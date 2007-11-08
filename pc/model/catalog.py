@@ -28,13 +28,13 @@ __revision__	= '$Id$'
 if __name__ == '__main__':
 	import sys
 	sys.path.append('../../')
-	
+
 
 import os
 import os.path
-#import gzip
 
-#import yaml
+import gettext
+_ = gettext.gettext
 
 from kpylibs.myobject import MyObject
 
@@ -48,10 +48,9 @@ from storage				import Storage
 from catalog_state			import CatalogState
 
 
+
 class Catalog(BaseElement):
-	
-	yaml_tag = '!Catalog'
-	
+
 	def __init__(self, filename):
 		BaseElement.__init__(self, -1, filename, None, catalog=self)
 		self._discs 		= []
@@ -65,33 +64,37 @@ class Catalog(BaseElement):
 		self.dirty			= False
 
 		self._set_filename(filename)
-		
+
 		self.load()
-	
-	
+
+
 	@property
 	def data_provider(self):
 		return self._data_provider
-	
+
+
 	@property
 	def tags_provider(self):
 		return self._tags_provider
-	
+
+
 	@property
 	def filename(self):
 		return self._indexfilepath
-	
+
+
 	@property
 	def discs(self):
 		return self._discs
-	
+
+
 	@property
 	def caption(self):
 		if self.dirty:
 			return '%s *' % self.name
 		return self.name
-	
-	
+
+
 	@property
 	def state(self):
 		self._state.last_offset = self._data_provider.offset
@@ -109,30 +112,24 @@ class Catalog(BaseElement):
 	id_provider = property(_get_id, _set_id)
 
 
-	def save(self, stream):
-		self._state.last_offset = self._data_provider.offset
-		yaml.dump(self._state, stream)
-		stream.write('\n---\n')
-		[ disc.save(stream) for disc in self.discs ]
-	
-	
 	def save_catalog(self):
 		Storage.save(self._indexfilepath, self)
 		self.dirty = False
-	
-	
+
+
 	def load(self, filename=None):
 		self._set_filename(filename)
 		self._tags_provider.reset()
 		self._discs = Storage.load(self._indexfilepath, self)
 		self._after_load()
 		self.data_provider.open(self._datafilepath)
-	
-	
+		print self.stat
+
+
 	def close(self):
 		self._data_provider.close()
-	
-	
+
+
 	def add_disc(self, path, name, descr=None, on_update=None):
 		disc = Disc(None, name, self.id, self)
 		disc.descr = descr
@@ -146,7 +143,7 @@ class Catalog(BaseElement):
 		self._discs.remove(disc)
 		self.dirty = True
 
-	
+
 	def _set_filename(self, filename):
 		if filename is not None:
 			self._indexfilepath	= filename
@@ -159,12 +156,11 @@ class Catalog(BaseElement):
 		self._state = state
 		self._data_provider.offset = state.last_offset
 
-	
+
 	def check_on_find(self, text, options=None):
 		self_result = BaseElement.check_on_find(self, text, options)
 		[ self_result.extend(disc.check_on_find(text, options)) for disc in self._discs ]
-		return self_result
-	
+
 
 	def _after_load(self):
 		self._discs.sort(lambda x,y: cmp(x.name, y.name))
@@ -180,7 +176,7 @@ class Catalog(BaseElement):
 	def fast_count_files_dirs(path):
 		def count_files(filenames):
 			return sum((1 for filename in filenames if filename.endswith('.jpg')))
-		
+
 		return sum(( (len(dirnames)+count_files(filenames)) for (dirpath, dirnames, filenames) in os.walk(path) ))
 
 
@@ -200,23 +196,38 @@ class Catalog(BaseElement):
 			image.set_tags(tags)
 
 
-	
-#yaml.add_representer(Catalog, representer)
+	@property
+	def stat(self):
+		result = []
+
+		result.append(_('Discs: %d') % len(self._discs))
+
+		files, folders = 0, 0
+		for disc in self._discs:
+			dfiles, dfolders = disc.root.folder_size
+			files += dfiles
+			folders += dfolders
+
+		result.append(_('Folders: %d') % folders)
+		result.append(_('Files: %d') % files)
+
+		return result
 
 
-	
+
+
 if __name__ == '__main__':
 	from pc.model.catalog import Catalog as _Catalog
 	catalog = _Catalog('test.index')
 	catalog.add_disc('/home/k/gfx', name='root')
 	#print repr(catalog)
 	#catalog.save()
-	
+
 	from storage import Storage
 	Storage.save('test.index', catalog)
-	
+
 	catalog.close()
-	
+
 	del catalog
 
 	#catalog = _Catalog('test.index')
@@ -224,4 +235,4 @@ if __name__ == '__main__':
 	#catalog.close()
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:
