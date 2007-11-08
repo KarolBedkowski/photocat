@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="a75c3ebf-b7e4-47c8-9d47-c581ae14a1f6" kpf_version="4" name="pc.kpf">
+<preference-set idref="a75c3ebf-b7e4-47c8-9d47-c581ae14a1f6/pc/model/catalog.py">
+  <string id="spellcheckLangID">en-US</string>
+</preference-set>
+<preference-set idref="a75c3ebf-b7e4-47c8-9d47-c581ae14a1f6">
+  <boolean id="import_live">1</boolean>
+</preference-set>
+</project>

@@ -1,0 +1,4 @@
+include LICENCE.txt
+include TODO
+include README
+recursive-include sag3 *.kid *.css *.js *.mo *.po *.pot

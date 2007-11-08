@@ -1,0 +1,212 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-11-07 23:24+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gui/wndmain.py:134
+msgid "&About..."
+msgstr ""
+
+#: gui/wndmain.py:125
+msgid "&Add disc..."
+msgstr ""
+
+#: gui/wndmain.py:100
+msgid "&Catalog"
+msgstr ""
+
+#: gui/wndmain.py:99
+msgid "&File"
+msgstr ""
+
+#: gui/wndmain.py:127
+msgid "&Find..."
+msgstr ""
+
+#: gui/_dlgabout.py:81
+msgid "About"
+msgstr ""
+
+#: gui/wndmain.py:134
+msgid "About application"
+msgstr ""
+
+#: gui/_dlgproperties.py:132
+msgid "Add"
+msgstr ""
+
+#: gui/_dlgadddisc.py:47 gui/_dlgadddisc.py:114 gui/_dlgadddisc.py:117
+msgid "Add disc"
+msgstr ""
+
+#: gui/wndmain.py:125
+msgid "Add disc to catalog"
+msgstr ""
+
+#: gui/wndmain.py:263
+msgid "Adding disc"
+msgstr ""
+
+#: gui/wndmain.py:195
+msgid "Catalog file name"
+msgstr ""
+
+#: gui/wndmain.py:113
+msgid "Close application"
+msgstr ""
+
+#: gui/wndmain.py:188
+msgid "Close program?"
+msgstr ""
+
+#: gui/wndmain.py:109 gui/wndmain.py:158
+msgid "Create new catalog"
+msgstr ""
+
+#: gui/wndmain.py:194
+msgid "Create new catalog?"
+msgstr ""
+
+#: gui/_dlgproperties.py:159 gui/components/infopanel.py:137
+#: gui/components/infopanel.py:167
+msgid "Date"
+msgstr ""
+
+#: gui/_dlgproperties.py:133
+msgid "Del"
+msgstr ""
+
+#: gui/_dlgproperties.py:79 gui/components/infopanel.py:56
+#: gui/components/infopanel.py:115
+msgid "Description"
+msgstr ""
+
+#: gui/_dlgadddisc.py:55
+msgid "Disc description:"
+msgstr ""
+
+#: gui/_dlgadddisc.py:51
+msgid "Disc name:"
+msgstr ""
+
+#: gui/wndmain.py:277
+msgid "Done!"
+msgstr ""
+
+#: gui/_dlgproperties.py:81 gui/components/infopanel.py:57
+msgid "Exif"
+msgstr ""
+
+#: gui/_dlgsearch.py:53 gui/_dlgsearch.py:85
+msgid "Find"
+msgstr ""
+
+#: gui/components/infopanel.py:58
+msgid "Folder"
+msgstr ""
+
+#: gui/_dlgadddisc.py:59
+msgid "Folder:"
+msgstr ""
+
+#: gui/wndmain.py:305
+#, python-format
+msgid "Folders %d;  files: %d"
+msgstr ""
+
+#: gui/wndmain.py:110 gui/wndmain.py:159
+msgid "Load catalog"
+msgstr ""
+
+#: gui/_dlgproperties.py:78 gui/components/infopanel.py:55
+msgid "Main"
+msgstr ""
+
+#: gui/_dlgproperties.py:157 gui/_dlgsearch.py:92
+#: gui/components/infopanel.py:135 gui/components/infopanel.py:165
+msgid "Name"
+msgstr ""
+
+#: gui/_dlgadddisc.py:114
+msgid "Name is empty!"
+msgstr ""
+
+#: gui/wndmain.py:391
+#, python-format
+msgid "Open %s"
+msgstr ""
+
+#: gui/wndmain.py:211
+msgid "Open file"
+msgstr ""
+
+#: gui/_dlgsearch.py:93
+msgid "Path"
+msgstr ""
+
+#: gui/_dlgadddisc.py:117
+msgid "Path is empty!"
+msgstr ""
+
+#: gui/_dlgproperties.py:51
+msgid "Properties"
+msgstr ""
+
+#: gui/wndmain.py:118
+msgid "Recent files"
+msgstr ""
+
+#: gui/components/infopanel.py:80 gui/components/infopanel.py:110
+msgid "Save"
+msgstr ""
+
+#: gui/wndmain.py:160
+msgid "Save catalog"
+msgstr ""
+
+#: gui/wndmain.py:111
+msgid "Save current catalog"
+msgstr ""
+
+#: gui/wndmain.py:127
+msgid "Search in calalogs"
+msgstr ""
+
+#: gui/_dlgadddisc.py:102
+msgid "Select directory"
+msgstr ""
+
+#: gui/_dlgproperties.py:158 gui/components/infopanel.py:136
+#: gui/components/infopanel.py:166
+msgid "Size"
+msgstr ""
+
+#: gui/components/infopanel.py:99 gui/components/infopanel.py:122
+msgid "Tag"
+msgstr ""
+
+#: gui/_dlgproperties.py:82 gui/components/infopanel.py:138
+#: gui/components/infopanel.py:168
+msgid "Tags"
+msgstr ""
+
+#: gui/_dlgsearch.py:75
+msgid "Text"
+msgstr ""
+
+#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
+msgid "Value"
+msgstr ""

@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-11-07 23:24+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gui/wndmain.py:134
+msgid "&About..."
+msgstr "&O programie..."
+
+#: gui/wndmain.py:125
+msgid "&Add disc..."
+msgstr "&Dodaj dysk..."
+
+#: gui/wndmain.py:100
+msgid "&Catalog"
+msgstr "&Katalog"
+
+#: gui/wndmain.py:99
+msgid "&File"
+msgstr "&Plik"
+
+#: gui/wndmain.py:127
+msgid "&Find..."
+msgstr "&Znajdź..."
+
+#: gui/_dlgabout.py:81
+msgid "About"
+msgstr "O programie"
+
+#: gui/wndmain.py:134
+msgid "About application"
+msgstr "O programie"
+
+#: gui/_dlgproperties.py:132
+msgid "Add"
+msgstr "Dodaj"
+
+#: gui/_dlgadddisc.py:47 gui/_dlgadddisc.py:114 gui/_dlgadddisc.py:117
+msgid "Add disc"
+msgstr "Dodaj Dysk"
+
+#: gui/wndmain.py:125
+msgid "Add disc to catalog"
+msgstr "Dodaj dysk do katalogu"
+
+#: gui/wndmain.py:263
+msgid "Adding disc"
+msgstr "Dodawanie dysku"
+
+#: gui/wndmain.py:195
+msgid "Catalog file name"
+msgstr "Nazwa pliku katalogu"
+
+#: gui/wndmain.py:113
+msgid "Close application"
+msgstr "Zamknij aplikację"
+
+#: gui/wndmain.py:188
+msgid "Close program?"
+msgstr "Zakończyć program?"
+
+#: gui/wndmain.py:109 gui/wndmain.py:158
+msgid "Create new catalog"
+msgstr "Utwórz nowy katalog"
+
+#: gui/wndmain.py:194
+msgid "Create new catalog?"
+msgstr "Utworzyć nowy katalog?"
+
+#: gui/_dlgproperties.py:159 gui/components/infopanel.py:137
+#: gui/components/infopanel.py:167
+msgid "Date"
+msgstr "Data"
+
+#: gui/_dlgproperties.py:133
+msgid "Del"
+msgstr "Usuń"
+
+#: gui/_dlgproperties.py:79 gui/components/infopanel.py:56
+#: gui/components/infopanel.py:115
+msgid "Description"
+msgstr "Opis"
+
+#: gui/_dlgadddisc.py:55
+msgid "Disc description:"
+msgstr "Opis dysku:"
+
+#: gui/_dlgadddisc.py:51
+msgid "Disc name:"
+msgstr "Nazwa dysku:"
+
+#: gui/wndmain.py:277
+msgid "Done!"
+msgstr "Zrobione!"
+
+#: gui/_dlgproperties.py:81 gui/components/infopanel.py:57
+msgid "Exif"
+msgstr ""
+
+#: gui/_dlgsearch.py:53 gui/_dlgsearch.py:85
+msgid "Find"
+msgstr "Znajdź"
+
+#: gui/components/infopanel.py:58
+msgid "Folder"
+msgstr ""
+
+#: gui/_dlgadddisc.py:59
+msgid "Folder:"
+msgstr ""
+
+#: gui/wndmain.py:305
+#, python-format
+msgid "Folders %d;  files: %d"
+msgstr "Podkatalogów: %d;  plików: %d"
+
+#: gui/wndmain.py:110 gui/wndmain.py:159
+msgid "Load catalog"
+msgstr "Wczytaj katalog"
+
+#: gui/_dlgproperties.py:78 gui/components/infopanel.py:55
+msgid "Main"
+msgstr "Główne"
+
+#: gui/_dlgproperties.py:157 gui/_dlgsearch.py:92
+#: gui/components/infopanel.py:135 gui/components/infopanel.py:165
+msgid "Name"
+msgstr "Nazwa"
+
+#: gui/_dlgadddisc.py:114
+msgid "Name is empty!"
+msgstr "Nazwa jest pusta!"
+
+#: gui/wndmain.py:391
+#, python-format
+msgid "Open %s"
+msgstr "Otwórz %s"
+
+#: gui/wndmain.py:211
+msgid "Open file"
+msgstr "Otwórz plik"
+
+#: gui/_dlgsearch.py:93
+msgid "Path"
+msgstr "Ścieżka"
+
+#: gui/_dlgadddisc.py:117
+msgid "Path is empty!"
+msgstr "Ścieżka jest pusta!"
+
+#: gui/_dlgproperties.py:51
+msgid "Properties"
+msgstr "Właściwości"
+
+#: gui/wndmain.py:118
+msgid "Recent files"
+msgstr "Ostatnie pliki"
+
+#: gui/components/infopanel.py:80 gui/components/infopanel.py:110
+msgid "Save"
+msgstr "Zapisz"
+
+#: gui/wndmain.py:160
+msgid "Save catalog"
+msgstr "Zapisz katalog"
+
+#: gui/wndmain.py:111
+msgid "Save current catalog"
+msgstr "Zapisz bierzący katalog"
+
+#: gui/wndmain.py:127
+msgid "Search in calalogs"
+msgstr "Szukaj w katalogacgg"
+
+#: gui/_dlgadddisc.py:102
+msgid "Select directory"
+msgstr "Wybierz katalog"
+
+#: gui/_dlgproperties.py:158 gui/components/infopanel.py:136
+#: gui/components/infopanel.py:166
+msgid "Size"
+msgstr "Rozmiar"
+
+#: gui/components/infopanel.py:99 gui/components/infopanel.py:122
+msgid "Tag"
+msgstr "Tag"
+
+#: gui/_dlgproperties.py:82 gui/components/infopanel.py:138
+#: gui/components/infopanel.py:168
+msgid "Tags"
+msgstr "Tagi"
+
+#: gui/_dlgsearch.py:75
+msgid "Text"
+msgstr "Tekst"
+
+#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
+msgid "Value"
+msgstr "Wartość"
