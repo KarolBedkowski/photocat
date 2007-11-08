@@ -93,6 +93,19 @@ class App(wx.App):
 
 		return True
 
+	def OnExceptionInMainLoop(self):
+		_LOG.warn('OnExceptionInMainLoop')
+		wx.App.OnExceptionInMainLoop(self)
+
+	def OnUnhandledException(self):
+		_LOG.warn('OnUnhandledException')
+		wx.App.OnUnhandledException(self)
+
+	def OnFatalException(self):
+		_LOG.warn('OnFatalException')
+		wx.App.OnFatalException(self)
+
+
 
 
 def run():

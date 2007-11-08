@@ -119,4 +119,9 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemText(node.tree_node, node.caption)
 
 
+	def delete_item(self, item):
+		self.DeleteChildren(item.tree_node)
+		self.Delete(item.tree_node)
+
+
 # vim: encoding=utf8: ff=unix: 

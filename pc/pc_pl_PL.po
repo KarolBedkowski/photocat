@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-07 23:24+0100\n"
+"POT-Creation-Date: 2007-11-08 20:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,35 +15,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/wndmain.py:134
+#: gui/wndmain.py:142
 msgid "&About..."
 msgstr "&O programie..."
 
-#: gui/wndmain.py:125
+#: gui/wndmain.py:130
 msgid "&Add disc..."
 msgstr "&Dodaj dysk..."
 
-#: gui/wndmain.py:100
+#: gui/wndmain.py:101
 msgid "&Catalog"
 msgstr "&Katalog"
 
-#: gui/wndmain.py:99
+#: gui/wndmain.py:131
+msgid "&Delete disc..."
+msgstr "&Usuń dysk..."
+
+#: gui/wndmain.py:135
+msgid "&Edit selected files..."
+msgstr "&Edytuj zaznaczone pliki..."
+
+#: gui/wndmain.py:100
 msgid "&File"
 msgstr "&Plik"
-
-#: gui/wndmain.py:127
-msgid "&Find..."
-msgstr "&Znajdź..."
 
 #: gui/_dlgabout.py:81
 msgid "About"
 msgstr "O programie"
 
-#: gui/wndmain.py:134
+#: gui/wndmain.py:142
 msgid "About application"
 msgstr "O programie"
 
-#: gui/_dlgproperties.py:132
+#: gui/_dlgproperties.py:136
 msgid "Add"
 msgstr "Dodaj"
 
@@ -51,44 +55,61 @@ msgstr "Dodaj"
 msgid "Add disc"
 msgstr "Dodaj Dysk"
 
-#: gui/wndmain.py:125
+#: gui/wndmain.py:130
 msgid "Add disc to catalog"
 msgstr "Dodaj dysk do katalogu"
 
-#: gui/wndmain.py:263
+#: gui/wndmain.py:329
 msgid "Adding disc"
 msgstr "Dodawanie dysku"
 
-#: gui/wndmain.py:195
+#: gui/wndmain.py:203
 msgid "Catalog file name"
 msgstr "Nazwa pliku katalogu"
 
-#: gui/wndmain.py:113
+#: gui/wndmain.py:117
 msgid "Close application"
 msgstr "Zamknij aplikację"
 
-#: gui/wndmain.py:188
+#: gui/wndmain.py:113
+msgid "Close catalog"
+msgstr "Zamknij katalog"
+
+#: gui/wndmain.py:113
+msgid "Close current catalog"
+msgstr "Zamknij bieżący katalog"
+
+#: gui/wndmain.py:196
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
-#: gui/wndmain.py:109 gui/wndmain.py:158
+#: gui/wndmain.py:110 gui/wndmain.py:166
 msgid "Create new catalog"
 msgstr "Utwórz nowy katalog"
 
-#: gui/wndmain.py:194
+#: gui/wndmain.py:202
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
-#: gui/_dlgproperties.py:159 gui/components/infopanel.py:137
+#: gui/_dlgproperties.py:164 gui/components/infopanel.py:137
 #: gui/components/infopanel.py:167
 msgid "Date"
 msgstr "Data"
 
-#: gui/_dlgproperties.py:133
+#: gui/_dlgproperties.py:137
 msgid "Del"
 msgstr "Usuń"
 
-#: gui/_dlgproperties.py:79 gui/components/infopanel.py:56
+#: gui/wndmain.py:356
+#, python-format
+msgid "Delete disc %s?"
+msgstr "Usunąć dysk %s?"
+
+#: gui/wndmain.py:131
+msgid "Delete selected disc from catalog"
+msgstr "Usuń wybrany dysk z katalogu"
+
+#: gui/_dlgproperties.py:83 gui/components/infopanel.py:56
 #: gui/components/infopanel.py:115
 msgid "Description"
 msgstr "Opis"
@@ -101,15 +122,25 @@ msgstr "Opis dysku:"
 msgid "Disc name:"
 msgstr "Nazwa dysku:"
 
-#: gui/wndmain.py:277
+#: gui/wndmain.py:343
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/_dlgproperties.py:81 gui/components/infopanel.py:57
+#: gui/wndmain.py:481
+#, python-format
+msgid "Error openning file %s"
+msgstr "Błąd otwierania pliku %s"
+
+#: gui/wndmain.py:236
+#, python-format
+msgid "Error saving catalog %s"
+msgstr "Błąd zapisywania katalogu %s"
+
+#: gui/_dlgproperties.py:85 gui/components/infopanel.py:57
 msgid "Exif"
 msgstr ""
 
-#: gui/_dlgsearch.py:53 gui/_dlgsearch.py:85
+#: gui/_dlgsearch.py:57 gui/_dlgsearch.py:89
 msgid "Find"
 msgstr "Znajdź"
 
@@ -121,20 +152,20 @@ msgstr ""
 msgid "Folder:"
 msgstr ""
 
-#: gui/wndmain.py:305
+#: gui/wndmain.py:412
 #, python-format
 msgid "Folders %d;  files: %d"
 msgstr "Podkatalogów: %d;  plików: %d"
 
-#: gui/wndmain.py:110 gui/wndmain.py:159
+#: gui/wndmain.py:111 gui/wndmain.py:167
 msgid "Load catalog"
 msgstr "Wczytaj katalog"
 
-#: gui/_dlgproperties.py:78 gui/components/infopanel.py:55
+#: gui/_dlgproperties.py:82 gui/components/infopanel.py:55
 msgid "Main"
 msgstr "Główne"
 
-#: gui/_dlgproperties.py:157 gui/_dlgsearch.py:92
+#: gui/_dlgproperties.py:162 gui/_dlgsearch.py:98
 #: gui/components/infopanel.py:135 gui/components/infopanel.py:165
 msgid "Name"
 msgstr "Nazwa"
@@ -143,16 +174,24 @@ msgstr "Nazwa"
 msgid "Name is empty!"
 msgstr "Nazwa jest pusta!"
 
-#: gui/wndmain.py:391
+#: gui/_dlgsearch.py:153
+msgid "Not found"
+msgstr "Nie znaleziono"
+
+#: gui/wndmain.py:500
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:211
+#: gui/wndmain.py:219 gui/wndmain.py:481
 msgid "Open file"
 msgstr "Otwórz plik"
 
-#: gui/_dlgsearch.py:93
+#: gui/_dlgsearch.py:153
+msgid "PC"
+msgstr ""
+
+#: gui/_dlgsearch.py:99
 msgid "Path"
 msgstr "Ścieżka"
 
@@ -164,7 +203,15 @@ msgstr "Ścieżka jest pusta!"
 msgid "Properties"
 msgstr "Właściwości"
 
-#: gui/wndmain.py:118
+#: gui/wndmain.py:115
+msgid "Rebuild catalog"
+msgstr "Przebuduj katalog"
+
+#: gui/wndmain.py:290
+msgid "Rebuild catalog finished"
+msgstr "Zakończono przebudowe katalogu"
+
+#: gui/wndmain.py:122
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
@@ -172,15 +219,15 @@ msgstr "Ostatnie pliki"
 msgid "Save"
 msgstr "Zapisz"
 
-#: gui/wndmain.py:160
+#: gui/wndmain.py:168 gui/wndmain.py:236
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 
-#: gui/wndmain.py:111
+#: gui/wndmain.py:112
 msgid "Save current catalog"
-msgstr "Zapisz bierzący katalog"
+msgstr "Zapisz bieżący katalog"
 
-#: gui/wndmain.py:127
+#: gui/wndmain.py:133
 msgid "Search in calalogs"
 msgstr "Szukaj w katalogacgg"
 
@@ -188,7 +235,7 @@ msgstr "Szukaj w katalogacgg"
 msgid "Select directory"
 msgstr "Wybierz katalog"
 
-#: gui/_dlgproperties.py:158 gui/components/infopanel.py:136
+#: gui/_dlgproperties.py:163 gui/components/infopanel.py:136
 #: gui/components/infopanel.py:166
 msgid "Size"
 msgstr "Rozmiar"
@@ -197,15 +244,18 @@ msgstr "Rozmiar"
 msgid "Tag"
 msgstr "Tag"
 
-#: gui/_dlgproperties.py:82 gui/components/infopanel.py:138
+#: gui/_dlgproperties.py:86 gui/components/infopanel.py:138
 #: gui/components/infopanel.py:168
 msgid "Tags"
 msgstr "Tagi"
 
-#: gui/_dlgsearch.py:75
+#: gui/_dlgsearch.py:79
 msgid "Text"
 msgstr "Tekst"
 
 #: gui/components/infopanel.py:100 gui/components/infopanel.py:123
 msgid "Value"
 msgstr "Wartość"
+
+#~ msgid "&Find..."
+#~ msgstr "&Znajdź..."

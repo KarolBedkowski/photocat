@@ -33,6 +33,7 @@ from kpylibs.wnd_shell		import WndShell
 from pc.model.catalog		import Catalog
 from pc.model.folder		import Folder
 from pc.model.disc			import Disc
+from pc.model.image			import Image
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
@@ -109,13 +110,17 @@ class WndMain(wx.Frame):
 			(None,	'Ctrl-N',	_('Create new catalog'),	self._on_file_new,		wx.ID_NEW,		wx.ART_NEW),
 			(None,	'Ctrl+O',	_('Load catalog'),			self._on_file_open,		wx.ID_OPEN,		wx.ART_FILE_OPEN),
 			(None,	'Ctrl+S',	_('Save current catalog'),	self._on_file_save,		wx.ID_SAVE,		wx.ART_FILE_SAVE),
+			(_('Close catalog'),	'Ctrl+Q',	_('Close current catalog'),	self._on_file_close),
+			('-'),
+			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
 			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
 		))
 		self._main_menu_file = menu
 
 		self._main_menu_file_recent = wx.Menu()
-		self._main_menu_file.InsertMenu(3, -1, _('Recent files'), self._main_menu_file_recent)
+		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(3, -1, _('Recent files'), 
+				self._main_menu_file_recent)
 
 		return menu
 
@@ -123,8 +128,11 @@ class WndMain(wx.Frame):
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
 			(_('&Add disc...'),	None,	_('Add disc to catalog'),	self._on_catalog_add,	None),
+			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None),
 			('-'),
-			(_('&Find...'),	None,	_('Search in calalogs'),	self._on_catalog_search,	None),
+			(None,	'Ctrl+F',	_('Search in calalogs'),	self._on_catalog_search,	wx.ID_FIND,	 wx.ART_FIND),
+			('-'),
+			(_('&Edit selected files...'),	None,	'',	self._on_catalog_edit_multi,	None),
 		))
 		return menu
 
@@ -158,6 +166,10 @@ class WndMain(wx.Frame):
 		cbtna(wx.ID_NEW,	self._on_file_new,	wx.ART_NEW,			_('Create new catalog'))
 		cbtna(wx.ID_OPEN,	self._on_file_open,	wx.ART_FILE_OPEN,	_('Load catalog'))
 		cbtna(wx.ID_SAVE,	self._on_file_save,	wx.ART_FILE_SAVE,	_('Save catalog'))
+
+		toolbar.AddSeparator()
+
+		cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
 
 		toolbar.AddSeparator()
 		toolbar.Realize()
@@ -217,15 +229,73 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_save(self, evt):
+
+		def save_catalog(catalog):
+			self.SetCursor(wx.HOURGLASS_CURSOR)
+			try:
+				if catalog.dirty:
+					catalog.save_catalog()
+			except:
+				_LOG.exception('WndMain._on_file_save(%s)' % catalog.name)
+				dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
+			self.SetCursor(wx.STANDARD_CURSOR)
+
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
 			for cat in self._catalogs:
-				cat.save_catalog()
+				save_catalog(cat)
 				self._dirs_tree.update_catalog_node(cat)
 		else:
-			tree_selected.catalog.save_catalog()
+			save_catalog(tree_selected.catalog)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
 		evt.Skip()
+
+
+	def _on_file_close(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None:
+			if len(self._catalogs) > 1:
+				return
+			else:
+				catalog = self._catalogs[0]
+		else:
+			if isinstance(tree_selected, Catalog):
+				catalog = tree_selected
+			else:
+				catalog = tree_selected.catalog
+
+		self._dirs_tree.delete_item(catalog)
+		catalog.close()
+		self._catalogs.remove(catalog)
+
+
+	def _on_file_rebuild(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None:
+			if len(self._catalogs) > 1:
+				return
+			else:
+				tree_selected = self._catalogs[0]
+
+		if isinstance(tree_selected, Catalog):
+			catalog = tree_selected
+		else:
+			catalog = tree_selected.catalog
+
+		try:
+			self.SetCursor(wx.HOURGLASS_CURSOR)
+			catalog.rebuild()
+			dialogs.message_box_info(self, _('Rebuild catalog finished'), 'PC')
+		except:
+			_LOG.exception('rebuild error')
+		finally:
+			self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_help_about(self, evt):
@@ -277,8 +347,23 @@ class WndMain(wx.Frame):
 				dlg_progress.Update(allfiles, _('Done!'))
 				dlg_progress.Destroy()
 		dlg.Destroy()
-		
-		
+
+
+	def _on_catalog_del_disc(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None or not isinstance(tree_selected, Disc):
+			return
+
+		if dialogs.message_box_warning_yesno(self, _('Delete disc %s?') % tree_selected.name, 'PC'):
+			self._dirs_tree.delete_item(tree_selected)
+			catalog = tree_selected.catalog
+			catalog.del_disc(tree_selected)
+			self._dirs_tree.update_catalog_node(catalog)
+
+
 	def _on_catalog_search(self, evt):
 		if len(self._catalogs) == 0:
 			return
@@ -286,6 +371,31 @@ class WndMain(wx.Frame):
 		dlg = DlgSearch(self, self._catalogs)
 		dlg.Show()
 		
+
+	def _on_catalog_edit_multi(self, evt):
+		folder = self._dirs_tree.selected_item
+		if folder is None:
+			return
+		if isinstance(folder, Folder):
+			pass
+		elif isinstance(folder, Disc):
+			folder = folder.root
+		else:
+			return
+
+		if folder.files_count == 0:
+			return
+
+		image = Image(None, None, None, catalog=folder.catalog)
+
+		dlg = DlgProperties(self, image)
+		if dlg.ShowModal():
+			selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
+			Catalog.update_images_from_image(selected_items, image)
+			folder.catalog.dirty = True
+			self._dirs_tree.update_catalog_node(folder.catalog)
+		dlg.Destroy()
+
 
 
 	def _on_dirtree_item_select(self, evt):
@@ -297,8 +407,9 @@ class WndMain(wx.Frame):
 		elif isinstance(item, Disc):
 			item = item.root
 		else:
+			self._photo_list.ShowDir([])
 			return
-			
+
 		if item is not None:
 			self._photo_list.ShowDir(item)
 			self._info_panel.show_folder(item)
@@ -340,7 +451,6 @@ class WndMain(wx.Frame):
 				self._info_panel.show(selected)
 				self._on_update_info_image(selected)
 			dlg.Destroy()
-			
 
 
 	def _on_file_history(self, evt):
@@ -370,6 +480,9 @@ class WndMain(wx.Frame):
 				self._catalogs.append(catalog)
 				self._dirs_tree.add_catalog(catalog)
 				self.__update_last_open_files(filename)
+			except:
+				_LOG.exception('WndMain._open_file(%s)' % filename)
+				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 
@@ -389,6 +502,9 @@ class WndMain(wx.Frame):
 			for num in xrange(min(len(last_open_files), 10)):
 				filename = os.path.basename(last_open_files[num])
 				menu.Append(wx.ID_FILE1+num, "&%d. %s" % (num+1, filename), _('Open %s') % last_open_files[num])
+			self._main_menu_file_recent_item.Enable(True)
+		else:
+			self._main_menu_file_recent_item.Enable(False)
 
 
 

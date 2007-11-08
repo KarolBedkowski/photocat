@@ -14,7 +14,6 @@
 ./icons/icons.py
 ./lib/EXIF.py
 ./lib/ThumbnailCtrl.py
-./lib/ThumbnailCtrlDemo.py
 ./lib/__init__.py
 ./main.py
 ./mki18n.py

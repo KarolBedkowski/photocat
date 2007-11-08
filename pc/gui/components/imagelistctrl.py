@@ -71,7 +71,7 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		if filter >= 0:
 			self._filter = filter
 			
-		self.SetCaption(dir.name)
+		#self.SetCaption(dir.name)
 		
 		self._isrunning = False	
 		
@@ -90,14 +90,18 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 
 		items = self._items[:]
 		
-		for idx, img in izip(xrange(len(dir.files)), dir.files):
+		for idx, img in izip(xrange(len(filenames)), filenames):
 			self.LoadImages(img, idx)
 
 		self._selectedarray = []
 		self.UpdateProp()
 		self.Refresh()
 	
-	
+
+	@property
+	def selected_items(self):
+		return self._selectedarray
+
 
 
 class MyThumbnailCtrl(ThumbnailCtrl):
@@ -162,5 +166,9 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 		index = self._scrolled.images.index(item)
 		self.SetSelection(index)
 		
+
+	@property
+	def selected_items(self):
+		return self._scrolled.selected_items
 
 # vim: encoding=utf8: ff=unix: 

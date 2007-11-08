@@ -51,11 +51,14 @@ class DlgProperties(wx.Dialog):
 		wx.Dialog.__init__(self, parent, -1, _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 		
 		self._item = item
+
+		self._is_fake = is_fake = item.name is None
 		
-		self._item_is_folder	= isinstance(item, Folder)
-		self._item_is_disc		= isinstance(item, Disc)
-		self._item_is_catalog	= isinstance(item, Catalog)
-		self._item_is_image		= isinstance(item, Image)
+		self._item_is_folder	= isinstance(item, Folder)	and not is_fake
+		self._item_is_disc		= isinstance(item, Disc)	and not is_fake
+		self._item_is_catalog	= isinstance(item, Catalog) and not is_fake
+		self._item_is_image		= isinstance(item, Image)	and not is_fake
+
 		
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
@@ -75,7 +78,8 @@ class DlgProperties(wx.Dialog):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
+		if not self._is_fake:
+			notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
 		notebook.AddPage(self._create_layout_page_desc(notebook), 	_('Description'))
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
@@ -148,18 +152,19 @@ class DlgProperties(wx.Dialog):
 		
 		
 	def _show(self, item):
-		listctrl = self._listctrl_main
-		
-		def insert(key, val):
-			idx = listctrl.InsertStringItem(sys.maxint, str(key))
-			listctrl.SetStringItem(idx, 1, str(val))
+		if not self._is_fake:
+			listctrl = self._listctrl_main
 			
-		insert(_('Name'),	item.name)
-		insert(_('Size'),	item.size)
-		insert(_('Date'),	time.asctime(time.localtime(item.date)))
-			
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+			def insert(key, val):
+				idx = listctrl.InsertStringItem(sys.maxint, str(key))
+				listctrl.SetStringItem(idx, 1, str(val))
+				
+			insert(_('Name'),	item.name)
+			insert(_('Size'),	item.size)
+			insert(_('Date'),	time.asctime(time.localtime(item.date)))
+				
+			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 		self._textctrl_desc.SetValue(str(item.descr or ''))
 
@@ -188,7 +193,8 @@ class DlgProperties(wx.Dialog):
 		
 	def _on_add_tag(self, evt):
 		tag = self._combobox_tags.GetValue().strip()
-		if tag:
+		if len(tag) > 0:
+			tag = tag.lower()
 			listbox = self._listbox_tags
 			tags = [ listbox.GetString(idx) for idx in xrange(listbox.GetCount()) ]
 			if tags.count(tag) > 0:

@@ -51,7 +51,7 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 	def init(self, parent=None, catalog=None):
 		self._tree_node	= None
 		self._parent	= parent
-		self._catalog	= catalog		
+		self._catalog	= catalog
 
 
 	def __repr__(self):
@@ -90,14 +90,15 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 	def set_tags(self, tags=None):
 		if tags is not None:
 			self.tags = tags
-		self.tags = self.tags or tuple()
-		self._catalog.tags_provider.update_item(self.tags, self)
+		self.tags = tuple(self.tags or tuple())
+		if self.name is not None: # fake object
+			self._catalog.tags_provider.update_item(self.tags, self)
 	
 	
 	def check_on_find(self, text, options=None):
-		if self.descr is not None and self.descr.count(text) > 0:
+		if self.descr is not None and self.descr.lower().count(text) > 0:
 			return [self]
-		if self.name is not None and self.name.count(text) > 0:
+		if self.name is not None and self.name.lower().count(text) > 0:
 			return [self]
 		if text in self.tags:
 			return [self]

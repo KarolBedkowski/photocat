@@ -56,7 +56,15 @@ class Image(Element):
 		self.exif	= {}
 		self.thumbsize = None
 		self._disc	= disc
-	
+
+
+	@property
+	def index(self):
+		if self._parent is None:
+			return -1
+		return self._parent.files.index(self)
+
+
 
 	def load(self, path, options=None, on_update=None):
 		Element.load(self, path, options, on_update)

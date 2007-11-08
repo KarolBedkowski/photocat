@@ -30,6 +30,9 @@ __all__			= ['DlgProperties']
 
 import sys
 
+import logging
+_LOG = logging.getLogger(__name__)
+
 import gettext
 _ = gettext.gettext
 
@@ -38,6 +41,7 @@ import wx
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
+from kpylibs				import dialogs 
 
 from pc.model.catalog		import Catalog
 from pc.model.folder		import Folder
@@ -82,7 +86,9 @@ class DlgSearch(wx.Dialog):
 		
 		self._tc_text = wx.ComboBox(self, -1, choices=last)
 		grid.Add(self._tc_text, 1, wx.EXPAND)
-		grid.Add(create_button(self, _('Find'), self._on_btn_find), 0, wx.EXPAND)
+		button = create_button(self, _('Find'), self._on_btn_find)
+		button.SetDefault()
+		grid.Add(button, 0, wx.EXPAND)
 		return grid
 	
 
@@ -101,14 +107,17 @@ class DlgSearch(wx.Dialog):
 		what = self._tc_text.GetValue().strip()
 		if len(what) == 0:
 			return
+
+		what = what.lower()
 		
+		_LOG.debug('DlgSearch._on_btn_find: "%s"' % what)
 		last_search_text_ctrl = self._tc_text
 		
 		if len([ None
 				for idx
 				in xrange(last_search_text_ctrl.GetCount())
 				if last_search_text_ctrl.GetString(idx) == what ]) == 0:
-			last_search_text_ctrl.Insert(0, what)
+			last_search_text_ctrl.Insert(what, 0)
 			
 			
 		last = [ last_search_text_ctrl.GetString(idx) for idx in xrange(min(last_search_text_ctrl.GetCount(), 10)) ]
@@ -139,8 +148,11 @@ class DlgSearch(wx.Dialog):
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		
-		
+
+		if len(self._result) == 0:
+			dialogs.message_box_info(self, _('Not found'), _('PC'))
+
+
 	def _on_list_activate(self, evt):
 		listctrl = self._result_list
 		if listctrl.GetSelectedItemCount() > 0:

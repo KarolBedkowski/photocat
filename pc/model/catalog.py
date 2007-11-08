@@ -125,6 +125,7 @@ class Catalog(BaseElement):
 		self._set_filename(filename)
 		self._tags_provider.reset()
 		self._discs = Storage.load(self._indexfilepath, self)
+		self._after_load()
 		self.data_provider.open(self._datafilepath)
 	
 	
@@ -140,6 +141,11 @@ class Catalog(BaseElement):
 		self._data_provider.flush()
 		self.dirty = True
 
+
+	def del_disc(self, disc):
+		self._discs.remove(disc)
+		self.dirty = True
+
 	
 	def _set_filename(self, filename):
 		if filename is not None:
@@ -152,7 +158,6 @@ class Catalog(BaseElement):
 	def set_state(self, state):
 		self._state = state
 		self._data_provider.offset = state.last_offset
-		print self._data_provider.offset
 
 	
 	def check_on_find(self, text, options=None):
@@ -161,13 +166,40 @@ class Catalog(BaseElement):
 		return self_result
 	
 
+	def _after_load(self):
+		self._discs.sort(lambda x,y: cmp(x.name, y.name))
+
+
+	def rebuild(self):
+		self._state.last_offset = self._data_provider.rebuild(self._discs)
+		self.save_catalog()
+		self._data_provider.open()
+
+
 	@staticmethod
 	def fast_count_files_dirs(path):
 		def count_files(filenames):
 			return sum((1 for filename in filenames if filename.endswith('.jpg')))
 		
 		return sum(( (len(dirnames)+count_files(filenames)) for (dirpath, dirnames, filenames) in os.walk(path) ))
-	
+
+
+	@staticmethod
+	def update_images_from_image(images, master_image):
+		descr = master_image.descr
+		if descr == '':
+			descr = None
+		else:
+			descr = descr.strip()
+
+		tags = master_image.tags
+
+		for image in images:
+			if descr is not None:
+				image.descr = descr
+			image.set_tags(tags)
+
+
 	
 #yaml.add_representer(Catalog, representer)
 

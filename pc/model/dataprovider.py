@@ -78,16 +78,18 @@ class DataProvider(object):
 			raise IOError('Invalid file version: %d (supported %d)' % (version, _DATA_FILE_VERSION_MAX))
 
 	
-	def _write_header(self):
+	def _write_header(self, filedesc=None):
 		_LOG.debug('DataProvider._write_header()')
-		self._file.seek(0)
-		self._file.write(_DATA_FILE_HEADER_ID)
-		self._file.write(pack("I", _DATA_FILE_VERSION_MAX))
-		self._file.seek(_DATA_FILE_HEADER_SIZE)
-		self._file.flush()
+		if filedesc is None:
+			filedesc = self._file
+		filedesc.seek(0)
+		filedesc.write(_DATA_FILE_HEADER_ID)
+		filedesc.write(pack("I", _DATA_FILE_VERSION_MAX))
+		filedesc.seek(_DATA_FILE_HEADER_SIZE)
+		filedesc.flush()
 
 
-	def open(self, filename):
+	def open(self, filename=None):
 		if filename is not None:
 			self.filename = filename
 			
@@ -107,8 +109,8 @@ class DataProvider(object):
 				self._file = file(self.filename, 'w+b')
 				self._file.write(" " * 50)
 			self._write_header()
-		
-		
+
+
 	def close(self):
 		if self._file is not None:
 			self._file.close()
@@ -135,6 +137,55 @@ class DataProvider(object):
 	def flush(self):
 		if self._file is not None:
 			self._file.flush()
+
+
+	def rebuild(self, discs):
+		if self._file is None:
+			return
+		self._file.flush()
+		new_file = file(self.filename + '.tmp', 'w+b')
+		new_file.write(" " * 50)
+		self._write_header(new_file)
+
+		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[])
+
+		def copy_folder(folder, opt={}):
+			for subdir in folder.subdirs:
+				copy_folder(subdir, opt)
+
+			for image in folder.files:
+				self._file.seek(image.offset)
+				data = self._file.read(image.thumbsize)
+
+				new_offset = opt['last_offset']
+				new_file.seek(new_offset)
+				new_file.write(data)
+				opt['last_offset'] = self._next_offset(new_file.tell())
+				opt['obj_offsets'].append((image, new_offset))
+
+		for disc in discs:
+			copy_folder(disc.root, opt)
+
+		new_file.close()
+		self._file.close()
+		self._file = None
+
+		self._offset = opt['last_offset']
+
+		os.rename(self.filename, self.filename + '.old')
+		os.rename(self.filename + '.tmp', self.filename)
+
+		for obj, offset in opt['obj_offsets']:
+			obj.offset = offset
+
+		return opt['last_offset']
+
+
+
+
+
+
+
 
 	
 	@staticmethod
