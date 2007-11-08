@@ -28,6 +28,9 @@ __revision__	= '$Id$'
 from itertools import izip
 import cStringIO
 
+import logging
+_LOG = logging.getLogger(__name__)
+
 import wx
 
 from pc.lib.ThumbnailCtrl import *
@@ -39,42 +42,46 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		ScrolledThumbnail.__init__(self, *argv, **kwagrs)
 		self.SetThumbSize(200, 200)
 
-		
+
 	def ListDirectory(self, directory, fileExtList):
 		print 'ListDirectory ', self._folder.name
-		
+
 		if self._folder is None:
 			return []
-		
-		return self._folder.files
-	
-		
-	def LoadImages(self, newfile, imagecount):
-		""" Methods That Load Images On ThumbnailCtrl. Used Internally. """	
 
-		stream = cStringIO.StringIO(newfile.image)
-		img = wx.ImageFromStream(stream)
+		return self._folder.files
+
+
+	def LoadImages(self, newfile, imagecount):
+		""" Methods That Load Images On ThumbnailCtrl. Used Internally. """
+
+		try:
+			stream = cStringIO.StringIO(newfile.image)
+			img = wx.ImageFromStream(stream)
+		except:
+			_LOG.exception('MyThumbnailCtrl.LoadImages  %r' % newfile)
+			img = wx.EmptyImage(1, 1)
 		originalsize = (img.GetWidth(), img.GetHeight())
-		
+
 		try:
 			self._items[imagecount]._threadedimage = img
 			self._items[imagecount]._originalsize = originalsize
 			self._items[imagecount]._bitmap = img
 		except:
 			return
-		
-	
-		
+
+
+
 	def ShowDir(self, dir, filter=THUMB_FILTER_IMAGES):
 		""" Shows Thumbnails For A Particular Folder. """
-		
+
 		if filter >= 0:
 			self._filter = filter
-			
+
 		#self.SetCaption(dir.name)
-		
-		self._isrunning = False	
-		
+
+		self._isrunning = False
+
 		# update items
 		self._items = []
 
@@ -82,21 +89,21 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 			filenames = dir
 		else:
 			filenames = dir.files
-			
+
 		self.images = filenames
 
 		for files in filenames:
 			self._items.append(Thumb(self, dir, files, files.name, files.size, files.date))
 
 		items = self._items[:]
-		
+
 		for idx, img in izip(xrange(len(filenames)), filenames):
 			self.LoadImages(img, idx)
 
 		self._selectedarray = []
 		self.UpdateProp()
 		self.Refresh()
-	
+
 
 	@property
 	def selected_items(self):
@@ -108,8 +115,8 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 	def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
 				 size=wx.DefaultSize, thumboutline=THUMB_OUTLINE_IMAGE,
 				 thumbfilter=THUMB_FILTER_IMAGES):
-		
-		wx.Panel.__init__(self, parent, id, pos, size)	 
+
+		wx.Panel.__init__(self, parent, id, pos, size)
 
 		self._sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -126,7 +133,7 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 
 		self.SetSizer(self._sizer)
 
-		self._sizer.Show(0, False)		
+		self._sizer.Show(0, False)
 		self._sizer.Layout()
 
 		methods = ["GetSelectedItem", "GetPointed", "GetHighlightPointed", "SetHighlightPointed",
@@ -146,29 +153,27 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 		self._combochoices = []
 		self._showcombo = False
 		self._subsizer = subsizer
-		
+
 		self._combo.Bind(wx.EVT_COMBOBOX, self.OnComboBox)
-		
+
 		self.SetZoomFactor(2.0)
 
-		
-		
-		
+
 	@property
 	def selected_item(self):
 		sel = self.GetSelection()
 		if sel >= 0:
 			return self._scrolled.images[sel]
 		return None
-	
+
 
 	def select_item(self, item):
 		index = self._scrolled.images.index(item)
 		self.SetSelection(index)
-		
+
 
 	@property
 	def selected_items(self):
 		return self._scrolled.selected_items
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

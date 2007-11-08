@@ -36,32 +36,29 @@ import time
 import logging
 _LOG = logging.getLogger(__name__)
 
-#import yaml
-
 from folder			import Folder
 from _idprovider 	import IdProvider
 from _element		import Element
 from storage_representer	import representer
 
 
-class Disc(Element):
 
-	yaml_tag = '!Disc'
+class Disc(Element):
 
 	def __init__(self, id, name, parent_id, parent=None):
 		Element.__init__(self, id, name, -1, parent, catalog=parent)
-		
-		
+
+
 	def init(self, parent=None, catalog=None):
 		Element.init(self, parent, catalog)
 		self._root = None
-	
-	
+
+
 	@property
 	def root(self):
 		return self._root
-	
-	
+
+
 	def add_folder(self, folder):
 		self._root = folder
 
@@ -73,36 +70,23 @@ class Disc(Element):
 		self.on_restore(None)
 
 
-	def dump(self, stream=None):
-		yaml.dump(self, stream)
-		
-		
-	def save(self, stream):
-		yaml.dump(self, stream)
-		stream.write('\n---\n')
-		self._root.save(stream)
-	
-	
 	def on_restore(self, catalog):
 		self._catalog = catalog
 		if catalog is not None:
 			catalog.id_provider.id = id
 			self.root.on_restore(catalog, self)
-			
-			
+
+
 	def check_on_find(self, text, options=None):
 		self_result = Element.check_on_find(self, text, options)
 		self_result.extend(self._root.check_on_find(text, options))
-		return self_result			
+		return self_result
 
 
 	@property
 	def path(self):
 		return '[%s] ' % self.name
-	
 
-
-#yaml.add_representer(Disc, representer)
 
 
 
@@ -118,4 +102,4 @@ if __name__ == '__main__':
 	pass
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

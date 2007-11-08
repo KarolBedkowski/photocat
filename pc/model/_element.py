@@ -31,13 +31,11 @@ import os
 import logging
 _LOG = logging.getLogger(__name__)
 
-#import yaml
-
 from kpylibs.myobject import MyObject
 
 
 
-class BaseElement(MyObject): #yaml.YAMLObject, 
+class BaseElement(MyObject):
 	def __init__(self, id, name, parent_id, parent=None, catalog=None):
 		self.id		= id
 		self.name	= name
@@ -54,18 +52,15 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 		self._catalog	= catalog
 
 
-	def __repr__(self):
-		return MyObject.__repr__(self)
-	
-
 	@property
 	def parent(self):
 		return self._parent
-	
+
+
 	@property
 	def catalog(self):
 		return self._catalog
-	
+
 
 	@property
 	def path(self):
@@ -75,15 +70,14 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 			if self.name != '/':
 				return self._parent.path + "/" +  self.name
 			return self._parent.path
-			
 
 
 	def _get_tree_node(self):
 		return self._tree_node
-	
+
 	def _set_tree_node(self, node):
 		self._tree_node = node
-		
+
 	tree_node = property(_get_tree_node, _set_tree_node)
 
 
@@ -93,8 +87,8 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 		self.tags = tuple(self.tags or tuple())
 		if self.name is not None: # fake object
 			self._catalog.tags_provider.update_item(self.tags, self)
-	
-	
+
+
 	def check_on_find(self, text, options=None):
 		if self.descr is not None and self.descr.lower().count(text) > 0:
 			return [self]
@@ -111,8 +105,6 @@ class BaseElement(MyObject): #yaml.YAMLObject,
 
 
 class Element(BaseElement):
-	yaml_tag = '!Element'
-
 
 	def __init__(self, id, name, parent_id, parent=None, catalog=None):
 		BaseElement.__init__(self, id, name, parent_id, parent, catalog)
@@ -121,7 +113,7 @@ class Element(BaseElement):
 	def init(self, parent=None, catalog=None):
 		BaseElement.init(self, parent, catalog)
 		self.size = None
-	
+
 		if self.id is None:
 			if catalog is not None:
 				self.id = catalog.id_provider
@@ -137,6 +129,6 @@ class Element(BaseElement):
 		self.date = os.path.getmtime(path)
 
 
-	
 
-# vim: encoding=utf8: ff=unix: 
+
+# vim: encoding=utf8: ff=unix:

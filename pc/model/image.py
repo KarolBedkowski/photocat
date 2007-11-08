@@ -31,16 +31,16 @@ import string
 import logging
 _LOG = logging.getLogger(__name__)
 
-#import yaml
-
 import Image as PILImage
-import PngImagePlugin, JpegImagePlugin
-PILImage._initialized = 2
+import PngImagePlugin, JpegImagePlugin, GifImagePlugin
+PILImage._initialized = 3
 
-from pc.lib import EXIF
+from pc.lib					import EXIF
 
-from _element import Element
+from _element				import Element
 from storage_representer	import representer
+
+
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
 
@@ -52,10 +52,11 @@ class Image(Element):
 	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
 
-		self.offset = None
-		self.exif	= {}
-		self.thumbsize = None
-		self._disc	= disc
+		self.offset		= None
+		self.exif		= {}
+		self.thumbsize	= None
+		self._disc		= disc
+		self.dimensions = None
 
 
 	@property
@@ -65,41 +66,51 @@ class Image(Element):
 		return self._parent.files.index(self)
 
 
-
 	def load(self, path, options=None, on_update=None):
 		Element.load(self, path, options, on_update)
 
 		tmpfilename = os.tmpnam() + "_.jpg"
-		
+
 		try:
-			image = PILImage.open(path)
+			try:
+				image = PILImage.open(path)
+			except:
+				image =  PILImage.new('RGB', (1,1))
+
+			if image.mode != 'RGB':
+				image = image.convert('RGB')
+
+			self.dimensions = image.size
 			image.thumbnail((200, 200), PILImage.ANTIALIAS)
-			image.save(tmpfilename, quality=60)
-			
+			image.save(tmpfilename, "JPEG", quality=50)
+
 			self.thumbsize = os.path.getsize(tmpfilename)
-			
+
 			image = open(tmpfilename, 'rb')
 			self.offset, size = self._catalog.data_provider.append(image.read(self.thumbsize))
 			image.close()
 		except StandardError:
 			_LOG.exception('PILImage error file=%s' % path)
-			
-		os.unlink(tmpfilename)
-		
-		try:
-			jpeg_file = open(path, 'rb')
-			exif = EXIF.process_file(jpeg_file)
-			if exif is not None:
-				for key, val in ( (key, val)
-						for key, val in exif.items()
-						if key not in _IGNORE_EXIF_KEYS and not key.startswith('Thumbnail ')):
-					val = val.printable.replace('\0', '').strip()
-					val = ''.join(( zn for zn in val if zn in string.printable ))
-					self.exif[key] = val
-		except StandardError:
-			_LOG.exception('load_exif error file=%s' % path)
-		if jpeg_file is not None:
-			jpeg_file.close()
+
+		if os.path.exists(tmpfilename):
+			os.unlink(tmpfilename)
+
+		if os.path.splitext(path)[1].lower() == '.jpg':
+			try:
+				jpeg_file = open(path, 'rb')
+				exif = EXIF.process_file(jpeg_file)
+				if exif is not None:
+					for key, val in ( (key, val)
+							for key, val in exif.items()
+							if key not in _IGNORE_EXIF_KEYS and not key.startswith('Thumbnail ')):
+						val = val.printable.replace('\0', '').strip()
+						val = ''.join(( zn for zn in val if zn in string.printable ))
+						self.exif[key] = val
+			except StandardError:
+				_LOG.exception('load_exif error file=%s' % path)
+			finally:
+				if jpeg_file is not None:
+					jpeg_file.close()
 
 
 	@property
@@ -110,19 +121,5 @@ class Image(Element):
 		return None
 
 
-	def save(self, stream):
-		yaml.dump(self, stream)
-		stream.write('\n---\n')
-		
-		
-	def check_on_find(self, text, options=None):
-		self_result = Element.check_on_find(self, text, options)
-		# TODO: exif?
-		return self_result		
-
-
-
-
-#yaml.add_representer(Image, representer)
 
 # vim: encoding=utf8: ff=unix:

@@ -25,6 +25,7 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
+
 def representer(dumper, data):
 	object_data = dict(
 			( (key, val) 

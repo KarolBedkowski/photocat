@@ -35,25 +35,26 @@ import os
 import logging
 _LOG = logging.getLogger(__name__)
 
-#import yaml
-
 from _element	import Element
 from image		import Image
 from storage_representer	import representer
 
 
+_IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
+
+
 
 class Folder(Element):
-	yaml_tag = '!Folder'
 
 	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
-		
+
 		self.subdirs_count = 0
 		self.files_count = 0
 
 		self._disc = disc
-		
+
+
 	def init(self, parent=None, catalog=None):
 		Element.init(self, parent, catalog)
 		self._subdirs = []
@@ -63,17 +64,19 @@ class Folder(Element):
 	@property
 	def subdirs(self):
 		return self._subdirs
-	
+
+
 	@property
 	def files(self):
 		return self._files
-	
+
 
 	def add_folder(self, folder):
 		self._subdirs.append(folder)
-		
+
+
 	def add_image(self, image):
-		self._files.append(image)		
+		self._files.append(image)
 
 
 	def load(self, path, options=None, on_update=None):
@@ -82,9 +85,9 @@ class Folder(Element):
 		Element.load(self, path, options, on_update)
 
 		subdirs = sorted(( fname for fname in os.listdir(path)
-			if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname)) 
+			if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
 		))
-		
+
 		_LOG.debug('Folder.load: len(subdirs)=%d' % len(subdirs))
 
 		def create_subfolder(name):
@@ -97,8 +100,9 @@ class Folder(Element):
 		subdirs = None
 
 		files = sorted(( fname for fname in os.listdir(path)
-			if fname.lower().endswith('.jpg') and not fname.startswith('.')
-				and os.path.isfile(os.path.join(path, fname)) 
+			if os.path.splitext(fname)[1].lower() in _IMAGE_FILES_EXTENSION
+				and not fname.startswith('.')
+				and os.path.isfile(os.path.join(path, fname))
 		))
 
 		_LOG.debug('Folder.load: len(files)=%d' % len(files))
@@ -113,25 +117,24 @@ class Folder(Element):
 		files = None
 
 
-	def on_restore(self, catalog, disc):
-		Element.on_restore(self, catalog, disc)
-		
-		[ subdir.on_restore(catalog, disc) for subdir in self.subdirs ]
-		[ image.on_restore(catalog, disc) for image in self.files ]
-
-
-	def save(self, stream):
-		yaml.dump(self, stream)
-		stream.write('\n---\n')
-		[ subdir.save(stream) for subdir in self._subdirs ]
-		[ image.save(stream) for image in self._files ]
-
-
 	def check_on_find(self, text, options=None):
 		self_result = Element.check_on_find(self, text, options)
 		[ self_result.extend(subdir.check_on_find(text, options)) for subdir in self._subdirs ]
 		[ self_result.extend(image.check_on_find(text, options)) for image in self._files ]
 		return self_result
+
+
+	@property
+	def folder_size(self):
+		files = len(self._files)
+		folders = len(self._subdirs)
+
+		for subdir in self._subdirs:
+			sfiles, sfolders = subdir.folder_size
+			files += sfiles
+			sfolders = sfolders
+
+		return (files, folders)
 
 
 #yaml.add_representer(Folder, representer)
@@ -148,4 +151,4 @@ if __name__ == '__main__':
 
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:
