@@ -8,7 +8,7 @@ MainWnd
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id: wndmain.py 11 2007-01-06 16:50:06Z k $'
+__revision__	= '$Id$'
 
 __all__			= ['WndMain']
 

@@ -26,7 +26,7 @@ Main class App
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id: main.py 6 2006-12-31 13:12:17Z k $'
+__revision__	= '$Id$'
 
 
 try:
