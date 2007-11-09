@@ -97,29 +97,29 @@ class Storage:
 				else:
 					if object_name == '!disc':
 						node = Disc(None, None, None)
-						node.update(attrs)
+						node.update_fast(attrs)
 						node.init(catalog, catalog)
 						ids[node.id] = node
 						discs.append(node)
 					elif object_name == '!folder':
 						node = Folder(None, None, None)
-						node.update(attrs)
+						node.update_fast(attrs)
 						parent = ids[node.parent_id]
 						ids[node.id] = node
 						node.init(parent, catalog)
-						node.set_tags()
+						node.set_tags(do_remove=False)
 						parent.add_folder(node)
 					elif object_name == '!image':
 						node = Image(None, None, None)
-						node.update(attrs)
+						node.update_fast(attrs)
 						parent = ids[node.parent_id]
 						ids[node.id] = node
 						node.init(parent, catalog)
-						node.set_tags()
+						node.set_tags(do_remove=False)
 						parent.add_image(node)
 					elif object_name == '!catalogstate':
 						node = CatalogState()
-						node.update(attrs)
+						node.update_fast(attrs)
 						catalog.set_state(node)
 					elif object_name == '!catalog':
 						pass

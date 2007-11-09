@@ -160,6 +160,7 @@ class Catalog(BaseElement):
 	def check_on_find(self, text, options=None):
 		self_result = BaseElement.check_on_find(self, text, options)
 		[ self_result.extend(disc.check_on_find(text, options)) for disc in self._discs ]
+		return self_result
 
 
 	def _after_load(self):

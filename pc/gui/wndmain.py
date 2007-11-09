@@ -30,6 +30,8 @@ from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
 from kpylibs.wnd_shell		import WndShell
 
+import pc
+
 from pc.model.catalog		import Catalog
 from pc.model.folder		import Folder
 from pc.model.disc			import Disc
@@ -51,7 +53,7 @@ class WndMain(wx.Frame):
 
 	def __init__(self, app, debug):
 		_LOG.debug('MainWnd.__init__')
-		wx.Frame.__init__(self, None, -1, "PC", size=(800, 600))
+		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=(800, 600))
 
 		self._app			= app
 		self._debug			= debug
@@ -127,8 +129,8 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
-			(_('&Add disc...'),	None,	_('Add disc to catalog'),	self._on_catalog_add,	None),
-			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None),
+			(_('&Add disc...'),	None,	_('Add disc to catalog'),	self._on_catalog_add,	None, wx.ART_NEW_DIR),
+			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None, wx.ART_DELETE),
 			('-'),
 			(None,	'Ctrl+F',	_('Search in calalogs'),	self._on_catalog_search,	wx.ID_FIND,	 wx.ART_FIND),
 			('-'),

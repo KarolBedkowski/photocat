@@ -67,6 +67,9 @@ class DlgSearch(wx.Dialog):
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
 		main_grid.Add(self._create_layout_list(),	1, wx.EXPAND|wx.ALL, 5)
 
+		self._statusbar = wx.StatusBar(self, -1)
+		main_grid.Add(self._statusbar, 0, wx.EXPAND)
+
 		self.SetSizerAndFit(main_grid)
 		self.SetSize((500, 300))
 
@@ -131,11 +134,15 @@ class DlgSearch(wx.Dialog):
 		
 		self._result = []
 
+		counters = [0, 0]
+
 		def insert(item):
 			if isinstance(item, Image):
 				ico = icon_image_idx
+				counters[0] += 1
 			else:
 				ico = icon_folder_idx
+				counters[1] += 1
 			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
 			listctrl.SetStringItem(idx, 1, item.path)
 			listctrl.SetItemData(idx, len(self._result))
@@ -152,6 +159,8 @@ class DlgSearch(wx.Dialog):
 		if len(self._result) == 0:
 			dialogs.message_box_info(self, _('Not found'), _('PC'))
 
+		self._statusbar.SetStatusText(_('Found %d folders and %d files') % (counters[1], counters[0]))
+
 
 	def _on_list_activate(self, evt):
 		listctrl = self._result_list
@@ -163,7 +172,7 @@ class DlgSearch(wx.Dialog):
 				self._parent.show_item(item)
 			elif isinstance(item, Image):
 				self._parent.show_item(item.parent)
-			
-			
+
+
 
 # vim: encoding=utf8: ff=unix:

@@ -52,13 +52,14 @@ class Tags(object):
 				tag_list.append(item)
 
 
-	def update_item(self, tags, item):
-		self.remove_item(item)
+	def update_item(self, tags, item, do_remove=True):
+		if do_remove:
+			self.remove_item(item)
 		[ self._get_tag_list(tag).append(item) for tag in tags ]
 
 
 	def remove_item(self, item):
-		[ tag_list.remove(item) for tag_list in self._tags.itervalues() if tag_list.count(item) > 0 ]
+		[ tag_list.remove(item) for tag_list in self._tags.itervalues() if item in tag_list ]
 
 
 

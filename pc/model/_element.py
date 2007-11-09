@@ -37,13 +37,13 @@ from kpylibs.myobject import MyObject
 
 class BaseElement(MyObject):
 	def __init__(self, id, name, parent_id, parent=None, catalog=None):
-		self.id		= id
-		self.name	= name
+		self.id			= id
+		self.name		= name
 		self.parent_id	= parent_id
-		self.tags	= tuple()
+		self.tags		= tuple()
 		self.init(parent, catalog)
-		self.descr	= None
-		self.date	= None
+		self.descr		= None
+		self.date		= None
 
 
 	def init(self, parent=None, catalog=None):
@@ -81,12 +81,13 @@ class BaseElement(MyObject):
 	tree_node = property(_get_tree_node, _set_tree_node)
 
 
-	def set_tags(self, tags=None):
+	def set_tags(self, tags=None, do_remove=True):
 		if tags is not None:
-			self.tags = tags
-		self.tags = tuple(self.tags or tuple())
+			self.tags = tuple(tags)
+		else:
+			self.tags = self.tags or tuple()
 		if self.name is not None: # fake object
-			self._catalog.tags_provider.update_item(self.tags, self)
+			self._catalog.tags_provider.update_item(self.tags, self, do_remove)
 
 
 	def check_on_find(self, text, options=None):
