@@ -43,17 +43,18 @@ from kpylibs.dialogs		import message_box_error
 class DlgAddDisc(wx.Dialog):
 	''' Dialog o programie '''
 
-	def __init__(self, parent):
-		wx.Dialog.__init__(self, parent, -1, _('Add disc'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+	def __init__(self, parent, update=False, name=None, desc=None):
+		caption = update and _('Add disc') or _('Update disc')
+		wx.Dialog.__init__(self, parent, -1, caption, style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		
 		main_grid.Add(wx.StaticText(self,-1, _('Disc name:')), 0, wx.ALL, 5)
-		self._disc_name = wx.TextCtrl(self, -1)
+		self._disc_name = wx.TextCtrl(self, -1, name or '')
 		main_grid.Add(self._disc_name, 0, wx.EXPAND|wx.ALL, 5)
 		
 		main_grid.Add(wx.StaticText(self,-1, _('Disc description:')), 0, wx.ALL, 5)
-		self._disc_descr = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE)
+		self._disc_descr = wx.TextCtrl(self, -1, desc or '', style=wx.TE_MULTILINE)
 		main_grid.Add(self._disc_descr, 1, wx.EXPAND|wx.ALL, 5)
 		
 		main_grid.Add(wx.StaticText(self,-1, _('Folder:')), 0, wx.ALL, 5)

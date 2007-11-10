@@ -122,7 +122,6 @@ class Catalog(BaseElement):
 		self._discs = Storage.load(self._indexfilepath, self)
 		self._after_load()
 		self.data_provider.open(self._datafilepath)
-		print self.stat
 
 
 	def close(self):
@@ -140,6 +139,12 @@ class Catalog(BaseElement):
 
 	def del_disc(self, disc):
 		self._discs.remove(disc)
+		self.dirty = True
+
+
+	def update_disc(self, path, disc, on_update=None):
+		disc.update_element(path, on_update=on_update)
+		self._data_provider.flush()
 		self.dirty = True
 
 

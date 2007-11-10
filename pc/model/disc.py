@@ -67,14 +67,11 @@ class Disc(Element):
 		self._root = Folder(None, '/', self.id, self, catalog=self._catalog, disc=self)
 		self._root.load(path, on_update=on_update)
 		self.date = time.time()
-		self.on_restore(None)
 
 
-	def on_restore(self, catalog):
-		self._catalog = catalog
-		if catalog is not None:
-			catalog.id_provider.id = id
-			self.root.on_restore(catalog, self)
+	def update_element(self, path, options=None, on_update=None):
+		self._root.update_element(path, options, on_update)
+		self.date = time.time()
 
 
 	def check_on_find(self, text, options=None):

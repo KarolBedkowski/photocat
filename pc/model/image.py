@@ -124,6 +124,11 @@ class Image(Element):
 					jpeg_file.close()
 
 
+	def update_element(self, path, options=None, on_update=None):
+		if Element.update_element(self, path, options, on_update):
+			self.load(path)
+
+
 	@property
 	def image(self):
 		if self.offset is not None:

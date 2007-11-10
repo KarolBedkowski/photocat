@@ -164,6 +164,16 @@ class Element(BaseElement):
 		self.date = os.path.getmtime(path)
 
 
+	def update_element(self, path, options=None, on_update=None):
+		_LOG.debug(self.__class__.__name__+".update_element(%s)" % path)
+		if on_update is not None:
+			on_update(path)
+		old_size, old_date = self.size, self.date
+		self.size = os.path.getsize(path)
+		self.date = os.path.getmtime(path)
+		return old_size != self.size or old_date != self.date
+
+
 
 
 # vim: encoding=utf8: ff=unix:

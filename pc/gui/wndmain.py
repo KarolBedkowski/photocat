@@ -94,7 +94,7 @@ class WndMain(wx.Frame):
 		splitter.SplitVertically(self._create_layout_tree(splitter), splitter2, 200)
 
 		splitter.SetSashGravity(0.0)
-		splitter2.SetSashGravity(0.5)
+		splitter2.SetSashGravity(1.0)
 
 
 	def _create_main_menu(self):
@@ -129,12 +129,13 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
-			(_('&Add disc...'),	None,	_('Add disc to catalog'),	self._on_catalog_add,	None, wx.ART_NEW_DIR),
-			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None, wx.ART_DELETE),
+			(_('&Add disc...'),		None,	_('Add disc to catalog'),				self._on_catalog_add,		None,		wx.ART_NEW_DIR),
+			(_('&Update disc...'),	None,	_('Update selected disc'),				self._on_catalog_update_disc),
+			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None,		wx.ART_DELETE),
 			('-'),
-			(None,	'Ctrl+F',	_('Search in calalogs'),	self._on_catalog_search,	wx.ID_FIND,	 wx.ART_FIND),
+			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			('-'),
-			(_('&Edit selected files...'),	None,	'',	self._on_catalog_edit_multi,	None),
+			(_('&Edit selected files...'),	None,	'',								self._on_catalog_edit_multi),
 		))
 		return menu
 
@@ -351,6 +352,39 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
+	def _on_catalog_update_disc(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None or not isinstance(tree_selected, Disc):
+			return
+
+		dlg = DlgAddDisc(self, update=True, name=tree_selected.name, desc=tree_selected.descr)
+		if dlg.ShowModal() == wx.ID_OK:
+			catalog		= tree_selected.catalog
+			allfiles	= Catalog.fast_count_files_dirs(dlg.path)
+			
+			dlg_progress = wx.ProgressDialog(_("Updating disc"), "", maximum=allfiles,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE)
+		
+			def update_progress(msg, cntr=[0]):
+				cntr[0] = cntr[0] + 1
+				dlg_progress.Update(cntr[0], msg)
+			
+			try:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				catalog.update_disc(dlg.path, tree_selected, on_update=update_progress)
+				catalog.save_catalog()
+				self._dirs_tree.add_catalog(catalog)
+			finally:
+				self.SetCursor(wx.STANDARD_CURSOR)
+				dlg_progress.Update(allfiles, _('Done!'))
+				dlg_progress.Destroy()
+		dlg.Destroy()
+
+
+
 	def _on_catalog_del_disc(self, evt):
 		if len(self._catalogs) == 0:
 			return
@@ -482,6 +516,7 @@ class WndMain(wx.Frame):
 				self._catalogs.append(catalog)
 				self._dirs_tree.add_catalog(catalog)
 				self.__update_last_open_files(filename)
+				self.SetStatusText(filename + ':  ' + ';  '.join(catalog.stat))
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
 				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))

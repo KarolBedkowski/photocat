@@ -117,6 +117,59 @@ class Folder(Element):
 		files = None
 
 
+	def update_element(self, path, options=None, on_update=None):
+		_LOG.debug('Folder.update_element(%s)' % path)
+
+		Element.update_element(self, path, options, on_update)
+
+		subdirs = ( fname for fname in os.listdir(path)
+			if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
+		)
+
+		def create_subfolder(name):
+			subfolder = [ folder for folder in self._subdirs if folder.name == name ]
+			if len(subfolder) > 0:
+				subfolder = subfolder[0]
+				subfolder.update_element(os.path.join(path, name), options, on_update=on_update)
+			else:
+				subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
+				subfolder.load(os.path.join(path, name), options, on_update=on_update)
+			return subfolder
+
+		self._subdirs = map(create_subfolder, subdirs)
+		_LOG.debug('Folder.load: len(subdirs)=%d' % len(self._subdirs))
+		self._subdirs.sort(Folder._items_cmp)
+		self.subdirs_count = len(self._subdirs)
+		subdirs = None
+
+		files = ( fname for fname in os.listdir(path)
+			if os.path.splitext(fname)[1].lower() in _IMAGE_FILES_EXTENSION
+				and not fname.startswith('.')
+				and os.path.isfile(os.path.join(path, fname))
+		)
+
+		def create_file(name):
+			image = [ image for image in self._files if image.name == name ]
+			if len(image) > 0:
+				image = image[0]
+				image.update_element(os.path.join(path, name), options, on_update=on_update)
+			else:
+				image = Image(None, name, self.id, self, self._catalog, self._disc)
+				image.load(os.path.join(path, name), options, on_update=on_update)
+			return image
+		
+		self._files = map(create_file, files)
+		_LOG.debug('Folder.load: len(files)=%d' % len(self._files))
+		self._files.sort(Folder._items_cmp)
+		self.files_count = len(self._files)
+		files = None
+
+
+	@staticmethod
+	def _items_cmp(x, y):
+		return cmp(x.name, y.name)
+
+
 	def check_on_find(self, text, options=None):
 		self_result = Element.check_on_find(self, text, options)
 		[ self_result.extend(subdir.check_on_find(text, options)) for subdir in self._subdirs ]
