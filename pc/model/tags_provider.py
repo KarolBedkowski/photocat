@@ -62,7 +62,6 @@ class Tags(object):
 		[ tag_list.remove(item) for tag_list in self._tags.itervalues() if item in tag_list ]
 
 
-
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
 			return self._tags[tag]

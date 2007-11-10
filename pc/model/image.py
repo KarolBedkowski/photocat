@@ -28,6 +28,9 @@ __revision__	= '$Id$'
 import os
 import string
 
+import gettext
+_ = gettext.gettext
+
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -47,7 +50,6 @@ _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF U
 
 
 class Image(Element):
-	yaml_tag = '!Image'
 
 	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
@@ -64,6 +66,15 @@ class Image(Element):
 		if self._parent is None:
 			return -1
 		return self._parent.files.index(self)
+
+
+	def _get_main_info(self):
+		result = Element._get_main_info(self)
+		if self.dimensions is not None:
+			result.append((_('Dimensions'), "%d x %d" % self.dimensions))
+		return result
+
+	main_info = property(_get_main_info)
 
 
 	def load(self, path, options=None, on_update=None):

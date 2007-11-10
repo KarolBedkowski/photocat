@@ -38,9 +38,8 @@ _ = gettext.gettext
 
 from kpylibs.myobject import MyObject
 
-from tags	import Tags
-from disc	import Disc
-
+from tags_provider			import Tags
+from disc					import Disc
 from dataprovider			import DataProvider
 from storage_representer	import representer
 from _element				import BaseElement

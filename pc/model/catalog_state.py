@@ -26,8 +26,6 @@ __revision__	= '$Id$'
 
 
 
-#import yaml
-
 from kpylibs.myobject import MyObject
 
 

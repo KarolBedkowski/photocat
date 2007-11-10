@@ -27,9 +27,13 @@ __revision__	= '$Id$'
 
 
 import os
+import time
 
 import logging
 _LOG = logging.getLogger(__name__)
+
+import gettext
+_ = gettext.gettext
 
 from kpylibs.myobject import MyObject
 
@@ -81,6 +85,18 @@ class BaseElement(MyObject):
 	tree_node = property(_get_tree_node, _set_tree_node)
 
 
+	def _get_main_info(self):
+		result = []
+		result.append((_('Name'), str(self.name)))
+		if self.date is not None:
+			result.append((_('Date'), time.strftime('%c', time.localtime(self.date))))
+		if self.tags is not None and len(self.tags) > 0:
+			result.append((_('Tags'), ', '.join(self.tags)))
+		return result
+
+	main_info = property(_get_main_info)
+
+
 	def set_tags(self, tags=None, do_remove=True):
 		if tags is not None:
 			self.tags = tuple(tags)
@@ -109,17 +125,35 @@ class Element(BaseElement):
 
 	def __init__(self, id, name, parent_id, parent=None, catalog=None):
 		BaseElement.__init__(self, id, name, parent_id, parent, catalog)
+		self.size = None
 
 
 	def init(self, parent=None, catalog=None):
 		BaseElement.init(self, parent, catalog)
-		self.size = None
 
 		if self.id is None:
 			if catalog is not None:
 				self.id = catalog.id_provider
 		#elif catalog is not None:
 		#	catalog.id_provider = self.id
+
+
+	def _size_to_human(self):
+		output = []
+		str_size = str(self.size)
+		while len(str_size) > 0:
+			output.insert(0, str_size[-3:])
+			str_size = str_size[:-3]
+		return ' '.join(output)
+
+
+	def _get_main_info(self):
+		result = BaseElement._get_main_info(self)
+		if self.size is not None:
+			result.append((_('Size'), self._size_to_human()))
+		return result
+	
+	main_info = property(_get_main_info)
 
 
 	def load(self, path, options=None, on_update=None):

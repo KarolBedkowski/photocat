@@ -45,7 +45,7 @@ class DataProvider(object):
 		self.filename = filename
 		self._file = None
 		self._offset = _DATA_FILE_HEADER_SIZE
-		
+
 		_LOG.debug('DataProvider.__init__(%s)' % filename)
 
 
@@ -55,10 +55,10 @@ class DataProvider(object):
 
 	def _get_offset(self):
 		return self._offset
-	
+
 	def _set_offset(self, offset):
 		self._offset = offset
-	
+
 	offset =  property(_get_offset, _set_offset)
 
 
@@ -77,7 +77,7 @@ class DataProvider(object):
 		if version > _DATA_FILE_VERSION_MAX:
 			raise IOError('Invalid file version: %d (supported %d)' % (version, _DATA_FILE_VERSION_MAX))
 
-	
+
 	def _write_header(self, filedesc=None):
 		_LOG.debug('DataProvider._write_header()')
 		if filedesc is None:
@@ -92,9 +92,9 @@ class DataProvider(object):
 	def open(self, filename=None):
 		if filename is not None:
 			self.filename = filename
-			
+
 		_LOG.debug('DataProvider.open(%s)' % self.filename)
-			
+
 		if self.filename is not None:
 			self._file = None
 			if os.path.exists(self.filename):
@@ -125,7 +125,7 @@ class DataProvider(object):
 			return self._file.read(size)
 		return None
 
-	
+
 	def append(self, data):
 		self._file.seek(self._offset)
 		self._file.write(data)
@@ -181,18 +181,11 @@ class DataProvider(object):
 		return opt['last_offset']
 
 
-
-
-
-
-
-
-	
 	@staticmethod
 	def _next_offset(offset):
 		''' magia... '''
 		return offset + (3 - (offset % 4)) + 1
-	
 
 
-# vim: encoding=utf8: ff=unix: 
+
+# vim: encoding=utf8: ff=unix:
