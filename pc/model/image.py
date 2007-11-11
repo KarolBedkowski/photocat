@@ -27,6 +27,7 @@ __revision__	= '$Id$'
 
 import os
 import string
+import time
 
 import gettext
 _ = gettext.gettext
@@ -72,6 +73,17 @@ class Image(Element):
 		result = Element._get_main_info(self)
 		if self.dimensions is not None:
 			result.append((_('Dimensions'), "%d x %d" % self.dimensions))
+		if self.exif is not None:
+			for exif_key in ('EXIF_DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF_DateTime'):
+				if self.exif.has_key(exif_key):
+					try:
+						ddate = time.strptime(self.exif[exif_key], '%Y:%m:%d %H:%M:%S')
+						result.append((_('Date'), time.strftime('%c', ddate)))
+						break
+					except:
+						pass
+
+
 		return result
 
 	main_info = property(_get_main_info)

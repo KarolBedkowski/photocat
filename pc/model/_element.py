@@ -89,7 +89,7 @@ class BaseElement(MyObject):
 		result = []
 		result.append((_('Name'), str(self.name)))
 		if self.date is not None:
-			result.append((_('Date'), time.strftime('%c', time.localtime(self.date))))
+			result.append((_('File date'), time.strftime('%c', time.localtime(self.date))))
 		if self.tags is not None and len(self.tags) > 0:
 			result.append((_('Tags'), ', '.join(self.tags)))
 		return result
