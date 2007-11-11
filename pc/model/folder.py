@@ -49,10 +49,12 @@ class Folder(Element):
 	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
 
-		self.subdirs_count = 0
-		self.files_count = 0
-
-		self._disc = disc
+		self.subdirs_count		= 0
+		self.files_count		= 0
+		self._folder_files		= None
+		self._disc				= disc
+		self.folder_files_offset = None
+		self.folder_files_size	= None
 
 
 	def init(self, parent=None, catalog=None):
@@ -69,6 +71,13 @@ class Folder(Element):
 	@property
 	def files(self):
 		return self._files
+
+
+	@property
+	def folder_files(self):
+		if self._folder_files is None and self.folder_files_offset is not None:
+			self._folder_files = eval(self._catalog.data_provider.get(self.folder_files_offset, self.folder_files_size))
+		return self._folder_files or ()
 
 
 	def add_folder(self, folder):
@@ -117,6 +126,7 @@ class Folder(Element):
 		files = None
 
 		self._load_caption_txt(path)
+		self._load_file_folders(path)
 
 
 	def update_element(self, path, options=None, on_update=None):
@@ -167,6 +177,7 @@ class Folder(Element):
 		files = None
 		
 		self._load_caption_txt(path)
+		self._load_file_folders(path)
 
 
 	@staticmethod
@@ -247,6 +258,22 @@ class Folder(Element):
 		if update_obj.descr is None or len(update_obj.descr) == 0:
 			descr = [ file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) ]
 			update_obj.descr = '\n'.join(descr)
+
+
+
+	def _load_file_folders(self, path):
+		_LOG.debug('Folder._load_file_folders(%s)' % path)
+		files = sorted(( fname for fname in os.listdir(path) if os.path.isfile(os.path.join(path, fname)) ))
+		folder_files = []
+		for file in files:
+			file_path = os.path.join(path, file)
+			size = os.path.getsize(file_path)
+			date = os.path.getmtime(file_path)
+			folder_files.append((file, date, size))
+		self._folder_files = tuple(folder_files)
+
+		self.folder_files_offset, self.folder_files_size = self._catalog.data_provider.append(repr(self._folder_files))
+
 
 
 

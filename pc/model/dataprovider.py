@@ -147,32 +147,29 @@ class DataProvider(object):
 		new_file.write(" " * 50)
 		self._write_header(new_file)
 
-		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[], exif_offsets=[])
+		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[], exif_offsets=[], folder_files=[])
+
+		def copy_data(offset, size, opt):
+			self._file.seek(offset)
+			data = self._file.read(size)
+			new_offset = opt['last_offset']
+			new_file.seek(new_offset)
+			new_file.write(data)
+			opt['last_offset'] = self._next_offset(new_file.tell())
+			return new_offset
 
 		def copy_folder(folder, opt={}):
 			for subdir in folder.subdirs:
 				copy_folder(subdir, opt)
 
+			if folder.folder_files_offset is not None:
+				opt['folder_files'].append((folder, copy_data(folder.folder_files_offset, folder.folder_files_size, opt)))
+
 			for image in folder.files:
-				self._file.seek(image.offset)
-				data = self._file.read(image.thumbsize)
-
-				new_offset = opt['last_offset']
-				new_file.seek(new_offset)
-				new_file.write(data)
-				opt['last_offset'] = self._next_offset(new_file.tell())
-				opt['obj_offsets'].append((image, new_offset))
-
+				opt['obj_offsets'].append((image, copy_data(image.offset, image.thumbsize, opt)))
 				# exif
 				if image.exif_offset is not None and image.exif_size is not None:
-					self._file.seek(image.exif_offset)
-					data = self._file.read(image.exif_size)
-
-					new_offset = opt['last_offset']
-					new_file.seek(new_offset)
-					new_file.write(data)
-					opt['last_offset'] = self._next_offset(new_file.tell())
-					opt['exif_offsets'].append((image, new_offset))
+					opt['exif_offsets'].append((image, copy_data(image.exif_offset, image.exif_size, opt)))
 
 		for disc in discs:
 			copy_folder(disc.root, opt)
@@ -186,11 +183,9 @@ class DataProvider(object):
 		os.rename(self.filename, self.filename + '.old')
 		os.rename(self.filename + '.tmp', self.filename)
 
-		for obj, offset in opt['obj_offsets']:
-			obj.offset = offset
-
-		for obj, offset in opt['exif_offsets']:
-			obj.exif_offset = offset
+		for obj, offset in opt['obj_offsets']:			obj.offset = offset
+		for obj, offset in opt['exif_offsets']:			obj.exif_offset = offset
+		for obj, offset in opt['folder_files']:			obj.folder_files_offset = offset
 
 		return opt['last_offset']
 

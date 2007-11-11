@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-11 13:24+0100\n"
+"POT-Creation-Date: 2007-11-11 17:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,7 +95,7 @@ msgstr "Utwórz nowy katalog"
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
-#: gui/_dlgproperties.py:164 model/image.py:81
+#: gui/_dlgproperties.py:164 gui/components/infopanel.py:139 model/image.py:83
 msgid "Date"
 msgstr "Data"
 
@@ -113,11 +113,11 @@ msgid "Delete selected disc from catalog"
 msgstr "Usuń wybrany dysk z katalogu"
 
 #: gui/_dlgproperties.py:83 gui/components/infopanel.py:56
-#: gui/components/infopanel.py:115
+#: gui/components/infopanel.py:116
 msgid "Description"
 msgstr "Opis"
 
-#: model/image.py:75
+#: model/image.py:77
 msgid "Dimensions"
 msgstr "Wymiary"
 
@@ -138,10 +138,18 @@ msgstr "Dysków: %d"
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/wndmain.py:522
+#: gui/wndmain.py:534
 #, python-format
 msgid "Error openning file %s"
 msgstr "Błąd otwierania pliku %s"
+
+#: gui/wndmain.py:522
+#, python-format
+msgid ""
+"Error openning file %s!\n"
+"File don't exists."
+msgstr "Błąd otwierania pliku %s!\n"
+"Plik nie istnieje."
 
 #: gui/wndmain.py:243
 #, python-format
@@ -169,11 +177,15 @@ msgstr "Znajdź"
 msgid "Folder"
 msgstr ""
 
+#: gui/components/infopanel.py:59
+msgid "Folder files"
+msgstr "Pliki katalogu"
+
 #: gui/_dlgadddisc.py:60
 msgid "Folder:"
 msgstr ""
 
-#: gui/wndmain.py:452
+#: gui/wndmain.py:456
 #, python-format
 msgid "Folders %d;  files: %d"
 msgstr "Podkatalogów: %d;  plików: %d"
@@ -196,7 +208,8 @@ msgstr "Wczytaj katalog"
 msgid "Main"
 msgstr "Główne"
 
-#: gui/_dlgproperties.py:162 gui/_dlgsearch.py:101 model/_element.py:90
+#: gui/_dlgproperties.py:162 gui/_dlgsearch.py:101
+#: gui/components/infopanel.py:138 model/_element.py:90
 msgid "Name"
 msgstr "Nazwa"
 
@@ -208,14 +221,19 @@ msgstr "Nazwa jest pusta!"
 msgid "Not found"
 msgstr "Nie znaleziono"
 
-#: gui/wndmain.py:541
+#: gui/wndmain.py:553
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:226 gui/wndmain.py:522
+#: gui/wndmain.py:226 gui/wndmain.py:522 gui/wndmain.py:534
 msgid "Open file"
 msgstr "Otwórz plik"
+
+#: gui/wndmain.py:525
+#, python-format
+msgid "Opening %s....  Please wait..."
+msgstr "Otwieranie %s.... Proszę czekać..."
 
 #: gui/_dlgsearch.py:160
 msgid "PC"
@@ -245,10 +263,6 @@ msgstr "Zakończono przebudowe katalogu"
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
-#: gui/components/infopanel.py:80 gui/components/infopanel.py:110
-msgid "Save"
-msgstr "Zapisz"
-
 #: gui/wndmain.py:171 gui/wndmain.py:243
 msgid "Save catalog"
 msgstr "Zapisz katalog"
@@ -265,11 +279,12 @@ msgstr "Szukaj w katalogacgg"
 msgid "Select directory"
 msgstr "Wybierz katalog"
 
-#: gui/_dlgproperties.py:163 model/_element.py:153
+#: gui/_dlgproperties.py:163 gui/components/infopanel.py:140
+#: model/_element.py:153
 msgid "Size"
 msgstr "Rozmiar"
 
-#: gui/components/infopanel.py:99 gui/components/infopanel.py:122
+#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
 msgid "Tag"
 msgstr "Tag"
 
@@ -293,9 +308,12 @@ msgstr "Aktualizuj zaznaczony dysk..."
 msgid "Updating disc"
 msgstr "Uaktualnianie dysku"
 
-#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
+#: gui/components/infopanel.py:101 gui/components/infopanel.py:124
 msgid "Value"
 msgstr "Wartość"
 
 #~ msgid "&Find..."
 #~ msgstr "&Znajdź..."
+
+#~ msgid "Save"
+#~ msgstr "Zapisz"

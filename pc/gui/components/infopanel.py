@@ -56,6 +56,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Description'))
 		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
 		notebook.AddPage(self._create_layout_page_folder(notebook),	_('Folder'))
+		notebook.AddPage(self._create_layout_page_folder_files(notebook),	_('Folder files'))
 		return notebook
 
 
@@ -77,11 +78,11 @@ class InfoPanel(wx.Panel, EventGenerator):
 		panel = wx.Panel(parent, -1)
 
 		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		button = create_button(panel, _('Save'), self._on_update_descr)
+		#button = create_button(panel, _('Save'), self._on_update_descr)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(textctrl, 1, wx.EXPAND)
-		sizer.Add(button,0, wx.EXPAND|wx.ALL, 5)
+		#sizer.Add(button,0, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
 		return panel
@@ -107,7 +108,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
 		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		button	 = create_button(panel, _('Save'), self._on_update_folder_descr)
+		#button	 = create_button(panel, _('Save'), self._on_update_folder_descr)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
@@ -115,7 +116,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		sizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND|wx.ALL, 5)
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
 		subsizer.Add(textctrl, 1, wx.EXPAND)
-		subsizer.Add(button, 0, wx.EXPAND|wx.ALL, 5)
+		#subsizer.Add(button, 0, wx.EXPAND|wx.ALL, 5)
 		sizer.Add(subsizer, 1, wx.EXPAND)
 		panel.SetSizerAndFit(sizer)
 
@@ -123,6 +124,23 @@ class InfoPanel(wx.Panel, EventGenerator):
 		listctrl.InsertColumn(1, _('Value'))
 
 		return panel
+
+
+	def _create_layout_page_folder_files(self, parent):
+		panel = wx.Panel(parent, -1)
+
+		listctrl = self._listctrl_folder_files = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
+		
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(listctrl, 1, wx.EXPAND)
+		panel.SetSizerAndFit(sizer)
+
+		listctrl.InsertColumn(0, _('Name'))
+		listctrl.InsertColumn(1, _('Date'))
+		listctrl.InsertColumn(2, _('Size'), format=wx.LIST_FORMAT_RIGHT)
+
+		return panel
+
 
 
 	def _show_main(self, image):
@@ -166,6 +184,19 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 		self._textctrl_folder_descr.SetValue(str(folder.descr or ""))
 
+		listctrl = self._listctrl_folder_files
+
+		def insert(name, date, size):
+			idx = listctrl.InsertStringItem(sys.maxint, str(name))
+			listctrl.SetStringItem(idx, 1, time.strftime('%c', time.localtime(date)))
+			listctrl.SetStringItem(idx, 2, file_size_to_human(size))
+
+		[ insert(name, date, size) for name, date, size in folder.folder_files ]
+
+		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+
 
 	def show(self, image):
 		self.clear()
@@ -190,6 +221,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def clear_folder(self):
 		self._folder is None
 		self._listctrl_folder.DeleteAllItems()
+		self._listctrl_folder_files.DeleteAllItems()
 		self._textctrl_folder_descr.SetValue('')
 
 
@@ -209,5 +241,12 @@ class InfoPanel(wx.Panel, EventGenerator):
 				self.event_call('update_folder', self._folder)
 
 
+def file_size_to_human(size):
+	output = []
+	str_size = str(size)
+	while len(str_size) > 0:
+		output.insert(0, str_size[-3:])
+		str_size = str_size[:-3]
+	return ' '.join(output)
 
 # vim: encoding=utf8: ff=unix:

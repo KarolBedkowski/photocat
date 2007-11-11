@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-11 13:24+0100\n"
+"POT-Creation-Date: 2007-11-11 17:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,7 +96,7 @@ msgstr ""
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgproperties.py:164 model/image.py:81
+#: gui/_dlgproperties.py:164 gui/components/infopanel.py:139 model/image.py:83
 msgid "Date"
 msgstr ""
 
@@ -114,11 +114,11 @@ msgid "Delete selected disc from catalog"
 msgstr ""
 
 #: gui/_dlgproperties.py:83 gui/components/infopanel.py:56
-#: gui/components/infopanel.py:115
+#: gui/components/infopanel.py:116
 msgid "Description"
 msgstr ""
 
-#: model/image.py:75
+#: model/image.py:77
 msgid "Dimensions"
 msgstr ""
 
@@ -139,9 +139,16 @@ msgstr ""
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:522
+#: gui/wndmain.py:534
 #, python-format
 msgid "Error openning file %s"
+msgstr ""
+
+#: gui/wndmain.py:522
+#, python-format
+msgid ""
+"Error openning file %s!\n"
+"File don't exists."
 msgstr ""
 
 #: gui/wndmain.py:243
@@ -170,11 +177,15 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
+#: gui/components/infopanel.py:59
+msgid "Folder files"
+msgstr ""
+
 #: gui/_dlgadddisc.py:60
 msgid "Folder:"
 msgstr ""
 
-#: gui/wndmain.py:452
+#: gui/wndmain.py:456
 #, python-format
 msgid "Folders %d;  files: %d"
 msgstr ""
@@ -197,7 +208,8 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
-#: gui/_dlgproperties.py:162 gui/_dlgsearch.py:101 model/_element.py:90
+#: gui/_dlgproperties.py:162 gui/_dlgsearch.py:101
+#: gui/components/infopanel.py:138 model/_element.py:90
 msgid "Name"
 msgstr ""
 
@@ -209,13 +221,18 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/wndmain.py:541
+#: gui/wndmain.py:553
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:226 gui/wndmain.py:522
+#: gui/wndmain.py:226 gui/wndmain.py:522 gui/wndmain.py:534
 msgid "Open file"
+msgstr ""
+
+#: gui/wndmain.py:525
+#, python-format
+msgid "Opening %s....  Please wait..."
 msgstr ""
 
 #: gui/_dlgsearch.py:160
@@ -246,10 +263,6 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/components/infopanel.py:80 gui/components/infopanel.py:110
-msgid "Save"
-msgstr ""
-
 #: gui/wndmain.py:171 gui/wndmain.py:243
 msgid "Save catalog"
 msgstr ""
@@ -266,11 +279,12 @@ msgstr ""
 msgid "Select directory"
 msgstr ""
 
-#: gui/_dlgproperties.py:163 model/_element.py:153
+#: gui/_dlgproperties.py:163 gui/components/infopanel.py:140
+#: model/_element.py:153
 msgid "Size"
 msgstr ""
 
-#: gui/components/infopanel.py:99 gui/components/infopanel.py:122
+#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
 msgid "Tag"
 msgstr ""
 
@@ -294,6 +308,6 @@ msgstr ""
 msgid "Updating disc"
 msgstr ""
 
-#: gui/components/infopanel.py:100 gui/components/infopanel.py:123
+#: gui/components/infopanel.py:101 gui/components/infopanel.py:124
 msgid "Value"
 msgstr ""

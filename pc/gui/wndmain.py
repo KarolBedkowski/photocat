@@ -333,9 +333,9 @@ class WndMain(wx.Frame):
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(dlg.path)
 			
-			dlg_progress = wx.ProgressDialog(_("Adding disc"), "", maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE)
-		
+			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 50), parent=self, maximum=allfiles,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
+	
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
 				dlg_progress.Update(cntr[0], msg)
@@ -365,8 +365,8 @@ class WndMain(wx.Frame):
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(dlg.path)
 			
-			dlg_progress = wx.ProgressDialog(_("Updating disc"), "", maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE)
+			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 50), parent=self, maximum=allfiles,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 		
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
@@ -447,9 +447,13 @@ class WndMain(wx.Frame):
 			return
 
 		if item is not None:
-			self._photo_list.ShowDir(item)
-			self._info_panel.show_folder(item)
-			self.SetStatusText(_('Folders %d;  files: %d') % (item.subdirs_count, item.files_count))
+			try:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				self._photo_list.ShowDir(item)
+				self._info_panel.show_folder(item)
+			finally:
+				self.SetCursor(wx.STANDARD_CURSOR)
+				self.SetStatusText(_('Folders %d;  files: %d') % (item.subdirs_count, item.files_count))
 
 
 	def _on_dirtree_item_activate(self, evt):
@@ -476,7 +480,11 @@ class WndMain(wx.Frame):
 		if selected is None:
 			self._info_panel.clear()
 		else:
-			self._info_panel.show(selected)
+			try:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				self._info_panel.show(selected)
+			finally:
+				self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_thumb_dclick(self, evt):
