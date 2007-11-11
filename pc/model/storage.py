@@ -60,14 +60,14 @@ class Storage:
 
 			def write(folder):
 				outfile.write('!folder:')
-				outfile.write(repr(folder.dict))
+				outfile.write(repr(folder.dict_not_none))
 				outfile.write('\n')
 
 				[ write(subfold) for subfold in folder.subdirs ]
 
 				def write_img(image):
 					outfile.write('!image:')
-					outfile.write(repr(image.dict))
+					outfile.write(repr(image.dict_not_none))
 					outfile.write('\n')
 
 				[ write_img(image) for image in folder.files ]
