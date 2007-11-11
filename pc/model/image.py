@@ -56,10 +56,12 @@ class Image(Element):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
 
 		self.offset		= None
-		self.exif		= {}
+		self._exif		= None
 		self.thumbsize	= None
 		self._disc		= disc
 		self.dimensions = None
+		self.exif_offset = None
+		self.exif_size	= None
 
 
 	@property
@@ -87,6 +89,14 @@ class Image(Element):
 		return result
 
 	main_info = property(_get_main_info)
+
+
+	@property
+	def exif(self):
+		if self._exif is None:
+			if self.exif_offset is not None:
+				self._exif = eval(self._catalog.data_provider.get(self.exif_offset, self.exif_size))
+		return self._exif or {}
 
 
 	def load(self, path, options=None, on_update=None):
@@ -123,12 +133,15 @@ class Image(Element):
 				jpeg_file = open(path, 'rb')
 				exif = EXIF.process_file(jpeg_file)
 				if exif is not None:
+					self._exif = {}
 					for key, val in ( (key, val)
 							for key, val in exif.items()
 							if key not in _IGNORE_EXIF_KEYS and not key.startswith('Thumbnail ')):
 						val = val.printable.replace('\0', '').strip()
 						val = ''.join(( zn for zn in val if zn in string.printable ))
-						self.exif[key] = val
+						self._exif[key] = val
+					str_exif = repr(self._exif)
+					self.exif_offset, self.exif_size = self._catalog.data_provider.append(str_exif)
 			except StandardError:
 				_LOG.exception('load_exif error file=%s' % path)
 			finally:

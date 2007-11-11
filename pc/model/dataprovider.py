@@ -147,7 +147,7 @@ class DataProvider(object):
 		new_file.write(" " * 50)
 		self._write_header(new_file)
 
-		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[])
+		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[], exif_offsets=[])
 
 		def copy_folder(folder, opt={}):
 			for subdir in folder.subdirs:
@@ -163,6 +163,17 @@ class DataProvider(object):
 				opt['last_offset'] = self._next_offset(new_file.tell())
 				opt['obj_offsets'].append((image, new_offset))
 
+				# exif
+				if image.exif_offset is not None and image.exif_size is not None:
+					self._file.seek(image.exif_offset)
+					data = self._file.read(image.exif_size)
+
+					new_offset = opt['last_offset']
+					new_file.seek(new_offset)
+					new_file.write(data)
+					opt['last_offset'] = self._next_offset(new_file.tell())
+					opt['exif_offsets'].append((image, new_offset))
+
 		for disc in discs:
 			copy_folder(disc.root, opt)
 
@@ -177,6 +188,9 @@ class DataProvider(object):
 
 		for obj, offset in opt['obj_offsets']:
 			obj.offset = offset
+
+		for obj, offset in opt['exif_offsets']:
+			obj.exif_offset = offset
 
 		return opt['last_offset']
 
