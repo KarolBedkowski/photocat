@@ -41,12 +41,9 @@ import wx
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
-from kpylibs				import dialogs 
+from kpylibs				import dialogs
 
-from pc.model.catalog		import Catalog
-from pc.model.folder		import Folder
-from pc.model.disc			import Disc
-from pc.model.image			import Image
+from pc.model		import Catalog, Folder, Disc, Image
 
 
 
@@ -55,14 +52,14 @@ class DlgSearch(wx.Dialog):
 
 	def __init__(self, parent, catalogs):
 		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
-		
+
 		self._catalogs	= catalogs
 		self._parent	= parent
 		self._result	= []
-		
+
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', 'folder1'])
-		
+
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
 		main_grid.Add(self._create_layout_list(),	1, wx.EXPAND|wx.ALL, 5)
@@ -71,40 +68,45 @@ class DlgSearch(wx.Dialog):
 		main_grid.Add(self._statusbar, 0, wx.EXPAND)
 
 		self.SetSizerAndFit(main_grid)
-		self.SetSize((500, 300))
 
+		appconfig = AppConfig()
+		size = (int(appconfig.get('search_wnd', 'size_x', 400)), int(appconfig.get('search_wnd', 'size_y', 400)))
+		self.SetSize(size)
+		
 		self.Centre(wx.BOTH)
+		
+		wx.EVT_CLOSE(self, self._on_close)
 
 
 	def _create_layout_fields(self):
 		grid = wx.FlexGridSizer(1, 3, 2, 2)
 		grid.AddGrowableCol(1)
 		grid.Add(wx.StaticText(self, -1, _('Text')), 0, wx.EXPAND|wx.ALL, 5)
-		
+
 		last = AppConfig().get_items('last_search')
 		if last is None:
 			last = []
 		else:
 			last = [l[1] for l in last]
-		
+
 		self._tc_text = wx.ComboBox(self, -1, choices=last)
 		grid.Add(self._tc_text, 1, wx.EXPAND)
 		button = create_button(self, _('Find'), self._on_btn_find)
 		button.SetDefault()
 		grid.Add(button, 0, wx.EXPAND)
 		return grid
-	
+
 
 	def _create_layout_list(self):
 		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.InsertColumn(0, _('Name'))
 		listctrl.InsertColumn(1, _('Path'))
-		
+
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
-		
+
 		return listctrl
-	
+
 
 	def _on_btn_find(self, evt):
 		what = self._tc_text.GetValue().strip()
@@ -112,28 +114,29 @@ class DlgSearch(wx.Dialog):
 			return
 
 		what = what.lower()
-		
+
 		_LOG.debug('DlgSearch._on_btn_find: "%s"' % what)
 		last_search_text_ctrl = self._tc_text
-		
-		if len([ None
-				for idx
-				in xrange(last_search_text_ctrl.GetCount())
-				if last_search_text_ctrl.GetString(idx) == what ]) == 0:
-			last_search_text_ctrl.Insert(what, 0)
-			
-			
-		last = [ last_search_text_ctrl.GetString(idx) for idx in xrange(min(last_search_text_ctrl.GetCount(), 10)) ]
+
+		last = [what] + [ text 
+				for text 
+				in (last_search_text_ctrl.GetString(idx) 
+						for idx 
+						in xrange(min(last_search_text_ctrl.GetCount(), 10))
+				)
+				if text != what
+		]
 		AppConfig().set_items('last_search', 'text', last)
-		
+		self._tc_text.Clear()
+		[ self._tc_text.Append(text) for text in last ]
+
 		listctrl = self._result_list
 		listctrl.DeleteAllItems()
 
-		icon_folder_idx = self._icon_provider.get_image_index('folder1')
-		icon_image_idx = self._icon_provider.get_image_index('image')
-		
-		self._result = []
+		icon_folder_idx	= self._icon_provider.get_image_index('folder1')
+		icon_image_idx	= self._icon_provider.get_image_index('image')
 
+		self._result = []
 		counters = [0, 0]
 
 		def insert(item):
@@ -168,10 +171,22 @@ class DlgSearch(wx.Dialog):
 			index	= listctrl.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
+
 			if isinstance(item, Folder) or isinstance(item, Disc):
 				self._parent.show_item(item)
 			elif isinstance(item, Image):
 				self._parent.show_item(item.parent)
+
+
+	def _on_close(self, evt):
+		size_x, size_y = self.GetSizeTuple()
+
+		appconfig = AppConfig()
+		appconfig.set('search_wnd', 'size_x', size_x)
+		appconfig.set('search_wnd', 'size_y', size_y)
+
+		evt.Skip()
+
 
 
 

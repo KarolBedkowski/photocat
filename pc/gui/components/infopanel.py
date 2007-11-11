@@ -38,6 +38,7 @@ from kpylibs.guitools	import create_button
 from kpylibs.eventgenerator import EventGenerator
 
 
+
 class InfoPanel(wx.Panel, EventGenerator):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
@@ -130,7 +131,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		panel = wx.Panel(parent, -1)
 
 		listctrl = self._listctrl_folder_files = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
-		
+
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
 		panel.SetSizerAndFit(sizer)
@@ -140,7 +141,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 		listctrl.InsertColumn(2, _('Size'), format=wx.LIST_FORMAT_RIGHT)
 
 		return panel
-
 
 
 	def _show_main(self, image):
@@ -162,7 +162,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 	def _show_exif(self, image):
 		listctrl = self._listctrl_exif
-		for key, val in sorted(image.exif.items()):
+		for key, val in sorted(image.exif.iteritems()):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
 			listctrl.SetStringItem(idx, 1, str(val))
 

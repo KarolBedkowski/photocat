@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0904
 """
- 
+
 """
 
 __author__		= 'Karol Będkowski'
@@ -25,7 +25,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	''' Drzewo katalogów '''
 
 	def __init__(self, parent, wxid=-1):
-		wx.TreeCtrl.__init__(self, parent, wxid, 
+		wx.TreeCtrl.__init__(self, parent, wxid,
 				style=wx.TR_HAS_BUTTONS|wx.TR_LINES_AT_ROOT|wx.TR_LINES_AT_ROOT|wx.TR_HIDE_ROOT)
 		EventGenerator.__init__(self, ['change_selection'])
 
@@ -95,22 +95,22 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		else:
 			catalog_node = catalog.tree_node
 			self.DeleteChildren(catalog_node)
-		
+
 		def add_dir(parent_node, dir):
 			_LOG.debug('add_catalog add_dir %s' % dir.name)
 			node = dir.tree_node = self.AppendItem(parent_node, dir.name, data=wx.TreeItemData(dir))
 			self.SetItemImage(node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
-			
+
 			[ add_dir(node, subdir) for subdir in dir.subdirs ]
 
 		for disc in catalog.discs:
 			_LOG.debug('add_catalog add_disc %s' % disc.name)
 			disc.tree_node = disc_node = self.AppendItem(catalog_node, disc.name, data=wx.TreeItemData(disc))
 			self.SetItemImage(disc_node, self._icon_disc_idx, wx.TreeItemIcon_Normal)
-		
+
 			[ add_dir(disc_node, subdir) for subdir in disc.root.subdirs ]
-		
+
 		self.Expand(catalog_node)
 		self.update_catalog_node(catalog)
 
@@ -124,4 +124,4 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.Delete(item.tree_node)
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

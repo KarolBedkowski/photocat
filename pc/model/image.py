@@ -135,7 +135,7 @@ class Image(Element):
 				if exif is not None:
 					self._exif = {}
 					for key, val in ( (key, val)
-							for key, val in exif.items()
+							for key, val in exif.iteritems()
 							if key not in _IGNORE_EXIF_KEYS and not key.startswith('Thumbnail ')):
 						val = val.printable.replace('\0', '').strip()
 						val = ''.join(( zn for zn in val if zn in string.printable ))

@@ -78,11 +78,7 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		if filter >= 0:
 			self._filter = filter
 
-		#self.SetCaption(dir.name)
-
 		self._isrunning = False
-
-		# update items
 		self._items = []
 
 		if isinstance(dir, list) or isinstance(dir, tuple):

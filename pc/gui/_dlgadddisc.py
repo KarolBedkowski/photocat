@@ -125,9 +125,7 @@ class DlgAddDisc(wx.Dialog):
 			return
 
 		current_path  = self.path
-		last_dirs = [ current_path ]
-
-		[ last_dirs.append(path)
+		last_dirs = [ current_path ] + [ path
 				for path in ( self._path.GetString(idx) for idx in xrange(min(self._path.GetCount(), 9)) )
 				if path != current_path
 		]
