@@ -99,6 +99,7 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		self._selectedarray = []
 		self.UpdateProp()
 		self.Refresh()
+		self.Scroll(0, 0)
 
 
 	@property
