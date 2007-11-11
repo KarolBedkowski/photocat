@@ -39,9 +39,8 @@ import gettext
 _ = gettext.gettext
 
 import wx
-import wx.lib.dialogs as dialogs
 
-from kpylibs				import dialogs 
+from kpylibs				import dialogs
 from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
@@ -49,10 +48,7 @@ from kpylibs.wnd_shell		import WndShell
 
 import pc
 
-from pc.model.catalog		import Catalog
-from pc.model.folder		import Folder
-from pc.model.disc			import Disc
-from pc.model.image			import Image
+from pc.model				import Catalog, Folder, Disc, Image
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
@@ -70,7 +66,11 @@ class WndMain(wx.Frame):
 
 	def __init__(self, app, debug):
 		_LOG.debug('MainWnd.__init__')
-		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=(800, 600))
+
+		appconfig = AppConfig()
+		size = (int(appconfig.get('main_wnd', 'size_x', 800)), int(appconfig.get('main_wnd', 'size_y', 600)))
+
+		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=size)
 
 		self._app			= app
 		self._debug			= debug
@@ -79,7 +79,7 @@ class WndMain(wx.Frame):
 		self._layout_splitter	= None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['folder_image', 'add', 'delete', 'add_files', 'information', 
+		self._icon_provider.load_icons(['folder_image', 'add', 'delete', 'add_files', 'information',
 			'folder1', 'folder_add', 'folder_edit', 'folder_delete', 'folder_go', 'disk'
 		])
 
@@ -138,7 +138,7 @@ class WndMain(wx.Frame):
 		self._main_menu_file = menu
 
 		self._main_menu_file_recent = wx.Menu()
-		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(3, -1, _('Recent files'), 
+		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(3, -1, _('Recent files'),
 				self._main_menu_file_recent)
 
 		return menu
@@ -177,7 +177,7 @@ class WndMain(wx.Frame):
 		toolbar.SetToolBitmapSize((16, 16))
 
 		def cbtn(label, function, iconname, description=''):
-			return create_toolbar_button(toolbar, label, function, self._icon_provider.get_image(iconname), 
+			return create_toolbar_button(toolbar, label, function, self._icon_provider.get_image(iconname),
 					description=description)
 
 		def cbtna(label, function, iconname, description=''):
@@ -218,6 +218,12 @@ class WndMain(wx.Frame):
 
 	def _on_close(self, evt):
 		if dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
+			size_x, size_y = self.GetSizeTuple()
+
+			appconfig = AppConfig()
+			appconfig.set('main_wnd', 'size_x', size_x)
+			appconfig.set('main_wnd', 'size_y', size_y)
+
 			self._app.ExitMainLoop()
 			evt.Skip()
 
@@ -279,13 +285,9 @@ class WndMain(wx.Frame):
 		if tree_selected is None:
 			if len(self._catalogs) > 1:
 				return
-			else:
-				catalog = self._catalogs[0]
+			catalog = self._catalogs[0]
 		else:
-			if isinstance(tree_selected, Catalog):
-				catalog = tree_selected
-			else:
-				catalog = tree_selected.catalog
+			catalog = tree_selected.catalog
 
 		self._dirs_tree.delete_item(catalog)
 		catalog.close()
@@ -300,18 +302,14 @@ class WndMain(wx.Frame):
 		if tree_selected is None:
 			if len(self._catalogs) > 1:
 				return
-			else:
-				tree_selected = self._catalogs[0]
-
-		if isinstance(tree_selected, Catalog):
-			catalog = tree_selected
+			catalog = self._catalogs[0]
 		else:
 			catalog = tree_selected.catalog
 
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
-			catalog.rebuild()
-			dialogs.message_box_info(self, _('Rebuild catalog finished'), 'PC')
+			saved_space = catalog.rebuild()
+			dialogs.message_box_info(self, _('Rebuild catalog finished\nSaved space: %d B') % saved_space, 'PC')
 		except:
 			_LOG.exception('rebuild error')
 		finally:
@@ -342,21 +340,21 @@ class WndMain(wx.Frame):
 
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
-			tree_selected = self._catalogs[0]
-
-		catalog = tree_selected.catalog
+			catalog = self._catalogs[0]
+		else:
+			catalog = tree_selected.catalog
 
 		dlg = DlgAddDisc(self)
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(dlg.path)
-			
-			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 50), parent=self, maximum=allfiles,
+
+			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
-	
+
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
 				dlg_progress.Update(cntr[0], msg)
-			
+
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog.add_disc(dlg.path, dlg.name, dlg.descr, on_update=update_progress)
@@ -381,14 +379,14 @@ class WndMain(wx.Frame):
 		if dlg.ShowModal() == wx.ID_OK:
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(dlg.path)
-			
-			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 50), parent=self, maximum=allfiles,
+
+			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
-		
+
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
 				dlg_progress.Update(cntr[0], msg)
-			
+
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog.update_disc(dlg.path, tree_selected, on_update=update_progress)
@@ -401,13 +399,13 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
-
 	def _on_catalog_del_disc(self, evt):
 		if len(self._catalogs) == 0:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None or not isinstance(tree_selected, Disc):
+			dialogs.message_box_error(self, _('No disc selected'), _('Delete disc'))
 			return
 
 		if dialogs.message_box_warning_yesno(self, _('Delete disc %s?') % tree_selected.name, 'PC'):
@@ -420,10 +418,10 @@ class WndMain(wx.Frame):
 	def _on_catalog_search(self, evt):
 		if len(self._catalogs) == 0:
 			return
-		
+
 		dlg = DlgSearch(self, self._catalogs)
 		dlg.Show()
-		
+
 
 	def _on_catalog_edit_multi(self, evt):
 		folder = self._dirs_tree.selected_item
@@ -448,7 +446,6 @@ class WndMain(wx.Frame):
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
 		dlg.Destroy()
-
 
 
 	def _on_dirtree_item_select(self, evt):
@@ -523,12 +520,12 @@ class WndMain(wx.Frame):
 	def _on_update_info_folder(self, folder):
 		folder.catalog.dirty = True
 		self._dirs_tree.update_catalog_node(folder.catalog)
-		
-		
+
+
 	def _on_update_info_image(self, image):
 		image.catalog.dirty = True
 		self._dirs_tree.update_catalog_node(image.catalog)
-	
+
 
 	################################################################################
 
@@ -537,7 +534,7 @@ class WndMain(wx.Frame):
 		if sum(( 1 for cat in self._catalogs if cat.filename == filename )) == 0:
 			if not os.path.exists(filename):
 				dialogs.message_box_error(self, _("Error openning file %s!\nFile don't exists.") % filename, _('Open file'))
-				return 
+				return
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
@@ -571,7 +568,6 @@ class WndMain(wx.Frame):
 			self._main_menu_file_recent_item.Enable(True)
 		else:
 			self._main_menu_file_recent_item.Enable(False)
-
 
 
 	def show_item(self, folder):

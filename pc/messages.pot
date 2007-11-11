@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-11 17:30+0100\n"
+"POT-Creation-Date: 2007-11-11 21:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,31 +16,31 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/wndmain.py:145
+#: gui/wndmain.py:162
 msgid "&About..."
 msgstr ""
 
-#: gui/wndmain.py:132
+#: gui/wndmain.py:149
 msgid "&Add disc..."
 msgstr ""
 
-#: gui/wndmain.py:103
+#: gui/wndmain.py:120
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:134
+#: gui/wndmain.py:151
 msgid "&Delete disc..."
 msgstr ""
 
-#: gui/wndmain.py:138
+#: gui/wndmain.py:155
 msgid "&Edit selected files..."
 msgstr ""
 
-#: gui/wndmain.py:102
+#: gui/wndmain.py:119
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:133
+#: gui/wndmain.py:150
 msgid "&Update disc..."
 msgstr ""
 
@@ -48,7 +48,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: gui/wndmain.py:145
+#: gui/wndmain.py:162
 msgid "About application"
 msgstr ""
 
@@ -56,43 +56,43 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: gui/_dlgadddisc.py:47 gui/_dlgadddisc.py:115 gui/_dlgadddisc.py:118
+#: gui/_dlgadddisc.py:47 gui/_dlgadddisc.py:120 gui/_dlgadddisc.py:124
 msgid "Add disc"
 msgstr ""
 
-#: gui/wndmain.py:132
+#: gui/wndmain.py:149
 msgid "Add disc to catalog"
 msgstr ""
 
-#: gui/wndmain.py:336
+#: gui/wndmain.py:351
 msgid "Adding disc"
 msgstr ""
 
-#: gui/wndmain.py:210
+#: gui/wndmain.py:233
 msgid "Catalog file name"
 msgstr ""
 
-#: gui/wndmain.py:119
+#: gui/wndmain.py:136
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:115
+#: gui/wndmain.py:132
 msgid "Close catalog"
 msgstr ""
 
-#: gui/wndmain.py:115
+#: gui/wndmain.py:132
 msgid "Close current catalog"
 msgstr ""
 
-#: gui/wndmain.py:203
+#: gui/wndmain.py:220
 msgid "Close program?"
 msgstr ""
 
-#: gui/wndmain.py:112 gui/wndmain.py:169
+#: gui/wndmain.py:129 gui/wndmain.py:186
 msgid "Create new catalog"
 msgstr ""
 
-#: gui/wndmain.py:209
+#: gui/wndmain.py:232
 msgid "Create new catalog?"
 msgstr ""
 
@@ -104,12 +104,16 @@ msgstr ""
 msgid "Del"
 msgstr ""
 
-#: gui/wndmain.py:396
+#: gui/wndmain.py:408
+msgid "Delete disc"
+msgstr ""
+
+#: gui/wndmain.py:411
 #, python-format
 msgid "Delete disc %s?"
 msgstr ""
 
-#: gui/wndmain.py:134
+#: gui/wndmain.py:151
 msgid "Delete selected disc from catalog"
 msgstr ""
 
@@ -130,28 +134,28 @@ msgstr ""
 msgid "Disc name:"
 msgstr ""
 
-#: model/catalog.py:208
+#: model/catalog.py:214
 #, python-format
 msgid "Discs: %d"
 msgstr ""
 
-#: gui/wndmain.py:350 gui/wndmain.py:382
+#: gui/wndmain.py:365 gui/wndmain.py:397
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:534
+#: gui/wndmain.py:548
 #, python-format
 msgid "Error openning file %s"
 msgstr ""
 
-#: gui/wndmain.py:522
+#: gui/wndmain.py:536
 #, python-format
 msgid ""
 "Error openning file %s!\n"
 "File don't exists."
 msgstr ""
 
-#: gui/wndmain.py:243
+#: gui/wndmain.py:266
 #, python-format
 msgid "Error saving catalog %s"
 msgstr ""
@@ -164,7 +168,7 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
-#: model/catalog.py:217
+#: model/catalog.py:223
 #, python-format
 msgid "Files: %d"
 msgstr ""
@@ -185,12 +189,12 @@ msgstr ""
 msgid "Folder:"
 msgstr ""
 
-#: gui/wndmain.py:456
+#: gui/wndmain.py:470
 #, python-format
 msgid "Folders %d;  files: %d"
 msgstr ""
 
-#: model/catalog.py:216
+#: model/catalog.py:222
 #, python-format
 msgid "Folders: %d"
 msgstr ""
@@ -200,7 +204,7 @@ msgstr ""
 msgid "Found %d folders and %d files"
 msgstr ""
 
-#: gui/wndmain.py:113 gui/wndmain.py:170
+#: gui/wndmain.py:130 gui/wndmain.py:187
 msgid "Load catalog"
 msgstr ""
 
@@ -213,24 +217,28 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: gui/_dlgadddisc.py:115
+#: gui/_dlgadddisc.py:120
 msgid "Name is empty!"
+msgstr ""
+
+#: gui/wndmain.py:408
+msgid "No disc selected"
 msgstr ""
 
 #: gui/_dlgsearch.py:160
 msgid "Not found"
 msgstr ""
 
-#: gui/wndmain.py:553
+#: gui/wndmain.py:567
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:226 gui/wndmain.py:522 gui/wndmain.py:534
+#: gui/wndmain.py:249 gui/wndmain.py:536 gui/wndmain.py:548
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:525
+#: gui/wndmain.py:539
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
@@ -243,7 +251,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: gui/_dlgadddisc.py:118
+#: gui/_dlgadddisc.py:124
 msgid "Path is empty!"
 msgstr ""
 
@@ -251,31 +259,34 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
-#: gui/wndmain.py:117
+#: gui/wndmain.py:134
 msgid "Rebuild catalog"
 msgstr ""
 
-#: gui/wndmain.py:297
-msgid "Rebuild catalog finished"
+#: gui/wndmain.py:312
+#, python-format
+msgid ""
+"Rebuild catalog finished\n"
+"Saved space: %d B"
 msgstr ""
 
-#: gui/wndmain.py:124
+#: gui/wndmain.py:141
 msgid "Recent files"
 msgstr ""
 
-#: gui/wndmain.py:171 gui/wndmain.py:243
+#: gui/wndmain.py:188 gui/wndmain.py:266
 msgid "Save catalog"
 msgstr ""
 
-#: gui/wndmain.py:114
+#: gui/wndmain.py:131
 msgid "Save current catalog"
 msgstr ""
 
-#: gui/wndmain.py:136 gui/wndmain.py:175
+#: gui/wndmain.py:153 gui/wndmain.py:192
 msgid "Search in calalogs"
 msgstr ""
 
-#: gui/_dlgadddisc.py:103
+#: gui/_dlgadddisc.py:108
 msgid "Select directory"
 msgstr ""
 
@@ -300,11 +311,11 @@ msgstr ""
 msgid "Update disc"
 msgstr ""
 
-#: gui/wndmain.py:133
+#: gui/wndmain.py:150
 msgid "Update selected disc"
 msgstr ""
 
-#: gui/wndmain.py:368
+#: gui/wndmain.py:383
 msgid "Updating disc"
 msgstr ""
 

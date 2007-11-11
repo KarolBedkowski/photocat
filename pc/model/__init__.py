@@ -25,4 +25,14 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
+__all__ = ['Catalog', 'Folder', 'Disc', 'Image']
+
+
+from catalog	import Catalog
+from folder		import Folder
+from disc		import Disc
+from image		import Image
+
+
+
 # vim: encoding=utf8: ff=unix: 

@@ -187,7 +187,10 @@ class DataProvider(object):
 		for obj, offset in opt['exif_offsets']:			obj.exif_offset = offset
 		for obj, offset in opt['folder_files']:			obj.folder_files_offset = offset
 
-		return opt['last_offset']
+		old_size = os.path.getsize(self.filename + '.old')
+		new_size = os.path.getsize(self.filename)
+
+		return (opt['last_offset'], old_size-new_size)
 
 
 	@staticmethod

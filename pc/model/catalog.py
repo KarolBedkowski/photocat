@@ -111,6 +111,11 @@ class Catalog(BaseElement):
 	id_provider = property(_get_id, _set_id)
 
 
+	@property
+	def catalog(self):
+		return self
+
+
 	def save_catalog(self):
 		Storage.save(self._indexfilepath, self)
 		self.dirty = False
@@ -172,9 +177,10 @@ class Catalog(BaseElement):
 
 
 	def rebuild(self):
-		self._state.last_offset = self._data_provider.rebuild(self._discs)
+		self._state.last_offset, saved_size = self._data_provider.rebuild(self._discs)
 		self.save_catalog()
 		self._data_provider.open()
+		return saved_size
 
 
 	@staticmethod
