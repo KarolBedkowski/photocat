@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-10 18:40+0100\n"
+"POT-Creation-Date: 2007-11-11 13:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,7 +95,7 @@ msgstr "Utwórz nowy katalog"
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
-#: gui/_dlgproperties.py:164 model/_element.py:92
+#: gui/_dlgproperties.py:164 model/image.py:81
 msgid "Date"
 msgstr "Data"
 
@@ -117,7 +117,7 @@ msgstr "Usuń wybrany dysk z katalogu"
 msgid "Description"
 msgstr "Opis"
 
-#: model/image.py:74
+#: model/image.py:75
 msgid "Dimensions"
 msgstr "Wymiary"
 
@@ -151,6 +151,10 @@ msgstr "Błąd zapisywania katalogu %s"
 #: gui/_dlgproperties.py:85 gui/components/infopanel.py:57
 msgid "Exif"
 msgstr ""
+
+#: model/_element.py:92
+msgid "File date"
+msgstr "Data pliku"
 
 #: model/catalog.py:217
 #, python-format

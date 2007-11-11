@@ -116,6 +116,8 @@ class Folder(Element):
 		self.files_count = len(files)
 		files = None
 
+		self._load_caption_txt(path)
+
 
 	def update_element(self, path, options=None, on_update=None):
 		_LOG.debug('Folder.update_element(%s)' % path)
@@ -163,6 +165,8 @@ class Folder(Element):
 		self._files.sort(Folder._items_cmp)
 		self.files_count = len(self._files)
 		files = None
+		
+		self._load_caption_txt(path)
 
 
 	@staticmethod
@@ -190,7 +194,59 @@ class Folder(Element):
 		return (files, folders)
 
 
+	def _load_caption_txt(self, path):
+		captions_file_path = os.path.join(path, 'captions.txt')
+		if not os.path.exists(captions_file_path):
+			return
+		
+		_LOG.debug('Folder._load_caption_txt(%s)' % captions_file_path)
 
+		captions_file = open(captions_file_path, 'r')
+		current_file_name = None
+		current_file_data = {}
+		while True:
+			line = captions_file.readline()
+			if line == '':					break
+			
+			line = line.strip()
+
+			if line.startswith('#'):		continue
+
+			if current_file_name is None:
+				if line != '':
+					current_file_name = line
+			elif line == '':
+				self._load_caption_txt_process_file(current_file_name, current_file_data)
+				current_file_data = {}
+				current_file_name = None
+			else:
+				key, dummy, val = line.partition('=')
+				if key in ('Title', 'Subtitle', 'Date', 'Desc') and len(val.strip()) > 0:
+					current_file_data[key] = val
+
+		if current_file_name != None:
+			self._load_caption_txt_process_file(current_file_name, current_file_data)
+
+		captions_file.close()
+
+
+	def _load_caption_txt_process_file(self, file_name, file_data):
+		if len(file_data) == 0:
+			return
+		
+		_LOG.debug('Folder._load_caption_txt_process_file(%s)' % file_name)
+
+		if file_name == '.':
+			update_obj = self
+		else:
+			find_update_obj = [ image for image in self._files if image.name == file_name]
+			if len(find_update_obj) != 1:
+				return
+			update_obj = find_update_obj[0]
+
+		if update_obj.descr is None or len(update_obj.descr) == 0:
+			descr = [ file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) ]
+			update_obj.descr = '\n'.join(descr)
 
 
 
