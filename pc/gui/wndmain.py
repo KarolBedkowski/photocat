@@ -425,7 +425,7 @@ class WndMain(wx.Frame):
 		image = Image(None, None, None, catalog=folder.catalog)
 
 		dlg = DlgProperties(self, image)
-		if dlg.ShowModal():
+		if dlg.ShowModal() == wx.ID_OK:
 			selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
 			Catalog.update_images_from_image(selected_items, image)
 			folder.catalog.dirty = True
@@ -464,7 +464,7 @@ class WndMain(wx.Frame):
 			return
 
 		dlg = DlgProperties(self, item)
-		if dlg.ShowModal():
+		if dlg.ShowModal() == wx.ID_OK:
 			item.catalog.dirty = True
 			self._info_panel.show_folder(item)
 			self._dirs_tree.update_catalog_node(item.catalog)
@@ -483,7 +483,7 @@ class WndMain(wx.Frame):
 		selected = self._photo_list.selected_item
 		if selected is not None:
 			dlg = DlgProperties(self, selected)
-			if dlg.ShowModal():
+			if dlg.ShowModal() == wx.ID_OK:
 				self._info_panel.show(selected)
 				self._on_update_info_image(selected)
 			dlg.Destroy()
@@ -510,7 +510,11 @@ class WndMain(wx.Frame):
 
 	def _open_file(self, filename):
 		if sum(( 1 for cat in self._catalogs if cat.filename == filename )) == 0:
+			if not os.path.exists(filename):
+				dialogs.message_box_error(self, _("Error openning file %s!\nFile don't exists.") % filename, _('Open file'))
+				return 
 			try:
+				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog = Catalog(filename)
 				self._catalogs.append(catalog)
