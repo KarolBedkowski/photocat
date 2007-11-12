@@ -346,7 +346,7 @@ class WndMain(wx.Frame):
 
 		dlg = DlgAddDisc(self)
 		if dlg.ShowModal() == wx.ID_OK:
-			allfiles = Catalog.fast_count_files_dirs(dlg.path)
+			allfiles = Catalog.fast_count_files_dirs(dlg.path) + 1
 
 			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
@@ -378,7 +378,7 @@ class WndMain(wx.Frame):
 		dlg = DlgAddDisc(self, update=True, name=tree_selected.name, desc=tree_selected.descr)
 		if dlg.ShowModal() == wx.ID_OK:
 			catalog		= tree_selected.catalog
-			allfiles	= Catalog.fast_count_files_dirs(dlg.path)
+			allfiles	= Catalog.fast_count_files_dirs(dlg.path) + 1
 
 			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)

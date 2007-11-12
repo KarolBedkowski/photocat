@@ -185,10 +185,27 @@ class Catalog(BaseElement):
 
 	@staticmethod
 	def fast_count_files_dirs(path):
-		def count_files(filenames):
-			return sum((1 for filename in filenames if filename.endswith('.jpg')))
+		_IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
 
-		return sum(( (len(dirnames)+count_files(filenames)) for (dirpath, dirnames, filenames) in os.walk(path) ))
+		def count_folder(path):
+			content = [ os.path.join(path, name) 
+					for name 
+					in os.listdir(path) 
+					if not name.startswith('.')
+			]
+
+			content_size = sum(( 1 for item 
+				in content 
+				if os.path.isdir(item) 
+					or (os.path.isfile(item) 
+						and os.path.splitext(item)[1].lower() in _IMAGE_FILES_EXTENSION 
+					)
+			))
+
+			content_size += sum( ( count_folder(item) for item in content if os.path.isdir(item) ) )
+			return content_size
+
+		return count_folder(path)
 
 
 	@staticmethod
