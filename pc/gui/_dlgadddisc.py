@@ -43,9 +43,16 @@ from kpylibs.dialogs		import message_box_error
 class DlgAddDisc(wx.Dialog):
 	''' Dialog o programie '''
 
-	def __init__(self, parent, update=False, name=None, desc=None):
+	def __init__(self, parent, update=False, name=None, desc=None, catalog=None):
 		caption = update and _('Add disc') or _('Update disc')
 		wx.Dialog.__init__(self, parent, -1, caption, style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+
+		self._catalog_disc_names = None
+		if catalog is not None:
+			if update:
+				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs if disc.name != name) )
+			else:
+				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs ) )
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
@@ -116,12 +123,17 @@ class DlgAddDisc(wx.Dialog):
 
 
 	def _on_ok(self, evt):
-		if len(self.name) == 0:
+		name = self.name
+		if len(name) == 0:
 			message_box_error(self, _('Name is empty!'), _('Add disc'))
 			return
 
 		if len(self.path) == 0:
 			message_box_error(self, _('Path is empty!'), _('Add disc'))
+			return
+
+		if self._catalog_disc_names is not None and name in self._catalog_disc_names:
+			message_box_error(self, _('Name already exists in catalog!'), _('Add disc'))
 			return
 
 		current_path  = self.path

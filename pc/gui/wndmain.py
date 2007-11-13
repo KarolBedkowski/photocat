@@ -93,6 +93,7 @@ class WndMain(wx.Frame):
 		self.Centre(wx.BOTH)
 
 		wx.EVT_CLOSE(self, self._on_close)
+		wx.EVT_SIZE(self, self._on_size)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_dirtree_item_select, self._dirs_tree)
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self._on_dirtree_item_activate, self._dirs_tree)
 		self.Bind(EVT_THUMBNAILS_SEL_CHANGED, self._on_thumb_sel_changed)
@@ -228,6 +229,11 @@ class WndMain(wx.Frame):
 			evt.Skip()
 
 
+	def _on_size(self, evt):
+		self._dirs_tree.Refresh()
+		evt.Skip()
+
+
 	def _on_file_new(self, evt):
 		if dialogs.message_box_question_yesno(self, _('Create new catalog?'), 'PC'):
 			filename = dialogs.dialog_file_save(self, _('Catalog file name'), '*.index')
@@ -344,7 +350,7 @@ class WndMain(wx.Frame):
 		else:
 			catalog = tree_selected.catalog
 
-		dlg = DlgAddDisc(self)
+		dlg = DlgAddDisc(self, catalog=catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(dlg.path) + 1
 
@@ -375,7 +381,7 @@ class WndMain(wx.Frame):
 		if tree_selected is None or not isinstance(tree_selected, Disc):
 			return
 
-		dlg = DlgAddDisc(self, update=True, name=tree_selected.name, desc=tree_selected.descr)
+		dlg = DlgAddDisc(self, update=True, name=tree_selected.name, desc=tree_selected.descr, catalog=tree_selected.catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(dlg.path) + 1
