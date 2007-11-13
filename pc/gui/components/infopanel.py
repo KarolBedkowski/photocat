@@ -36,6 +36,7 @@ import wx
 
 from kpylibs.guitools	import create_button
 from kpylibs.eventgenerator import EventGenerator
+from kpylibs.formaters	import format_size
 
 
 
@@ -189,7 +190,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		def insert(name, date, size):
 			idx = listctrl.InsertStringItem(sys.maxint, str(name))
 			listctrl.SetStringItem(idx, 1, time.strftime('%c', time.localtime(date)))
-			listctrl.SetStringItem(idx, 2, file_size_to_human(size))
+			listctrl.SetStringItem(idx, 2, format_size(size, separate=True))
 
 		[ insert(name, date, size) for name, date, size in folder.folder_files ]
 
@@ -241,12 +242,5 @@ class InfoPanel(wx.Panel, EventGenerator):
 				self.event_call('update_folder', self._folder)
 
 
-def file_size_to_human(size):
-	output = []
-	str_size = str(size)
-	while len(str_size) > 0:
-		output.insert(0, str_size[-3:])
-		str_size = str_size[:-3]
-	return ' '.join(output)
 
 # vim: encoding=utf8: ff=unix:

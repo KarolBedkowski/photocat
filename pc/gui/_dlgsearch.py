@@ -101,7 +101,9 @@ class DlgSearch(wx.Dialog):
 		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.InsertColumn(0, _('Name'))
-		listctrl.InsertColumn(1, _('Path'))
+		listctrl.InsertColumn(1, _('Catalog'))
+		listctrl.InsertColumn(2, _('Disc'))
+		listctrl.InsertColumn(3, _('Path'))
 
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
 
@@ -147,17 +149,20 @@ class DlgSearch(wx.Dialog):
 				ico = icon_folder_idx
 				counters[1] += 1
 			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
-			listctrl.SetStringItem(idx, 1, item.path)
+			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
+			listctrl.SetStringItem(idx, 2, str(item.disc.name))
+			listctrl.SetStringItem(idx, 3, item.path)
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
 
 		for catalog in self._catalogs:
 			result = catalog.check_on_find(what)
-			for item in result:
-				insert(item)
+			[ insert(item) for item in result ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
 		if len(self._result) == 0:
 			dialogs.message_box_info(self, _('Not found'), _('PC'))

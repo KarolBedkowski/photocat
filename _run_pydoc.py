@@ -59,5 +59,5 @@ class KPyDocRunner:
 
 if __name__ == '__main__':
 	sys.path.append('../..')
-	KPyDocRunner('sag3').run()
+	KPyDocRunner('pc').run()
 

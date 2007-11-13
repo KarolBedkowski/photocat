@@ -45,7 +45,7 @@ from _element		import Element
 class Disc(Element):
 
 	def __init__(self, id, name, parent_id, parent=None):
-		Element.__init__(self, id, name, -1, parent, catalog=parent)
+		Element.__init__(self, id, name, -1, None, catalog=parent)
 
 
 	def init(self, parent=None, catalog=None):
@@ -81,7 +81,7 @@ class Disc(Element):
 
 	@property
 	def path(self):
-		return '[%s] ' % self.name
+		return ''
 
 
 

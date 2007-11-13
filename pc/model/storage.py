@@ -96,9 +96,8 @@ class Storage:
 					_LOG.warn('Loading error; row=' + line)
 				else:
 					if object_name == '!disc':
-						node = Disc(None, None, None)
+						node = Disc(None, None, None, parent=catalog)
 						node.attributes_update_fast(attrs)
-						node.init(catalog, catalog)
 						ids[node.id] = node
 						discs.append(node)
 					elif object_name == '!folder':
