@@ -37,7 +37,6 @@ _LOG = logging.getLogger(__name__)
 
 from _element	import Element
 from image		import Image
-from storage_representer	import representer
 
 
 _IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')

@@ -41,7 +41,6 @@ from kpylibs.myobject import MyObject
 from tags_provider			import Tags
 from disc					import Disc
 from dataprovider			import DataProvider
-from storage_representer	import representer
 from _element				import BaseElement
 from storage				import Storage
 from catalog_state			import CatalogState

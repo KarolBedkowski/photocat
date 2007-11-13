@@ -39,7 +39,6 @@ _LOG = logging.getLogger(__name__)
 from folder			import Folder
 from _idprovider 	import IdProvider
 from _element		import Element
-from storage_representer	import representer
 
 
 

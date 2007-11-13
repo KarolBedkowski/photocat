@@ -42,7 +42,6 @@ PILImage._initialized = 3
 from pc.lib					import EXIF
 
 from _element				import Element
-from storage_representer	import representer
 
 
 
