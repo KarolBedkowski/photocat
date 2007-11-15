@@ -45,6 +45,7 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
 from kpylibs.wnd_shell		import WndShell
+from kpylibs.formaters		import format_size
 
 import pc
 
@@ -157,9 +158,12 @@ class WndMain(wx.Frame):
 			(_('&Update disc...'),	None,	_('Update selected disc'),				self._on_catalog_update_disc),
 			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None,		wx.ART_DELETE),
 			('-'),
-			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
+			(_('Delete selected &folder...'),	None,	'',							self._on_catalog_del_folder),
+			(_('Delete selected &image...'),	None,	'',							self._on_catalog_del_image),
 			('-'),
 			(_('&Edit selected files...'),	None,	'',								self._on_catalog_edit_multi),
+			('-'),
+			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 		))
 		return menu
 
@@ -321,7 +325,8 @@ class WndMain(wx.Frame):
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
 			saved_space = catalog.rebuild()
-			dialogs.message_box_info(self, _('Rebuild catalog finished\nSaved space: %d B') % saved_space, 'PC')
+			dialogs.message_box_info(self, 
+					_('Rebuild catalog finished\nSaved space: %sB') % format_size(saved_space, True, reduce_at=1024*1024, separate=True), 'PC')
 		except:
 			_LOG.exception('rebuild error')
 		finally:
@@ -425,6 +430,50 @@ class WndMain(wx.Frame):
 			catalog = tree_selected.catalog
 			catalog.del_disc(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
+
+
+	def _on_catalog_del_folder(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None or not isinstance(tree_selected, Folder):
+			dialogs.message_box_error(self, _('No folder selected'), _('Delete folder'))
+			return
+
+		if dialogs.message_box_warning_yesno(self, _('Delete folder %s?') % tree_selected.name, 'PC'):
+			self._dirs_tree.delete_item(tree_selected)
+			tree_selected.parent.delete_subfolder(tree_selected)
+			self._dirs_tree.update_catalog_node(tree_selected.catalog)
+
+
+	def _on_catalog_del_image(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		folder = self._dirs_tree.selected_item
+		if folder is None:
+			return
+		if isinstance(folder, Folder):
+			pass
+		elif isinstance(folder, Disc):
+			folder = folder.root
+		else:
+			return
+
+		if folder.files_count == 0:
+			return
+
+		selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
+		if len(selected_items) == 0:
+			return
+
+		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
+			for image in selected_items:
+				folder.delete_image(image)
+			self._photo_list.ShowDir(folder)
+			self._info_panel.show_folder(folder)
+			self._dirs_tree.update_catalog_node(folder.catalog)
 
 
 	def _on_catalog_search(self, evt):

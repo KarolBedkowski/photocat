@@ -300,6 +300,25 @@ class Folder(Element):
 		self.folder_files_offset, self.folder_files_size = self._catalog.data_provider.append(repr(self._folder_files))
 
 
+	def delete_subfolder(self, folder):
+		''' obj.delete_subfolder(folder) -- usuniecie podfolderu z zawartoscia z folderu '''
+		if folder in self._subdirs:
+			self._subdirs.remove(folder)
+			self.subdirs_count = len(self._subdirs)
+			self.catalog.dirty = True
+		else:
+			_LOG.warn('Folder.delete_subfolder %r not found in %r' % (folder, self))
+
+
+	def delete_image(self, image):
+		''' obj.delete_image(image) -- usuniecie wybranego zdjecia z folderu '''
+		if image in self._files:
+			self._files.remove(image)
+			self.files_count = len(self._files)
+			self.catalog.dirty = True
+		else:
+			_LOG.warn('Folder.delete_image %r not found in %r' % (image, self))
+
 
 	@staticmethod
 	def _filter_folders(folders, filter_folder_names):
