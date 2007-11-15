@@ -92,21 +92,6 @@ class Folder(Element):
 
 		Element.load(self, path, options, on_update)
 
-		subdirs = sorted(( fname for fname in os.listdir(path)
-			if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
-		))
-
-		_LOG.debug('Folder.load: len(subdirs)=%d' % len(subdirs))
-
-		def create_subfolder(name):
-			subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
-			subfolder.load(os.path.join(path, name), options, on_update=on_update)
-			return subfolder
-
-		self._subdirs = map(create_subfolder, subdirs)
-		self.subdirs_count = len(subdirs)
-		subdirs = None
-
 		files = sorted(( fname for fname in os.listdir(path)
 			if os.path.splitext(fname)[1].lower() in _IMAGE_FILES_EXTENSION
 				and not fname.startswith('.')
@@ -124,6 +109,37 @@ class Folder(Element):
 		self.files_count = len(files)
 		files = None
 
+		filter_folder_names = None
+		if options is not None:
+			filter_folder_names = options.get('folder_files', None)
+
+		subdirs = sorted(
+				self._filter_folders( (
+						fname 
+						for fname in os.listdir(path)
+						if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
+				), filter_folder_names )
+		)
+
+		_LOG.debug('Folder.load: len(subdirs)=%d' % len(subdirs))
+
+		if self.files_count == 0 and len(subdirs) == 0:
+			self.subdirs_count = 0
+			self._subdirs = []
+			return
+
+		def create_subfolder(name):
+			subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
+			subfolder.load(os.path.join(path, name), options, on_update=on_update)
+			return subfolder
+
+		if options is None or options.get('include_empty', 0) == 0:
+			self._subdirs = [ subfolder for subfolder in map(create_subfolder, subdirs) if subfolder.folder_size[0] > 0 ]
+		else:
+			self._subdirs = map(create_subfolder, subdirs)
+		self.subdirs_count = len(subdirs)
+		subdirs = None
+
 		self._load_caption_txt(path)
 		self._load_file_folders(path)
 
@@ -132,26 +148,6 @@ class Folder(Element):
 		_LOG.debug('Folder.update_element(%s)' % path)
 
 		Element.update_element(self, path, options, on_update)
-
-		subdirs = ( fname for fname in os.listdir(path)
-			if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
-		)
-
-		def create_subfolder(name):
-			subfolder = [ folder for folder in self._subdirs if folder.name == name ]
-			if len(subfolder) > 0:
-				subfolder = subfolder[0]
-				subfolder.update_element(os.path.join(path, name), options, on_update=on_update)
-			else:
-				subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
-				subfolder.load(os.path.join(path, name), options, on_update=on_update)
-			return subfolder
-
-		self._subdirs = map(create_subfolder, subdirs)
-		_LOG.debug('Folder.load: len(subdirs)=%d' % len(self._subdirs))
-		self._subdirs.sort(Folder._items_cmp)
-		self.subdirs_count = len(self._subdirs)
-		subdirs = None
 
 		files = ( fname for fname in os.listdir(path)
 			if os.path.splitext(fname)[1].lower() in _IMAGE_FILES_EXTENSION
@@ -168,13 +164,44 @@ class Folder(Element):
 				image = Image(None, name, self.id, self, self._catalog, self._disc)
 				image.load(os.path.join(path, name), options, on_update=on_update)
 			return image
-		
+
 		self._files = map(create_file, files)
 		_LOG.debug('Folder.load: len(files)=%d' % len(self._files))
 		self._files.sort(Folder._items_cmp)
 		self.files_count = len(self._files)
 		files = None
-		
+
+		filter_folder_names = None
+		if options is not None:
+			filter_folder_names = options.get('folder_files', None)
+
+		subdirs = sorted(
+				self._filter_folders( (
+						fname 
+						for fname in os.listdir(path)
+						if not fname.startswith('.') and os.path.isdir(os.path.join(path, fname))
+				), filter_folder_names )
+		)
+
+		def create_subfolder(name):
+			subfolder = [ folder for folder in self._subdirs if folder.name == name ]
+			if len(subfolder) > 0:
+				subfolder = subfolder[0]
+				subfolder.update_element(os.path.join(path, name), options, on_update=on_update)
+			else:
+				subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
+				subfolder.load(os.path.join(path, name), options, on_update=on_update)
+			return subfolder
+
+		if options is None or options.get('include_empty', 0) == 0:
+			self._subdirs = [ subfolder for subfolder in map(create_subfolder, subdirs) if subfolder.folder_size[0] > 0 ]
+		else:
+			self._subdirs = map(create_subfolder, subdirs)
+		_LOG.debug('Folder.load: len(subdirs)=%d' % len(self._subdirs))
+		self._subdirs.sort(Folder._items_cmp)
+		self.subdirs_count = len(self._subdirs)
+		subdirs = None
+
 		self._load_caption_txt(path)
 		self._load_file_folders(path)
 
@@ -208,7 +235,7 @@ class Folder(Element):
 		captions_file_path = os.path.join(path, 'captions.txt')
 		if not os.path.exists(captions_file_path):
 			return
-		
+
 		_LOG.debug('Folder._load_caption_txt(%s)' % captions_file_path)
 
 		captions_file = open(captions_file_path, 'r')
@@ -217,7 +244,7 @@ class Folder(Element):
 		while True:
 			line = captions_file.readline()
 			if line == '':					break
-			
+
 			line = line.strip()
 
 			if line.startswith('#'):		continue
@@ -243,7 +270,7 @@ class Folder(Element):
 	def _load_caption_txt_process_file(self, file_name, file_data):
 		if len(file_data) == 0:
 			return
-		
+
 		_LOG.debug('Folder._load_caption_txt_process_file(%s)' % file_name)
 
 		if file_name == '.':
@@ -259,7 +286,6 @@ class Folder(Element):
 			update_obj.descr = '\n'.join(descr)
 
 
-
 	def _load_file_folders(self, path):
 		_LOG.debug('Folder._load_file_folders(%s)' % path)
 		files = sorted(( fname for fname in os.listdir(path) if os.path.isfile(os.path.join(path, fname)) ))
@@ -273,6 +299,14 @@ class Folder(Element):
 
 		self.folder_files_offset, self.folder_files_size = self._catalog.data_provider.append(repr(self._folder_files))
 
+
+
+	@staticmethod
+	def _filter_folders(folders, filter_folder_names):
+		if filter_folder_names is None:
+			return folders
+		folders = ( folder for folder in folders if folder not in  filter_folder_names )
+		return folder
 
 
 

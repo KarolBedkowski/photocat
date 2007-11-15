@@ -132,10 +132,10 @@ class Catalog(BaseElement):
 		self._data_provider.close()
 
 
-	def add_disc(self, path, name, descr=None, on_update=None):
+	def add_disc(self, path, name, descr=None, options=None, on_update=None):
 		disc = Disc(None, name, self.id, self)
 		disc.descr = descr
-		disc.load(path, on_update=on_update)
+		disc.load(path, options=options, on_update=on_update)
 		self._discs.append(disc)
 		self._data_provider.flush()
 		self.dirty = True
@@ -146,8 +146,8 @@ class Catalog(BaseElement):
 		self.dirty = True
 
 
-	def update_disc(self, path, disc, on_update=None):
-		disc.update_element(path, on_update=on_update)
+	def update_disc(self, path, disc, options=None, on_update=None):
+		disc.update_element(path, options=options, on_update=on_update)
 		self._data_provider.flush()
 		self.dirty = True
 

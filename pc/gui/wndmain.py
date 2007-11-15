@@ -60,6 +60,12 @@ from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
 
 
+_DEFAULT_ADD_OPTIONS = {
+		'filter_folder_names': None,
+		'include_empty': 0
+}
+
+
 
 class WndMain(wx.Frame):
 	""" MainWnd """
@@ -363,7 +369,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.add_disc(dlg.path, dlg.name, dlg.descr, on_update=update_progress)
+				catalog.add_disc(dlg.path, dlg.name, dlg.descr, options=_DEFAULT_ADD_OPTIONS, on_update=update_progress)
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:
@@ -395,7 +401,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.update_disc(dlg.path, tree_selected, on_update=update_progress)
+				catalog.update_disc(dlg.path, tree_selected, options=_DEFAULT_ADD_OPTIONS, on_update=update_progress)
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:

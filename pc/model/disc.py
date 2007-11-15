@@ -62,9 +62,9 @@ class Disc(Element):
 		self._root = folder
 
 
-	def load(self, path, on_update=None):
+	def load(self, path, options=None, on_update=None):
 		self._root = Folder(None, '/', self.id, self, catalog=self._catalog, disc=self)
-		self._root.load(path, on_update=on_update)
+		self._root.load(path, options=options, on_update=on_update)
 		self.date = time.time()
 
 

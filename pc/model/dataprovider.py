@@ -150,6 +150,8 @@ class DataProvider(object):
 		opt = dict(last_offset=_DATA_FILE_HEADER_SIZE, obj_offsets=[], exif_offsets=[], folder_files=[])
 
 		def copy_data(offset, size, opt):
+			if offset is None:
+				return None
 			self._file.seek(offset)
 			data = self._file.read(size)
 			new_offset = opt['last_offset']
