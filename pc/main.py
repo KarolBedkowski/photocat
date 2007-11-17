@@ -63,9 +63,6 @@ _LOG = logging.getLogger(__name__)
 import gettext
 import wx
 
-from kpylibs.appconfig		import AppConfig
-from kpylibs.iconprovider	import IconProvider
-
 from pc.icons				import icons
 
 
@@ -78,6 +75,8 @@ class App(wx.App):
 
 		_LOG.info('App.OnInit')
 		self.debug = debug
+
+		from kpylibs.iconprovider	import IconProvider
 	
 		_LOG.info('App.OnInit: preparing iconprovider...')
 		icon_provider = IconProvider(icons)
@@ -109,6 +108,8 @@ class App(wx.App):
 
 
 def run():
+	from kpylibs.appconfig		import AppConfig
+
 	logging_setup_wx()
 	
 	_LOG.info('run')
@@ -123,9 +124,11 @@ def run():
 	locale = wx.Locale(wx.LANGUAGE_DEFAULT)
 	locale.AddCatalogLookupPathPrefix(locales_dir)
 	locale.AddCatalog('wxstd')
+	locale.AddCatalog('kpylibs')
 	locale.AddCatalog('pc')
 
 	gettext.bindtextdomain('pc', locales_dir)
+	gettext.bindtextdomain('kpylibs', locales_dir)
 	gettext.textdomain('pc')
 
 	_LOG.info('run: starting app...')
