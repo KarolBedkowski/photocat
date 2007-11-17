@@ -132,7 +132,7 @@ msgstr "Usunąć folder %s?"
 
 #: gui/wndmain.py:161
 msgid "Delete selected &folder..."
-msgstr "Usuń zaznaczone &pliki..."
+msgstr "Usuń zaznaczony &folder..."
 
 #: gui/wndmain.py:162
 msgid "Delete selected &image..."

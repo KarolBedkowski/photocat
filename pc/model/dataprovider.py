@@ -191,6 +191,8 @@ class DataProvider(object):
 
 		old_size = os.path.getsize(self.filename + '.old')
 		new_size = os.path.getsize(self.filename)
+		
+		os.unlink(self.filename + '.old')
 
 		return (opt['last_offset'], old_size-new_size)
 
