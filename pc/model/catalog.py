@@ -39,7 +39,7 @@ _ = gettext.gettext
 from kpylibs.myobject import MyObject
 
 from tags_provider			import Tags
-from disc					import Disc
+from disk					import Disk
 from dataprovider			import DataProvider
 from _element				import BaseElement
 from storage				import Storage
@@ -51,7 +51,7 @@ class Catalog(BaseElement):
 
 	def __init__(self, filename):
 		BaseElement.__init__(self, -1, filename, None, catalog=self)
-		self._discs 		= []
+		self._disks 		= []
 		self._data_provider = DataProvider();
 		self._tags_provider	= Tags()
 		self._indexfilepath	= None
@@ -82,8 +82,8 @@ class Catalog(BaseElement):
 
 
 	@property
-	def discs(self):
-		return self._discs
+	def disks(self):
+		return self._disks
 
 
 	@property
@@ -123,7 +123,7 @@ class Catalog(BaseElement):
 	def load(self, filename=None):
 		self._set_filename(filename)
 		self._tags_provider.reset()
-		self._discs = Storage.load(self._indexfilepath, self)
+		self._disks = Storage.load(self._indexfilepath, self)
 		self._after_load()
 		self.data_provider.open(self._datafilepath)
 
@@ -132,26 +132,26 @@ class Catalog(BaseElement):
 		self._data_provider.close()
 
 
-	def add_disc(self, path, name, descr=None, options=None, on_update=None):
-		disc = Disc(None, name, self.id, self)
-		disc.descr = descr
-		disc.load(path, options=options, on_update=on_update)
-		self._discs.append(disc)
+	def add_disk(self, path, name, descr=None, options=None, on_update=None):
+		disk = Disk(None, name, self.id, self)
+		disk.descr = descr
+		disk.load(path, options=options, on_update=on_update)
+		self._disks.append(disk)
 		self._data_provider.flush()
 		self.dirty = True
 
 
-	def del_disc(self, disc):
-		self._discs.remove(disc)
+	def del_disk(self, disk):
+		self._disks.remove(disk)
 		self.dirty = True
 
 
-	def update_disc(self, path, disc, options=None, on_update=None, name=None, descr=None):
-		disc.update_element(path, options=options, on_update=on_update)
+	def update_disk(self, path, disk, options=None, on_update=None, name=None, descr=None):
+		disk.update_element(path, options=options, on_update=on_update)
 		if name is not None:
-			disc.name = name
+			disk.name = name
 		if descr is not None:
-			disc.descr = descr
+			disk.descr = descr
 		self._data_provider.flush()
 		self.dirty = True
 
@@ -171,16 +171,16 @@ class Catalog(BaseElement):
 
 	def check_on_find(self, text, options=None):
 		self_result = BaseElement.check_on_find(self, text, options)
-		[ self_result.extend(disc.check_on_find(text, options)) for disc in self._discs ]
+		[ self_result.extend(disk.check_on_find(text, options)) for disk in self._disks ]
 		return self_result
 
 
 	def _after_load(self):
-		self._discs.sort(lambda x,y: cmp(x.name, y.name))
+		self._disks.sort(lambda x,y: cmp(x.name, y.name))
 
 
 	def rebuild(self):
-		self._state.last_offset, saved_size = self._data_provider.rebuild(self._discs)
+		self._state.last_offset, saved_size = self._data_provider.rebuild(self._disks)
 		self.save_catalog()
 		self._data_provider.open()
 		return saved_size
@@ -231,11 +231,11 @@ class Catalog(BaseElement):
 	def stat(self):
 		result = []
 
-		result.append(_('Discs: %d') % len(self._discs))
+		result.append(_('Disks: %d') % len(self._disks))
 
 		files, folders = 0, 0
-		for disc in self._discs:
-			dfiles, dfolders = disc.root.folder_size
+		for disk in self._disks:
+			dfiles, dfolders = disk.root.folder_size
 			files += dfiles
 			folders += dfolders
 
@@ -250,7 +250,7 @@ class Catalog(BaseElement):
 if __name__ == '__main__':
 	from pc.model.catalog import Catalog as _Catalog
 	catalog = _Catalog('test.index')
-	catalog.add_disc('/home/k/gfx', name='root')
+	catalog.add_disk('/home/k/gfx', name='root')
 	#print repr(catalog)
 	#catalog.save()
 

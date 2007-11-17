@@ -38,7 +38,7 @@ import wx
 
 from kpylibs.guitools	import create_button
 
-from pc.model			import Catalog, Directory, Disc, Image
+from pc.model			import Catalog, Directory, Disk, Image
 
 
 
@@ -51,7 +51,7 @@ class DlgProperties(wx.Dialog):
 		self._item = item
 		self._item_is_fake		= is_fake = item.name is None
 		self._item_is_folder	= isinstance(item, Directory)	and not is_fake
-		self._item_is_disc		= isinstance(item, Disc)	and not is_fake
+		self._item_is_disk		= isinstance(item, Disk)	and not is_fake
 		self._item_is_catalog	= isinstance(item, Catalog) and not is_fake
 		self._item_is_image		= isinstance(item, Image)	and not is_fake
 

@@ -149,8 +149,8 @@ class Element(BaseElement):
 
 
 	@property
-	def disc(self):
-		''' obj.disc -> Disc() -- dysk do ktorego nalezy obiekt '''
+	def disk(self):
+		''' obj.disk -> Disk() -- dysk do ktorego nalezy obiekt '''
 		obj = self
 		while obj.parent is not None:
 			obj = obj.parent

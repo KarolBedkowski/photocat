@@ -43,7 +43,7 @@ from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
 
-from pc.model		import Catalog, Directory, Disc, Image
+from pc.model		import Catalog, Directory, Disk, Image
 
 
 
@@ -102,7 +102,7 @@ class DlgSearch(wx.Dialog):
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.InsertColumn(0, _('Name'))
 		listctrl.InsertColumn(1, _('Catalog'))
-		listctrl.InsertColumn(2, _('Disc'))
+		listctrl.InsertColumn(2, _('Disk'))
 		listctrl.InsertColumn(3, _('Path'))
 
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
@@ -150,7 +150,7 @@ class DlgSearch(wx.Dialog):
 				counters[1] += 1
 			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
 			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
-			listctrl.SetStringItem(idx, 2, str(item.disc.name))
+			listctrl.SetStringItem(idx, 2, str(item.disk.name))
 			listctrl.SetStringItem(idx, 3, item.path)
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
@@ -177,7 +177,7 @@ class DlgSearch(wx.Dialog):
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 
-			if isinstance(item, Directory) or isinstance(item, Disc):
+			if isinstance(item, Directory) or isinstance(item, Disk):
 				self._parent.show_item(item)
 			elif isinstance(item, Image):
 				self._parent.show_item(item.parent)

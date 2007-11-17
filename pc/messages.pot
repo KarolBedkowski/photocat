@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-17 14:01+0100\n"
+"POT-Creation-Date: 2007-11-17 22:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgid "&About..."
 msgstr ""
 
 #: gui/wndmain.py:157
-msgid "&Add disc..."
+msgid "&Add disk..."
 msgstr ""
 
 #: gui/wndmain.py:128
@@ -29,7 +29,7 @@ msgid "&Catalog"
 msgstr ""
 
 #: gui/wndmain.py:159
-msgid "&Delete disc..."
+msgid "&Delete disk..."
 msgstr ""
 
 #: gui/wndmain.py:164
@@ -41,7 +41,7 @@ msgid "&File"
 msgstr ""
 
 #: gui/wndmain.py:158
-msgid "&Update disc..."
+msgid "&Update disk..."
 msgstr ""
 
 #: gui/_dlgabout.py:81
@@ -56,16 +56,16 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: gui/_dlgadddisc.py:58 gui/_dlgadddisc.py:182 gui/_dlgadddisc.py:188
-msgid "Add disc"
+#: gui/_dlgadddisk.py:58 gui/_dlgadddisk.py:182 gui/_dlgadddisk.py:188
+msgid "Add disk"
 msgstr ""
 
 #: gui/wndmain.py:157
-msgid "Add disc to catalog"
+msgid "Add disk to catalog"
 msgstr ""
 
 #: gui/wndmain.py:370
-msgid "Adding disc"
+msgid "Adding disk"
 msgstr ""
 
 #: gui/_dlgsearch.py:104
@@ -104,6 +104,10 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
+#: ../kpylibs/validators/validators.py:134
+msgid "Date isn't in correct format - YYYY-MM-DD format required"
+msgstr ""
+
 #: gui/_dlgproperties.py:132
 msgid "Del"
 msgstr ""
@@ -113,26 +117,26 @@ msgstr ""
 msgid "Delete %d images?"
 msgstr ""
 
-#: gui/wndmain.py:429
-msgid "Delete disc"
-msgstr ""
-
-#: gui/wndmain.py:432
-#, python-format
-msgid "Delete disc %s?"
-msgstr ""
-
 #: gui/wndmain.py:445
-msgid "Delete folder"
+msgid "Delete directory"
 msgstr ""
 
 #: gui/wndmain.py:448
 #, python-format
-msgid "Delete folder %s?"
+msgid "Delete directory %s?"
+msgstr ""
+
+#: gui/wndmain.py:429
+msgid "Delete disk"
+msgstr ""
+
+#: gui/wndmain.py:432
+#, python-format
+msgid "Delete disk %s?"
 msgstr ""
 
 #: gui/wndmain.py:161
-msgid "Delete selected &folder..."
+msgid "Delete selected &dir..."
 msgstr ""
 
 #: gui/wndmain.py:162
@@ -140,7 +144,7 @@ msgid "Delete selected &image..."
 msgstr ""
 
 #: gui/wndmain.py:159
-msgid "Delete selected disc from catalog"
+msgid "Delete selected disk from catalog"
 msgstr ""
 
 #: gui/_dlgproperties.py:78 gui/components/infopanel.py:58
@@ -152,21 +156,26 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
+#: gui/wndmain.py:535
+#, python-format
+msgid "Directorys %d;  files: %d"
+msgstr ""
+
 #: gui/_dlgsearch.py:105
-msgid "Disc"
+msgid "Disk"
 msgstr ""
 
-#: gui/_dlgadddisc.py:100
-msgid "Disc description:"
+#: gui/_dlgadddisk.py:100
+msgid "Disk description:"
 msgstr ""
 
-#: gui/_dlgadddisc.py:90
-msgid "Disc name:"
+#: gui/_dlgadddisk.py:90
+msgid "Disk name:"
 msgstr ""
 
 #: model/catalog.py:234
 #, python-format
-msgid "Discs: %d"
+msgid "Disks: %d"
 msgstr ""
 
 #: gui/wndmain.py:384 gui/wndmain.py:418
@@ -194,6 +203,10 @@ msgstr ""
 msgid "Exif"
 msgstr ""
 
+#: ../kpylibs/validators/validators.py:28
+msgid "Field must by not empty"
+msgstr ""
+
 #: model/_element.py:96
 msgid "File date"
 msgstr ""
@@ -207,6 +220,10 @@ msgstr ""
 msgid "Find"
 msgstr ""
 
+#: ../kpylibs/validators/validators.py:96
+msgid "Float value required"
+msgstr ""
+
 #: gui/components/infopanel.py:60
 msgid "Folder"
 msgstr ""
@@ -215,13 +232,8 @@ msgstr ""
 msgid "Folder files"
 msgstr ""
 
-#: gui/_dlgadddisc.py:109
+#: gui/_dlgadddisk.py:109
 msgid "Folder:"
-msgstr ""
-
-#: gui/wndmain.py:535
-#, python-format
-msgid "Folders %d;  files: %d"
 msgstr ""
 
 #: model/catalog.py:242
@@ -229,7 +241,7 @@ msgstr ""
 msgid "Folders: %d"
 msgstr ""
 
-#: gui/_dlgadddisc.py:148
+#: gui/_dlgadddisk.py:148
 msgid "Force"
 msgstr ""
 
@@ -238,23 +250,31 @@ msgstr ""
 msgid "Found %d folders and %d files"
 msgstr ""
 
-#: gui/_dlgadddisc.py:142
+#: gui/_dlgadddisk.py:142
 msgid "Include empty directories"
+msgstr ""
+
+#: ../kpylibs/validators/validators.py:66
+msgid "Incorrect value"
+msgstr ""
+
+#: ../kpylibs/validators/validators.py:79
+msgid "Integer value required"
 msgstr ""
 
 #: gui/wndmain.py:138 gui/wndmain.py:198
 msgid "Load catalog"
 msgstr ""
 
-#: gui/_dlgadddisc.py:145
+#: gui/_dlgadddisk.py:145
 msgid "Load info about files in directories"
 msgstr ""
 
-#: gui/_dlgadddisc.py:151
+#: gui/_dlgadddisk.py:151
 msgid "Load info from captions.txt"
 msgstr ""
 
-#: gui/_dlgadddisc.py:79 gui/_dlgproperties.py:77
+#: gui/_dlgadddisk.py:79 gui/_dlgproperties.py:77
 #: gui/components/infopanel.py:57
 msgid "Main"
 msgstr ""
@@ -264,16 +284,16 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: gui/_dlgadddisc.py:182
+#: gui/_dlgadddisk.py:182
 msgid "Name already exists in catalog!"
 msgstr ""
 
-#: gui/wndmain.py:429
-msgid "No disc selected"
+#: gui/wndmain.py:445
+msgid "No directory selected"
 msgstr ""
 
-#: gui/wndmain.py:445
-msgid "No folder selected"
+#: gui/wndmain.py:429
+msgid "No disk selected"
 msgstr ""
 
 #: gui/_dlgsearch.py:168
@@ -294,7 +314,7 @@ msgstr ""
 msgid "Opening %s....  Please wait..."
 msgstr ""
 
-#: gui/_dlgadddisc.py:80
+#: gui/_dlgadddisk.py:80
 msgid "Options"
 msgstr ""
 
@@ -337,11 +357,11 @@ msgstr ""
 msgid "Search in calalogs"
 msgstr ""
 
-#: gui/_dlgadddisc.py:163
+#: gui/_dlgadddisk.py:163
 msgid "Select directory"
 msgstr ""
 
-#: gui/_dlgadddisc.py:188
+#: gui/_dlgadddisk.py:188
 msgid "Selected dir don't exists!"
 msgstr ""
 
@@ -362,26 +382,49 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: gui/_dlgadddisc.py:58
-msgid "Update disc"
+#: ../kpylibs/validators/validators.py:113
+msgid "Time isn't in correct format - HH:MM format required"
+msgstr ""
+
+#: ../kpylibs/validators/validators.py:40
+msgid "Too few characters in fields"
+msgstr ""
+
+#: ../kpylibs/validators/validators.py:53
+msgid "Too many characters in fields"
+msgstr ""
+
+#: gui/_dlgadddisk.py:58
+msgid "Update disk"
 msgstr ""
 
 #: gui/wndmain.py:158
-msgid "Update selected disc"
+msgid "Update selected disk"
 msgstr ""
 
 #: gui/wndmain.py:404
-msgid "Updating disc"
+msgid "Updating disk"
+msgstr ""
+
+#: ../kpylibs/validators/my_validator.py:54
+msgid "Validate error"
+msgstr ""
+
+#: ../kpylibs/validators/my_validator.py:53
+#, python-format
+msgid ""
+"Validate field \"%s\" failed:\n"
+"%s"
 msgstr ""
 
 #: gui/components/infopanel.py:103 gui/components/infopanel.py:126
 msgid "Value"
 msgstr ""
 
-#: gui/_dlgadddisc.py:95
+#: gui/_dlgadddisk.py:95
 msgid "name"
 msgstr ""
 
-#: gui/_dlgadddisc.py:114
+#: gui/_dlgadddisk.py:114
 msgid "path"
 msgstr ""

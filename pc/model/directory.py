@@ -45,13 +45,13 @@ _IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
 
 class Directory(Element):
 
-	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
+	def __init__(self, id, name, parent_id, parent=None, catalog=None, disk=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
 
 		self.subdirs_count		= 0
 		self.files_count		= 0
 		self._folder_files		= None
-		self._disc				= disc
+		self._disk				= disk
 		self.folder_files_offset = None
 		self.folder_files_size	= None
 
@@ -101,7 +101,7 @@ class Directory(Element):
 		_LOG.debug('Directory.load: len(files)=%d' % len(files))
 
 		def create_file(name):
-			image = Image(None, name, self.id, self, self._catalog, self._disc)
+			image = Image(None, name, self.id, self, self._catalog, self._disk)
 			image.load(os.path.join(path, name), options, on_update=on_update)
 			return image
 
@@ -129,7 +129,7 @@ class Directory(Element):
 			return
 
 		def create_subfolder(name):
-			subfolder = Directory(None, name, self.id, self, self._catalog, self._disc)
+			subfolder = Directory(None, name, self.id, self, self._catalog, self._disk)
 			subfolder.load(os.path.join(path, name), options, on_update=on_update)
 			return subfolder
 
@@ -161,7 +161,7 @@ class Directory(Element):
 				image = image[0]
 				image.update_element(os.path.join(path, name), options, on_update=on_update)
 			else:
-				image = Image(None, name, self.id, self, self._catalog, self._disc)
+				image = Image(None, name, self.id, self, self._catalog, self._disk)
 				image.load(os.path.join(path, name), options, on_update=on_update)
 			return image
 
@@ -189,7 +189,7 @@ class Directory(Element):
 				subfolder = subfolder[0]
 				subfolder.update_element(os.path.join(path, name), options, on_update=on_update)
 			else:
-				subfolder = Directory(None, name, self.id, self, self._catalog, self._disc)
+				subfolder = Directory(None, name, self.id, self, self._catalog, self._disk)
 				subfolder.load(os.path.join(path, name), options, on_update=on_update)
 			return subfolder
 

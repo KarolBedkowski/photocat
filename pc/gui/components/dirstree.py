@@ -36,7 +36,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self._icon_idx = self.__icon_provider.get_image_index('folder')
 		self._icon2_idx = self.__icon_provider.get_image_index('folder_open')
 		self._icon_folderimg_idx = self.__icon_provider.get_image_index('folder_image')
-		self._icon_disc_idx = self.__icon_provider.get_image_index('disk')
+		self._icon_disk_idx = self.__icon_provider.get_image_index('disk')
 
 		item_root = self.AddRoot('')
 		self.SetItemImage(item_root, self._icon_idx, wx.TreeItemIcon_Normal)
@@ -104,12 +104,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 			[ add_dir(node, subdir) for subdir in dir.subdirs ]
 
-		for disc in catalog.discs:
-			_LOG.debug('add_catalog add_disc %s' % disc.name)
-			disc.tree_node = disc_node = self.AppendItem(catalog_node, disc.name, data=wx.TreeItemData(disc))
-			self.SetItemImage(disc_node, self._icon_disc_idx, wx.TreeItemIcon_Normal)
+		for disk in catalog.disks:
+			_LOG.debug('add_catalog add_disk %s' % disk.name)
+			disk.tree_node = disk_node = self.AppendItem(catalog_node, disk.name, data=wx.TreeItemData(disk))
+			self.SetItemImage(disk_node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
 
-			[ add_dir(disc_node, subdir) for subdir in disc.root.subdirs ]
+			[ add_dir(disk_node, subdir) for subdir in disk.root.subdirs ]
 
 		self.Expand(catalog_node)
 		self.update_catalog_node(catalog)

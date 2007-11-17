@@ -1,7 +1,7 @@
 ./__init__.py
 ./gui/__init__.py
 ./gui/_dlgabout.py
-./gui/_dlgadddisc.py
+./gui/_dlgadddisk.py
 ./gui/_dlgproperties.py
 ./gui/_dlgsearch.py
 ./gui/components/__init__.py
@@ -22,8 +22,12 @@
 ./model/catalog.py
 ./model/catalog_state.py
 ./model/dataprovider.py
-./model/disc.py
-./model/folder.py
+./model/directory.py
+./model/disk.py
 ./model/image.py
 ./model/storage.py
 ./model/tags_provider.py
+../kpylibs/validators/__init__.py
+../kpylibs/validators/my_validator.py
+../kpylibs/validators/my_validator_dv.py
+../kpylibs/validators/validators.py

@@ -42,7 +42,7 @@ from _element		import Element
 
 
 
-class Disc(Element):
+class Disk(Element):
 
 	def __init__(self, id, name, parent_id, parent=None):
 		Element.__init__(self, id, name, -1, None, catalog=parent)
@@ -63,7 +63,7 @@ class Disc(Element):
 
 
 	def load(self, path, options=None, on_update=None):
-		self._root = Directory(None, '/', self.id, self, catalog=self._catalog, disc=self)
+		self._root = Directory(None, '/', self.id, self, catalog=self._catalog, disk=self)
 		self._root.load(path, options=options, on_update=on_update)
 		self.date = time.time()
 
@@ -89,11 +89,11 @@ class Disc(Element):
 if __name__ == '__main__':
 	#from catalog import Catalog
 	#catalog = Catalog()
-	#disc = Disc(id=None, name='root', catalog=catalog)
-	#disc.load('/home/k/gfx')
-	#print repr(disc)
+	#disk = Disk(id=None, name='root', catalog=catalog)
+	#disk.load('/home/k/gfx')
+	#print repr(disk)
 	#fout = file('out.yaml', 'w')
-	#disc.dump(fout)
+	#disk.dump(fout)
 	#fout.close()
 	pass
 

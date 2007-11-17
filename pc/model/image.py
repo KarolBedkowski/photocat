@@ -51,13 +51,13 @@ _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF U
 
 class Image(Element):
 
-	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
+	def __init__(self, id, name, parent_id, parent=None, catalog=None, disk=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
 
 		self.offset		= None
 		self._exif		= None
 		self.thumbsize	= None
-		self._disc		= disc
+		self._disk		= disk
 		self.dimensions = None
 		self.exif_offset = None
 		self.exif_size	= None

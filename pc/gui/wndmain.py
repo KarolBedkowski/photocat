@@ -49,14 +49,14 @@ from kpylibs.formaters		import format_size
 
 import pc
 
-from pc.model				import Catalog, Directory, Disc, Image
+from pc.model				import Catalog, Directory, Disk, Image
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
 from components.infopanel	import InfoPanel
 
 from _dlgabout				import DlgAbout
-from _dlgadddisc			import DlgAddDisc
+from _dlgadddisk			import DlgAddDisk
 from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
 
@@ -154,11 +154,11 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
-			(_('&Add disc...'),		None,	_('Add disc to catalog'),				self._on_catalog_add,		None,		wx.ART_NEW_DIR),
-			(_('&Update disc...'),	None,	_('Update selected disc'),				self._on_catalog_update_disc),
-			(_('&Delete disc...'),	None,	_('Delete selected disc from catalog'),	self._on_catalog_del_disc,	None,		wx.ART_DELETE),
+			(_('&Add disk...'),		None,	_('Add disk to catalog'),				self._on_catalog_add,		None,		wx.ART_NEW_DIR),
+			(_('&Update disk...'),	None,	_('Update selected disk'),				self._on_catalog_update_disk),
+			(_('&Delete disk...'),	None,	_('Delete selected disk from catalog'),	self._on_catalog_del_disk,	None,		wx.ART_DELETE),
 			('-'),
-			(_('Delete selected &folder...'),	None,	'',							self._on_catalog_del_folder),
+			(_('Delete selected &dir...'),	None,	'',								self._on_catalog_del_dir),
 			(_('Delete selected &image...'),	None,	'',							self._on_catalog_del_image),
 			('-'),
 			(_('&Edit selected files...'),	None,	'',								self._on_catalog_edit_multi),
@@ -170,7 +170,7 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_help(self):
 		menu = create_menu(self, (
-			(_('&About...'),	None,	_('About application'),	self._on_help_about,	wx.ID_ABOUT,	wx.ART_INFORMATION),
+			(_('&About...'),	None,	'',	self._on_help_about,	wx.ID_ABOUT,	wx.ART_INFORMATION),
 		))
 		return menu
 
@@ -363,11 +363,11 @@ class WndMain(wx.Frame):
 
 		data = {}
 
-		dlg = DlgAddDisc(self, data, catalog=catalog)
+		dlg = DlgAddDisk(self, data, catalog=catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
 
-			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 70), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Adding disk"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 
 			def update_progress(msg, cntr=[0]):
@@ -376,7 +376,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.add_disc(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
+				catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:
@@ -386,22 +386,22 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
-	def _on_catalog_update_disc(self, evt):
+	def _on_catalog_update_disk(self, evt):
 		if len(self._catalogs) == 0:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None or not isinstance(tree_selected, Disc):
+		if tree_selected is None or not isinstance(tree_selected, Disk):
 			return
 
 		data = dict(name=tree_selected.name, descr=tree_selected.descr)
 
-		dlg = DlgAddDisc(self, data, update=True, catalog=tree_selected.catalog)
+		dlg = DlgAddDisk(self, data, update=True, catalog=tree_selected.catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
 
-			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 70), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Updating disk"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 
 			def update_progress(msg, cntr=[0]):
@@ -410,7 +410,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.update_disc(data['path'], tree_selected, options=data, on_update=update_progress, name=data['name'], descr=data['descr'])
+				catalog.update_disk(data['path'], tree_selected, options=data, on_update=update_progress, name=data['name'], descr=data['descr'])
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:
@@ -420,32 +420,32 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
-	def _on_catalog_del_disc(self, evt):
+	def _on_catalog_del_disk(self, evt):
 		if len(self._catalogs) == 0:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None or not isinstance(tree_selected, Disc):
-			dialogs.message_box_error(self, _('No disc selected'), _('Delete disc'))
+		if tree_selected is None or not isinstance(tree_selected, Disk):
+			dialogs.message_box_error(self, _('No disk selected'), _('Delete disk'))
 			return
 
-		if dialogs.message_box_warning_yesno(self, _('Delete disc %s?') % tree_selected.name, 'PC'):
+		if dialogs.message_box_warning_yesno(self, _('Delete disk %s?') % tree_selected.name, 'PC'):
 			self._dirs_tree.delete_item(tree_selected)
 			catalog = tree_selected.catalog
-			catalog.del_disc(tree_selected)
+			catalog.del_disk(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
 
 
-	def _on_catalog_del_folder(self, evt):
+	def _on_catalog_del_dir(self, evt):
 		if len(self._catalogs) == 0:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None or not isinstance(tree_selected, Directory):
-			dialogs.message_box_error(self, _('No folder selected'), _('Delete folder'))
+			dialogs.message_box_error(self, _('No directory selected'), _('Delete directory'))
 			return
 
-		if dialogs.message_box_warning_yesno(self, _('Delete folder %s?') % tree_selected.name, 'PC'):
+		if dialogs.message_box_warning_yesno(self, _('Delete directory %s?') % tree_selected.name, 'PC'):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.delete_subfolder(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
@@ -460,7 +460,7 @@ class WndMain(wx.Frame):
 			return
 		if isinstance(folder, Directory):
 			pass
-		elif isinstance(folder, Disc):
+		elif isinstance(folder, Disk):
 			folder = folder.root
 		else:
 			return
@@ -494,7 +494,7 @@ class WndMain(wx.Frame):
 			return
 		if isinstance(folder, Directory):
 			pass
-		elif isinstance(folder, Disc):
+		elif isinstance(folder, Disk):
 			folder = folder.root
 		else:
 			return
@@ -519,7 +519,7 @@ class WndMain(wx.Frame):
 		self._info_panel.clear_folder()
 		if isinstance(item, Directory):
 			pass
-		elif isinstance(item, Disc):
+		elif isinstance(item, Disk):
 			item = item.root
 		else:
 			self._photo_list.ShowDir([])
@@ -541,7 +541,7 @@ class WndMain(wx.Frame):
 		self._info_panel.clear_folder()
 		if isinstance(item, Directory):
 			pass
-		elif isinstance(item, Disc):
+		elif isinstance(item, Disk):
 			item = item.root
 		else:
 			return

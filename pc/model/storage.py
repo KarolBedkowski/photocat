@@ -32,7 +32,7 @@ import logging
 _LOG = logging.getLogger(__name__)
 from struct			import pack, unpack, calcsize
 
-from disc			import Disc
+from disk			import Disk
 from directory		import Directory
 from image			import Image
 from catalog_state	import CatalogState
@@ -54,9 +54,9 @@ class Storage:
 		outfile.write(repr(catalog.state.dict))
 		outfile.write('\n')
 
-		for disc in catalog.discs:
-			outfile.write('!disc:')
-			outfile.write(repr(disc.dict))
+		for disk in catalog.disks:
+			outfile.write('!disk:')
+			outfile.write(repr(disk.dict))
 			outfile.write('\n')
 
 			def write(folder):
@@ -73,7 +73,7 @@ class Storage:
 
 				[ write_img(image) for image in folder.files ]
 
-			write(disc.root)
+			write(disk.root)
 
 		outfile.close()
 
@@ -91,8 +91,8 @@ class Storage:
 
 		write('!catalogstate:' + repr(catalog.state.dict))
 
-		for disc in catalog.discs:
-			write('!disc:' + repr(disc.dict))
+		for disk in catalog.disks:
+			write('!disk:' + repr(disk.dict))
 
 			def write_folder(folder):
 				write('!folder:' + repr(folder.dict_not_none))
@@ -104,7 +104,7 @@ class Storage:
 
 				[ write_img(image) for image in folder.files ]
 
-			write_folder(disc.root)
+			write_folder(disk.root)
 
 		outfile.close()
 
@@ -115,7 +115,7 @@ class Storage:
 
 	@classmethod
 	def load_v1(cls, catalog_file_path, catalog):
-		discs	= []
+		disks	= []
 		ids		= {}
 
 		if os.path.exists(catalog_file_path):
@@ -131,11 +131,11 @@ class Storage:
 				except:
 					_LOG.warn('Loading error; row=' + line)
 				else:
-					if object_name == '!disc':
-						node = Disc(None, None, None, parent=catalog)
+					if object_name == '!disk' or object_name == '!disc':
+						node = Disk(None, None, None, parent=catalog)
 						node.attributes_update_fast(attrs)
 						ids[node.id] = node
-						discs.append(node)
+						disks.append(node)
 					elif object_name == '!folder':
 						node = Directory(None, None, None)
 						node.attributes_update_fast(attrs)
@@ -163,12 +163,12 @@ class Storage:
 
 			infile.close()
 
-		return discs
+		return disks
 
 
 	@classmethod
 	def load_v2(cls, catalog_file_path, catalog):
-		discs	= []
+		disks	= []
 		ids		= {}
 
 		long_len = calcsize('L')
@@ -189,11 +189,11 @@ class Storage:
 				except:
 					_LOG.warn('Loading error; row=' + line)
 				else:
-					if object_name == '!disc':
-						node = Disc(None, None, None, parent=catalog)
+					if object_name == '!disk':
+						node = Disk(None, None, None, parent=catalog)
 						node.attributes_update_fast(attrs)
 						ids[node.id] = node
-						discs.append(node)
+						disks.append(node)
 					elif object_name == '!folder':
 						node = Directory(None, None, None)
 						node.attributes_update_fast(attrs)
@@ -221,7 +221,7 @@ class Storage:
 
 			infile.close()
 
-		return discs
+		return disks
 
 
 	load = load_v1

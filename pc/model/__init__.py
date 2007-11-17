@@ -25,12 +25,12 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-__all__ = ['Catalog', 'Folder', 'Disc', 'Image']
+__all__ = ['Catalog', 'Folder', 'Disk', 'Image']
 
 
 from catalog	import Catalog
 from directory	import Directory
-from disc		import Disc
+from disk		import Disk
 from image		import Image
 
 

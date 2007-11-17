@@ -25,7 +25,7 @@ __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
-__all__			= ['DlgAddDisc']
+__all__			= ['DlgAddDisk']
 
 
 if __name__ == '__main__':
@@ -51,16 +51,16 @@ from kpylibs.validators		import MyValidator, validators
 
 
 
-class DlgAddDisc(wx.Dialog):
+class DlgAddDisk(wx.Dialog):
 	''' Dialog dodania/uaktualnienia dysku '''
 
 	def __init__(self, parent, data, update=False, catalog=None):
-		caption = update and _('Add disc') or _('Update disc')
+		caption = update and _('Add disk') or _('Update disk')
 		wx.Dialog.__init__(self, parent, -1, caption)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
 		self._data = data
-		self.__load_disc_names(catalog, update)
+		self.__load_disk_names(catalog, update)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_notebook(), 0, wx.EXPAND|wx.ALL, 5)
@@ -87,22 +87,22 @@ class DlgAddDisc(wx.Dialog):
 		panel = wx.Panel(parent, -1)
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Disc name:')), 0, wx.ALL, 5)
-		self._disc_name = wx.TextCtrl(panel, -1,
+		main_grid.Add(wx.StaticText(panel, -1, _('Disk name:')), 0, wx.ALL, 5)
+		self._disk_name = wx.TextCtrl(panel, -1,
 				validator=MyValidator(
 						data_key=(data, 'name'), 
 						validators=validators.NotEmptyValidator(), 
 						field=_('name')
 				)
 		)
-		main_grid.Add(self._disc_name, 0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._disk_name, 0, wx.EXPAND|wx.ALL, 5)
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Disc description:')), 0, wx.ALL, 5)
-		self._disc_descr = wx.TextCtrl(panel, -1, 
+		main_grid.Add(wx.StaticText(panel, -1, _('Disk description:')), 0, wx.ALL, 5)
+		self._disk_descr = wx.TextCtrl(panel, -1, 
 				validator=MyValidator(data_key=(data, 'descr')),
 				style=wx.TE_MULTILINE
 		)
-		main_grid.Add(self._disc_descr, 1, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._disk_descr, 1, wx.EXPAND|wx.ALL, 5)
 
 		last_dirs, last_dir = self.__get_last_dirs()
 
@@ -178,14 +178,14 @@ class DlgAddDisc(wx.Dialog):
 
 		name = self._data['name']
 
-		if self._catalog_disc_names is not None and name in self._catalog_disc_names:
-			message_box_error(self, _('Name already exists in catalog!'), _('Add disc'))
+		if self._catalog_disk_names is not None and name in self._catalog_disk_names:
+			message_box_error(self, _('Name already exists in catalog!'), _('Add disk'))
 			return
 
 		current_path  = self._data['path']
 
 		if not os.path.exists(current_path):
-			message_box_error(self, _("Selected dir don't exists!"), _('Add disc'))
+			message_box_error(self, _("Selected dir don't exists!"), _('Add disk'))
 			return
 
 		last_dirs = [ current_path ] + [ path
@@ -194,7 +194,7 @@ class DlgAddDisc(wx.Dialog):
 		]
 
 		if __name__ != '__main__':
-			AppConfig().set_items('add_disc-last_dir', 'last_dir', last_dirs)
+			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
 		self.EndModal(wx.ID_OK)
 
 
@@ -203,21 +203,21 @@ class DlgAddDisc(wx.Dialog):
 		if __name__ == '__main__':
 			last_dirs = []
 		else:
-			last_dirs = AppConfig().get_items('add_disc-last_dir') or []
+			last_dirs = AppConfig().get_items('add_disk-last_dir') or []
 			if len(last_dirs) > 0:
 				last_dirs = [ val for key, val in sorted(last_dirs) ]
 				last_dir = last_dirs[0]
 		return (last_dirs, last_dir)
 
 
-	def __load_disc_names(self, catalog, update):
-		self._catalog_disc_names = None
+	def __load_disk_names(self, catalog, update):
+		self._catalog_disk_names = None
 		if catalog is not None:
 			if update:
 				name = self._data['name']
-				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs if disc.name != name) )
+				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks if disk.name != name) )
 			else:
-				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs ) )
+				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks ) )
 
 
 
@@ -228,7 +228,7 @@ if __name__ == '__main__':
 			'name' : '__name__',
 			'descr': '__descr__'
 	}
-	wnd = DlgAddDisc(None, data)
+	wnd = DlgAddDisk(None, data)
 	if wnd.ShowModal() == wx.ID_OK:
 		print 'OK', data
 	else:
