@@ -27,6 +27,16 @@ __revision__	= '$Id$'
 
 __all__			= ['DlgAddDisc']
 
+
+if __name__ == '__main__':
+	import sys
+	reload(sys)
+	try:
+		sys.setappdefaultencoding("utf-8")
+	except:
+		sys.setdefaultencoding("utf-8")
+	sys.path.append('../../')
+
 import sys
 import os
 
@@ -37,83 +47,120 @@ import wx
 
 from kpylibs.appconfig		import AppConfig
 from kpylibs.dialogs		import message_box_error
+from kpylibs.validators		import MyValidator, validators
 
 
 
 class DlgAddDisc(wx.Dialog):
-	''' Dialog o programie '''
+	''' Dialog dodania/uaktualnienia dysku '''
 
-	def __init__(self, parent, update=False, name=None, desc=None, catalog=None):
+	def __init__(self, parent, data, update=False, catalog=None):
 		caption = update and _('Add disc') or _('Update disc')
-		wx.Dialog.__init__(self, parent, -1, caption, style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		wx.Dialog.__init__(self, parent, -1, caption)
+		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
-		self._catalog_disc_names = None
-		if catalog is not None:
-			if update:
-				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs if disc.name != name) )
-			else:
-				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs ) )
+		self._data = data
+		self.__load_disc_names(catalog, update)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-
-		main_grid.Add(wx.StaticText(self,-1, _('Disc name:')), 0, wx.ALL, 5)
-		self._disc_name = wx.TextCtrl(self, -1, name or '')
-		main_grid.Add(self._disc_name, 0, wx.EXPAND|wx.ALL, 5)
-
-		main_grid.Add(wx.StaticText(self,-1, _('Disc description:')), 0, wx.ALL, 5)
-		self._disc_descr = wx.TextCtrl(self, -1, desc or '', style=wx.TE_MULTILINE)
-		main_grid.Add(self._disc_descr, 1, wx.EXPAND|wx.ALL, 5)
-
-		main_grid.Add(wx.StaticText(self,-1, _('Folder:')), 0, wx.ALL, 5)
-
-		last_dirs = AppConfig().get_items('add_disc-last_dir') or []
-		last_dir = ''
-		if len(last_dirs) > 0:
-			last_dirs = [ val for key, val in sorted(last_dirs) ]
-			last_dir = last_dirs[0]
-
-		self._path = wx.ComboBox(self, -1, last_dir, choices=last_dirs)
-		btn_sel_dir = wx.Button(self, -1, '...')
-
-		grid = wx.BoxSizer(wx.HORIZONTAL)
-		grid.Add(self._path, 1, wx.EXPAND)
-		grid.Add(btn_sel_dir, 0, wx.ALL)
-
-		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 5)
-
+		main_grid.Add(self._create_notebook(), 0, wx.EXPAND|wx.ALL, 5)
 		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
 
 		self.SetSizerAndFit(main_grid)
-		self.SetSize((500, 300))
+		self.SetSize((500, -1))
 
 		self.Centre(wx.BOTH)
-
-		self.Bind(wx.EVT_BUTTON, self._on_btn_sel_dir, btn_sel_dir)
+		
 		wx.EVT_BUTTON(self, wx.ID_OK, self._on_ok)
 
 
-	@property
-	def path(self):
-		return self._path.GetValue().strip()
+	def _create_notebook(self):
+		notebook = wx.Notebook(self, -1)
+		notebook.AddPage(self._create_page_main(notebook),		_('Main'))
+		notebook.AddPage(self._create_page_options(notebook),	_('Options'))
+		return notebook
 
 
-	@property
-	def name(self):
-		return self._disc_name.GetValue().strip()
+	def _create_page_main(self, parent):
+		data = self._data
+
+		panel = wx.Panel(parent, -1)
+		main_grid = wx.BoxSizer(wx.VERTICAL)
+
+		main_grid.Add(wx.StaticText(panel, -1, _('Disc name:')), 0, wx.ALL, 5)
+		self._disc_name = wx.TextCtrl(panel, -1,
+				validator=MyValidator(
+						data_key=(data, 'name'), 
+						validators=validators.NotEmptyValidator(), 
+						field=_('name')
+				)
+		)
+		main_grid.Add(self._disc_name, 0, wx.EXPAND|wx.ALL, 5)
+
+		main_grid.Add(wx.StaticText(panel, -1, _('Disc description:')), 0, wx.ALL, 5)
+		self._disc_descr = wx.TextCtrl(panel, -1, 
+				validator=MyValidator(data_key=(data, 'descr')),
+				style=wx.TE_MULTILINE
+		)
+		main_grid.Add(self._disc_descr, 1, wx.EXPAND|wx.ALL, 5)
+
+		last_dirs, last_dir = self.__get_last_dirs()
+
+		main_grid.Add(wx.StaticText(panel, -1, _('Folder:')), 0, wx.ALL, 5)
+		self._path = wx.ComboBox(panel, -1, last_dir, 
+				validator=MyValidator(
+						data_key=(data, 'path'), 
+						validators=validators.NotEmptyValidator(), 
+						field=_('path')
+				),
+				choices=last_dirs)
+		
+		size = self._path.GetSizeTuple()[1]
+		btn_sel_dir = wx.Button(panel, -1, '...', size=(size, size))
+
+		grid = wx.BoxSizer(wx.HORIZONTAL)
+		grid.Add(self._path, 1, wx.EXPAND)
+		grid.Add((5, 1))
+		grid.Add(btn_sel_dir, 0, wx.ALL)
+		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 5)
+
+		panel.SetSizerAndFit(main_grid)
+
+		self.Bind(wx.EVT_BUTTON, self._on_btn_sel_dir, btn_sel_dir)
+
+		return panel
 
 
-	@property
-	def descr(self):
-		return self._disc_descr.GetValue().strip()
+	def _create_page_options(self, parent):
+		data = self._data
+		if not data.has_key('load_folder_files'):			data['load_folder_files'] = True
+		if not data.has_key('load_captions_txt'):			data['load_captions_txt'] = True
+
+		panel = wx.Panel(parent, -1)
+		main_grid = wx.BoxSizer(wx.VERTICAL)
+
+		main_grid.Add(wx.CheckBox(panel, -1, _('Include empty directories'), validator=MyValidator(data_key=(data, 'include_empty'))),
+				0, wx.EXPAND|wx.ALL, 5)
+
+		main_grid.Add(wx.CheckBox(panel, -1, _('Load info about files in directories'), validator=MyValidator(data_key=(data, 'load_folder_files'))),
+				0, wx.EXPAND|wx.ALL, 5)
+
+		main_grid.Add(wx.CheckBox(panel, -1, _('Force'), validator=MyValidator(data_key=(data, 'force'))),
+				0, wx.EXPAND|wx.ALL, 5)
+
+		main_grid.Add(wx.CheckBox(panel, -1, _('Load info from captions.txt'), validator=MyValidator(data_key=(data, 'load_captions_txt'))),
+				0, wx.EXPAND|wx.ALL, 5)
+
+		panel.SetSizerAndFit(main_grid)
+		return panel
 
 
 	def _on_btn_sel_dir(self, evt):
-		curr_dir = self.path
+		curr_dir = self._path.GetValue()
 		if curr_dir is None or len(curr_dir) == 0 or not os.path.exists(curr_dir) or not os.path.isdir(curr_dir):
 			curr_dir = os.path.abspath(os.curdir)
 
-		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir,
-				style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
+		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
 
 		if dialog.ShowModal() == wx.ID_OK:
 			directory = dialog.GetPath()
@@ -123,27 +170,73 @@ class DlgAddDisc(wx.Dialog):
 
 
 	def _on_ok(self, evt):
-		name = self.name
-		if len(name) == 0:
-			message_box_error(self, _('Name is empty!'), _('Add disc'))
+		if not self.Validate():
 			return
 
-		if len(self.path) == 0:
-			message_box_error(self, _('Path is empty!'), _('Add disc'))
+		if not self.TransferDataFromWindow():
 			return
+
+		name = self._data['name']
 
 		if self._catalog_disc_names is not None and name in self._catalog_disc_names:
 			message_box_error(self, _('Name already exists in catalog!'), _('Add disc'))
 			return
 
-		current_path  = self.path
+		current_path  = self._data['path']
+
+		if not os.path.exists(current_path):
+			message_box_error(self, _("Selected dir don't exists!"), _('Add disc'))
+			return
+
 		last_dirs = [ current_path ] + [ path
 				for path in ( self._path.GetString(idx) for idx in xrange(min(self._path.GetCount(), 9)) )
 				if path != current_path
 		]
 
-		AppConfig().set_items('add_disc-last_dir', 'last_dir', last_dirs)
+		if __name__ != '__main__':
+			AppConfig().set_items('add_disc-last_dir', 'last_dir', last_dirs)
 		self.EndModal(wx.ID_OK)
+
+
+	def __get_last_dirs(self):
+		last_dir = ''
+		if __name__ == '__main__':
+			last_dirs = []
+		else:
+			last_dirs = AppConfig().get_items('add_disc-last_dir') or []
+			if len(last_dirs) > 0:
+				last_dirs = [ val for key, val in sorted(last_dirs) ]
+				last_dir = last_dirs[0]
+		return (last_dirs, last_dir)
+
+
+	def __load_disc_names(self, catalog, update):
+		self._catalog_disc_names = None
+		if catalog is not None:
+			if update:
+				name = self._data['name']
+				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs if disc.name != name) )
+			else:
+				self._catalog_disc_names = tuple( ( disc.name for disc in catalog.discs ) )
+
+
+
+
+if __name__ == '__main__':
+	app = wx.PySimpleApp()
+	data = {
+			'name' : '__name__',
+			'descr': '__descr__'
+	}
+	wnd = DlgAddDisc(None, data)
+	if wnd.ShowModal() == wx.ID_OK:
+		print 'OK', data
+	else:
+		print 'cancel'
+	wnd.Destroy()
+
+	del app
+
 
 
 # vim: encoding=utf8: ff=unix:

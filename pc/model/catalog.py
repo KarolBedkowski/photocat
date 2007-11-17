@@ -146,8 +146,12 @@ class Catalog(BaseElement):
 		self.dirty = True
 
 
-	def update_disc(self, path, disc, options=None, on_update=None):
+	def update_disc(self, path, disc, options=None, on_update=None, name=None, descr=None):
 		disc.update_element(path, options=options, on_update=on_update)
+		if name is not None:
+			disc.name = name
+		if descr is not None:
+			disc.descr = descr
 		self._data_provider.flush()
 		self.dirty = True
 

@@ -149,7 +149,7 @@ class Image(Element):
 
 
 	def update_element(self, path, options=None, on_update=None):
-		if Element.update_element(self, path, options, on_update):
+		if Element.update_element(self, path, options, on_update) or options.get('force', False):
 			self.load(path)
 
 

@@ -140,8 +140,8 @@ class Folder(Element):
 		self.subdirs_count = len(subdirs)
 		subdirs = None
 
-		self._load_caption_txt(path)
-		self._load_file_folders(path)
+		if options.get('load_captions_txt', True):		self._load_caption_txt(path)
+		if options.get('load_folder_files', True):		self._load_file_folders(path)
 
 
 	def update_element(self, path, options=None, on_update=None):
@@ -202,8 +202,8 @@ class Folder(Element):
 		self.subdirs_count = len(self._subdirs)
 		subdirs = None
 
-		self._load_caption_txt(path)
-		self._load_file_folders(path)
+		if options.get('load_captions_txt', True):		self._load_caption_txt(path)
+		if options.get('load_folder_files', True):		self._load_file_folders(path)
 
 
 	@staticmethod

@@ -361,9 +361,11 @@ class WndMain(wx.Frame):
 		else:
 			catalog = tree_selected.catalog
 
-		dlg = DlgAddDisc(self, catalog=catalog)
+		data = {}
+
+		dlg = DlgAddDisc(self, data, catalog=catalog)
 		if dlg.ShowModal() == wx.ID_OK:
-			allfiles = Catalog.fast_count_files_dirs(dlg.path) + 1
+			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
 
 			dlg_progress = wx.ProgressDialog(_("Adding disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
@@ -374,7 +376,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.add_disc(dlg.path, dlg.name, dlg.descr, options=_DEFAULT_ADD_OPTIONS, on_update=update_progress)
+				catalog.add_disc(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:
@@ -392,10 +394,12 @@ class WndMain(wx.Frame):
 		if tree_selected is None or not isinstance(tree_selected, Disc):
 			return
 
-		dlg = DlgAddDisc(self, update=True, name=tree_selected.name, desc=tree_selected.descr, catalog=tree_selected.catalog)
+		data = dict(name=tree_selected.name, descr=tree_selected.descr)
+
+		dlg = DlgAddDisc(self, data, update=True, catalog=tree_selected.catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			catalog		= tree_selected.catalog
-			allfiles	= Catalog.fast_count_files_dirs(dlg.path) + 1
+			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
 
 			dlg_progress = wx.ProgressDialog(_("Updating disc"), (" " * 70), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
@@ -406,7 +410,7 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.update_disc(dlg.path, tree_selected, options=_DEFAULT_ADD_OPTIONS, on_update=update_progress)
+				catalog.update_disc(data['path'], tree_selected, options=data, on_update=update_progress, name=data['name'], descr=data['descr'])
 				catalog.save_catalog()
 				self._dirs_tree.add_catalog(catalog)
 			finally:
