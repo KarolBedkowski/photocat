@@ -49,7 +49,7 @@ from kpylibs.formaters		import format_size
 
 import pc
 
-from pc.model				import Catalog, Folder, Disc, Image
+from pc.model				import Catalog, Directory, Disc, Image
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
@@ -441,7 +441,7 @@ class WndMain(wx.Frame):
 			return
 
 		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None or not isinstance(tree_selected, Folder):
+		if tree_selected is None or not isinstance(tree_selected, Directory):
 			dialogs.message_box_error(self, _('No folder selected'), _('Delete folder'))
 			return
 
@@ -458,7 +458,7 @@ class WndMain(wx.Frame):
 		folder = self._dirs_tree.selected_item
 		if folder is None:
 			return
-		if isinstance(folder, Folder):
+		if isinstance(folder, Directory):
 			pass
 		elif isinstance(folder, Disc):
 			folder = folder.root
@@ -492,7 +492,7 @@ class WndMain(wx.Frame):
 		folder = self._dirs_tree.selected_item
 		if folder is None:
 			return
-		if isinstance(folder, Folder):
+		if isinstance(folder, Directory):
 			pass
 		elif isinstance(folder, Disc):
 			folder = folder.root
@@ -517,7 +517,7 @@ class WndMain(wx.Frame):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
-		if isinstance(item, Folder):
+		if isinstance(item, Directory):
 			pass
 		elif isinstance(item, Disc):
 			item = item.root
@@ -532,14 +532,14 @@ class WndMain(wx.Frame):
 				self._info_panel.show_folder(item)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
-				self.SetStatusText(_('Folders %d;  files: %d') % (item.subdirs_count, item.files_count))
+				self.SetStatusText(_('Directorys %d;  files: %d') % (item.subdirs_count, item.files_count))
 
 
 	def _on_dirtree_item_activate(self, evt):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
-		if isinstance(item, Folder):
+		if isinstance(item, Directory):
 			pass
 		elif isinstance(item, Disc):
 			item = item.root

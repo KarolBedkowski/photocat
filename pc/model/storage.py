@@ -33,7 +33,7 @@ _LOG = logging.getLogger(__name__)
 from struct			import pack, unpack, calcsize
 
 from disc			import Disc
-from folder			import Folder
+from directory		import Directory
 from image			import Image
 from catalog_state	import CatalogState
 
@@ -137,7 +137,7 @@ class Storage:
 						ids[node.id] = node
 						discs.append(node)
 					elif object_name == '!folder':
-						node = Folder(None, None, None)
+						node = Directory(None, None, None)
 						node.attributes_update_fast(attrs)
 						parent = ids[node.parent_id]
 						ids[node.id] = node
@@ -195,7 +195,7 @@ class Storage:
 						ids[node.id] = node
 						discs.append(node)
 					elif object_name == '!folder':
-						node = Folder(None, None, None)
+						node = Directory(None, None, None)
 						node.attributes_update_fast(attrs)
 						parent = ids[node.parent_id]
 						ids[node.id] = node

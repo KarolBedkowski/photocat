@@ -43,7 +43,7 @@ _IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
 
 
 
-class Folder(Element):
+class Directory(Element):
 
 	def __init__(self, id, name, parent_id, parent=None, catalog=None, disc=None):
 		Element.__init__(self, id, name, parent_id, parent, catalog)
@@ -88,7 +88,7 @@ class Folder(Element):
 
 
 	def load(self, path, options=None, on_update=None):
-		_LOG.debug('Folder.load(%s)' % path)
+		_LOG.debug('Directory.load(%s)' % path)
 
 		Element.load(self, path, options, on_update)
 
@@ -98,7 +98,7 @@ class Folder(Element):
 				and os.path.isfile(os.path.join(path, fname))
 		))
 
-		_LOG.debug('Folder.load: len(files)=%d' % len(files))
+		_LOG.debug('Directory.load: len(files)=%d' % len(files))
 
 		def create_file(name):
 			image = Image(None, name, self.id, self, self._catalog, self._disc)
@@ -121,7 +121,7 @@ class Folder(Element):
 				), filter_folder_names )
 		)
 
-		_LOG.debug('Folder.load: len(subdirs)=%d' % len(subdirs))
+		_LOG.debug('Directory.load: len(subdirs)=%d' % len(subdirs))
 
 		if self.files_count == 0 and len(subdirs) == 0:
 			self.subdirs_count = 0
@@ -129,7 +129,7 @@ class Folder(Element):
 			return
 
 		def create_subfolder(name):
-			subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
+			subfolder = Directory(None, name, self.id, self, self._catalog, self._disc)
 			subfolder.load(os.path.join(path, name), options, on_update=on_update)
 			return subfolder
 
@@ -145,7 +145,7 @@ class Folder(Element):
 
 
 	def update_element(self, path, options=None, on_update=None):
-		_LOG.debug('Folder.update_element(%s)' % path)
+		_LOG.debug('Directory.update_element(%s)' % path)
 
 		Element.update_element(self, path, options, on_update)
 
@@ -166,8 +166,8 @@ class Folder(Element):
 			return image
 
 		self._files = map(create_file, files)
-		_LOG.debug('Folder.load: len(files)=%d' % len(self._files))
-		self._files.sort(Folder._items_cmp)
+		_LOG.debug('Directory.load: len(files)=%d' % len(self._files))
+		self._files.sort(Directory._items_cmp)
 		self.files_count = len(self._files)
 		files = None
 
@@ -189,7 +189,7 @@ class Folder(Element):
 				subfolder = subfolder[0]
 				subfolder.update_element(os.path.join(path, name), options, on_update=on_update)
 			else:
-				subfolder = Folder(None, name, self.id, self, self._catalog, self._disc)
+				subfolder = Directory(None, name, self.id, self, self._catalog, self._disc)
 				subfolder.load(os.path.join(path, name), options, on_update=on_update)
 			return subfolder
 
@@ -197,8 +197,8 @@ class Folder(Element):
 			self._subdirs = [ subfolder for subfolder in map(create_subfolder, subdirs) if subfolder.folder_size[0] > 0 ]
 		else:
 			self._subdirs = map(create_subfolder, subdirs)
-		_LOG.debug('Folder.load: len(subdirs)=%d' % len(self._subdirs))
-		self._subdirs.sort(Folder._items_cmp)
+		_LOG.debug('Directory.load: len(subdirs)=%d' % len(self._subdirs))
+		self._subdirs.sort(Directory._items_cmp)
 		self.subdirs_count = len(self._subdirs)
 		subdirs = None
 
@@ -236,7 +236,7 @@ class Folder(Element):
 		if not os.path.exists(captions_file_path):
 			return
 
-		_LOG.debug('Folder._load_caption_txt(%s)' % captions_file_path)
+		_LOG.debug('Directory._load_caption_txt(%s)' % captions_file_path)
 
 		captions_file = open(captions_file_path, 'r')
 		current_file_name = None
@@ -271,7 +271,7 @@ class Folder(Element):
 		if len(file_data) == 0:
 			return
 
-		_LOG.debug('Folder._load_caption_txt_process_file(%s)' % file_name)
+		_LOG.debug('Directory._load_caption_txt_process_file(%s)' % file_name)
 
 		if file_name == '.':
 			update_obj = self
@@ -287,7 +287,7 @@ class Folder(Element):
 
 
 	def _load_file_folders(self, path):
-		_LOG.debug('Folder._load_file_folders(%s)' % path)
+		_LOG.debug('Directory._load_file_folders(%s)' % path)
 		files = sorted(( fname for fname in os.listdir(path) if os.path.isfile(os.path.join(path, fname)) ))
 		folder_files = []
 		for file in files:
@@ -307,7 +307,7 @@ class Folder(Element):
 			self.subdirs_count = len(self._subdirs)
 			self.catalog.dirty = True
 		else:
-			_LOG.warn('Folder.delete_subfolder %r not found in %r' % (folder, self))
+			_LOG.warn('Directory.delete_subfolder %r not found in %r' % (folder, self))
 
 
 	def delete_image(self, image):
@@ -317,7 +317,7 @@ class Folder(Element):
 			self.files_count = len(self._files)
 			self.catalog.dirty = True
 		else:
-			_LOG.warn('Folder.delete_image %r not found in %r' % (image, self))
+			_LOG.warn('Directory.delete_image %r not found in %r' % (image, self))
 
 
 	@staticmethod
@@ -330,7 +330,7 @@ class Folder(Element):
 
 
 if __name__ == '__main__':
-	folder = Folder(id=None, name='root', parent=None)
+	folder = Directory(id=None, name='root', parent=None)
 	folder.load('/home/k/gfx')
 	print repr(folder)
 	fout = file('out.yaml', 'w')

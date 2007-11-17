@@ -29,7 +29,7 @@ __all__ = ['Catalog', 'Folder', 'Disc', 'Image']
 
 
 from catalog	import Catalog
-from folder		import Folder
+from directory	import Directory
 from disc		import Disc
 from image		import Image
 

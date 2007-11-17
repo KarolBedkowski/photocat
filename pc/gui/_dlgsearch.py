@@ -43,7 +43,7 @@ from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
 
-from pc.model		import Catalog, Folder, Disc, Image
+from pc.model		import Catalog, Directory, Disc, Image
 
 
 
@@ -177,7 +177,7 @@ class DlgSearch(wx.Dialog):
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 
-			if isinstance(item, Folder) or isinstance(item, Disc):
+			if isinstance(item, Directory) or isinstance(item, Disc):
 				self._parent.show_item(item)
 			elif isinstance(item, Image):
 				self._parent.show_item(item.parent)

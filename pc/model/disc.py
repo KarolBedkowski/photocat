@@ -36,7 +36,7 @@ import time
 import logging
 _LOG = logging.getLogger(__name__)
 
-from folder			import Folder
+from directory		import Directory
 from _idprovider 	import IdProvider
 from _element		import Element
 
@@ -63,7 +63,7 @@ class Disc(Element):
 
 
 	def load(self, path, options=None, on_update=None):
-		self._root = Folder(None, '/', self.id, self, catalog=self._catalog, disc=self)
+		self._root = Directory(None, '/', self.id, self, catalog=self._catalog, disc=self)
 		self._root.load(path, options=options, on_update=on_update)
 		self.date = time.time()
 
