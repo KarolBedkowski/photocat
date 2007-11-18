@@ -9,7 +9,7 @@ import sys, os
 
 from wx.tools import img2py
 
-os.chdir('sag4/icons')
+os.chdir('pc/icons')
 os.unlink('icons.py')
 
 f = file('icons.py', 'w')

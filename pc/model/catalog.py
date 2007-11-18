@@ -53,13 +53,14 @@ class Catalog(BaseElement):
 		BaseElement.__init__(self, -1, filename, None, catalog=self)
 		self._disks 		= []
 		self._data_provider = DataProvider();
-		self._tags_provider	= Tags()
+		self._tags_provider	= Tags(self)
 		self._indexfilepath	= None
 		self._filesdir		= None
 		self._datafilepath	= None
 		self._tree_node		= None
 		self._state			= CatalogState()
 		self.dirty			= False
+		self._tree_tags_node = None
 
 		self._set_filename(filename)
 
@@ -113,6 +114,15 @@ class Catalog(BaseElement):
 	@property
 	def catalog(self):
 		return self
+
+
+	def _get_tree_tags_node(self):
+		return self._tree_tags_node
+
+	def _set_tree_tags_node(self, node):
+		self._tree_tags_node = node
+
+	tree_tags_node = property(_get_tree_tags_node, _set_tree_tags_node)
 
 
 	def save_catalog(self):

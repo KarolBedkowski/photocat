@@ -25,14 +25,14 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-__all__ = ['Catalog', 'Folder', 'Disk', 'Image']
+__all__ = ['Catalog', 'Folder', 'Disk', 'Image', 'Tag']
 
 
 from catalog	import Catalog
 from directory	import Directory
 from disk		import Disk
 from image		import Image
-
+from tags_provider import Tag
 
 
 # vim: encoding=utf8: ff=unix: 

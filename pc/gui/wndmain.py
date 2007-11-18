@@ -49,7 +49,7 @@ from kpylibs.formaters		import format_size
 
 import pc
 
-from pc.model				import Catalog, Directory, Disk, Image
+from pc.model				import Catalog, Directory, Disk, Image, Tag
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
@@ -449,6 +449,7 @@ class WndMain(wx.Frame):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.delete_subfolder(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
+			self._dirs_tree.update_catalog_tags(tree_selected.catalog)
 
 
 	def _on_catalog_del_image(self, evt):
@@ -517,10 +518,14 @@ class WndMain(wx.Frame):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
+		show_info = True
 		if isinstance(item, Directory):
 			pass
 		elif isinstance(item, Disk):
 			item = item.root
+		elif isinstance(item, Tag):
+			item = tuple(( itm for itm in item.items if isinstance(itm, Image) ))
+			show_info = False
 		else:
 			self._photo_list.ShowDir([])
 			return
@@ -529,10 +534,15 @@ class WndMain(wx.Frame):
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				self._photo_list.ShowDir(item)
-				self._info_panel.show_folder(item)
+				if show_info:
+					self._info_panel.show_folder(item)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
-				self.SetStatusText(_('Directorys %d;  files: %d') % (item.subdirs_count, item.files_count))
+				if show_info:
+					self.SetStatusText(_('Directorys %d;  files: %d') % (item.subdirs_count, item.files_count))
+				else:
+					self.SetStatusText(_('Files: %d') % len(item))
+
 
 
 	def _on_dirtree_item_activate(self, evt):
@@ -551,6 +561,7 @@ class WndMain(wx.Frame):
 			item.catalog.dirty = True
 			self._info_panel.show_folder(item)
 			self._dirs_tree.update_catalog_node(item.catalog)
+			self._dirs_tree.update_catalog_tags(item.catalog)
 		dlg.Destroy()
 
 

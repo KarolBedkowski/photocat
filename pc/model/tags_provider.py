@@ -26,9 +26,28 @@ __revision__	= '$Id$'
 
 
 
+class Tag(object):
+	def __init__(self, name=None, catalog=None):
+		self.name		= name
+		self.tree_node	= None
+		self.items		= []
+		self.catalog	= catalog
+
+	@property
+	def size(self):
+		return len(self.items)
+
+
+	@property
+	def caption(self):
+		return '%s (%d)' % (self.name, len(self.items))
+
+
+
 class Tags(object):
-	def __init__(self):
+	def __init__(self, catalog=None):
 		self.reset()
+		self.catalog = catalog
 
 
 	def reset(self):
@@ -40,9 +59,14 @@ class Tags(object):
 
 	def _set_tags(self, tag):
 		if not self._tags.has_key(tag):
-			self._tags[tag] = []
+			self._tags[tag] = Tag(tag, self.catalog)
 
 	tags = property(_get_tags, _set_tags)
+
+
+	@property
+	def tags_items(self):
+		return self._tags.iteritems()
 
 
 	def add_item(self, tags, item):
@@ -59,14 +83,19 @@ class Tags(object):
 
 
 	def remove_item(self, item):
-		[ tag_list.remove(item) for tag_list in self._tags.itervalues() if item in tag_list ]
+		[ tag.items.remove(item) for tag in self._tags.itervalues() if item in tag.items ]
 
 
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
-			return self._tags[tag]
-		self._tags[tag] = list()
-		return self._tags[tag]
+			return self._tags[tag].items
+		self._tags[tag] = Tag(tag, self.catalog)
+		return self._tags[tag].items
+
+
+	def get_tag(self, tag):
+		return self._tags.get(tag)
+
 
 
 # vim: encoding=utf8: ff=unix: 
