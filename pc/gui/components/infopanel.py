@@ -110,16 +110,14 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
 		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		#button	 = create_button(panel, _('Save'), self._on_update_folder_descr)
 
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(listctrl, 1, wx.EXPAND)
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer.Add(listctrl, 1, wx.EXPAND|wx.ALL, 5)
 
-		sizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND|wx.ALL, 5)
-		subsizer = wx.BoxSizer(wx.HORIZONTAL)
+		subsizer = wx.BoxSizer(wx.VERTICAL)
+		subsizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND)
 		subsizer.Add(textctrl, 1, wx.EXPAND)
-		#subsizer.Add(button, 0, wx.EXPAND|wx.ALL, 5)
-		sizer.Add(subsizer, 1, wx.EXPAND)
+		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
 		listctrl.InsertColumn(0, _('Tag'))
@@ -151,7 +149,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
 			listctrl.SetStringItem(idx, 1, str(val))
 
-		[ insert(key, val) for key, val in image.main_info ]
+		[ insert(key, val) for dummy, key, val in sorted(image.main_info) ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -178,7 +176,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
 			listctrl.SetStringItem(idx, 1, str(val))
 
-		[ insert(key, val) for key, val in folder.main_info ]
+		[ insert(key, val) for dummy, key, val in sorted(folder.main_info) ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)

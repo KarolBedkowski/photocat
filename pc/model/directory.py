@@ -32,11 +32,17 @@ if __name__ == '__main__':
 
 import os
 
+import gettext
+_ = gettext.gettext
+
 import logging
 _LOG = logging.getLogger(__name__)
 
 from _element	import Element
 from image		import Image
+
+from kpylibs.formaters	import format_size
+
 
 
 _IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
@@ -77,6 +83,18 @@ class Directory(Element):
 		if self._folder_files is None and self.folder_files_offset is not None:
 			self._folder_files = eval(self._catalog.data_provider.get(self.folder_files_offset, self.folder_files_size))
 		return self._folder_files or ()
+
+
+	def _get_main_info(self):
+		result = Element._get_main_info(self)
+
+		images_sum = sum(( image.size for image in self._files ))
+
+		result.append((210, _('Files'),			"%d   (%s B)" % (self.files_count, format_size(images_sum, separate=True))))
+		result.append((211, _('Directories'),	str(self.subdirs_count)))
+		return result
+
+	main_info = property(_get_main_info)
 
 
 	def add_folder(self, folder):

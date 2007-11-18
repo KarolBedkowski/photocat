@@ -57,6 +57,13 @@ class BaseElement(MyObject):
 		self._tree_node	= None
 		self._parent	= parent
 		self._catalog	= catalog
+		self._disk		= None
+		if parent is not None:
+			tmp_parent = parent
+			self._disk = tmp_parent
+			while tmp_parent.parent is not None:
+				tmp_parent = tmp_parent.parent
+				self._disk = tmp_parent
 
 
 	@property
@@ -91,11 +98,17 @@ class BaseElement(MyObject):
 
 	def _get_main_info(self):
 		result = []
-		result.append((_('Name'), str(self.name)))
-		if self.date is not None:
-			result.append((_('File date'), time.strftime('%c', time.localtime(self.date))))
+		result.append((0, _('Name'), str(self.name)))
 		if self.tags is not None and len(self.tags) > 0:
-			result.append((_('Tags'), ', '.join(self.tags)))
+			result.append((1, _('Tags'), ', '.join(self.tags)))
+		result.append((99, '', ''))
+		result.append((100, _('Catalog'), self.catalog.name))
+		if self._disk is not None:
+			result.append((101, _('Disk'), self._disk.name))
+		result.append((102, _('Path'), self.path))
+		result.append((199, '', ''))
+		if self.date is not None:
+			result.append((200, _('File date'), time.strftime('%c', time.localtime(self.date))))
 		return result
 
 	main_info = property(_get_main_info)
@@ -142,7 +155,7 @@ class Element(BaseElement):
 	def _get_main_info(self):
 		result = BaseElement._get_main_info(self)
 		if self.size is not None:
-			result.append((_('Size'), format_size(self.size, True, separate=True)))
+			result.append((201, _('Size'), format_size(self.size, True, separate=True)))
 		return result
 	
 	main_info = property(_get_main_info)

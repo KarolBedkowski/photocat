@@ -154,9 +154,7 @@ class DlgProperties(wx.Dialog):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key))
 				listctrl.SetStringItem(idx, 1, str(val))
 
-			insert(_('Name'),	item.name)
-			insert(_('Size'),	item.size)
-			insert(_('Date'),	time.asctime(time.localtime(item.date)))
+			[ insert(key, val) for dummy, key, val in sorted(item.main_info) ]
 
 			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)

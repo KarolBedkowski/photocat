@@ -73,18 +73,18 @@ class Image(Element):
 	def _get_main_info(self):
 		result = Element._get_main_info(self)
 		if self.dimensions is not None:
-			result.append((_('Dimensions'), "%d x %d" % self.dimensions))
+			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 		if self.exif is not None:
 			for exif_key in ('EXIF_DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF_DateTime'):
 				if self.exif.has_key(exif_key):
 					try:
 						ddate = time.strptime(self.exif[exif_key], '%Y:%m:%d %H:%M:%S')
-						result.append((_('Date'), time.strftime('%c', ddate)))
+						result.append((51, _('Date'), time.strftime('%c', ddate)))
 						break
 					except:
 						pass
-
-
+			if self.exif.has_key('Image Model'):
+				result.append((52, _('Camera'), str(self.exif['Image Model'])))
 		return result
 
 	main_info = property(_get_main_info)
