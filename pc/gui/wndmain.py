@@ -86,9 +86,7 @@ class WndMain(wx.Frame):
 		self._layout_splitter	= None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['folder_image', 'add', 'delete', 'add_files', 'information',
-			'folder1', 'folder_add', 'folder_edit', 'folder_delete', 'folder_go', 'disk'
-		])
+		self._icon_provider.load_icons(['folder_image'])
 
 		self.SetIcon(self._icon_provider.get_icon('folder_image'))
 

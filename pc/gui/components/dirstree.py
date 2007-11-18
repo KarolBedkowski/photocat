@@ -35,13 +35,14 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		EventGenerator.__init__(self, ['change_selection'])
 
 		self.__icon_provider = IconProvider()
-		self.__icon_provider.load_icons(['folder', 'folder_open', 'folder_image', 'disk', 'tags', 'tag'])
+		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 
+			wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
 		self.SetImageList(self.__icon_provider.get_image_list())
-		self._icon_idx				= self.__icon_provider.get_image_index('folder')
-		self._icon2_idx				= self.__icon_provider.get_image_index('folder_open')
+		self._icon_idx				= self.__icon_provider.get_image_index(wx.ART_FOLDER)
+		self._icon2_idx				= self.__icon_provider.get_image_index(wx.ART_FOLDER_OPEN)
 		self._icon_folderimg_idx	= self.__icon_provider.get_image_index('folder_image')
-		self._icon_disk_idx			= self.__icon_provider.get_image_index('disk')
+		self._icon_disk_idx			= self.__icon_provider.get_image_index(wx.ART_CDROM)
 		self._icon_tags_idx			= self.__icon_provider.get_image_index('tags')
 		self._icon_tag_idx			= self.__icon_provider.get_image_index('tag')
 
