@@ -43,6 +43,7 @@ class Storage:
 
 	@classmethod
 	def save_v1(cls, catalog_file_path, catalog):
+		_LOG.debug('Storage.save_v1 %s' % catalog_file_path)
 		outfile = gzip.open(catalog_file_path, "w")
 
 		format = repr(catalog.dict)
@@ -76,6 +77,7 @@ class Storage:
 			write(disk.root)
 
 		outfile.close()
+		_LOG.debug('Storage.save_v1 %s  DONE' % catalog_file_path)
 
 
 	@classmethod
@@ -115,6 +117,8 @@ class Storage:
 
 	@classmethod
 	def load_v1(cls, catalog_file_path, catalog):
+		_LOG.debug('Storage.load_v1 %s' % catalog_file_path)
+
 		disks	= []
 		ids		= {}
 
@@ -163,6 +167,7 @@ class Storage:
 
 			infile.close()
 
+		_LOG.debug('Storage.load_v1 %s   DONE' % catalog_file_path)
 		return disks
 
 

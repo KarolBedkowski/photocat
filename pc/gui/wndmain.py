@@ -40,7 +40,7 @@ _ = gettext.gettext
 
 import wx
 
-from kpylibs				import dialogs
+from kpylibs				import dialogs 
 from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
@@ -302,6 +302,24 @@ class WndMain(wx.Frame):
 			catalog = self._catalogs[0]
 		else:
 			catalog = tree_selected.catalog
+
+		if catalog.dirty:
+			res = dialogs.message_box_warning_yesnocancel(self, 
+					_('Catalog %s has unsaved chacnges!\nSave before close??') % catalog.name,
+					'PC')
+			if res == wx.ID_YES:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				try:
+					catalog.save_catalog()
+				except:
+					_LOG.exception('WndMain._on_file_close(%s)' % catalog.name)
+					dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
+				self.SetCursor(wx.STANDARD_CURSOR)
+
+			elif res == wx.ID_CANCEL:
+				return
+		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.name, 'PC'):
+			return
 
 		self._dirs_tree.delete_item(catalog)
 		catalog.close()
