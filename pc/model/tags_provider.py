@@ -21,9 +21,12 @@
 """
 
 __author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
+__copyright__	= 'Copyright (C) Karol Będkowski 2007'
 __revision__	= '$Id$'
 
+
+
+from image import Image
 
 
 class Tag(object):
@@ -31,7 +34,9 @@ class Tag(object):
 		self.name		= name
 		self.tree_node	= None
 		self.items		= []
+		self.items_files = []
 		self.catalog	= catalog
+
 
 	@property
 	def size(self):
@@ -39,8 +44,30 @@ class Tag(object):
 
 
 	@property
+	def size_files(self):
+		return len(self.items_files)
+
+
+	@property
 	def caption(self):
-		return '%s (%d)' % (self.name, len(self.items))
+		return '%s (%d/%d)' % (self.name, len(self.items_files), len(self.items))
+
+
+	def remove_item(self, item):
+		if isinstance(item, Image):
+			if item in self.items_files:
+				self.items_files.remove(item)
+			return
+		if item in self.items:
+			self.items.remove(item)
+
+	
+	def add_item(self, item):
+		if isinstance(item, Image):
+			self.items_files.append(item)
+			return
+		self.items.append(item)
+
 
 
 
@@ -72,25 +99,24 @@ class Tags(object):
 	def add_item(self, tags, item):
 		for tag in tags:
 			tag_list = self._get_tag_list(tag)
-			if tag_list.count(item) == 0:
-				tag_list.append(item)
+			tag_list.add_item(item)
 
 
 	def update_item(self, tags, item, do_remove=True):
 		if do_remove:
 			self.remove_item(item)
-		[ self._get_tag_list(tag).append(item) for tag in tags ]
+		[ self._get_tag_list(tag).add_item(item) for tag in tags ]
 
 
 	def remove_item(self, item):
-		[ tag.items.remove(item) for tag in self._tags.itervalues() if item in tag.items ]
+		[ tag.items.remove_item(item) for tag in self._tags.itervalues() if item in tag.items ]
 
 
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
-			return self._tags[tag].items
+			return self._tags[tag]
 		self._tags[tag] = Tag(tag, self.catalog)
-		return self._tags[tag].items
+		return self._tags[tag]
 
 
 	def get_tag(self, tag):

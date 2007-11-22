@@ -522,7 +522,7 @@ class WndMain(wx.Frame):
 		elif isinstance(item, Disk):
 			item = item.root
 		elif isinstance(item, Tag):
-			item = tuple(( itm for itm in item.items if isinstance(itm, Image) ))
+			item = item.items_files
 			show_info = False
 		else:
 			self._photo_list.ShowDir([])

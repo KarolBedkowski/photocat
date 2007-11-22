@@ -160,6 +160,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		if not isinstance(item, Tag):
 			return
 
+		_LOG.debug('DirsTree._on_expanding tag=%s' % item.name)
+
 		self.DeleteChildren(node)
 
 		def add_dir(parent_node, dir):
