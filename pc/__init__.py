@@ -27,7 +27,7 @@ __revision__	= '$Id$'
 __all__			= ['run']
 
 
-__version__		= '0.1.0'
+__version__		= '0.1.1'
 
 
 from pc.main import run
