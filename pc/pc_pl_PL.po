@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-18 22:47+0100\n"
+"POT-Creation-Date: 2007-11-24 22:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr "Dodaj dysk"
 msgid "Add disk to catalog"
 msgstr "Dodaj dysk do katalogu"
 
-#: gui/wndmain.py:368
+#: gui/wndmain.py:414
 msgid "Adding disk"
 msgstr "Dodawanie dysky"
 
@@ -71,7 +71,25 @@ msgstr "Aparat"
 msgid "Catalog"
 msgstr "Katalog"
 
-#: gui/wndmain.py:247
+#: gui/wndmain.py:336
+#, python-format
+msgid ""
+"Catalog %s has unsaved changes!\n"
+"Save before close??"
+msgstr ""
+"Katalog %s zawiera niezapisane zmiany!\n"
+"Zapisać przed wyjściem?"
+
+#: gui/wndmain.py:236
+#, python-format
+msgid ""
+"Catalog %s isn't saved\n"
+"Save it?"
+msgstr ""
+"Katalog %s nie jest zapisany!\n"
+"Zapisać?"
+
+#: gui/wndmain.py:275
 msgid "Catalog file name"
 msgstr "Nazwa plku katalogu"
 
@@ -83,11 +101,16 @@ msgstr "Zamknij program"
 msgid "Close catalog"
 msgstr "Zamknij katalog"
 
+#: gui/wndmain.py:349
+#, python-format
+msgid "Close catalog %s?"
+msgstr "Zamknąć katalog %s?"
+
 #: gui/wndmain.py:138
 msgid "Close current catalog"
 msgstr "Zamknij aktualny katalog"
 
-#: gui/wndmain.py:229
+#: gui/wndmain.py:257
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
@@ -95,7 +118,7 @@ msgstr "Zakończyć program?"
 msgid "Create new catalog"
 msgstr "Utwórz nowy katalog"
 
-#: gui/wndmain.py:246
+#: gui/wndmain.py:274
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
@@ -111,25 +134,25 @@ msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 msgid "Del"
 msgstr "Usuń"
 
-#: gui/wndmain.py:474
+#: gui/wndmain.py:520
 #, python-format
 msgid "Delete %d images?"
 msgstr "Usunąć %d plików?"
 
-#: gui/wndmain.py:443
+#: gui/wndmain.py:489
 msgid "Delete directory"
 msgstr "Usuń katalog"
 
-#: gui/wndmain.py:446
+#: gui/wndmain.py:492
 #, python-format
 msgid "Delete directory %s?"
 msgstr "Usunąć katalog %s?"
 
-#: gui/wndmain.py:427
+#: gui/wndmain.py:473
 msgid "Delete disk"
 msgstr "Usuń dysk"
 
-#: gui/wndmain.py:430
+#: gui/wndmain.py:476
 #, python-format
 msgid "Delete disk %s?"
 msgstr "Usunąć dysk %s?"
@@ -159,7 +182,7 @@ msgstr "Wymiary"
 msgid "Directories"
 msgstr "Katalogów"
 
-#: gui/wndmain.py:540
+#: gui/wndmain.py:586
 #, python-format
 msgid "Directorys %d;  files: %d"
 msgstr "Katalogów %d;  plików: %d"
@@ -181,16 +204,16 @@ msgstr "Nazwa dysku:"
 msgid "Disks: %d"
 msgstr "Dysków: %d"
 
-#: gui/wndmain.py:382 gui/wndmain.py:416
+#: gui/wndmain.py:428 gui/wndmain.py:462
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/wndmain.py:622
+#: gui/wndmain.py:668
 #, python-format
 msgid "Error openning file %s"
 msgstr "Błąd otwierania pliku %s"
 
-#: gui/wndmain.py:610
+#: gui/wndmain.py:656
 #, python-format
 msgid ""
 "Error openning file %s!\n"
@@ -199,7 +222,7 @@ msgstr ""
 "Błąd otwierania pliku %s!\n"
 "Plik nie istnieje."
 
-#: gui/wndmain.py:280
+#: gui/wndmain.py:247 gui/wndmain.py:308 gui/wndmain.py:344
 #, python-format
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
@@ -220,7 +243,7 @@ msgstr "Data pliku"
 msgid "Files"
 msgstr "Plików"
 
-#: gui/wndmain.py:542 model/catalog.py:253
+#: gui/wndmain.py:588 model/catalog.py:253
 #, python-format
 msgid "Files: %d"
 msgstr "Plików: %d"
@@ -296,11 +319,11 @@ msgstr "Nazwa"
 msgid "Name already exists in catalog!"
 msgstr "Nazwa już istnieje w katalogu!"
 
-#: gui/wndmain.py:443
+#: gui/wndmain.py:489
 msgid "No directory selected"
 msgstr "Nie wybrano katalogu"
 
-#: gui/wndmain.py:427
+#: gui/wndmain.py:473
 msgid "No disk selected"
 msgstr "Nie wybrano dysku"
 
@@ -308,16 +331,16 @@ msgstr "Nie wybrano dysku"
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
-#: gui/wndmain.py:641
+#: gui/wndmain.py:687
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:263 gui/wndmain.py:610 gui/wndmain.py:622
+#: gui/wndmain.py:291 gui/wndmain.py:656 gui/wndmain.py:668
 msgid "Open file"
 msgstr "Otwórz plik"
 
-#: gui/wndmain.py:613
+#: gui/wndmain.py:659
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr "Otwieranie %s.... Proszę czekać..."
@@ -342,7 +365,7 @@ msgstr "Własności"
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
-#: gui/wndmain.py:327
+#: gui/wndmain.py:373
 #, python-format
 msgid ""
 "Rebuild catalog finished\n"
@@ -355,7 +378,7 @@ msgstr ""
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
-#: gui/wndmain.py:197 gui/wndmain.py:280
+#: gui/wndmain.py:197 gui/wndmain.py:247 gui/wndmain.py:308 gui/wndmain.py:344
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 
@@ -412,7 +435,7 @@ msgstr "Aktualizuj dysk"
 msgid "Update selected disk"
 msgstr "Aktualizuj wybrany dysk"
 
-#: gui/wndmain.py:402
+#: gui/wndmain.py:448
 msgid "Updating disk"
 msgstr "Aktualizacja dysku"
 

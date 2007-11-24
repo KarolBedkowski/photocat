@@ -226,7 +226,35 @@ class WndMain(wx.Frame):
 
 
 	def _on_close(self, evt):
-		if dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
+
+		dirty_catalogs = [ catalog for catalog in self._catalogs if catalog.dirty ]
+
+		if len(dirty_catalogs) > 0:
+			removed = []
+			result = True
+			for catalog in dirty_catalogs:
+				res = dialogs.message_box_warning_yesnocancel(self, _("Catalog %s isn't saved\nSave it?") % catalog.name, 'PC')
+				if res == wx.ID_CANCEL:
+					return
+				elif res == wx.ID_YES:
+					self.SetCursor(wx.HOURGLASS_CURSOR)
+					try:
+						catalog.save_catalog()
+						removed.append(catalog)
+					except:
+						self.SetCursor(wx.STANDARD_CURSOR)
+						_LOG.exception('WndMain._on_file_save(%s)' % catalog.name)
+						dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
+						return
+					self.SetCursor(wx.STANDARD_CURSOR)
+			if result:
+				evt.Skip()
+			else:
+				for catalog in removed:
+					self._dirs_tree.delete_item(catalog)
+					self._catalogs.remove(catalog)
+
+		elif dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
 			size_x, size_y = self.GetSizeTuple()
 
 			appconfig = AppConfig()
@@ -305,7 +333,7 @@ class WndMain(wx.Frame):
 
 		if catalog.dirty:
 			res = dialogs.message_box_warning_yesnocancel(self, 
-					_('Catalog %s has unsaved chacnges!\nSave before close??') % catalog.name,
+					_('Catalog %s has unsaved changes!\nSave before close??') % catalog.name,
 					'PC')
 			if res == wx.ID_YES:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
