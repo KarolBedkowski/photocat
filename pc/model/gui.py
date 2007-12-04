@@ -22,43 +22,24 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 
 
 
-import time
-
-from directory	import Directory
-
-
-
-class Disk(Directory):
-	def __init__(self, id, name, parent, catalog, *args, **kwargs):
-		self.catalog		= catalog
-		self.add_date		= None
-		self.update_date	= None
-
-		Directory.__init__(self, id, name, parent, self, *args, **kwargs)
+class TreeItem(object):
+	def __init__(self):
+		self.tree_node		= None
+		self.tree_tag_nodes	= None
 
 
-	def load(self, path, options, on_update):
-		Directory.load(self, path, options, on_update)
-		self.update_date = self.add_date = time.time()
-		return True
+	@property
+	def caption(self):
+		return ''
 
 
-	def update(self, path, options, on_update):
-		Directory.update(self, path, options, on_update)
-		self.update_date = time.time()
-		return True
-
-
-	@classmethod
-	def _attrlist(cls):
-		attribs = Directory._attrlist()
-		attribs.extend((('add_date', int), ('update_date', int)))
-		return attribs
-
+	@property
+	def childs(self):
+		return None
 
 
 

@@ -149,21 +149,24 @@ class InfoPanel(wx.Panel, EventGenerator):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
 			listctrl.SetStringItem(idx, 1, str(val))
 
-		[ insert(key, val) for dummy, key, val in sorted(image.main_info) ]
+		[ insert(key, val) for dummy, key, val in sorted(image.info) ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 
 	def _show_desc(self, image):
-		self._textctrl_desc.SetValue(str(image.descr or ''))
+		self._textctrl_desc.SetValue(str(image.desc or ''))
 
 
 	def _show_exif(self, image):
 		listctrl = self._listctrl_exif
-		for key, val in sorted(image.exif.iteritems()):
-			idx = listctrl.InsertStringItem(sys.maxint, str(key))
-			listctrl.SetStringItem(idx, 1, str(val))
+		exif_data =  image.exif_data
+
+		if exif_data is not None:
+			for key, val in sorted(exif_data.iteritems()):
+				idx = listctrl.InsertStringItem(sys.maxint, str(key))
+				listctrl.SetStringItem(idx, 1, str(val))
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -176,12 +179,12 @@ class InfoPanel(wx.Panel, EventGenerator):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
 			listctrl.SetStringItem(idx, 1, str(val))
 
-		[ insert(key, val) for dummy, key, val in sorted(folder.main_info) ]
+		[ insert(key, val) for dummy, key, val in sorted(folder.info) ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
-		self._textctrl_folder_descr.SetValue(str(folder.descr or ""))
+		self._textctrl_folder_descr.SetValue(str(folder.desc or ""))
 
 		listctrl = self._listctrl_folder_files
 
@@ -190,7 +193,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 			listctrl.SetStringItem(idx, 1, time.strftime('%c', time.localtime(date)))
 			listctrl.SetStringItem(idx, 2, format_size(size, separate=True))
 
-		[ insert(name, date, size) for name, date, size in folder.folder_files ]
+#		[ insert(name, date, size) for name, date, size in folder.folder_files ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -227,16 +230,16 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _on_update_descr(self, evt):
 		if self._image is not None:
 			new_descr = self._textctrl_desc.GetValue()
-			if new_descr != self._image.descr:
-				self._image.descr = new_descr
+			if new_descr != self._image.desc:
+				self._image.desc = new_descr
 				self.event_call('update_image', self._image)
 
 
 	def _on_update_folder_descr(self, evt):
 		if self._folder is not None:
 			new_descr = self._textctrl_folder_descr.GetValue()
-			if new_descr != self._folder.descr:
-				self._folder.descr = new_descr
+			if new_descr != self._folder.desc:
+				self._folder.desc = new_descr
 				self.event_call('update_folder', self._folder)
 
 

@@ -22,73 +22,68 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2007'
-__revision__	= '$Id$'
+__revision__	= '$Id: tags_provider.py 42 2007-11-22 16:44:59Z k $'
 
 
 
-from image import Image
+from file_image	import FileImage
+
 
 
 class Tag(object):
 	def __init__(self, name=None, catalog=None):
 		self.name		= name
-		self.tree_node	= None
-		self.items		= []
-		self.items_files = []
+		self.files		= []
+		self.dirs		= []
 		self.catalog	= catalog
 
 
 	@property
-	def size(self):
-		return len(self.items)
+	def files_count(self):
+		return len(self.files)
 
 
 	@property
-	def size_files(self):
-		return len(self.items_files)
+	def dirs_count(self):
+		return len(self.dirs)
 
 
 	@property
 	def caption(self):
-		return '%s (%d/%d)' % (self.name, len(self.items_files), len(self.items))
+		return '%s (%d/%d)' % (self.name, len(self.files), len(self.dirs))
 
 
 	def remove_item(self, item):
-		if isinstance(item, Image):
-			if item in self.items_files:
-				self.items_files.remove(item)
+		if isinstance(item, FileImage):
+			if item in self.files:
+				self.files.remove(item)
 			return
 		if item in self.items:
-			self.items.remove(item)
+			self.dirs.remove(item)
 
-	
+
 	def add_item(self, item):
-		if isinstance(item, Image):
-			self.items_files.append(item)
+		if isinstance(item, FileImage):
+			self.files.append(item)
 			return
-		self.items.append(item)
+		self.dirs.append(item)
 
 
 
 
 class Tags(object):
-	def __init__(self, catalog=None):
+	def __init__(self, catalog):
 		self.reset()
-		self.catalog = catalog
+		self._catalog = catalog
 
 
 	def reset(self):
 		self._tags = {}
 
 
-	def _get_tags(self):
+	@property
+	def tags(self):
 		return self._tags.keys()
-
-	def _set_tags(self, tag):
-		if not self._tags.has_key(tag):
-			self._tags[tag] = Tag(tag, self.catalog)
-
-	tags = property(_get_tags, _set_tags)
 
 
 	@property
@@ -96,33 +91,27 @@ class Tags(object):
 		return self._tags.iteritems()
 
 
-	def add_item(self, tags, item):
-		for tag in tags:
-			tag_list = self._get_tag_list(tag)
-			tag_list.add_item(item)
+	def add_item(self, item):
+		if item.tags is not None:
+			[ self._get_tag_list(tag).add_item(item) for tag in item.tags ]
 
 
-	def update_item(self, tags, item, do_remove=True):
-		if do_remove:
-			self.remove_item(item)
-		[ self._get_tag_list(tag).add_item(item) for tag in tags ]
+	def update_item(self, item):
+		self.remove_item(item)
+		self.add_item(item)
 
 
 	def remove_item(self, item):
-		[ tag.items.remove_item(item) for tag in self._tags.itervalues() if item in tag.items ]
+		[ tag.remove_item(item) for tag in self._tags.itervalues() ]
 
 
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
 			return self._tags[tag]
-		self._tags[tag] = Tag(tag, self.catalog)
-		return self._tags[tag]
+		tag_obj = Tag(tag, self._catalog)
+		self._tags[tag] = tag_obj
+		return tag_obj
 
 
-	def get_tag(self, tag):
-		return self._tags.get(tag)
-
-
-
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:
 

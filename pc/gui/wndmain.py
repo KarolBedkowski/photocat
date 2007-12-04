@@ -49,7 +49,8 @@ from kpylibs.formaters		import format_size
 
 import pc
 
-from pc.model				import Catalog, Directory, Disk, Image, Tag
+from pc.model				import Catalog, Directory, Disk, FileImage, Tag
+from pc.model.storage		import Storage
 
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
@@ -217,8 +218,6 @@ class WndMain(wx.Frame):
 
 	def _create_layout_info(self, parent):
 		panel = self._info_panel = InfoPanel(parent)
-		panel.event_add_listener('update_image', self._on_update_info_image)
-		panel.event_add_listener('update_folder', self._on_update_info_folder)
 		return panel
 
 
@@ -233,20 +232,12 @@ class WndMain(wx.Frame):
 			removed = []
 			result = True
 			for catalog in dirty_catalogs:
-				res = dialogs.message_box_warning_yesnocancel(self, _("Catalog %s isn't saved\nSave it?") % catalog.name, 'PC')
+				res = dialogs.message_box_warning_yesnocancel(self, 
+						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
 				if res == wx.ID_CANCEL:
 					return
 				elif res == wx.ID_YES:
-					self.SetCursor(wx.HOURGLASS_CURSOR)
-					try:
-						catalog.save_catalog()
-						removed.append(catalog)
-					except:
-						self.SetCursor(wx.STANDARD_CURSOR)
-						_LOG.exception('WndMain._on_file_save(%s)' % catalog.name)
-						dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
-						return
-					self.SetCursor(wx.STANDARD_CURSOR)
+					self.__save_catalog(catalog)
 			if result:
 				evt.Skip()
 			else:
@@ -279,6 +270,7 @@ class WndMain(wx.Frame):
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					catalog = Catalog(filename)
+					catalog.data_provider.open(True)
 					self._catalogs.append(catalog)
 					self._dirs_tree.add_catalog(catalog)
 				finally:
@@ -297,24 +289,13 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_save(self, evt):
-
-		def save_catalog(catalog):
-			self.SetCursor(wx.HOURGLASS_CURSOR)
-			try:
-				if catalog.dirty:
-					catalog.save_catalog()
-			except:
-				_LOG.exception('WndMain._on_file_save(%s)' % catalog.name)
-				dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
-			self.SetCursor(wx.STANDARD_CURSOR)
-
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
 			for cat in self._catalogs:
-				save_catalog(cat)
+				self.__save_catalog(cat)
 				self._dirs_tree.update_catalog_node(cat)
 		else:
-			save_catalog(tree_selected.catalog)
+			self.__save_catalog(tree_selected.catalog)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
 		evt.Skip()
 
@@ -333,20 +314,14 @@ class WndMain(wx.Frame):
 
 		if catalog.dirty:
 			res = dialogs.message_box_warning_yesnocancel(self, 
-					_('Catalog %s has unsaved changes!\nSave before close??') % catalog.name,
+					_('Catalog %s has unsaved changes!\nSave before close??') % catalog.caption,
 					'PC')
 			if res == wx.ID_YES:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				try:
-					catalog.save_catalog()
-				except:
-					_LOG.exception('WndMain._on_file_close(%s)' % catalog.name)
-					dialogs.message_box_error(self, _('Error saving catalog %s') % filename, _('Save catalog'))
-				self.SetCursor(wx.STANDARD_CURSOR)
+				self.__save_catalog(catalog)
 
 			elif res == wx.ID_CANCEL:
 				return
-		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.name, 'PC'):
+		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.caption, 'PC'):
 			return
 
 		self._dirs_tree.delete_item(catalog)
@@ -368,9 +343,11 @@ class WndMain(wx.Frame):
 
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = catalog.rebuild()
+			saved_space = Storage.rebuild(catalog)
 			dialogs.message_box_info(self, 
-					_('Rebuild catalog finished\nSaved space: %sB') % format_size(saved_space, True, reduce_at=1024*1024, separate=True), 'PC')
+					_('Rebuild catalog finished\nSaved space: %sB') % 
+							format_size(saved_space, True, reduce_at=1024*1024, separate=True), 
+					'PC')
 		except:
 			_LOG.exception('rebuild error')
 		finally:
@@ -421,7 +398,7 @@ class WndMain(wx.Frame):
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
-				catalog.save_catalog()
+				self.__save_catalog(catalog)
 				self._dirs_tree.add_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
@@ -438,7 +415,7 @@ class WndMain(wx.Frame):
 		if tree_selected is None or not isinstance(tree_selected, Disk):
 			return
 
-		data = dict(name=tree_selected.name, descr=tree_selected.descr)
+		data = dict(name=tree_selected.name, descr=tree_selected.desc)
 
 		dlg = DlgAddDisk(self, data, update=True, catalog=tree_selected.catalog)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -454,8 +431,8 @@ class WndMain(wx.Frame):
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.update_disk(data['path'], tree_selected, options=data, on_update=update_progress, name=data['name'], descr=data['descr'])
-				catalog.save_catalog()
+				catalog.update_disk(tree_selected, data['path'], descr=data['descr'], options=data, on_update=update_progress, name=data['name'])
+				self.__save_catalog(catalog)
 				self._dirs_tree.add_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
@@ -491,7 +468,7 @@ class WndMain(wx.Frame):
 
 		if dialogs.message_box_warning_yesno(self, _('Delete directory %s?') % tree_selected.name, 'PC'):
 			self._dirs_tree.delete_item(tree_selected)
-			tree_selected.parent.delete_subfolder(tree_selected)
+			tree_selected.parent.remove_subdir(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
 			self._dirs_tree.update_catalog_tags(tree_selected.catalog)
 
@@ -501,16 +478,7 @@ class WndMain(wx.Frame):
 			return
 
 		folder = self._dirs_tree.selected_item
-		if folder is None:
-			return
-		if isinstance(folder, Directory):
-			pass
-		elif isinstance(folder, Disk):
-			folder = folder.root
-		else:
-			return
-
-		if folder.files_count == 0:
+		if folder is None or isinstance(folder, Catalog):
 			return
 
 		selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
@@ -519,7 +487,7 @@ class WndMain(wx.Frame):
 
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
 			for image in selected_items:
-				folder.delete_image(image)
+				folder.remove_file(image)
 			self._photo_list.ShowDir(folder)
 			self._info_panel.show_folder(folder)
 			self._dirs_tree.update_catalog_node(folder.catalog)
@@ -535,19 +503,13 @@ class WndMain(wx.Frame):
 
 	def _on_catalog_edit_multi(self, evt):
 		folder = self._dirs_tree.selected_item
-		if folder is None:
-			return
-		if isinstance(folder, Directory):
-			pass
-		elif isinstance(folder, Disk):
-			folder = folder.root
-		else:
+		if folder is None or isinstance(folder, Catalog):
 			return
 
 		if folder.files_count == 0:
 			return
 
-		image = Image(None, None, None, catalog=folder.catalog)
+		image = FileImage(None, None, None, catalog=folder.catalog)
 
 		dlg = DlgProperties(self, image)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -563,14 +525,11 @@ class WndMain(wx.Frame):
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
 		show_info = True
-		if isinstance(item, Directory):
-			pass
-		elif isinstance(item, Disk):
-			item = item.root
-		elif isinstance(item, Tag):
+
+		if isinstance(item, Tag):
 			item = item.items_files
 			show_info = False
-		else:
+		elif not isinstance(item, Directory):
 			self._photo_list.ShowDir([])
 			return
 
@@ -583,21 +542,17 @@ class WndMain(wx.Frame):
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 				if show_info:
-					self.SetStatusText(_('Directorys %d;  files: %d') % (item.subdirs_count, item.files_count))
+					files_count, subdirs_count, dummy, dummy = item.directory_size
+					self.SetStatusText(_('Directorys %d;  files: %d') % (subdirs_count, files_count))
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
-
 
 
 	def _on_dirtree_item_activate(self, evt):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
-		if isinstance(item, Directory):
-			pass
-		elif isinstance(item, Disk):
-			item = item.root
-		else:
+		if isinstance(item, Catalog):
 			return
 
 		dlg = DlgProperties(self, item)
@@ -627,7 +582,8 @@ class WndMain(wx.Frame):
 			dlg = DlgProperties(self, selected)
 			if dlg.ShowModal() == wx.ID_OK:
 				self._info_panel.show(selected)
-				self._on_update_info_image(selected)
+				selected.catalog.dirty = True
+				self._dirs_tree.update_catalog_node(selected.catalog)
 			dlg.Destroy()
 
 
@@ -635,16 +591,6 @@ class WndMain(wx.Frame):
 		filehistnum = evt.GetId() - wx.ID_FILE1
 		filename = AppConfig().last_open_files[filehistnum]
 		self._open_file(filename)
-
-
-	def _on_update_info_folder(self, folder):
-		folder.catalog.dirty = True
-		self._dirs_tree.update_catalog_node(folder.catalog)
-
-
-	def _on_update_info_image(self, image):
-		image.catalog.dirty = True
-		self._dirs_tree.update_catalog_node(image.catalog)
 
 
 	################################################################################
@@ -658,11 +604,12 @@ class WndMain(wx.Frame):
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog = Catalog(filename)
+				catalog = Storage.load(filename)
+				catalog.data_provider.open()
 				self._catalogs.append(catalog)
 				self._dirs_tree.add_catalog(catalog)
 				self.__update_last_open_files(filename)
-				self.SetStatusText(filename + ':  ' + ';  '.join(catalog.stat))
+				self.SetStatusText(filename)
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
 				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
@@ -688,6 +635,18 @@ class WndMain(wx.Frame):
 			self._main_menu_file_recent_item.Enable(True)
 		else:
 			self._main_menu_file_recent_item.Enable(False)
+
+
+
+	def __save_catalog(self, catalog):
+		self.SetCursor(wx.HOURGLASS_CURSOR)
+		try:
+			if catalog.dirty:
+				Storage.save(catalog)
+		except:
+			_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)
+			dialogs.message_box_error(self, _('Error saving catalog %s') % catalog.catalog_filename, _('Save catalog'))
+		self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def show_item(self, folder):

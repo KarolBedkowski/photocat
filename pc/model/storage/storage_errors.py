@@ -22,28 +22,22 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 
 
 
-class IdProvider(object):
-	def __init__(self):
-		self.reset()
+class LoadFileError(Exception):
+	pass
 
 
-	def reset(self):
-		self._id = 0
+
+class InvalidFileError(LoadFileError):
+	pass
 
 
-	def _get_id(self):
-		self._id = self._id + 1
-		return self._id;
 
-	def _set_id(self, id):
-		if id > self._id:
-			self._id = id
-
-	id = property(_get_id, _set_id)
+class SaveFileError(Exception):
+	pass
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

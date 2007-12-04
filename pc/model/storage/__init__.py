@@ -22,20 +22,14 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 
 
 
-from kpylibs.myobject import MyObject
+from storage		import Storage
+from storage_object	import StorageObject
+from data_provider	import DataProvider
 
 
 
-class CatalogState(MyObject): #yaml.YAMLObject, 
-	yaml_tag = '!CatalogState'
-	
-	def __init__(self):
-		self.last_id = 0
-		self.last_offset = 0
-
-
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

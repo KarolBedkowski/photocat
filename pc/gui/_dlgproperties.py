@@ -38,7 +38,7 @@ import wx
 
 from kpylibs.guitools	import create_button
 
-from pc.model			import Catalog, Directory, Disk, Image
+from pc.model			import Catalog, Directory, Disk, FileImage
 
 
 
@@ -53,7 +53,7 @@ class DlgProperties(wx.Dialog):
 		self._item_is_folder	= isinstance(item, Directory)	and not is_fake
 		self._item_is_disk		= isinstance(item, Disk)	and not is_fake
 		self._item_is_catalog	= isinstance(item, Catalog) and not is_fake
-		self._item_is_image		= isinstance(item, Image)	and not is_fake
+		self._item_is_image		= isinstance(item, FileImage)	and not is_fake
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
@@ -66,7 +66,7 @@ class DlgProperties(wx.Dialog):
 
 		self._show(item)
 
-		[ self._combobox_tags.Append(tag) for tag in item.catalog.tags_provider.tags ]
+		[ self._combobox_tags.Append(tag) for tag in item.disk.catalog.tags_provider.tags ]
 
 		wx.EVT_BUTTON(self, wx.ID_OK, self._on_ok)
 
@@ -154,29 +154,32 @@ class DlgProperties(wx.Dialog):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key))
 				listctrl.SetStringItem(idx, 1, str(val))
 
-			[ insert(key, val) for dummy, key, val in sorted(item.main_info) ]
+			[ insert(key, val) for dummy, key, val in sorted(item.info) ]
 
 			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
-		self._textctrl_desc.SetValue(str(item.descr or ''))
+		self._textctrl_desc.SetValue(str(item.desc or ''))
 
 		if self._item_is_image:
 			listctrl = self._listctrl_exif
-			for key, val in sorted(item.exif.iteritems()):
-				idx = listctrl.InsertStringItem(sys.maxint, str(key))
-				listctrl.SetStringItem(idx, 1, str(val))
+			exif = item.exif_data
+			if exif is not None:
+				for key, val in sorted(exif.iteritems()):
+					idx = listctrl.InsertStringItem(sys.maxint, str(key))
+					listctrl.SetStringItem(idx, 1, str(val))
 
-			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+				listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+				listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
-		listbox = self._listbox_tags
-		[ listbox.Append(tag) for tag in item.tags ]
+		if item.tags is not None:
+			listbox = self._listbox_tags
+			[ listbox.Append(tag) for tag in item.tags ]
 
 
 	def _on_ok(self, evt):
 		item = self._item
-		item.descr = self._textctrl_desc.GetValue()
+		item.desc = self._textctrl_desc.GetValue()
 		listbox = self._listbox_tags
 		tag_iter = ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
 		tags = [ tag for tag in tag_iter if len(tag) > 0 ]
