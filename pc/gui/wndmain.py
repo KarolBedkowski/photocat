@@ -343,13 +343,17 @@ class WndMain(wx.Frame):
 
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = Storage.rebuild(catalog)
+			saved_space = catalog.data_provider.rebuild(catalog)
+			self.__save_catalog(catalog)
 			dialogs.message_box_info(self, 
 					_('Rebuild catalog finished\nSaved space: %sB') % 
 							format_size(saved_space, True, reduce_at=1024*1024, separate=True), 
 					'PC')
-		except:
+		except Exception, err:
 			_LOG.exception('rebuild error')
+			dialogs.message_box_error(self,
+					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
+					'PC')
 		finally:
 			self.SetCursor(wx.STANDARD_CURSOR)
 

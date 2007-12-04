@@ -54,6 +54,10 @@ class DataProvider:
 
 
 	def get_data(self, offset_size):
+		''' DataProvider.get_data(offset_size) -> str -- pobranie danych
+			@param offset_size (offset, size) danych do pobrania
+			@return dane
+		'''
 		offset, size = offset_size
 		_LOG.debug('DataProvider.get_data(%d, %d)' % (offset, size))
 		if self._file is None:
@@ -70,20 +74,24 @@ class DataProvider:
 		return self._file.read(size)
 
 
-	def put_data(self, offset, data):
+	def append(self, data):
+		''' DataProvider.append(data) -> (int, int) -- dodanie danych do pliku
+			@param data dane do zapisanie
+			@return (offset, size) zapisanych danych
+		'''
 		length = len(data)
+		offset = self.next_offset
 		_LOG.debug('DataProvider.put_data(%d, len=%d)' % (offset, length))
-		
+
 		self.next_offset = self._write_block(self._file, offset, length, data)
-		
+
 		return (offset, length)
 
 
-	def append(self, data):
-		return self.put_data(self.next_offset, data)
-
-
 	def open(self, force_new=False):
+		''' DataProvider.open([force_new]) -- otwarcie pliku danych
+			@param force_new wymuszenie utworzenia nowego pliku
+		'''
 		_LOG.debug('DataProvider.open(%s)' % self.filename)
 
 		self.close()
@@ -99,37 +107,107 @@ class DataProvider:
 			except Exception, e:
 				_LOG.exception('DataProvider.open(%s) error ' % self.filename)
 				self.close()
-				raise Exception(e)
+				raise StandardError(e)
 		else:
 			self._file = file(self.filename, 'w+b')
 			self.next_offset = self._write_header(self._file)
 
 
 	def close(self):
+		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
 			self._file.close()
 			self._file = None
 
 
 	def rebuild(self, catalog):
-		return
+		''' DataProvider.rebuild(catalog) -> int -- przebudowanie pliku danych.
+			Przebudowywuje plik danych i usuwa z niego śmieci.
+
+			@param catalog katalog do przebudowy
+			@return ilość zaoszczędzonego miejsca
+		'''
 		self._file.flush()
-		new_file = file(self.filename + '.tmp', 'w+b')
 
-		new_file_next_offset = self._write_header(new_file)
+		saved_space	= 0
+		new_file	= None
+		tmp_filename	= self.filename + '.tmp'
+		old_filename	= self.filename + '.old'
 
-		files_to_update = []
-		dirs_to_update	= []
+		try:
+			new_file = file(tmp_filename, 'w+b')
+			new_file_next_offset = self._write_header(new_file)
 
-		def copy_data(offset, size, new_offset):
-			data = self.get_data((offset, size))
-			next_offset = self._write_block(new_file, new_offset, size, data)
-			return new_offset
+			files_to_update = []
 
+			# kopiowanie danych
+			def copy_data(offset, size, new_offset):
+				data = self.get_data((offset, size))
+				next_offset = self._write_block(new_file, new_offset, size, data)
+				return next_offset
 
-		#def copy_directory(dir, 
+			# kopiowanie katalogu z podkatalogami
+			def copy_directory(dir, next_offset):
+				for image in dir.files:
+					image_thumb	= None
+					image_exif	= None
 
+					if image.thumb is not None:
+						offset, size = image.thumb
+						image_thumb = (next_offset, size)
+						next_offset = copy_data(offset, size, next_offset)
 
+					if image.exif is not None:
+						offset, size = image.exif
+						image_exif = (next_offset, size)
+						next_offset = copy_data(offset, size, next_offset)
+					files_to_update.append((image, image_thumb, image_exif))
+
+				for subdir in dir.subdirs:
+					next_offset = copy_directory(subdir, next_offset)
+
+				return next_offset
+
+			# kopiowanie katalogu
+			next_offset = new_file_next_offset
+			for disk in catalog.disks:
+				next_offset = copy_directory(disk, next_offset)
+
+			new_file.close()
+			new_file = None
+			self._file.close()
+			self._file = None
+
+		except IOError, err:
+			_LOG.exception('DataProvider.rebuild error')
+			if os.path.exists(tmp_filename):
+				os.unlink(tmp_filename)
+			raise StandardError(err)
+		else:
+			os.rename(self.filename, old_filename)
+			os.rename(tmp_filename, self.filename)
+
+			# rozmiary plików przed i po
+			old_size = os.path.getsize(old_filename)
+			new_size = os.path.getsize(self.filename)
+			saved_space = old_size - new_size
+
+			# aktualizacja odnośników w katalogu
+			for image, image_thumb, image_exif in files_to_update:
+				if image_thumb is not None:		image.thumb = image_thumb
+				if image_exif is not None:		image.exif = image_exif
+
+			# wywalenie starego pliku
+			os.unlink(old_filename)
+		finally:
+			if new_file is not None:
+				new_file.close()
+			if self._file is not None:
+				self._file.close()
+				self._file = None
+			self.open()
+
+		return saved_space
 
 
 	######################################################################################
@@ -146,6 +224,8 @@ class DataProvider:
 				ulong - ostatni offset
 		"""
 		_LOG.debug('DataProvider._check_file()')
+
+		# sprawdzenie nagłówka
 		header = dest_file.read(len(self._DATA_FILE_HEADER_ID))
 		if header != self._DATA_FILE_HEADER_ID:
 			raise IOError('Invalid file')
@@ -168,12 +248,16 @@ class DataProvider:
 		'''
 		_LOG.debug('DataProvider._write_header()')
 
+		# zapisanie nagłówka
 		dest_file.seek(0)
 		dest_file.write("\x00" * self._DATA_BLOCK_HEADER_SIZE)
 		dest_file.seek(0)
 		dest_file.write(self._DATA_FILE_HEADER_ID)
+
+		# wersji
 		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
 
+		# kolejny offset
 		next_offset = self._DATA_FILE_HEADER_SIZE
 		self._write_next_offset(dest_file, next_offset)
 
