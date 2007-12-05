@@ -78,6 +78,7 @@ class Catalog(TreeItem):
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
 		self.disks.append(disk)
+		self.dirty = True
 		return True
 
 
@@ -99,6 +100,12 @@ class Catalog(TreeItem):
 
 	def encode(self):
 		return ''
+
+
+	def check_on_find(self, text, options=None):
+		self_result = []
+		[ self_result.extend(disk.check_on_find(text, options)) for disk in self.disks ]
+		return self_result
 
 
 	@staticmethod

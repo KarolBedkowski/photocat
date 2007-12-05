@@ -103,17 +103,17 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		CatalogFile.load(self, path, options, on_update)
+		self._load_thumb(path)
 		if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 			self._load_exif(path)
-		self._load_thumb(path)
 		return True
 
 
 	def update(self, path, options, on_update):
 		if CatalogFile.update(self, path, options, on_update) or options.get('force', False):
+			self._load_thumb(path)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
-			self._load_thumb(path)
 		return True
 
 
@@ -136,7 +136,6 @@ class FileImage(CatalogFile):
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
 					self.exif = self.disk.catalog.data_provider.append(str_exif)
-					print self.exif
 				else:
 					self.exif = None
 		except StandardError:

@@ -53,25 +53,31 @@ class DataProvider:
 		self.close()
 
 
-	def get_data(self, offset_size):
+	def get_data(self, offset_size, src_file=None):
 		''' DataProvider.get_data(offset_size) -> str -- pobranie danych
 			@param offset_size (offset, size) danych do pobrania
 			@return dane
 		'''
 		offset, size = offset_size
 		_LOG.debug('DataProvider.get_data(%d, %d)' % (offset, size))
-		if self._file is None:
+		src_file = src_file or self._file
+		if src_file is None:
 			_LOG.warn('DataProvider.get: file closed')
 			return None
 
-		self._file.seek(offset)
+		src_file.seek(offset)
 	
 		# naglowek
-		h_prefix, h_offset, h_length = unpack('LLL', self._file.read(self._DATA_BLOCK_HEADER_SIZE))
-		if h_prefix != self._DATA_BLOCK_HEADER_PREFIX or h_offset != offset or h_length != size:
-			raise StandardError('Invalid block')
+		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(self._DATA_BLOCK_HEADER_SIZE))
+		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
+		offset_dont_match = h_offset != offset
+		size_dont_match = h_length != size
+		if prefix_dont_match or offset_dont_match or size_dont_match:
+			raise StandardError('Invalid block prefix=%r  offset=%r  size=%r' %
+					(prefix_dont_match, offset_dont_match, size_dont_match)
+			)
 
-		return self._file.read(size)
+		return src_file.read(size)
 
 
 	def append(self, data):
@@ -129,8 +135,8 @@ class DataProvider:
 		'''
 		self._file.flush()
 
-		saved_space	= 0
-		new_file	= None
+		saved_space		= 0
+		new_file		= None
 		tmp_filename	= self.filename + '.tmp'
 		old_filename	= self.filename + '.old'
 
@@ -143,7 +149,9 @@ class DataProvider:
 			# kopiowanie danych
 			def copy_data(offset, size, new_offset):
 				data = self.get_data((offset, size))
+				#off = new_offset
 				next_offset = self._write_block(new_file, new_offset, size, data)
+				#sdata = self.get_data((off, size), new_file)
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
@@ -161,6 +169,7 @@ class DataProvider:
 						offset, size = image.exif
 						image_exif = (next_offset, size)
 						next_offset = copy_data(offset, size, next_offset)
+
 					files_to_update.append((image, image_thumb, image_exif))
 
 				for subdir in dir.subdirs:
@@ -206,6 +215,7 @@ class DataProvider:
 				self._file.close()
 				self._file = None
 			self.open()
+			catalog.dirty = True
 
 		return saved_space
 
@@ -285,6 +295,7 @@ class DataProvider:
 			@param data			dane do zapisania
 			@return następny offset (koneic danych)
 		'''
+		_LOG.debug('DataProvider._write_block(%d, %d)' % (offset, size))
 		dest_file.seek(offset)
 		# nagłówek bloku
 		dest_file.write(pack('LLL', self._DATA_BLOCK_HEADER_PREFIX, offset, size))
@@ -293,7 +304,7 @@ class DataProvider:
 		# kolejny offset
 		next_offset = self._next_offset(dest_file.tell())
 		self._write_next_offset(dest_file, next_offset)
-		dest_file.flush()
+		dest_file.flush()#
 		return next_offset
 
 

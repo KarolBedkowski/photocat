@@ -92,6 +92,13 @@ class CatalogFile(StorageObject):
 		return self.disk.id
 
 
+	@property
+	def path(self):
+		if self.parent is None:
+			return self.name
+		return os.path.join(self.parent.path, self.name)
+
+
 	def load(self, path, options, on_update):
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
@@ -114,6 +121,18 @@ class CatalogFile(StorageObject):
 	def set_tags(self, tags):
 		self.tags = tuple(tags)
 		self.disk.catalog.tags_provider.update_item(self)
+
+
+	def check_on_find(self, text, options=None):
+		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
+		if self.desc is not None and self.desc.lower().count(text) > 0:
+			return [self]
+		if self.name is not None and self.name.lower().count(text) > 0:
+			return [self]
+		if self.tags is not None and text in self.tags:
+			return [self]
+		return list()
+
 
 
 	@classmethod

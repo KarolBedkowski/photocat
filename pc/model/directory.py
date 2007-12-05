@@ -100,6 +100,13 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
+	def check_on_find(self, text, options=None):
+		self_result = CatalogFile.check_on_find(self, text, options)
+		[ self_result.extend(subdir.check_on_find(text, options))	for subdir in self.subdirs ]
+		[ self_result.extend(image.check_on_find(text, options))	for image in self.files ]
+		return self_result
+
+
 	def _load_subdirs(self, path, options, on_update):
 		subdirs = self.__folder_subdirs_list(path)
 		include_empty_subdirs = options.get('include_empty_subdirs', False)

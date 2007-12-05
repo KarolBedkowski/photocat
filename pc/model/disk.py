@@ -40,6 +40,11 @@ class Disk(Directory):
 
 		Directory.__init__(self, id, name, parent, self, *args, **kwargs)
 
+	
+	@property
+	def path(self):
+		return ''
+
 
 	def load(self, path, options, on_update):
 		Directory.load(self, path, options, on_update)

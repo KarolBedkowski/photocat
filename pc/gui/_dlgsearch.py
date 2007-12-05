@@ -58,7 +58,7 @@ class DlgSearch(wx.Dialog):
 		self._result	= []
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['image', 'folder1'])
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
@@ -99,7 +99,7 @@ class DlgSearch(wx.Dialog):
 
 	def _create_layout_list(self):
 		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
-		listctrl.SetFileImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
+		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.InsertColumn(0, _('Name'))
 		listctrl.InsertColumn(1, _('Catalog'))
 		listctrl.InsertColumn(2, _('Disk'))
@@ -135,7 +135,7 @@ class DlgSearch(wx.Dialog):
 		listctrl = self._result_list
 		listctrl.DeleteAllItems()
 
-		icon_folder_idx	= self._icon_provider.get_image_index('folder1')
+		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
 
 		self._result = []
@@ -148,7 +148,7 @@ class DlgSearch(wx.Dialog):
 			else:
 				ico = icon_folder_idx
 				counters[1] += 1
-			idx = listctrl.InsertFileImageStringItem(sys.maxint, str(item.name), ico)
+			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
 			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
 			listctrl.SetStringItem(idx, 2, str(item.disk.name))
 			listctrl.SetStringItem(idx, 3, item.path)
