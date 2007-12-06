@@ -654,7 +654,8 @@ class WndMain(wx.Frame):
 
 
 	def show_item(self, folder):
-		self._dirs_tree.EnsureVisible(folder.tree_node)
+		#self._dirs_tree.EnsureVisible(folder.tree_node)
+		self._dirs_tree.show_node(folder)
 		self._dirs_tree.SelectItem(folder.tree_node)
 
 

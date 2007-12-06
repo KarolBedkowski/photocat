@@ -51,7 +51,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
 		self._root = item_root
 
-		wx.EVT_TREE_ITEM_EXPANDING(self, wxid, self._on_expanding)
+		#wx.EVT_TREE_ITEM_EXPANDING(self, wxid, self._on_expanding)
 
 
 	@property
@@ -156,9 +156,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			_LOG.debug('add_catalog add_disk %s' % disk.name)
 			disk.tree_node = disk_node = self.AppendItem(catalog_node, disk.caption, data=wx.TreeItemData(disk))
 			self.SetItemImage(disk_node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
-
-			if len(disk.childs) > 0:
-				self.AppendItem(disk_node, '...')
+			self._update_node_disk(disk_node, disk)
 
 		#node = catalog.tree_tags_node = self.AppendItem(catalog_node, _('Tags'), data=wx.TreeItemData(catalog.tags_provider))
 		#self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
@@ -172,9 +170,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			dir_node = dir.tree_node = self.AppendItem(disk_node, dir.caption, data=wx.TreeItemData(dir))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
-
-			if len(dir.childs) > 0:
-				self.AppendItem(dir_node, '...')
+			self._update_node_directory(dir_node, dir)
 
 
 	def _update_node_directory(self, node, dir):
@@ -185,9 +181,11 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			subdir_node = subdir.tree_node = self.AppendItem(dir_node, subdir.caption, data=wx.TreeItemData(subdir))
 			self.SetItemImage(subdir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(subdir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
+			self._update_node_directory(subdir_node, subdir)
 
-			if len(subdir.childs) > 0:
-				self.AppendItem(subdir_node, '...')
+
+	def show_node(self, node):
+		self.EnsureVisible(node.tree_node)
 
 
 
