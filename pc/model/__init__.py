@@ -32,6 +32,6 @@ from directory		import Directory
 from disk			import Disk
 from file_image		import FileImage
 from catalog		import Catalog
-from tag			import Tag
+from tag			import Tag, Tags
 
 # vim: encoding=utf8: ff=unix:

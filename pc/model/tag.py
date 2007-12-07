@@ -58,7 +58,7 @@ class Tag(object):
 			if item in self.files:
 				self.files.remove(item)
 			return
-		if item in self.items:
+		if item in self.dirs:
 			self.dirs.remove(item)
 
 

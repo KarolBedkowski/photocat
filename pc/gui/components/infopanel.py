@@ -58,7 +58,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Description'))
 		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
 		notebook.AddPage(self._create_layout_page_folder(notebook),	_('Folder'))
-		notebook.AddPage(self._create_layout_page_folder_files(notebook),	_('Folder files'))
 		return notebook
 
 
@@ -126,22 +125,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 		return panel
 
 
-	def _create_layout_page_folder_files(self, parent):
-		panel = wx.Panel(parent, -1)
-
-		listctrl = self._listctrl_folder_files = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(listctrl, 1, wx.EXPAND)
-		panel.SetSizerAndFit(sizer)
-
-		listctrl.InsertColumn(0, _('Name'))
-		listctrl.InsertColumn(1, _('Date'))
-		listctrl.InsertColumn(2, _('Size'), format=wx.LIST_FORMAT_RIGHT)
-
-		return panel
-
-
 	def _show_main(self, image):
 		listctrl = self._listctrl_main
 
@@ -186,14 +169,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 		self._textctrl_folder_descr.SetValue(str(folder.desc or ""))
 
-		listctrl = self._listctrl_folder_files
-
-		def insert(name, date, size):
-			idx = listctrl.InsertStringItem(sys.maxint, str(name))
-			listctrl.SetStringItem(idx, 1, time.strftime('%c', time.localtime(date)))
-			listctrl.SetStringItem(idx, 2, format_size(size, separate=True))
-
-#		[ insert(name, date, size) for name, date, size in folder.folder_files ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -223,7 +198,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def clear_folder(self):
 		self._folder is None
 		self._listctrl_folder.DeleteAllItems()
-		self._listctrl_folder_files.DeleteAllItems()
 		self._textctrl_folder_descr.SetValue('')
 
 

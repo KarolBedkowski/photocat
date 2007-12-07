@@ -531,7 +531,7 @@ class WndMain(wx.Frame):
 		show_info = True
 
 		if isinstance(item, Tag):
-			item = item.items_files
+			item = item.files
 			show_info = False
 		elif not isinstance(item, Directory):
 			self._photo_list.ShowDir([])

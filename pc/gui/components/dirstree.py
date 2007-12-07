@@ -22,7 +22,7 @@ import wx
 from kpylibs.eventgenerator	import EventGenerator
 from kpylibs.iconprovider	import IconProvider
 
-from pc.model import Tag, FileImage, Catalog, Directory, Disk
+from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags
 
 
 
@@ -51,7 +51,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
 		self._root = item_root
 
-		#wx.EVT_TREE_ITEM_EXPANDING(self, wxid, self._on_expanding)
+		wx.EVT_TREE_ITEM_EXPANDING(self, wxid, self._on_expanding)
 
 
 	@property
@@ -131,11 +131,19 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				node = self.AppendItem(tag.tree_node, '...')
 
 
+	def show_node(self, node):
+		self.EnsureVisible(node.tree_node)
+
+
 	def _on_expanding(self, evt):
 		node = evt.GetItem()
 		item = self.GetItemData(node).GetData()
 
-		self.update_node(node, item)
+		#self.update_node(node, item)
+		if isinstance(item, Tag):
+			self._update_node_tag(node, item)
+		elif isinstance(item, Tags):
+			self._update_node_tags(node, item)
 
 
 	def update_node(self, node, item):
@@ -153,20 +161,21 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		catalog_node = node
 
 		for disk in catalog.childs:
-			_LOG.debug('add_catalog add_disk %s' % disk.name)
+			_LOG.debug('_update_node_catalog add_disk %s' % disk.name)
 			disk.tree_node = disk_node = self.AppendItem(catalog_node, disk.caption, data=wx.TreeItemData(disk))
 			self.SetItemImage(disk_node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
 			self._update_node_disk(disk_node, disk)
 
-		#node = catalog.tree_tags_node = self.AppendItem(catalog_node, _('Tags'), data=wx.TreeItemData(catalog.tags_provider))
-		#self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+		node = catalog.tree_tags_node = self.AppendItem(catalog_node, _('Tags'), data=wx.TreeItemData(catalog.tags_provider))
+		self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+		self._update_node_tags(node, catalog.tags_provider)
 
 
 	def _update_node_disk(self, node, disk):
 		disk_node = node
 
 		for dir in disk.childs:
-			_LOG.debug('add_catalog add_dir %s' % dir.name)
+			_LOG.debug('_update_node_disk add_dir %s' % dir.name)
 			dir_node = dir.tree_node = self.AppendItem(disk_node, dir.caption, data=wx.TreeItemData(dir))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
@@ -177,15 +186,42 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		dir_node = node
 
 		for subdir in dir.childs:
-			_LOG.debug('add_catalog add_dir %s' % dir.name)
+			_LOG.debug('_update_node_directory add_dir %s' % dir.name)
 			subdir_node = subdir.tree_node = self.AppendItem(dir_node, subdir.caption, data=wx.TreeItemData(subdir))
 			self.SetItemImage(subdir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(subdir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
 			self._update_node_directory(subdir_node, subdir)
 
 
-	def show_node(self, node):
-		self.EnsureVisible(node.tree_node)
+	def _update_node_tags(self, node, tags):
+		self.DeleteChildren(node)
+		for tag_name, tag in tags.tags_items:
+			if tag.files_count + tag.dirs_count > 0:
+				_LOG.debug('_update_node_tags %s' % tag.name)
+				tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
+				self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+				if tag.dirs_count > 0:
+					self.AppendItem(tag_node, '...')
+
+
+	def _update_node_tag(self, node, tag):
+		_LOG.debug('_update_node_tag %s' % tag.name)
+
+		self.DeleteChildren(node)
+
+		def add_subdir(parent_node, item):
+			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
+			self.SetItemImage(node, self._icon_idx, wx.TreeItemIcon_Normal)
+			self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
+			for subdir in item.childs:
+				add_subdir(node, subdir)
+
+		for dir in tag.dirs:
+			add_subdir(node, dir)
+
+
+
+
 
 
 
