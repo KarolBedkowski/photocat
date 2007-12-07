@@ -74,7 +74,7 @@ class Tag(object):
 class Tags(object):
 	def __init__(self, catalog):
 		self.reset()
-		self._catalog = catalog
+		self.catalog = catalog
 
 
 	def reset(self):
@@ -108,7 +108,7 @@ class Tags(object):
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
 			return self._tags[tag]
-		tag_obj = Tag(tag, self._catalog)
+		tag_obj = Tag(tag, self.catalog)
 		self._tags[tag] = tag_obj
 		return tag_obj
 

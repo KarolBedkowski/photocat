@@ -510,10 +510,10 @@ class WndMain(wx.Frame):
 		if folder is None or isinstance(folder, Catalog):
 			return
 
-		if folder.files_count == 0:
+		if len(folder.files) == 0:
 			return
 
-		image = FileImage(None, None, None, catalog=folder.catalog)
+		image = FileImage(None, None, None, folder.disk, catalog=folder.catalog)
 
 		dlg = DlgProperties(self, image)
 		if dlg.ShowModal() == wx.ID_OK:

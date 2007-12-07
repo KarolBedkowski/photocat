@@ -119,7 +119,9 @@ class CatalogFile(StorageObject):
 
 
 	def set_tags(self, tags):
-		self.tags = tuple(tags)
+		self.tags = None
+		if len(tags) > 0:
+			self.tags = tuple(tags)
 		self.disk.catalog.tags_provider.update_item(self)
 
 
