@@ -53,9 +53,9 @@ class FileImage(CatalogFile):
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
-		self.thumb		= None
-		self.dimensions	= None
-		self.exif		= None
+		self.thumb		= kwargs.get('thumb')
+		self.dimensions	= kwargs.get('dimensions')
+		self.exif		= kwargs.get('exif')
 
 		self._exif_data = None
 
@@ -129,9 +129,9 @@ class FileImage(CatalogFile):
 						for key, val in exif.iteritems()
 						if key not in _IGNORE_EXIF_KEYS
 							and not key.startswith('Thumbnail ')
-				):
+				): # wolny generator
 					val = val.printable.replace('\0', '').strip()
-					val = ''.join(( zn for zn in val if zn in string.printable ))
+					val = ''.join(( zn for zn in val if zn in string.printable )) # wolne!!
 					self._exif_data[key] = val
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)

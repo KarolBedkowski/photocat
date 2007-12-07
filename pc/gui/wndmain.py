@@ -392,7 +392,7 @@ class WndMain(wx.Frame):
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
 
-			dlg_progress = wx.ProgressDialog(_("Adding disk"), (" " * 70), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 50), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 
 			def update_progress(msg, cntr=[0]):
@@ -402,7 +402,7 @@ class WndMain(wx.Frame):
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
-				self.__save_catalog(catalog)
+				self.__save_catalog(catalog, True)
 				self._dirs_tree.add_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
@@ -426,7 +426,7 @@ class WndMain(wx.Frame):
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
 
-			dlg_progress = wx.ProgressDialog(_("Updating disk"), (" " * 70), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 50), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 
 			def update_progress(msg, cntr=[0]):
@@ -436,7 +436,7 @@ class WndMain(wx.Frame):
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
 				catalog.update_disk(tree_selected, data['path'], descr=data['descr'], options=data, on_update=update_progress, name=data['name'])
-				self.__save_catalog(catalog)
+				self.__save_catalog(catalog, True)
 				self._dirs_tree.add_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
@@ -642,10 +642,10 @@ class WndMain(wx.Frame):
 
 
 
-	def __save_catalog(self, catalog):
+	def __save_catalog(self, catalog, force=False):
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 		try:
-			if catalog.dirty:
+			if catalog.dirty or force:
 				Storage.save(catalog)
 		except:
 			_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)

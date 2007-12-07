@@ -25,8 +25,11 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 
 
+from types	import DictType
 
 from kpylibs.singleton	import Singleton
+
+
 
 class _IdProvider(Singleton):
 	def init(self):
@@ -58,8 +61,8 @@ class StorageObject(object):
 		if id is not None:
 			self._id = _id_provider.set(id)
 
-		if kwargs is not None and len(kwargs) > 0:
-			self.set_attributes(kwargs)
+		#if kwargs is not None and len(kwargs) > 0:
+		#	self.set_attributes(kwargs)
 
 
 	def _get_id(self):
@@ -102,21 +105,21 @@ class StorageObject(object):
 		attributes = cls.__preserveattr__()
 		eval_data = eval(data)
 
-		if not isinstance(eval_data, dict):
-			raise Exception('unknow data: "%s" type=' % (eval_data, type(eval_data)))
+		if type(eval_data) != DictType:
+			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(eval_data)))
 
-		data = dict((
-				(key, attributes[key](val))
-				for key, val in eval_data.items()
-				if attributes.has_key(key)
-		))
-		return data
+		return eval_data
+
+#		data = dict((
+#				(key, attributes[key](val))
+#				for key, val in eval_data.iteritems()
+#				if attributes.has_key(key)
+#		))
+#		return data
 
 
 	def set_attributes(self, data):
-		for key, val in data.items():
-			if hasattr(self, key):
-				setattr(self, key, val)
+		[ setattr(self, key, val) for key, val in data.iteritems() if hasattr(self, key) ]
 
 
 	def encode(self):

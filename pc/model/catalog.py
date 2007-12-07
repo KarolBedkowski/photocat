@@ -78,6 +78,7 @@ class Catalog(TreeItem):
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
 		self.disks.append(disk)
+		self.disks.sort(lambda x,y: cmp(x.name, y.name))
 		self.dirty = True
 		return True
 

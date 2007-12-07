@@ -43,10 +43,10 @@ from storage import StorageObject
 
 class CatalogFile(StorageObject):
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
-		self.size = None
-		self.date = None
-		self.tags = None
-		self.desc = None
+		self.size = kwargs.get('size')
+		self.date = kwargs.get('date')
+		self.tags = kwargs.get('tags')
+		self.desc = kwargs.get('desc')
 
 		StorageObject.__init__(self, id, *args, **kwargs)
 
@@ -102,7 +102,7 @@ class CatalogFile(StorageObject):
 	def load(self, path, options, on_update):
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
-		on_update(self.name)
+		on_update(path)
 		return True
 
 
@@ -114,7 +114,7 @@ class CatalogFile(StorageObject):
 		old_date = self.date
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
-		on_update(self.name)
+		on_update(path)
 		return old_size != self.size or old_date != self.date
 
 

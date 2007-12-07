@@ -106,6 +106,7 @@ class Storage:
 					_LOG.exception('Storage.load(%s) line="%s"' % (filename, line))
 					raise InvalidFileError()
 
+			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
 			catalog.dirty = False
 
 		except InvalidFileError, err:
