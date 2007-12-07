@@ -135,17 +135,12 @@ class Catalog(TreeItem):
 	@staticmethod
 	def update_images_from_image(images, master_image):
 		desc = master_image.desc
-		if desc == '':
-			desc = None
-		else:
-			desc = desc.strip()
-
 		tags = master_image.tags
 
 		for image in images:
 			if desc is not None:
-				image.desc = desc
-			if tags is not None and len(tags) > 0:
+				image.desc = desc.strip()
+			if tags is not None:
 				image.set_tags(tags)
 
 

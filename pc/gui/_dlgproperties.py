@@ -102,6 +102,11 @@ class DlgProperties(wx.Dialog):
 		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
+
+		if self._item_is_fake:
+			self._cb_set_descr = wx.CheckBox(panel, -1, _('Set description'))
+			sizer.Add(self._cb_set_descr, 0, wx.EXPAND|wx.ALL, 5)
+
 		sizer.Add(textctrl,1, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
@@ -132,6 +137,11 @@ class DlgProperties(wx.Dialog):
 		button2	= create_button(panel, _('Del'), self._on_del_tag)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
+
+		if self._item_is_fake:
+			self._cb_set_tags = wx.CheckBox(panel, -1, _('Set tags'))
+			sizer.Add(self._cb_set_tags, 0, wx.EXPAND|wx.ALL, 5)
+
 		sizer.Add(listbox, 1, wx.EXPAND)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -179,11 +189,20 @@ class DlgProperties(wx.Dialog):
 
 	def _on_ok(self, evt):
 		item = self._item
-		item.desc = self._textctrl_desc.GetValue()
-		listbox = self._listbox_tags
-		tag_iter = ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
-		tags = [ tag for tag in tag_iter if len(tag) > 0 ]
-		item.set_tags(tags)
+
+		if not self._item_is_fake or self._cb_set_descr.IsChecked():
+			item.desc = self._textctrl_desc.GetValue()
+		else:
+			item.desc = None
+
+		if not self._item_is_fake or self._cb_set_tags.IsChecked():
+			listbox = self._listbox_tags
+			tag_iter = ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
+			tags = [ tag for tag in tag_iter if len(tag) > 0 ]
+			item.set_tags(tags)
+		else:
+			item.tags = None
+
 		self.EndModal(wx.ID_OK)
 
 
