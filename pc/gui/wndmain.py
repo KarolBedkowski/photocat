@@ -105,6 +105,7 @@ class WndMain(wx.Frame):
 		self.Bind(EVT_THUMBNAILS_SEL_CHANGED, self._on_thumb_sel_changed)
 		self.Bind(EVT_THUMBNAILS_DCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
+		self._dirs_tree.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu)
 
 		self.__update_last_open_files()
 
@@ -598,6 +599,15 @@ class WndMain(wx.Frame):
 		self._open_file(filename)
 
 
+	def _on_dirtree_context_menu(self, evt):
+		item = self._dirs_tree.selected_item
+		if item is None:
+			return
+		
+		self.PopupMenu(self.__create_popup_menu(item))
+
+
+
 	################################################################################
 
 
@@ -659,6 +669,28 @@ class WndMain(wx.Frame):
 		self._dirs_tree.show_node(folder)
 		self._dirs_tree.SelectItem(folder.tree_node)
 
+
+	def __create_popup_menu(self, item):
+		popup_menu = wx.Menu()
+
+		def append(name, func):
+			mid = wx.NewId()
+			popup_menu.Append(mid, name)
+			wx.EVT_MENU(self, mid, func)
+
+		if isinstance(item, Directory):
+			append(_('Properties'), self._on_dirtree_item_activate)
+			popup_menu.AppendSeparator()
+			if isinstance(item, Disk):
+				append(_('&Update disk...'), self._on_catalog_update_disk)
+				append(_('&Delete disk...'), self._on_catalog_del_disk)
+			else:
+				append(_('Delete selected &dir...'), self._on_catalog_del_dir)
+			popup_menu.AppendSeparator()
+
+		append(_('Close catalog'),	self._on_file_close)
+
+		return popup_menu
 
 
 # vim: encoding=utf8:
