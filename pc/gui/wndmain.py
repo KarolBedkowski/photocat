@@ -342,6 +342,9 @@ class WndMain(wx.Frame):
 		else:
 			catalog = tree_selected.catalog
 
+		if not dialogs.message_box_question_yesno(self, _('Rebuild catalog %s?') % catalog.caption, 'PC'):
+			return
+
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
 			saved_space = catalog.data_provider.rebuild(catalog)

@@ -211,8 +211,11 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 		def add_subdir(parent_node, item):
 			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
-			self.SetItemImage(node, self._icon_idx, wx.TreeItemIcon_Normal)
-			self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
+			if isinstance(item, Disk):
+				self.SetItemImage(node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
+			else:
+				self.SetItemImage(node, self._icon_idx, wx.TreeItemIcon_Normal)
+				self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
 			for subdir in item.childs:
 				add_subdir(node, subdir)
 
