@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-08 21:45+0100\n"
+"POT-Creation-Date: 2007-12-08 22:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:159 gui/wndmain.py:689
+#: gui/wndmain.py:159 gui/wndmain.py:692
 msgid "&Delete disk..."
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:158 gui/wndmain.py:688
+#: gui/wndmain.py:158 gui/wndmain.py:691
 msgid "&Update disk..."
 msgstr ""
 
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: gui/_dlgadddisk.py:58 gui/_dlgadddisk.py:182 gui/_dlgadddisk.py:188
+#: gui/_dlgadddisk.py:58 gui/_dlgadddisk.py:178 gui/_dlgadddisk.py:184
 msgid "Add disk"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:140 gui/wndmain.py:694
+#: gui/wndmain.py:140 gui/wndmain.py:697
 msgid "Close catalog"
 msgstr ""
 
@@ -131,30 +131,30 @@ msgstr ""
 msgid "Del"
 msgstr ""
 
-#: gui/wndmain.py:496
+#: gui/wndmain.py:499
 #, python-format
 msgid "Delete %d images?"
 msgstr ""
 
-#: gui/wndmain.py:474
+#: gui/wndmain.py:477
 msgid "Delete directory"
 msgstr ""
 
-#: gui/wndmain.py:477
+#: gui/wndmain.py:480
 #, python-format
 msgid "Delete directory %s?"
 msgstr ""
 
-#: gui/wndmain.py:458
+#: gui/wndmain.py:461
 msgid "Delete disk"
 msgstr ""
 
-#: gui/wndmain.py:461
+#: gui/wndmain.py:464
 #, python-format
 msgid "Delete disk %s?"
 msgstr ""
 
-#: gui/wndmain.py:161 gui/wndmain.py:691
+#: gui/wndmain.py:161 gui/wndmain.py:694
 msgid "Delete selected &dir..."
 msgstr ""
 
@@ -175,13 +175,17 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: gui/wndmain.py:554
+#: gui/wndmain.py:557
 #, python-format
 msgid "Directorys %d;  files: %d"
 msgstr ""
 
 #: gui/_dlgsearch.py:105 model/_catalog_file.py:72
 msgid "Disk"
+msgstr ""
+
+#: model/disk.py:56
+msgid "Disk added"
 msgstr ""
 
 #: gui/_dlgadddisk.py:100
@@ -192,23 +196,27 @@ msgstr ""
 msgid "Disk name:"
 msgstr ""
 
-#: gui/wndmain.py:413 gui/wndmain.py:447
+#: model/disk.py:57
+msgid "Disk updated"
+msgstr ""
+
+#: gui/wndmain.py:413 gui/wndmain.py:450
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:633
+#: gui/wndmain.py:636
 #, python-format
 msgid "Error openning file %s"
 msgstr ""
 
-#: gui/wndmain.py:620
+#: gui/wndmain.py:623
 #, python-format
 msgid ""
 "Error openning file %s!\n"
 "File don't exists."
 msgstr ""
 
-#: gui/wndmain.py:666
+#: gui/wndmain.py:669
 #, python-format
 msgid "Error saving catalog %s"
 msgstr ""
@@ -225,7 +233,7 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
-#: gui/wndmain.py:556
+#: gui/wndmain.py:559
 #, python-format
 msgid "Files: %d"
 msgstr ""
@@ -246,7 +254,7 @@ msgstr ""
 msgid "Folder:"
 msgstr ""
 
-#: gui/_dlgadddisk.py:148
+#: gui/_dlgadddisk.py:144
 msgid "Force"
 msgstr ""
 
@@ -255,7 +263,7 @@ msgstr ""
 msgid "Found %d folders and %d files"
 msgstr ""
 
-#: gui/_dlgadddisk.py:142
+#: gui/_dlgadddisk.py:141
 msgid "Include empty directories"
 msgstr ""
 
@@ -271,11 +279,7 @@ msgstr ""
 msgid "Load catalog"
 msgstr ""
 
-#: gui/_dlgadddisk.py:145
-msgid "Load info about files in directories"
-msgstr ""
-
-#: gui/_dlgadddisk.py:151
+#: gui/_dlgadddisk.py:147
 msgid "Load info from captions.txt"
 msgstr ""
 
@@ -288,7 +292,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: gui/_dlgadddisk.py:182
+#: gui/_dlgadddisk.py:178
 msgid "Name already exists in catalog!"
 msgstr ""
 
@@ -296,11 +300,11 @@ msgstr ""
 msgid "Name:"
 msgstr ""
 
-#: gui/wndmain.py:474
+#: gui/wndmain.py:477
 msgid "No directory selected"
 msgstr ""
 
-#: gui/wndmain.py:458
+#: gui/wndmain.py:461
 msgid "No disk selected"
 msgstr ""
 
@@ -308,16 +312,16 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/wndmain.py:652
+#: gui/wndmain.py:655
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:284 gui/wndmain.py:620 gui/wndmain.py:633
+#: gui/wndmain.py:284 gui/wndmain.py:623 gui/wndmain.py:636
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:623
+#: gui/wndmain.py:626
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
@@ -334,7 +338,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: gui/_dlgproperties.py:49 gui/wndmain.py:685
+#: gui/_dlgproperties.py:49 gui/wndmain.py:688
 msgid "Properties"
 msgstr ""
 
@@ -365,7 +369,7 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/wndmain.py:199 gui/wndmain.py:666
+#: gui/wndmain.py:199 gui/wndmain.py:669
 msgid "Save catalog"
 msgstr ""
 
@@ -377,11 +381,11 @@ msgstr ""
 msgid "Search in calalogs"
 msgstr ""
 
-#: gui/_dlgadddisk.py:163
+#: gui/_dlgadddisk.py:159
 msgid "Select directory"
 msgstr ""
 
-#: gui/_dlgadddisk.py:188
+#: gui/_dlgadddisk.py:184
 msgid "Selected dir don't exists!"
 msgstr ""
 
@@ -426,7 +430,7 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: gui/wndmain.py:433
+#: gui/wndmain.py:436
 msgid "Updating disk"
 msgstr ""
 

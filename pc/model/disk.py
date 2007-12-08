@@ -27,6 +27,11 @@ __revision__	= '$Id$'
 
 
 import time
+import logging
+_LOG = logging.getLogger(__name__)
+
+import gettext
+_ = gettext.gettext
 
 from directory	import Directory
 
@@ -44,6 +49,15 @@ class Disk(Directory):
 	@property
 	def path(self):
 		return ''
+
+	def _get_info(self):
+		result = Directory._get_info(self)
+		result.append((150, '', ''))
+		result.append((151, _('Disk added'), time.strftime('%c', time.localtime(self.add_date))))
+		result.append((152, _('Disk updated'), time.strftime('%c', time.localtime(self.update_date))))
+		return result
+
+	info = property(_get_info)
 
 
 	def load(self, path, options, on_update):
