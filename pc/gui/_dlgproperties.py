@@ -51,8 +51,8 @@ class DlgProperties(wx.Dialog):
 		self._item = item
 		self._item_is_fake		= is_fake = item.name is None
 		self._item_is_folder	= isinstance(item, Directory)	and not is_fake
-		self._item_is_disk		= isinstance(item, Disk)	and not is_fake
-		self._item_is_catalog	= isinstance(item, Catalog) and not is_fake
+		self._item_is_disk		= isinstance(item, Disk)		and not is_fake
+		self._item_is_catalog	= isinstance(item, Catalog) 	and not is_fake
 		self._item_is_image		= isinstance(item, FileImage)	and not is_fake
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
@@ -84,9 +84,18 @@ class DlgProperties(wx.Dialog):
 
 	def _create_layout_page_main(self, parent):
 		panel = wx.Panel(parent, -1)
-		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
 
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer = wx.BoxSizer(wx.VERTICAL)
+
+		if self._item_is_disk:
+			name_sizer = wx.BoxSizer(wx.HORIZONTAL)
+			name_sizer.Add(wx.StaticText(panel, -1, _('Name:')))
+			name_sizer.Add((5, 5))
+			self._tc_name = wx.TextCtrl(panel, -1)
+			name_sizer.Add(self._tc_name, 1, wx.EXPAND)
+			sizer.Add(name_sizer, 0, wx.EXPAND|wx.ALL, 5)
+
+		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
 		sizer.Add(listctrl, 1, wx.EXPAND)
 		panel.SetSizerAndFit(sizer)
 
@@ -157,6 +166,9 @@ class DlgProperties(wx.Dialog):
 
 
 	def _show(self, item):
+		if self._item_is_disk:
+			self._tc_name.SetValue(item.name)
+
 		if not self._item_is_fake:
 			listctrl = self._listctrl_main
 
@@ -189,6 +201,9 @@ class DlgProperties(wx.Dialog):
 
 	def _on_ok(self, evt):
 		item = self._item
+
+		if self._item_is_disk:
+			item.name  = self._tc_name.GetValue() or item.name
 
 		if not self._item_is_fake or self._cb_set_descr.IsChecked():
 			item.desc = self._textctrl_desc.GetValue()

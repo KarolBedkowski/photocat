@@ -565,6 +565,7 @@ class WndMain(wx.Frame):
 			self._info_panel.show_folder(item)
 			self._dirs_tree.update_catalog_node(item.catalog)
 			self._dirs_tree.update_catalog_tags(item.catalog)
+			self._dirs_tree.update_node(item.tree_node, item)
 		dlg.Destroy()
 
 
@@ -601,7 +602,7 @@ class WndMain(wx.Frame):
 
 
 	def _open_file(self, filename):
-		if sum(( 1 for cat in self._catalogs if cat.filename == filename )) == 0:
+		if sum(( 1 for cat in self._catalogs if cat.catalog_filename == filename )) == 0:
 			if not os.path.exists(filename):
 				dialogs.message_box_error(self, _("Error openning file %s!\nFile don't exists.") % filename, _('Open file'))
 				return
