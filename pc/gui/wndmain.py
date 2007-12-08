@@ -401,11 +401,11 @@ class WndMain(wx.Frame):
 				return
 
 			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 50), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
-				dlg_progress.Update(cntr[0], msg)
+				return dlg_progress.Update(cntr[0], msg)
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
@@ -442,11 +442,11 @@ class WndMain(wx.Frame):
 				return
 
 			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 50), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + 1
-				dlg_progress.Update(cntr[0], msg)
+				return dlg_progress.Update(cntr[0], msg)
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)

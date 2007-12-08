@@ -102,19 +102,23 @@ class FileImage(CatalogFile):
 
 
 	def load(self, path, options, on_update):
-		CatalogFile.load(self, path, options, on_update)
-		self._load_thumb(path)
-		if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
-			self._load_exif(path)
-		return True
-
-
-	def update(self, path, options, on_update):
-		if CatalogFile.update(self, path, options, on_update) or options.get('force', False):
+		if CatalogFile.load(self, path, options, on_update):
 			self._load_thumb(path)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
-		return True
+			return True
+		return False
+
+
+	def update(self, path, options, on_update):
+		changes, process = CatalogFile.update(self, path, options, on_update)
+		if process:
+			if changes or options.get('force', False):
+				self._load_thumb(path)
+				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
+					self._load_exif(path)
+			return True
+		return False
 
 
 	def _load_exif(self, path):

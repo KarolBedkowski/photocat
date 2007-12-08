@@ -80,26 +80,28 @@ class Directory(CatalogFile, TreeItem):
 
 	def load(self, path, options, on_update):
 		_LOG.debug('Directory.load(%s)' % path)
-		CatalogFile.load(self, path, options, on_update)
-		self._load_subdirs(path, options, on_update)
-		self._load_files(path, options, on_update)
+		if CatalogFile.load(self, path, options, on_update):
+			if not self._load_subdirs(path, options, on_update):	return False
+			if not self._load_files(path, options, on_update):	 	return False
 
-		if options.get('load_captions_txt', True):
-			self._load_caption_txt(path)
+			if options.get('load_captions_txt', True):
+				self._load_caption_txt(path)
 
-		return True
+			return True
+		return False
 
 
 	def update(self, path, options, on_update):
 		_LOG.debug('Directory.update(%s)' % path)
-		CatalogFile.update(self, path, options, on_update)
-		self._update_subdirs(path, options, on_update)
-		self._update_files(path, options, on_update)
+		if CatalogFile.update(self, path, options, on_update)[1]:
+			if not self._update_subdirs(path, options, on_update):	return False
+			if not self._update_files(path, options, on_update):	return False
 
-		if options.get('load_captions_txt', True):
-			self._load_caption_txt(path)
+			if options.get('load_captions_txt', True):
+				self._load_caption_txt(path)
 
-		return True
+			return True
+		return False
 
 
 	def remove_subdir(self, subdir):
@@ -124,10 +126,13 @@ class Directory(CatalogFile, TreeItem):
 		include_empty_subdirs = options.get('include_empty_subdirs', False)
 		for subdir, subdir_path in subdirs:
 			subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
-			subdir_obj.load(subdir_path, options, on_update)
+			if not subdir_obj.load(subdir_path, options, on_update):
+				return False
 
 			if include_empty_subdirs or subdir_obj.directory_size_sumary > 0:
 				self.subdirs.append(subdir_obj)
+
+		return True
 
 
 	def _update_subdirs(self, path, options, on_update):
@@ -141,22 +146,27 @@ class Directory(CatalogFile, TreeItem):
 			subdir_obj = dir_subdirs_names.get(subdir)
 			if subdir_obj is None:
 				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
-				subdir_obj.load(subdir_path, options, on_update)
+				if not subdir_obj.load(subdir_path, options, on_update):
+					return False
 			else:
-				subdir_obj.update(subdir_path, options, on_update)
+				if not subdir_obj.update(subdir_path, options, on_update):
+					return False
 
 			if include_empty_subdirs or subdir_obj.directory_size_sumary > 0:
 				new_subdirs.append(subdir_obj)
 
 		self.subdirs = new_subdirs
+		return True
 
 
 	def _load_files(self, path, options, on_update):
 		files = self.__folder_files_list(path)
 		for filename, file_path in files:
 			fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
-			fileimage.load(file_path, options, on_update)
+			if not fileimage.load(file_path, options, on_update):
+				return False
 			self.files.append(fileimage)
+		return True
 
 
 	def _update_files(self, path, options, on_update):
@@ -168,12 +178,15 @@ class Directory(CatalogFile, TreeItem):
 			fileimage = files_dict.get(filename)
 			if fileimage is None:
 				fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
-				fileimage.load(file_path, options, on_update)
+				if not fileimage.load(file_path, options, on_update):
+					return False
 			else:
-				fileimage.update(file_path, options, on_update)
+				if not fileimage.update(file_path, options, on_update):
+					return False
 			new_files.append(fileimage)
 
 		self.files = new_files
+		return True
 
 
 	def __folder_files_list(self, path):

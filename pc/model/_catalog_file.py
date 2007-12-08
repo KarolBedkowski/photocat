@@ -102,8 +102,7 @@ class CatalogFile(StorageObject):
 	def load(self, path, options, on_update):
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
-		on_update(path)
-		return True
+		return on_update(path)
 
 
 	def update(self, path, options, on_update):
@@ -114,8 +113,7 @@ class CatalogFile(StorageObject):
 		old_date = self.date
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
-		on_update(path)
-		return old_size != self.size or old_date != self.date
+		return (old_size != self.size or old_date != self.date), on_update(path)
 
 
 	def set_tags(self, tags):
