@@ -427,6 +427,9 @@ class WndMain(wx.Frame):
 
 		dlg = DlgAddDisk(self, data, update=True, catalog=tree_selected.catalog)
 		if dlg.ShowModal() == wx.ID_OK:
+
+			_LOG.debug('_on_catalog_update_disk options=%r' % data)
+
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
 

@@ -27,6 +27,8 @@ __revision__	= '$Id$'
 
 
 import os
+import logging
+_LOG = logging.getLogger(__name__)
 
 from _catalog_file	import CatalogFile
 from gui			import TreeItem
@@ -77,16 +79,26 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def load(self, path, options, on_update):
+		_LOG.debug('Directory.load(%s)' % path)
 		CatalogFile.load(self, path, options, on_update)
 		self._load_subdirs(path, options, on_update)
 		self._load_files(path, options, on_update)
+
+		if options.get('load_captions_txt', True):
+			self._load_caption_txt(path)
+
 		return True
 
 
 	def update(self, path, options, on_update):
+		_LOG.debug('Directory.update(%s)' % path)
 		CatalogFile.update(self, path, options, on_update)
 		self._update_subdirs(path, options, on_update)
 		self._update_files(path, options, on_update)
+
+		if options.get('load_captions_txt', True):
+			self._load_caption_txt(path)
+
 		return True
 
 
@@ -185,6 +197,61 @@ class Directory(CatalogFile, TreeItem):
 					and os.path.isdir(os.path.join(path, fname))
 		))
 		return subdirs
+
+
+	def _load_caption_txt(self, path):
+		captions_file_path = os.path.join(path, 'captions.txt')
+		if not os.path.exists(captions_file_path):
+			return
+
+		_LOG.debug('Directory._load_caption_txt(%s)' % captions_file_path)
+
+		captions_file = open(captions_file_path, 'r')
+		current_file_name = None
+		current_file_data = {}
+		while True:
+			line = captions_file.readline()
+			if line == '':					break
+
+			line = line.strip()
+
+			if line.startswith('#'):		continue
+
+			if current_file_name is None:
+				if line != '':
+					current_file_name = line
+			elif line == '':
+				self._load_caption_txt_process_file(current_file_name, current_file_data)
+				current_file_data = {}
+				current_file_name = None
+			else:
+				key, dummy, val = line.partition('=')
+				if key in ('Title', 'Subtitle', 'Date', 'Desc') and len(val.strip()) > 0:
+					current_file_data[key] = val
+
+		if current_file_name != None:
+			self._load_caption_txt_process_file(current_file_name, current_file_data)
+
+		captions_file.close()
+
+
+	def _load_caption_txt_process_file(self, file_name, file_data):
+		if len(file_data) == 0:
+			return
+
+		_LOG.debug('Directory._load_caption_txt_process_file(%s)' % file_name)
+
+		if file_name == '.':
+			update_obj = self
+		else:
+			find_update_obj = [ image for image in self.files if image.name == file_name]
+			if len(find_update_obj) != 1:
+				return
+			update_obj = find_update_obj[0]
+
+		if update_obj.desc is None or len(update_obj.desc) == 0:
+			desc = [ file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) ]
+			update_obj.desc = '\n'.join(desc)
 
 
 

@@ -133,16 +133,12 @@ class DlgAddDisk(wx.Dialog):
 
 	def _create_page_options(self, parent):
 		data = self._data
-		if not data.has_key('load_folder_files'):			data['load_folder_files'] = True
 		if not data.has_key('load_captions_txt'):			data['load_captions_txt'] = True
 
 		panel = wx.Panel(parent, -1)
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
 		main_grid.Add(wx.CheckBox(panel, -1, _('Include empty directories'), validator=MyValidator(data_key=(data, 'include_empty'))),
-				0, wx.EXPAND|wx.ALL, 5)
-
-		main_grid.Add(wx.CheckBox(panel, -1, _('Load info about files in directories'), validator=MyValidator(data_key=(data, 'load_folder_files'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
 		main_grid.Add(wx.CheckBox(panel, -1, _('Force'), validator=MyValidator(data_key=(data, 'force'))),
