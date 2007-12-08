@@ -396,6 +396,10 @@ class WndMain(wx.Frame):
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
 
+			if allfiles == 1:
+				dialogs.message_box_error(self, _('No files found!'), _("Adding disk"))
+				return
+
 			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 50), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
 
@@ -432,6 +436,10 @@ class WndMain(wx.Frame):
 
 			catalog		= tree_selected.catalog
 			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
+
+			if allfiles == 1:
+				dialogs.message_box_error(self, _('No files found!'), _("Updating disk"))
+				return
 
 			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 50), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
