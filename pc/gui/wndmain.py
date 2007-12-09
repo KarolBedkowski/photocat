@@ -40,7 +40,7 @@ _ = gettext.gettext
 
 import wx
 
-from kpylibs				import dialogs 
+from kpylibs				import dialogs
 from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
@@ -214,6 +214,7 @@ class WndMain(wx.Frame):
 	def _create_layout_photolist(self, parent):
 		self._photo_list = MyThumbnailCtrl(parent)
 		self._photo_list.ShowFileNames()
+		self._photo_list.SetPopupMenu(self.__create_popup_menu_image())
 		return self._photo_list
 
 
@@ -233,7 +234,7 @@ class WndMain(wx.Frame):
 			removed = []
 			result = True
 			for catalog in dirty_catalogs:
-				res = dialogs.message_box_warning_yesnocancel(self, 
+				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
 				if res == wx.ID_CANCEL:
 					return
@@ -314,7 +315,7 @@ class WndMain(wx.Frame):
 			catalog = tree_selected.catalog
 
 		if catalog.dirty:
-			res = dialogs.message_box_warning_yesnocancel(self, 
+			res = dialogs.message_box_warning_yesnocancel(self,
 					_('Catalog %s has unsaved changes!\nSave before close??') % catalog.caption,
 					'PC')
 			if res == wx.ID_YES:
@@ -349,9 +350,9 @@ class WndMain(wx.Frame):
 			self.SetCursor(wx.HOURGLASS_CURSOR)
 			saved_space = catalog.data_provider.rebuild(catalog)
 			self.__save_catalog(catalog)
-			dialogs.message_box_info(self, 
-					_('Rebuild catalog finished\nSaved space: %sB') % 
-							format_size(saved_space, True, reduce_at=1024*1024, separate=True), 
+			dialogs.message_box_info(self,
+					_('Rebuild catalog finished\nSaved space: %sB') %
+							format_size(saved_space, True, reduce_at=1024*1024, separate=True),
 					'PC')
 		except Exception, err:
 			_LOG.exception('rebuild error')
@@ -400,7 +401,7 @@ class WndMain(wx.Frame):
 				dialogs.message_box_error(self, _('No files found!'), _("Adding disk"))
 				return
 
-			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 50), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 30), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
@@ -441,7 +442,7 @@ class WndMain(wx.Frame):
 				dialogs.message_box_error(self, _('No files found!'), _("Updating disk"))
 				return
 
-			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 50), parent=self, maximum=allfiles,
+			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 30), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
@@ -617,7 +618,7 @@ class WndMain(wx.Frame):
 		item = self._dirs_tree.selected_item
 		if item is None:
 			return
-		
+
 		self.PopupMenu(self.__create_popup_menu(item))
 
 
@@ -666,7 +667,6 @@ class WndMain(wx.Frame):
 			self._main_menu_file_recent_item.Enable(False)
 
 
-
 	def __save_catalog(self, catalog, force=False):
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 		try:
@@ -706,5 +706,19 @@ class WndMain(wx.Frame):
 
 		return popup_menu
 
+
+	def __create_popup_menu_image(self):
+		popup_menu = wx.Menu()
+
+		def append(name, func):
+			mid = wx.NewId()
+			popup_menu.Append(mid, name)
+			wx.EVT_MENU(self, mid, func)
+
+		append(_('Properties'), self._on_thumb_dclick)
+		popup_menu.AppendSeparator()
+		append(_('&Delete file...'), self._on_catalog_del_image)
+
+		return popup_menu
 
 # vim: encoding=utf8:
