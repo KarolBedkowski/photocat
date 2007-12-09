@@ -63,9 +63,6 @@ _ABOUT_TEXT = '''
 
 				<dt>wxPython </dt>
 				<dd>%(wxversion)s</dd>
-				
-				<dt>EXIF.py (15-02-2004)</dt>
-				<dd>Copyright 2002 Gene Cash All rights reserved.</dd>
 			</dl>
 		</p>
 	</html>

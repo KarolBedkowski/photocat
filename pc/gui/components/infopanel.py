@@ -55,7 +55,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _create_layout(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
 		notebook.AddPage(self._create_layout_page_main(notebook),	_('Main'))
-		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Description'))
 		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
 		notebook.AddPage(self._create_layout_page_folder(notebook),	_('Folder'))
 		return notebook
@@ -64,27 +63,20 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _create_layout_page_main(self, parent):
 		panel = wx.Panel(parent, -1)
 		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
-
+		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
+	
+		subsizer = wx.BoxSizer(wx.VERTICAL)
+		subsizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND)
+		subsizer.Add(textctrl, 1, wx.EXPAND)
+		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
+		
 		panel.SetSizerAndFit(sizer)
 
 		listctrl.InsertColumn(0, 'Tag')
 		listctrl.InsertColumn(1, 'Value')
-
-		return panel
-
-
-	def _create_layout_page_desc(self, parent):
-		panel = wx.Panel(parent, -1)
-
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		#button = create_button(panel, _('Save'), self._on_update_descr)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(textctrl, 1, wx.EXPAND)
-		#sizer.Add(button,0, wx.EXPAND|wx.ALL, 5)
-		panel.SetSizerAndFit(sizer)
 
 		return panel
 

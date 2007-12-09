@@ -37,14 +37,13 @@ _ = gettext.gettext
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin
 PILImage._initialized = 3
-
-from pc.lib					import EXIF
+from PIL.ExifTags import TAGS
 
 from _catalog_file			import CatalogFile
 
 
 
-_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
+_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote'] # 'EXIF UserComment']
 
 
 
@@ -96,8 +95,20 @@ class FileImage(CatalogFile):
 					except:
 						_LOG.exception('_get_info key=%s' % exif_key)
 						pass
+
 			if exif.has_key('Image Model'):
-				result.append((52, _('Camera'), str(exif['Image Model'])))
+				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
+
+			#if exif.has_key('EXIF UserComment'):
+			#	result.append((52, _('User comment'), str(exif.get('EXIF UserComment'))))
+		
+			# informacje o zdjeciu
+			shot_info = self.__get_exif_shotinfo(exif)
+			if len(shot_info) > 0:
+				result.append((53, _('Shot info'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
+
+
+
 		return result
 
 	info = property(_get_info)
@@ -126,18 +137,19 @@ class FileImage(CatalogFile):
 	def _load_exif(self, path):
 		_LOG.debug('FileImage._load_exif(%s)' % path)
 		try:
-			jpeg_file = open(path, 'rb')
-			exif = EXIF.process_file(jpeg_file)
+			#jpeg_file = open(path, 'rb')
+			#exif = EXIF.process_file(jpeg_file)
+			image = PILImage.open(path)
+			exif = image._getexif()
 			if exif is not None:
 				self._exif_data = {}
-				for key, val in (
-						(key, val)
-						for key, val in exif.iteritems()
-						if key not in _IGNORE_EXIF_KEYS
-							and not key.startswith('Thumbnail ')
-				): # wolny generator
-					val = val.printable.replace('\0', '').strip()
-					val = ''.join(( zn for zn in val if zn in string.printable )) # wolne!!
+				for key, val in exif.iteritems():
+					key = TAGS.get(key, key)
+					if key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail '):
+						continue
+					if isinstance(val, str):
+						val = val.printable.replace('\0', '').strip()
+						val = ''.join(( zn for zn in val if zn in string.printable )) # wolne!!
 					self._exif_data[key] = val
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
@@ -147,9 +159,9 @@ class FileImage(CatalogFile):
 		except StandardError:
 			_LOG.exception('load_exif error file=%s' % path)
 			self.exif = None
-		finally:
-			if jpeg_file is not None:
-				jpeg_file.close()
+		#finally:
+		#	if jpeg_file is not None:
+		#		jpeg_file.close()
 
 
 	def _load_thumb(self, path):
@@ -180,6 +192,38 @@ class FileImage(CatalogFile):
 
 		if os.path.exists(tmpfilename):
 			os.unlink(tmpfilename)
+
+
+	def __get_exif_shotinfo(self, exif):
+		shot_info = []
+
+		def append(key, name):
+			if exif.has_key(key):
+				shot_info.append((name, exif[key]))
+
+		append('EXIF ExposureTime', _('t'))
+
+		if exif.has_key('EXIF FNumber'):
+			try:
+				fnumber = eval(exif['EXIF FNumber'] + '.')
+				if int(fnumber) == fnumber: 	fnumber = int(fnumber)
+				shot_info.append((_('f'), fnumber))
+			except:
+				_LOG.exception('_get_info exif fnumber "%s"' % exif.get('EXIF FNumber'))
+
+		if exif.has_key('EXIF ISOSpeedRatings'):
+			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
+		elif exif.has_key('MakerNote ISOSetting'):
+			try:
+				iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
+				shot_info.append((_('iso'), iso))
+			except:
+				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
+
+		append('EXIF Flash', _('flash'))
+		append('EXIF FocalLength', _('focal len'))
+
+		return shot_info
 
 
 	@classmethod
