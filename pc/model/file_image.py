@@ -102,7 +102,7 @@ class FileImage(CatalogFile):
 			# informacje o zdjeciu
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
-				result.append((53, _('Shot info'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
+				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
 		
 		return result
 
@@ -215,7 +215,14 @@ class FileImage(CatalogFile):
 				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
 
 		append('EXIF Flash', _('flash'))
-		append('EXIF FocalLength', _('focal len'))
+		
+		if exif.has_key('EXIF FocalLength'):
+			try:
+				flen = eval(exif['EXIF FocalLength'] + '.')
+				if int(flen) == flen: 	flen = int(flen)
+				shot_info.append((_('focal len.'), flen))
+			except:
+				_LOG.exception('_get_info exif flen "%s"' % exif.get('EXIF FocalLength'))
 
 		return shot_info
 
