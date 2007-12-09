@@ -27,6 +27,7 @@ __revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 
 import os
 import string
+import time
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -86,13 +87,14 @@ class FileImage(CatalogFile):
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 		exif = self.exif_data
 		if exif is not None:
-			for exif_key in ('EXIF_DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF_DateTime'):
+			for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
 				if exif.has_key(exif_key):
 					try:
 						ddate = time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
 						result.append((51, _('Date'), time.strftime('%c', ddate)))
 						break
 					except:
+						_LOG.exception('_get_info key=%s' % exif_key)
 						pass
 			if exif.has_key('Image Model'):
 				result.append((52, _('Camera'), str(exif['Image Model'])))
