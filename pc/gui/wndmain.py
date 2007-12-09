@@ -76,7 +76,7 @@ class WndMain(wx.Frame):
 		_LOG.debug('MainWnd.__init__')
 
 		appconfig = AppConfig()
-		size = (int(appconfig.get('main_wnd', 'size_x', 800)), int(appconfig.get('main_wnd', 'size_y', 600)))
+		size = appconfig.get('main_wnd', 'size', (800, 600))
 
 		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=size)
 
@@ -93,33 +93,40 @@ class WndMain(wx.Frame):
 
 		self.SetMenuBar(self._create_main_menu())
 		self._create_toolbar()
-		self._create_layout()
+		self._create_layout(appconfig)
 		self.CreateStatusBar(1, wx.ST_SIZEGRIP)
 
-		self.Centre(wx.BOTH)
-
-		wx.EVT_CLOSE(self, self._on_close)
-		wx.EVT_SIZE(self, self._on_size)
+		position = appconfig.get('main_wnd', 'position')
+		if position is None:
+			self.Centre(wx.BOTH)
+		else:
+			self.Move(position)
+	
+		self.Bind(wx.EVT_CLOSE, self._on_close)
+		self.Bind(wx.EVT_SIZE, self._on_size)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_dirtree_item_select, self._dirs_tree)
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self._on_dirtree_item_activate, self._dirs_tree)
 		self.Bind(EVT_THUMBNAILS_SEL_CHANGED, self._on_thumb_sel_changed)
 		self.Bind(EVT_THUMBNAILS_DCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
-		self._dirs_tree.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu)
+		self.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu, self._dirs_tree)
 
 		self.__update_last_open_files()
 
 
-	def _create_layout(self):
-		splitter = self._layout_splitter = wx.SplitterWindow(self, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH) #|wx.SP_LIVE_UPDATE)
+	def _create_layout(self, appconfig):
+		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH) #|wx.SP_LIVE_UPDATE)
 
-		splitter2 = wx.SplitterWindow(splitter, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
-		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2), self._create_layout_info(splitter2), -150)
+		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
+		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2), self._create_layout_info(splitter2))
 
-		splitter.SplitVertically(self._create_layout_tree(splitter), splitter2, 200)
+		splitter.SplitVertically(self._create_layout_tree(splitter), splitter2)
 
 		splitter.SetSashGravity(0.0)
 		splitter2.SetSashGravity(1.0)
+
+		splitter.SetSashPosition(appconfig.get('main_wnd', 'splitter_v', 200))
+		splitter2.SetSashPosition(appconfig.get('main_wnd', 'splitter_h', -150))
 
 
 	def _create_main_menu(self):
@@ -240,22 +247,23 @@ class WndMain(wx.Frame):
 					return
 				elif res == wx.ID_YES:
 					self.__save_catalog(catalog)
-			if result:
-				evt.Skip()
-			else:
+			if not result:
 				for catalog in removed:
 					self._dirs_tree.delete_item(catalog)
 					self._catalogs.remove(catalog)
+				return
 
-		elif dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
-			size_x, size_y = self.GetSizeTuple()
+		elif not dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
+			return 
 
-			appconfig = AppConfig()
-			appconfig.set('main_wnd', 'size_x', size_x)
-			appconfig.set('main_wnd', 'size_y', size_y)
+		appconfig = AppConfig()
+		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
+		appconfig.set('main_wnd', 'position',	self.GetPositionTuple())
+		appconfig.set('main_wnd', 'splitter_h', self._layout_splitter_h.GetSashPosition())
+		appconfig.set('main_wnd', 'splitter_v', self._layout_splitter_v.GetSashPosition())
 
-			self._app.ExitMainLoop()
-			evt.Skip()
+		self._app.ExitMainLoop()
+		evt.Skip()
 
 
 	def _on_size(self, evt):
@@ -391,33 +399,7 @@ class WndMain(wx.Frame):
 		else:
 			catalog = tree_selected.catalog
 
-		data = {}
-
-		dlg = DlgAddDisk(self, data, catalog=catalog)
-		if dlg.ShowModal() == wx.ID_OK:
-			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
-
-			if allfiles == 1:
-				dialogs.message_box_error(self, _('No files found!'), _("Adding disk"))
-				return
-
-			dlg_progress = wx.ProgressDialog(_("Adding disk"), ("  " * 30), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-
-			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + 1
-				return dlg_progress.Update(cntr[0], msg)
-
-			try:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
-				self.__save_catalog(catalog, True)
-				self._dirs_tree.add_catalog(catalog)
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dlg_progress.Update(allfiles, _('Done!'))
-				dlg_progress.Destroy()
-		dlg.Destroy()
+		self.__add_or_update_disk(catalog)
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -425,40 +407,11 @@ class WndMain(wx.Frame):
 			return
 
 		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None or not isinstance(tree_selected, Disk):
+		if tree_selected is None or not isinstance(tree_selected, Directory):
 			return
 
-		data = dict(name=tree_selected.name, descr=tree_selected.desc)
-
-		dlg = DlgAddDisk(self, data, update=True, catalog=tree_selected.catalog)
-		if dlg.ShowModal() == wx.ID_OK:
-
-			_LOG.debug('_on_catalog_update_disk options=%r' % data)
-
-			catalog		= tree_selected.catalog
-			allfiles	= Catalog.fast_count_files_dirs(data['path']) + 1
-
-			if allfiles == 1:
-				dialogs.message_box_error(self, _('No files found!'), _("Updating disk"))
-				return
-
-			dlg_progress = wx.ProgressDialog(_("Updating disk"), ("  " * 30), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-
-			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + 1
-				return dlg_progress.Update(cntr[0], msg)
-
-			try:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog.update_disk(tree_selected, data['path'], descr=data['descr'], options=data, on_update=update_progress, name=data['name'])
-				self.__save_catalog(catalog, True)
-				self._dirs_tree.add_catalog(catalog)
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dlg_progress.Update(allfiles, _('Done!'))
-				dlg_progress.Destroy()
-		dlg.Destroy()
+		disk = tree_selected.disk
+		self.__add_or_update_disk(disk.catalog, disk, True)
 
 
 	def _on_catalog_del_disk(self, evt):
@@ -720,5 +673,49 @@ class WndMain(wx.Frame):
 		append(_('&Delete file...'), self._on_catalog_del_image)
 
 		return popup_menu
+
+
+	def __add_or_update_disk(self, catalog, disk=None, update=False):
+		if update:
+			data = dict(name=disk.name, descr=disk.desc)
+		else:
+			data = {}
+		dlg = DlgAddDisk(self, data, update=update, catalog=catalog)
+		if dlg.ShowModal() == wx.ID_OK:
+			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
+				
+			title = update and _("Updating disk") or _("Adding disk")
+
+			if allfiles == 1:
+				dialogs.message_box_error(self, _('No files found!'), title)
+				return
+
+			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=self, maximum=allfiles,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+
+			def update_progress(msg, cntr=[0]):
+				cntr[0] = cntr[0] + 1
+				return dlg_progress.Update(cntr[0], msg)
+
+			try:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				if update:
+					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data, 
+							on_update=update_progress, name=data['name'])
+				else:
+					catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
+				self.__save_catalog(catalog, True)
+				self._dirs_tree.add_catalog(catalog)
+			except:
+				_LOG.exception('MainWnd.__add_or_update_disk()')
+				self.SetCursor(wx.STANDARD_CURSOR)
+			finally:
+				self.SetCursor(wx.STANDARD_CURSOR)
+				dlg_progress.Update(allfiles, _('Done!'))
+				dlg_progress.Destroy()
+		dlg.Destroy()
+
+
+
 
 # vim: encoding=utf8:

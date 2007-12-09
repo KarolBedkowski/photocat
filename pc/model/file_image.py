@@ -28,6 +28,7 @@ __revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
 import os
 import string
 import time
+import re
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ from _catalog_file			import CatalogFile
 
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote'] # 'EXIF UserComment']
+RE_REPLACE_EXPRESSION = re.compile(r'[^\w ]+', re.MULTILINE)
 
 
 
@@ -87,14 +89,9 @@ class FileImage(CatalogFile):
 		exif = self.exif_data
 		if exif is not None:
 			for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
-				if exif.has_key(exif_key):
-					try:
-						ddate = time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
-						result.append((51, _('Date'), time.strftime('%c', ddate)))
-						break
-					except:
-						_LOG.exception('_get_info key=%s' % exif_key)
-						pass
+				date = self.__get_exif_shot_date(exif)
+				if date is not None:
+					result.append((51, _('Date'), date))
 
 			if exif.has_key('Image Model'):
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
@@ -106,9 +103,7 @@ class FileImage(CatalogFile):
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Shot info'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
-
-
-
+		
 		return result
 
 	info = property(_get_info)
@@ -137,20 +132,23 @@ class FileImage(CatalogFile):
 	def _load_exif(self, path):
 		_LOG.debug('FileImage._load_exif(%s)' % path)
 		try:
-			#jpeg_file = open(path, 'rb')
-			#exif = EXIF.process_file(jpeg_file)
 			image = PILImage.open(path)
 			exif = image._getexif()
 			if exif is not None:
 				self._exif_data = {}
 				for key, val in exif.iteritems():
-					key = TAGS.get(key, key)
+					key = str(TAGS.get(key, key))
+
 					if key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail '):
 						continue
+
 					if isinstance(val, str):
-						val = val.printable.replace('\0', '').strip()
-						val = ''.join(( zn for zn in val if zn in string.printable )) # wolne!!
+						val = val.replace('\0', '').strip()
+						val = RE_REPLACE_EXPRESSION.sub('', val)
+
 					self._exif_data[key] = val
+					print val
+
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
 					self.exif = self.disk.catalog.data_provider.append(str_exif)
@@ -159,9 +157,6 @@ class FileImage(CatalogFile):
 		except StandardError:
 			_LOG.exception('load_exif error file=%s' % path)
 			self.exif = None
-		#finally:
-		#	if jpeg_file is not None:
-		#		jpeg_file.close()
 
 
 	def _load_thumb(self, path):
@@ -224,6 +219,18 @@ class FileImage(CatalogFile):
 		append('EXIF FocalLength', _('focal len'))
 
 		return shot_info
+
+
+	def __get_exif_shot_date(self, exif):
+		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
+			if exif.has_key(exif_key):
+				try:
+					ddate = time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
+					return time.strftime('%c', ddate)
+				except:
+					_LOG.exception('_get_info key=%s' % exif_key)
+		return None
+
 
 
 	@classmethod

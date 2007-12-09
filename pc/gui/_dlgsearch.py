@@ -70,12 +70,16 @@ class DlgSearch(wx.Dialog):
 		self.SetSizerAndFit(main_grid)
 
 		appconfig = AppConfig()
-		size = (int(appconfig.get('search_wnd', 'size_x', 400)), int(appconfig.get('search_wnd', 'size_y', 400)))
+		size = appconfig.get('search_wnd', 'size', (400, 400))
 		self.SetSize(size)
 		
-		self.Centre(wx.BOTH)
+		position = appconfig.get('search_wnd', 'position')
+		if position is None:
+			self.Centre(wx.BOTH)
+		else:
+			self.Move(position)
 		
-		wx.EVT_CLOSE(self, self._on_close)
+		self.Bind(wx.EVT_CLOSE, self._on_close)
 
 
 	def _create_layout_fields(self):
@@ -184,11 +188,9 @@ class DlgSearch(wx.Dialog):
 
 
 	def _on_close(self, evt):
-		size_x, size_y = self.GetSizeTuple()
-
 		appconfig = AppConfig()
-		appconfig.set('search_wnd', 'size_x', size_x)
-		appconfig.set('search_wnd', 'size_y', size_y)
+		appconfig.set('search_wnd', 'size',		self.GetSizeTuple())
+		appconfig.set('search_wnd', 'position',	self.GetPositionTuple())
 
 		evt.Skip()
 

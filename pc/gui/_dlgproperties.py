@@ -37,6 +37,7 @@ _ = gettext.gettext
 import wx
 
 from kpylibs.guitools	import create_button
+from kpylibs.appconfig		import AppConfig
 
 from pc.model			import Catalog, Directory, Disk, FileImage
 
@@ -60,15 +61,24 @@ class DlgProperties(wx.Dialog):
 		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
 
 		self.SetSizerAndFit(main_grid)
-		self.SetSize((500, 300))
 
-		self.Centre(wx.BOTH)
+		appconfig = AppConfig()
+		size = appconfig.get('properties_wnd', 'size', (500, 300))
+		self.SetSize(size)
+
+		position = appconfig.get('properties_wnd', 'position')
+		if position is None:
+			self.Centre(wx.BOTH)
+		else:
+			self.Move(position)
 
 		self._show(item)
 
 		[ self._combobox_tags.Append(tag) for tag in item.disk.catalog.tags_provider.tags ]
 
-		wx.EVT_BUTTON(self, wx.ID_OK, self._on_ok)
+		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
+		self.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CANCEL)
+		self.Bind(wx.EVT_CLOSE, self._on_close)
 
 
 	def _create_layout_notebook(self):
@@ -218,6 +228,7 @@ class DlgProperties(wx.Dialog):
 		else:
 			item.tags = None
 
+		self._on_close()
 		self.EndModal(wx.ID_OK)
 
 
@@ -237,5 +248,15 @@ class DlgProperties(wx.Dialog):
 		sel = self._listbox_tags.GetSelection()
 		if sel >=0 :
 			self._listbox_tags.Delete(sel)
+
+
+	def _on_close(self, evt=None):
+		appconfig = AppConfig()
+		appconfig.set('properties_wnd', 'size',		self.GetSizeTuple())
+		appconfig.set('properties_wnd', 'position',	self.GetPositionTuple())
+
+		if evt is not None:
+			evt.Skip()
+
 
 # vim: encoding=utf8:
