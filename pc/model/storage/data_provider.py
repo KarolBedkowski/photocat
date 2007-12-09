@@ -22,7 +22,7 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id: __init__.py 39 2007-11-18 15:52:57Z k $'
+__revision__	= '$Id$'
 
 
 import os

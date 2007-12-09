@@ -22,7 +22,7 @@
 
 __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2007'
-__revision__	= '$Id: tags_provider.py 42 2007-11-22 16:44:59Z k $'
+__revision__	= '$Id$'
 
 
 
