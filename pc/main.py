@@ -63,6 +63,8 @@ _LOG = logging.getLogger(__name__)
 import gettext
 import wx
 
+from kpylibs.appconfig		import AppConfig
+
 from pc.icons				import icons
 
 
@@ -75,6 +77,20 @@ class App(wx.App):
 
 		_LOG.info('App.OnInit')
 		self.debug = debug
+
+		app_config = AppConfig()
+		locales_dir = app_config.locales_dir
+		_LOG.info('run: locale dir: %s' % locales_dir)
+		locale = wx.Locale(wx.LANGUAGE_DEFAULT)
+		locale.AddCatalogLookupPathPrefix(locales_dir)
+		locale.AddCatalog('wxstd')
+		locale.AddCatalog('kpylibs')
+		locale.AddCatalog('pc')
+
+		gettext.bindtextdomain('pc', locales_dir)
+		gettext.bindtextdomain('kpylibs', locales_dir)
+		gettext.textdomain('pc')
+
 
 		from kpylibs.iconprovider	import IconProvider
 	
@@ -108,31 +124,17 @@ class App(wx.App):
 
 
 def run():
-	from kpylibs.appconfig		import AppConfig
 
 	logging_setup_wx()
-	
+
 	_LOG.info('run')
-
 	use_home_dir = wx.Platform != '__WXMSW__'
-
 	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir, app_name='pc')
 	app_config.load()
 
-	locales_dir = app_config.locales_dir
-	_LOG.info('run: locale dir: %s' % locales_dir)
-	locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-	locale.AddCatalogLookupPathPrefix(locales_dir)
-	locale.AddCatalog('wxstd')
-	locale.AddCatalog('kpylibs')
-	locale.AddCatalog('pc')
-
-	gettext.bindtextdomain('pc', locales_dir)
-	gettext.bindtextdomain('kpylibs', locales_dir)
-	gettext.textdomain('pc')
-
 	_LOG.info('run: starting app...')
 	app = App(None)
+
 
 	_LOG.info('run: starting app main loop...')
 	app.MainLoop()
