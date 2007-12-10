@@ -212,24 +212,44 @@ class DlgProperties(wx.Dialog):
 	def _on_ok(self, evt):
 		item = self._item
 
+		changed = False
+
 		if self._item_is_disk:
-			item.name  = self._tc_name.GetValue() or item.name
+			new_name = self._tc_name.GetValue().strip() or item.name
+			changed = item.name != new_name
+			item.name  =  new_name
 
 		if not self._item_is_fake or self._cb_set_descr.IsChecked():
-			item.desc = self._textctrl_desc.GetValue()
+			new_desc = self._textctrl_desc.GetValue().strip()
+			if item.desc is None:
+				changed_desc = new_desc != ''
+			else:
+				changed_desc = new_desc != item.desc
+			if changed_desc:
+				item.desc = new_desc
+				changed = True
 		else:
 			item.desc = None
 
 		if not self._item_is_fake or self._cb_set_tags.IsChecked():
 			listbox = self._listbox_tags
 			tag_iter = ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
-			tags = [ tag for tag in tag_iter if len(tag) > 0 ]
-			item.set_tags(tags)
+			tags = tuple(sorted([ tag for tag in tag_iter if len(tag) > 0 ]))
+			if item.tags is None:
+				changed_tags = len(tags) > 0
+			else:
+				changed_tags = tags != item.tags
+			if changed_tags:
+				item.set_tags(tags)
+				changed = True
 		else:
 			item.tags = None
 
 		self._on_close()
-		self.EndModal(wx.ID_OK)
+		if changed:
+			self.EndModal(wx.ID_OK)
+		else:
+			self.EndModal(wx.ID_CANCEL)
 
 
 	def _on_add_tag(self, evt):
@@ -238,10 +258,9 @@ class DlgProperties(wx.Dialog):
 			tag = tag.lower()
 			listbox = self._listbox_tags
 			tags = [ listbox.GetString(idx) for idx in xrange(listbox.GetCount()) ]
-			if tags.count(tag) > 0:
-				return
-			listbox.Append(tag)
-			self._combobox_tags.Append(tag)
+			if tags.count(tag) == 0:
+				listbox.Append(tag)
+				self._combobox_tags.Append(tag)
 
 
 	def _on_del_tag(self, evt):

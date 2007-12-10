@@ -45,7 +45,7 @@ from _catalog_file			import CatalogFile
 
 
 
-_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote'] # 'EXIF UserComment']
+_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
 RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 
@@ -96,14 +96,11 @@ class FileImage(CatalogFile):
 			if exif.has_key('Image Model'):
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
 
-			#if exif.has_key('EXIF UserComment'):
-			#	result.append((52, _('User comment'), str(exif.get('EXIF UserComment'))))
-		
 			# informacje o zdjeciu
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
-		
+
 		return result
 
 	info = property(_get_info)
@@ -131,28 +128,25 @@ class FileImage(CatalogFile):
 
 	def _load_exif(self, path):
 		_LOG.debug('FileImage._load_exif(%s)' % path)
+		self.exif = None
 		try:
 			jpeg_file = open(path, 'rb')
 			exif = EXIF.process_file(jpeg_file)
 			if exif is not None:
 				self._exif_data = {}
 				for key, val in exif.iteritems():
-					if key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail '):
+					if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') or
+							key.startswith('EXIF Tag ') or key.startswith('MakerNote Tag ')):
 						continue
-					
-					val = str(val).replace('\0', '').strip()
-					val = RE_REPLACE_EXPRESSION.sub(' ', val)
 
-					self._exif_data[key] = val
+					val = str(val).replace('\0', '').strip()
+					self._exif_data[key] = RE_REPLACE_EXPRESSION.sub(' ', val)
 
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
 					self.exif = self.disk.catalog.data_provider.append(str_exif)
-				else:
-					self.exif = None
 		except StandardError:
 			_LOG.exception('load_exif error file=%s' % path)
-			self.exif = None
 		finally:
 			if jpeg_file is not None:
 				jpeg_file.close()
@@ -215,7 +209,7 @@ class FileImage(CatalogFile):
 				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
 
 		append('EXIF Flash', _('flash'))
-		
+
 		if exif.has_key('EXIF FocalLength'):
 			try:
 				flen = eval(exif['EXIF FocalLength'] + '.')

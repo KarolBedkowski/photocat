@@ -234,12 +234,10 @@ class WndMain(wx.Frame):
 
 
 	def _on_close(self, evt):
-
 		dirty_catalogs = [ catalog for catalog in self._catalogs if catalog.dirty ]
 
 		if len(dirty_catalogs) > 0:
 			removed = []
-			result = True
 			for catalog in dirty_catalogs:
 				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
@@ -247,14 +245,11 @@ class WndMain(wx.Frame):
 					return
 				elif res == wx.ID_YES:
 					self.__save_catalog(catalog)
-			if not result:
-				for catalog in removed:
-					self._dirs_tree.delete_item(catalog)
-					self._catalogs.remove(catalog)
-				return
 
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
 			return 
+
+		[ catalog.close() for catalog in self._catalogs ]
 
 		appconfig = AppConfig()
 		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
@@ -311,16 +306,9 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_close(self, evt):
-		if len(self._catalogs) == 0:
+		catalog = self.__get_selected_catalog()
+		if catalog is None:
 			return
-
-		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None:
-			if len(self._catalogs) > 1:
-				return
-			catalog = self._catalogs[0]
-		else:
-			catalog = tree_selected.catalog
 
 		if catalog.dirty:
 			res = dialogs.message_box_warning_yesnocancel(self,
@@ -328,7 +316,6 @@ class WndMain(wx.Frame):
 					'PC')
 			if res == wx.ID_YES:
 				self.__save_catalog(catalog)
-
 			elif res == wx.ID_CANCEL:
 				return
 		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.caption, 'PC'):
@@ -340,16 +327,9 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_rebuild(self, evt):
-		if len(self._catalogs) == 0:
+		catalog = self.__get_selected_catalog()
+		if catalog is None:
 			return
-
-		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None:
-			if len(self._catalogs) > 1:
-				return
-			catalog = self._catalogs[0]
-		else:
-			catalog = tree_selected.catalog
 
 		if not dialogs.message_box_question_yesno(self, _('Rebuild catalog %s?') % catalog.caption, 'PC'):
 			return
@@ -390,16 +370,9 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_add(self, evt):
-		if len(self._catalogs) == 0:
-			return
-
-		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None:
-			catalog = self._catalogs[0]
-		else:
-			catalog = tree_selected.catalog
-
-		self.__add_or_update_disk(catalog)
+		catalog = self.__get_selected_catalog()
+		if catalog is not None:
+			self.__add_or_update_disk(catalog)
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -622,12 +595,12 @@ class WndMain(wx.Frame):
 
 	def __save_catalog(self, catalog, force=False):
 		self.SetCursor(wx.HOURGLASS_CURSOR)
-		try:
-			if catalog.dirty or force:
+		if catalog.dirty or force:
+			try:
 				Storage.save(catalog)
-		except:
-			_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)
-			dialogs.message_box_error(self, _('Error saving catalog %s') % catalog.catalog_filename, _('Save catalog'))
+			except:
+				_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)
+				dialogs.message_box_error(self, _('Error saving catalog %s') % catalog.catalog_filename, _('Save catalog'))
 		self.SetCursor(wx.STANDARD_CURSOR)
 
 
@@ -706,14 +679,29 @@ class WndMain(wx.Frame):
 					catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
 				self.__save_catalog(catalog, True)
 				self._dirs_tree.add_catalog(catalog)
-			except:
+			except Exception, err:
 				_LOG.exception('MainWnd.__add_or_update_disk()')
 				self.SetCursor(wx.STANDARD_CURSOR)
+				dialogs.message_box_error(self, _('Error:\n%s') % err, title)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 				dlg_progress.Update(allfiles, _('Done!'))
 				dlg_progress.Destroy()
 		dlg.Destroy()
+
+
+	def __get_selected_catalog(self):
+		if len(self._catalogs) == 0:
+			return None
+
+		tree_selected = self._dirs_tree.selected_item
+		if tree_selected is None:
+			if len(self._catalogs) > 1:
+				return None
+			catalog = self._catalogs[0]
+		else:
+			catalog = tree_selected.catalog
+		return catalog
 
 
 

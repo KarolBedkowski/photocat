@@ -71,7 +71,7 @@ class DlgAddDisk(wx.Dialog):
 
 		self.Centre(wx.BOTH)
 		
-		wx.EVT_BUTTON(self, wx.ID_OK, self._on_ok)
+		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 
 
 	def _create_notebook(self):

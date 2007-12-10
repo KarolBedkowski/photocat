@@ -190,24 +190,32 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def __folder_files_list(self, path):
-		# TODO: zoptymalizować
+		files_path = ( 
+				(fname, os.path.join(path, fname)) 
+				for fname in os.listdir(path) 
+				if not fname.startswith('.') 
+					and os.path.splitext(fname)[1].lower() in FileImage.IMAGE_FILES_EXTENSION
+		)
+
 		files = sorted((
-				( fname, os.path.join(path, fname) )
-				for fname in os.listdir(path)
-				if os.path.splitext(fname)[1].lower() in FileImage.IMAGE_FILES_EXTENSION
-					and not fname.startswith('.')
-					and os.path.isfile(os.path.join(path, fname))
+				( fname, fpath )
+				for fname, fpath in files_path
+				if os.path.isfile(fpath)
 		))
 		return files
 
 
 	def __folder_subdirs_list(self, path):
-		# TODO: zoptymalizować
+		files_path = ( 
+				(fname, os.path.join(path, fname)) 
+				for fname in os.listdir(path) 
+				if not fname.startswith('.') 
+		)
+
 		subdirs = sorted((
-				( fname, os.path.join(path, fname) )
-				for fname in os.listdir(path)
-				if not fname.startswith('.')
-					and os.path.isdir(os.path.join(path, fname))
+				( fname, fpath )
+				for fname, fpath in files_path
+				if  os.path.isdir(fpath)
 		))
 		return subdirs
 
@@ -263,7 +271,7 @@ class Directory(CatalogFile, TreeItem):
 			update_obj = find_update_obj[0]
 
 		if update_obj.desc is None or len(update_obj.desc) == 0:
-			desc = [ file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) ]
+			desc = ( file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) )
 			update_obj.desc = '\n'.join(desc)
 
 
