@@ -141,7 +141,7 @@ class DlgAddDisk(wx.Dialog):
 		main_grid.Add(wx.CheckBox(panel, -1, _('Include empty directories'), validator=MyValidator(data_key=(data, 'include_empty'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
-		main_grid.Add(wx.CheckBox(panel, -1, _('Force'), validator=MyValidator(data_key=(data, 'force'))),
+		main_grid.Add(wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
 		main_grid.Add(wx.CheckBox(panel, -1, _('Load info from captions.txt'), validator=MyValidator(data_key=(data, 'load_captions_txt'))),

@@ -8,6 +8,7 @@
 ./gui/_dlgadddisk.py
 ./gui/_dlgproperties.py
 ./gui/_dlgsearch.py
+./gui/_dlgsettings.py
 ./gui/components/__init__.py
 ./gui/components/dirstree.py
 ./gui/components/imagelistctrl.py

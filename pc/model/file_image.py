@@ -108,7 +108,7 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self._load_thumb(path)
+			self._load_thumb(path, options)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
 			return True
@@ -119,7 +119,7 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self._load_thumb(path)
+				self._load_thumb(path, options)
 				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 					self._load_exif(path)
 			return True
@@ -152,7 +152,7 @@ class FileImage(CatalogFile):
 				jpeg_file.close()
 
 
-	def _load_thumb(self, path):
+	def _load_thumb(self, path, options):
 		_LOG.debug('FileImage._load_thumb(%s)' % path)
 		tmpfilename = os.tmpnam() + "_.jpg"
 		try:
@@ -165,8 +165,12 @@ class FileImage(CatalogFile):
 				image = image.convert('RGB')
 
 			self.dimensions = image.size
-			image.thumbnail((200, 200), PILImage.ANTIALIAS)
-			image.save(tmpfilename, "JPEG", quality=50)
+
+			thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
+			thumb_compression = options.get('thumb_compression', 50)
+
+			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
+			image.save(tmpfilename, "JPEG", quality=thumb_compression)
 
 			thumbsize = os.path.getsize(tmpfilename)
 

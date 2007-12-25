@@ -60,6 +60,7 @@ from _dlgabout				import DlgAbout
 from _dlgadddisk			import DlgAddDisk
 from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
+from _dlgsettings			import DlgSettings
 
 
 _DEFAULT_ADD_OPTIONS = {
@@ -148,6 +149,8 @@ class WndMain(wx.Frame):
 			('-'),
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
+			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
+			('-'),
 			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
 		))
 		self._main_menu_file = menu
@@ -222,6 +225,11 @@ class WndMain(wx.Frame):
 		self._photo_list = MyThumbnailCtrl(parent)
 		self._photo_list.ShowFileNames()
 		self._photo_list.SetPopupMenu(self.__create_popup_menu_image())
+
+		appconfig = AppConfig()
+		self._photo_list.SetThumbSize(
+				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+		)
 		return self._photo_list
 
 
@@ -349,6 +357,17 @@ class WndMain(wx.Frame):
 					'PC')
 		finally:
 			self.SetCursor(wx.STANDARD_CURSOR)
+
+
+	def _on_file_settings(self, evt):
+		dlg = DlgSettings(self)
+		res = dlg.ShowModal()
+		dlg.Destroy()
+		appconfig = AppConfig()
+		if res == wx.ID_OK:
+			self._photo_list.SetThumbSize(
+					appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
+			)
 
 
 	def _on_help_about(self, evt):
@@ -653,6 +672,8 @@ class WndMain(wx.Frame):
 			data = dict(name=disk.name, descr=disk.desc)
 		else:
 			data = {}
+		appconfig = AppConfig()
+		data.update(dict(appconfig.get_items('settings') or []))
 		dlg = DlgAddDisk(self, data, update=update, catalog=catalog)
 		if dlg.ShowModal() == wx.ID_OK:
 			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
