@@ -211,6 +211,10 @@ class WndMain(wx.Frame):
 		toolbar.AddSeparator()
 
 		cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
+		
+		toolbar.AddSeparator()
+
+		cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
 
 		toolbar.AddSeparator()
 		toolbar.Realize()

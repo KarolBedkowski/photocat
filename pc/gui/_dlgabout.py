@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
  Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+ Copyright (c) Karol Będkowski, 2004-2008
 
  This file is part of Photo Catalog
 
@@ -22,7 +22,7 @@
 """
 
 __author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
+__copyright__	= 'Copyright (C) Karol Będkowski 2006-2008'
 __revision__	= '$Id$'
 
 __all__			= ['DlgAbout']
@@ -44,7 +44,7 @@ _ABOUT_TEXT = '''
 	<body>
 		<h1>PC</h1>
 		<p>ver. %(version)s</p>
-		<p><i>Copyright &copy; Karol Będkowski 2007</i></p>
+		<p><i>Copyright &copy; Karol Będkowski 2007,2008</i></p>
 		<p>
 			PC is free software; you can redistribute it and/or modify it under the
 			terms of the GNU General Public License as published by the Free Software

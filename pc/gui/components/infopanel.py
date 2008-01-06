@@ -138,10 +138,14 @@ class InfoPanel(wx.Panel, EventGenerator):
 		listctrl = self._listctrl_exif
 		exif_data =  image.exif_data
 
-		if exif_data is not None:
+		if exif_data is not None and len(exif_data) > 0:
 			for key, val in sorted(exif_data.iteritems()):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key))
 				listctrl.SetStringItem(idx, 1, str(val))
+			self._notebook.SetPageText(1, _('Exif'))
+		else:
+			self._notebook.SetPageText(1, _('No Exif'))
+
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
