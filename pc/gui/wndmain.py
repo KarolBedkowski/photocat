@@ -498,6 +498,8 @@ class WndMain(wx.Frame):
 			self._photo_list.ShowDir([])
 			return
 
+		self._dirs_tree.Expand(self._dirs_tree.selected_node)
+
 		if item is not None:
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
