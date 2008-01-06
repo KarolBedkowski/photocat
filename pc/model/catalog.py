@@ -120,7 +120,7 @@ class Catalog(TreeItem):
 					if not name.startswith('.')
 			]
 
-			content_size = sum(( 1 for item
+			content_size = sum(( os.path.getsize(item) for item
 				in content
 				if os.path.isdir(item)
 					or (os.path.isfile(item)

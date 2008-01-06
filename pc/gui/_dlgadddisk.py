@@ -147,6 +147,9 @@ class DlgAddDisk(wx.Dialog):
 		main_grid.Add(wx.CheckBox(panel, -1, _('Load info from captions.txt'), validator=MyValidator(data_key=(data, 'load_captions_txt'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
+		main_grid.Add(wx.StaticText(panel, -1, _('Skip dirs (";" - separated):')))
+		main_grid.Add(wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))), 0, wx.EXPAND|wx.ALL, 5)
+
 		panel.SetSizerAndFit(main_grid)
 		return panel
 
@@ -191,6 +194,10 @@ class DlgAddDisk(wx.Dialog):
 
 		if __name__ != '__main__':
 			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
+
+
+		self._data['skip_dirs_list'] = [ dir.strip() for dir in self._data['skip_subdirs'].split(';') ]
+
 		self.EndModal(wx.ID_OK)
 
 

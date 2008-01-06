@@ -688,7 +688,7 @@ class WndMain(wx.Frame):
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + 1
+				cntr[0] = cntr[0] + os.path.getsize(msg)
 				return dlg_progress.Update(cntr[0], msg)
 
 			try:

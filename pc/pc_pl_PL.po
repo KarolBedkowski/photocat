@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-25 19:53+0100\n"
+"POT-Creation-Date: 2008-01-06 21:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,7 +55,7 @@ msgstr "O programie"
 msgid "Add"
 msgstr "Dodaj"
 
-#: gui/_dlgadddisk.py:58 gui/_dlgadddisk.py:178 gui/_dlgadddisk.py:184
+#: gui/_dlgadddisk.py:58 gui/_dlgadddisk.py:181 gui/_dlgadddisk.py:187
 msgid "Add disk"
 msgstr "Dodaj dysk"
 
@@ -312,7 +312,7 @@ msgstr "Główne"
 msgid "Name"
 msgstr "Nazwa"
 
-#: gui/_dlgadddisk.py:178
+#: gui/_dlgadddisk.py:181
 msgid "Name already exists in catalog!"
 msgstr "Nazwa już istnieje w katalogu!"
 
@@ -413,11 +413,11 @@ msgstr "Zapisz aktualny katalog"
 msgid "Search in calalogs"
 msgstr "Szujak w katalogach"
 
-#: gui/_dlgadddisk.py:159
+#: gui/_dlgadddisk.py:162
 msgid "Select directory"
 msgstr "Wybierz katalog"
 
-#: gui/_dlgadddisk.py:184
+#: gui/_dlgadddisk.py:187
 msgid "Selected dir don't exists!"
 msgstr "Wybrany katalog nie istnieje"
 
@@ -432,6 +432,10 @@ msgstr "Ustaw tagi"
 #: model/file_image.py:102
 msgid "Settings"
 msgstr "Ustawienia"
+
+#: gui/_dlgadddisk.py:150
+msgid "Skip dirs (\";\" - separated):"
+msgstr "Pomiń katalogi (oddzielone znakiem \";\"):"
 
 #: gui/components/infopanel.py:93 gui/components/infopanel.py:114
 msgid "Tag"

@@ -122,9 +122,14 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def _load_subdirs(self, path, options, on_update):
-		subdirs = self.__folder_subdirs_list(path)
-		include_empty_subdirs = options.get('include_empty_subdirs', False)
+		subdirs					= self.__folder_subdirs_list(path)
+		include_empty_subdirs	= options.get('include_empty_subdirs', False)
+		skip_dirs_list			= options.get('skip_dirs_list', [])
+
 		for subdir, subdir_path in subdirs:
+			if subdir in skip_dirs_list:
+				continue
+
 			subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
 			if not subdir_obj.load(subdir_path, options, on_update):
 				return False
@@ -141,10 +146,13 @@ class Directory(CatalogFile, TreeItem):
 		new_subdirs			= []
 		subdirs				= self.__folder_subdirs_list(path)
 		dir_subdirs_names	= dict(( (subdir.name, subdir) for subdir in self.subdirs ))
+		skip_dirs_list		= options.get('skip_dirs_list', [])
 
 		for subdir, subdir_path in subdirs:
 			subdir_obj = dir_subdirs_names.get(subdir)
 			if subdir_obj is None:
+				if subdir in skip_dirs_list:
+					continue
 				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
