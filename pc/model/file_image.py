@@ -38,7 +38,7 @@ _ = gettext.gettext
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin
 PILImage._initialized = 3
-from PIL.ExifTags import TAGS
+#from PIL.ExifTags import TAGS
 from pc.lib					import EXIF
 
 from _catalog_file			import CatalogFile
