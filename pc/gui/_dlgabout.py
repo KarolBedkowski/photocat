@@ -58,11 +58,12 @@ _ABOUT_TEXT = '''
 		</p>
 		<p><b>Biblioteki:</b>
 			<dl>
-				<dt>Python</dt>
-				<dd> %(pyversion)s</dd>
+				<dt>Python %(pyversion)s</dt>
+				<dd>Copyright (c) 2001-2007 Python Software Foundation.</dd>
 
-				<dt>wxPython </dt>
-				<dd>%(wxversion)s</dd>
+				<dt>wxPython %(wxversion)s</dt>
+				<dd>Copyright (c) 1998 Julian Smart, Robert Roebling et al</dd>
+
 				<dt>EXIF.py (15-02-2004)</dt>
 				<dd>Copyright 2002 Gene Cash All rights reserved.</dd>
 			</dl>

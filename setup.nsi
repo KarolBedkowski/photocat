@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "PC"
-!define PRODUCT_VERSION "1.0.0"
+!define PRODUCT_VERSION "0.2.1"
 !define PRODUCT_PUBLISHER "Karol Bêdkowski"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\pc.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -66,6 +66,9 @@ Section "GrupaGlowna" SEC01
   File "dist\MSVCP71.dll"
   File "dist\w9xpopen.exe"
   File "dist\LICENCE.txt"
+  File "dist\LICENCE_EXIFpy.txt"
+  File "dist\LICENCE_python.txt"
+  File "dist\LICENCE_wxPython.txt"
   File "dist\README"
   File "dist\TODO"
   
@@ -120,6 +123,9 @@ Section Uninstall
   Delete "$INSTDIR\pc.exe"
   Delete "$INSTDIR\pc.log"
   Delete "$INSTDIR\LICENCE.txt"
+  Delete "$INSTDIR\LICENCE_EXIFpy.txt"
+  Delete "$INSTDIR\LICENCE_python.txt"
+  Delete "$INSTDIR\LICENCE_wxPython.txt"
   Delete "$INSTDIR\README"
   Delete "$INSTDIR\TODO"
   Delete "$INSTDIR\pc.cfg"

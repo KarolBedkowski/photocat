@@ -77,7 +77,9 @@ def np_files_for(dirname):
 
 
 data_files = [ (a[3:], b) for a, b in np_files_for('pc') ]
-data_files.append(('', ['README', "TODO", "LICENCE.txt"]))
+data_files.append(('',
+	['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt", "LICENCE_python.txt", "LICENCE_wxPython.txt"]
+))
 
 
 
