@@ -174,6 +174,7 @@ class WndMain(wx.Frame):
 			(_('&Edit selected files...'),	None,	'',								self._on_catalog_edit_multi),
 			('-'),
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
+			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
 		))
 		return menu
 
@@ -468,6 +469,24 @@ class WndMain(wx.Frame):
 
 		dlg = DlgSearch(self, self._catalogs)
 		dlg.Show()
+
+
+	def _on_catalog_info(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		catalog = self.__get_selected_catalog()
+
+		files_count, subdirs_count = 0, 0
+		for disk in catalog.disks:
+			disk_files_count, disk_subdirs_count, disk_files_count2, disk_subdirs_count2 = disk.directory_size
+			files_count		+= disk_files_count + disk_files_count2
+			subdirs_count	+= disk_subdirs_count + disk_subdirs_count2
+
+		data = dict(disks=len(catalog.disks), files=files_count, dirs=subdirs_count)
+		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d') % data
+		dialogs.message_box_info(self, info, 'PC')
+
 
 
 	def _on_catalog_edit_multi(self, evt):

@@ -60,9 +60,9 @@ class Directory(CatalogFile, TreeItem):
 		subdirs_files = 0
 		subdirs_dirs = 0
 		for subdir in self.subdirs:
-			dummy, dummy, subdir_files, subdir_dirs = subdir.directory_size
-			subdirs_files	+= subdir_files
-			subdirs_dirs	+= subdir_dirs
+			files, dirs, subdir_files, subdir_dirs = subdir.directory_size
+			subdirs_files	+= subdir_files + files
+			subdirs_dirs	+= subdir_dirs + dirs
 		return (len(self.files), len(self.subdirs), subdirs_files, subdirs_dirs)
 
 
