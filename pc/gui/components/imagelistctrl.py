@@ -156,6 +156,10 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 		self.SetZoomFactor(2.0)
 
 
+	def bind_on_char(self, func):
+		self._scrolled.Bind(wx.EVT_CHAR, func)
+
+
 	@property
 	def selected_item(self):
 		sel = self.GetSelection()

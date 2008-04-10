@@ -111,6 +111,8 @@ class WndMain(wx.Frame):
 		self.Bind(EVT_THUMBNAILS_DCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
 		self.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu, self._dirs_tree)
+		self._dirs_tree.Bind(wx.EVT_KEY_DOWN, self._on_dirtree_key_down)
+		self._photo_list.bind_on_char(self._on_photolist_key_down)
 
 		self.__update_last_open_files()
 
@@ -592,6 +594,23 @@ class WndMain(wx.Frame):
 		self.PopupMenu(self.__create_popup_menu(item))
 
 
+	def _on_dirtree_key_down(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		if evt.GetKeyCode() == wx.WXK_DELETE:
+			tree_selected = self._dirs_tree.selected_item
+			if tree_selected is None:
+				return
+			if isinstance(tree_selected, Disk):
+				self._on_catalog_del_disk(None)
+			elif isinstance(tree_selected, Directory):
+				self._on_catalog_del_dir(None)
+
+
+	def _on_photolist_key_down(self, evt):
+		if evt.m_keyCode == wx.WXK_DELETE:
+			self._on_catalog_del_image(None)
 
 	################################################################################
 
