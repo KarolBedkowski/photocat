@@ -100,6 +100,22 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		self.UpdateProp()
 		self.Refresh()
 		self.Scroll(0, 0)
+		
+		
+
+	def CalculateBestCaption(self, dc, caption, sw, width):
+		""" Calculate The Best Caption Based On Actual Zoom.
+			Zmiana w stosunku do oryginału: obcinanie napisu od tyłu.
+		"""
+		
+		if sw <= width:
+			return caption
+		
+		while sw > width:
+			caption = caption[:-1]
+			sw, sh = dc.GetTextExtent(caption)
+
+		return caption[0:-3] + "..."
 
 
 	@property
