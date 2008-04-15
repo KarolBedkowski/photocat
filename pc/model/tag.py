@@ -36,6 +36,7 @@ class Tag(object):
 		self.files		= []
 		self.dirs		= []
 		self.catalog	= catalog
+		self.tree_node	= None
 
 
 	@property
@@ -46,6 +47,11 @@ class Tag(object):
 	@property
 	def dirs_count(self):
 		return len(self.dirs)
+	
+	
+	@property
+	def count(self):
+		return len(self.dirs) + len(self.files)
 
 
 	@property
@@ -57,8 +63,7 @@ class Tag(object):
 		if isinstance(item, FileImage):
 			if item in self.files:
 				self.files.remove(item)
-			return
-		if item in self.dirs:
+		elif item in self.dirs:
 			self.dirs.remove(item)
 
 
@@ -75,10 +80,18 @@ class Tags(object):
 	def __init__(self, catalog):
 		self.reset()
 		self.catalog = catalog
+		self.current_tags_nodes = []
 
 
 	def reset(self):
 		self._tags = {}
+
+
+	def __getitem__(self, key, default=None):
+		return self._tags.get(key, default)
+
+	def __settem__(self, key, value):
+		self._tags[key] = value
 
 
 	@property
@@ -92,17 +105,19 @@ class Tags(object):
 
 
 	def add_item(self, item):
-		if item.tags is not None:
+		if item.tags is not None and item.name is not None:
 			[ self._get_tag_list(tag).add_item(item) for tag in item.tags ]
 
 
 	def update_item(self, item):
-		self.remove_item(item)
-		self.add_item(item)
+		if item.name is not None:
+			self.remove_item(item)
+			self.add_item(item)
 
 
 	def remove_item(self, item):
-		[ tag.remove_item(item) for tag in self._tags.itervalues() ]
+		if item.name is not None:
+			[ tag.remove_item(item) for tag in self._tags.itervalues() ]
 
 
 	def _get_tag_list(self, tag):

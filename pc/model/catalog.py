@@ -51,6 +51,8 @@ class Catalog(TreeItem):
 
 		self.data_provider		= DataProvider(filename)
 		self.tags_provider		= Tags(self)
+		
+		self.current_disks		= []
 
 
 
@@ -137,12 +139,15 @@ class Catalog(TreeItem):
 	def update_images_from_image(images, master_image):
 		desc = master_image.desc
 		tags = master_image.tags
+		changed_tags = {}
 
 		for image in images:
 			if desc is not None:
 				image.desc = desc.strip()
 			if tags is not None:
-				image.set_tags(tags)
+				ff_changed_tags = image.set_tags(tags)
+				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+		return changed_tags.keys()
 
 
 

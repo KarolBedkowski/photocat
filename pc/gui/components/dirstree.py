@@ -51,8 +51,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
 		self._root = item_root
 
-		wx.EVT_TREE_ITEM_EXPANDING(self, wxid, self._on_expanding)
-
 
 	@property
 	def selected_item(self):
@@ -107,6 +105,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			self.DeleteChildren(catalog_node)
 
 		self._update_node_catalog(catalog_node, catalog)
+		self.update_node_tags(catalog.tree_tags_node, catalog.tags_provider)
 		self.Expand(catalog_node)
 
 
@@ -119,46 +118,22 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.Delete(item.tree_node)
 
 
-	def update_catalog_tags(self, catalog):
-		return
-		tags_node = catalog.tree_tags_node
-		self.DeleteChildren(tags_node)
-
-		for tag_name, tag in catalog.tags_provider.tags_items:
-			tag.tree_node = self.AppendItem(tags_node, tag.caption, data=wx.TreeItemData(tag))
-			self.SetItemImage(tag.tree_node, self._icon_tag_idx, wx.TreeItemIcon_Normal)
-			if tag.size > 0:
-				node = self.AppendItem(tag.tree_node, '...')
-
-
 	def show_node(self, node):
 		self.EnsureVisible(node.tree_node)
 
 
-	def _on_expanding(self, evt):
-		node = evt.GetItem()
-		item = self.GetItemData(node).GetData()
-
-		#self.update_node(node, item)
-		if isinstance(item, Tag):
-			self._update_node_tag(node, item)
-		elif isinstance(item, Tags):
-			self._update_node_tags(node, item)
-
-
-	def update_node(self, node, item):
-		self.DeleteChildren(node)
+	def update_node(self, node, item):		
 		self.SetItemText(node, item.caption)
 		if isinstance(item, Catalog):
 			self._update_node_catalog(node, item)
 		elif isinstance(item, Disk):
 			self._update_node_disk(node, item)
 		elif isinstance(item, Directory):
-			self._update_node_directory(node, item)
+			self._update_node_directory(node, item)		
 
 
 	def _update_node_catalog(self, node, catalog):
-		catalog_node = node
+		catalog_node = node		
 
 		for disk in catalog.childs:
 			_LOG.debug('_update_node_catalog add_disk %s' % disk.name)
@@ -168,7 +143,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 		node = catalog.tree_tags_node = self.AppendItem(catalog_node, _('Tags'), data=wx.TreeItemData(catalog.tags_provider))
 		self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
-		self._update_node_tags(node, catalog.tags_provider)
+		self.update_node_tags(node, catalog.tags_provider)
 
 
 	def _update_node_disk(self, node, disk):
@@ -193,23 +168,44 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			self._update_node_directory(subdir_node, subdir)
 
 
-	def _update_node_tags(self, node, tags):
-		self.DeleteChildren(node)
+	def update_node_tags(self, node, tags):
+		current_nodes = []		
 		for tag_name, tag in tags.tags_items:
-			if tag.files_count + tag.dirs_count > 0:
-				_LOG.debug('_update_node_tags %s' % tag.name)
-				tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
-				self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
-				if tag.dirs_count > 0:
-					self.AppendItem(tag_node, '...')
+			if tag.count > 0:
+				if tag.tree_node is None:
+					_LOG.debug('_update_node_tags %s' % tag.name)
+					tag.tree_node = tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
+					self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+				else:
+					self.SetItemText(tag.tree_node, tag.caption)
+					tags.current_tags_nodes.remove(tag.tree_node)
+				self.update_node_tag(tag.tree_node, tag)
+				current_nodes.append(tag.tree_node)
+			else:
+				if tag.tree_node is not None:
+					self.DeleteChildren(tag.tree_node)
+					self.Delete(tag.tree_node)
+					stags.current_tags_nodes.remove(tag.tree_node)
+					tag.tree_node = None
+		for tree_node in tags.current_tags_nodes:
+			self.DeleteChildren(tree_node)
+			self.Delete(tree_node)
+		tags.current_tags_nodes = current_nodes
 
 
-	def _update_node_tag(self, node, tag):
-		_LOG.debug('_update_node_tag %s' % tag.name)
+	def update_node_tag(self, node, tag):
+		_LOG.debug('_update_node_tag %s' % tag)
 
 		self.DeleteChildren(node)
+		
+		if tag.count == 0:
+			# jeżeli tag nie ma nic - usunięcie go
+			self.Delete(node)
+			tag.tree_node = None
+			return
 
 		def add_subdir(parent_node, item):
+			assert parent_node.IsOk()
 			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
 			if isinstance(item, Disk):
 				self.SetItemImage(node, self._icon_disk_idx, wx.TreeItemIcon_Normal)

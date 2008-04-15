@@ -37,7 +37,7 @@ _ = gettext.gettext
 import wx
 
 from kpylibs.guitools	import create_button
-from kpylibs.appconfig		import AppConfig
+from kpylibs.appconfig	import AppConfig
 
 from pc.model			import Catalog, Directory, Disk, FileImage
 
@@ -55,6 +55,9 @@ class DlgProperties(wx.Dialog):
 		self._item_is_disk		= isinstance(item, Disk)		and not is_fake
 		self._item_is_catalog	= isinstance(item, Catalog) 	and not is_fake
 		self._item_is_image		= isinstance(item, FileImage)	and not is_fake
+		
+		# lista zmienionych podczas edycji nazw tagów
+		self.changed_tags		= None
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
@@ -240,7 +243,7 @@ class DlgProperties(wx.Dialog):
 			else:
 				changed_tags = tags != item.tags
 			if changed_tags:
-				item.set_tags(tags)
+				self.changed_tags = item.set_tags(tags)
 				changed = True
 		else:
 			item.tags = None

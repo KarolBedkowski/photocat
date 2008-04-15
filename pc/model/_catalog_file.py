@@ -117,10 +117,19 @@ class CatalogFile(StorageObject):
 
 
 	def set_tags(self, tags):
+		# zapamiętanie zmienionych tagów
+		if self.tags is None:
+			updated_tags = tags
+		elif tags is None:
+			updated_tags = self.tags
+		else:
+			updated_tags = [ tag for tag in tags if tag not in self.tags] + [ tag for tag in self.tags if tag not in tags ]
+			
 		self.tags = None
 		if len(tags) > 0:
 			self.tags = tuple(tags)
 		self.disk.catalog.tags_provider.update_item(self)
+		return updated_tags
 
 
 	def check_on_find(self, text, options=None):
@@ -132,7 +141,6 @@ class CatalogFile(StorageObject):
 		if self.tags is not None and text in self.tags:
 			return [self]
 		return list()
-
 
 
 	@classmethod
