@@ -82,7 +82,7 @@ class Catalog(TreeItem):
 		self.disks.append(disk)
 		self.disks.sort(lambda x,y: cmp(x.name, y.name))
 		self.dirty = True
-		return True
+		return disk
 
 
 	def remove_disk(self, disk):

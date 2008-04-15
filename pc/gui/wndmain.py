@@ -743,9 +743,10 @@ class WndMain(wx.Frame):
 					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data, 
 							on_update=update_progress, name=data['name'])
 				else:
-					catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
+					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
 				self.__save_catalog(catalog, True)
-				self._dirs_tree.add_catalog(catalog)
+				#self._dirs_tree.add_catalog(catalog)
+				self._dirs_tree.update_node_disk(disk.tree_node, disk)
 			except Exception, err:
 				_LOG.exception('MainWnd.__add_or_update_disk()')
 				self.SetCursor(wx.STANDARD_CURSOR)
