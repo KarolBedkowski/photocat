@@ -425,7 +425,7 @@ class WndMain(wx.Frame):
 		if dialogs.message_box_warning_yesno(self, _('Delete disk %s?') % tree_selected.name, 'PC'):
 			self._dirs_tree.delete_item(tree_selected)
 			catalog = tree_selected.catalog
-			catalog.del_disk(tree_selected)
+			catalog.remove_disk(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
 
 
@@ -442,7 +442,7 @@ class WndMain(wx.Frame):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
-			self._dirs_tree.update_catalog_tags(tree_selected.catalog)
+			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider)
 
 
 	def _on_catalog_del_image(self, evt):
@@ -554,7 +554,10 @@ class WndMain(wx.Frame):
 			self._info_panel.show_folder(item)
 			self._dirs_tree.update_catalog_node(item.catalog)
 			self.__update_changed_tags(item.catalog.tags_provider, item.catalog.tree_tags_node, dlg.changed_tags)
-			self._dirs_tree.update_node(item.tree_node, item)
+			if isinstance(item, Disk):
+				self._dirs_tree.update_node_disk(item, False)
+			else:
+				self._dirs_tree.update_node_directory(item, False)
 		dlg.Destroy()
 
 
@@ -746,7 +749,7 @@ class WndMain(wx.Frame):
 					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
 				self.__save_catalog(catalog, True)
 				#self._dirs_tree.add_catalog(catalog)
-				self._dirs_tree.update_node_disk(disk.tree_node, disk)
+				self._dirs_tree.update_node_disk(disk)
 			except Exception, err:
 				_LOG.exception('MainWnd.__add_or_update_disk()')
 				self.SetCursor(wx.STANDARD_CURSOR)
@@ -775,12 +778,12 @@ class WndMain(wx.Frame):
 	def __update_changed_tags(self, tags_provider, tree_tags_node, changed_tags):
 		""" aktualizacja tagów w drzewie """
 		if changed_tags is not None and len(changed_tags) > 0:
-			[ self._dirs_tree.update_node_tag(tag_item.tree_node, tag_item)
+			[ self._dirs_tree.update_node_tag(tag_item)
 				for tag_item
 				in (tags_provider[tag] for tag in changed_tags)
 				if tag_item.tree_node is not None
 			]
-			self._dirs_tree.update_node_tags(tree_tags_node, tags_provider)
+			self._dirs_tree.update_node_tags(tags_provider)
 
 
 # vim: encoding=utf8:

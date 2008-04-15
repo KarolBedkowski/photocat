@@ -81,6 +81,7 @@ class Tags(object):
 		self.reset()
 		self.catalog = catalog
 		self.current_tags_nodes = []
+		self.tree_node = None
 
 
 	def reset(self):

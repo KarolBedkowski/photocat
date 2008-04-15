@@ -43,7 +43,6 @@ class Catalog(TreeItem):
 		self.name				= os.path.basename(filename)
 		self.last_id			= None
 		self.last_offset		= None
-		self.tree_tags_node		= None
 		self.dirty				= True
 
 		self.disks				= []
