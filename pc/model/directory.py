@@ -166,6 +166,7 @@ class Directory(CatalogFile, TreeItem):
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
 			else:
+				dir_subdirs_names.pop(subdir)
 				if not subdir_obj.update(subdir_path, options, on_update):
 					return False
 
@@ -173,6 +174,10 @@ class Directory(CatalogFile, TreeItem):
 				new_subdirs.append(subdir_obj)
 
 		self.subdirs = new_subdirs
+		
+		# usuniecie starych katalogow
+		[ subdir.delete() for subdir in dir_subdirs_names.itervalues() ]
+		
 		return True
 
 
@@ -198,11 +203,16 @@ class Directory(CatalogFile, TreeItem):
 				if not fileimage.load(file_path, options, on_update):
 					return False
 			else:
+				files_dict.pop(filename)
 				if not fileimage.update(file_path, options, on_update):
 					return False
 			new_files.append(fileimage)
 
 		self.files = new_files
+		
+		# usuniecie starych plikow
+		[ file.delete() for file in files_dict.itervalues() ]
+		
 		return True
 
 
