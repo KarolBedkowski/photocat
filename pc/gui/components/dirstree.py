@@ -116,7 +116,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	def update_node_catalog(self, catalog, recursive=True):
 		catalog_node = catalog.tree_node
 		
-		if catalog_node is None:
+		if catalog_node is None or not catalog_node.IsOk():
 			catalog_node = catalog.tree_node = self.AppendItem(self._root, catalog.caption, data=wx.TreeItemData(catalog))
 			self.SetItemImage(catalog_node, self._icon_folderimg_idx, wx.TreeItemIcon_Normal)
 		else:
@@ -152,7 +152,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	def update_node_directory(self, dir, recursive=True):
 		dir_node = dir.tree_node
 		
-		if dir_node is None:
+		if dir_node is None or not dir_node.IsOk():
 			dir_node = dir.tree_node = self.AppendItem(dir.parent.tree_node, dir.caption, data=wx.TreeItemData(dir))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
@@ -172,7 +172,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	def update_node_tags(self, tags, clear=False):
 		node = tags.tree_node
 
-		if node is None:
+		if node is None or not node.IsOk():
 			node = tags.tree_node = self.AppendItem(tags.catalog.tree_node, _('Tags'),
 					data=wx.TreeItemData(tags.catalog.tags_provider))
 			self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)

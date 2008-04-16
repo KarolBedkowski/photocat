@@ -75,6 +75,9 @@ class Tag(object):
 
 
 
+####################################################################################################################
+
+
 
 class Tags(object):
 	def __init__(self, catalog):
@@ -111,9 +114,8 @@ class Tags(object):
 
 
 	def update_item(self, item):
-		if item.name is not None:
-			self.remove_item(item)
-			self.add_item(item)
+		self.remove_item(item)
+		self.add_item(item)
 
 
 	def remove_item(self, item):

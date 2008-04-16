@@ -54,7 +54,6 @@ class Catalog(TreeItem):
 		self.current_disks		= []
 
 
-
 	@property
 	def caption(self):
 		return self.name + (self.dirty and ' *' or '')

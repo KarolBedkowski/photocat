@@ -58,6 +58,7 @@ class CatalogFile(StorageObject):
 
 	@property
 	def caption(self):
+		""" etykieta obiektu """
 		return str(self.name or id(self))
 
 
@@ -107,6 +108,7 @@ class CatalogFile(StorageObject):
 
 
 	def load(self, path, options, on_update):
+		""" załadowanie danych o obiekcie """
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
 		return on_update(path)
@@ -124,6 +126,7 @@ class CatalogFile(StorageObject):
 
 
 	def set_tags(self, tags):
+		""" ustawienie tagów dla obiektu """
 		# zapamiętanie zmienionych tagów
 		if self.tags is None:
 			updated_tags = tags

@@ -162,6 +162,7 @@ class Directory(CatalogFile, TreeItem):
 			if subdir_obj is None:
 				if subdir in skip_dirs_list:
 					continue
+				
 				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
@@ -202,10 +203,12 @@ class Directory(CatalogFile, TreeItem):
 				fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
 				if not fileimage.load(file_path, options, on_update):
 					return False
+
 			else:
 				files_dict.pop(filename)
 				if not fileimage.update(file_path, options, on_update):
 					return False
+
 			new_files.append(fileimage)
 
 		self.files = new_files
@@ -259,11 +262,13 @@ class Directory(CatalogFile, TreeItem):
 		current_file_data = {}
 		while True:
 			line = captions_file.readline()
-			if line == '':					break
+			if line == '':
+				break
 
 			line = line.strip()
 
-			if line.startswith('#'):		continue
+			if line.startswith('#'):
+				continue
 
 			if current_file_name is None:
 				if line != '':
