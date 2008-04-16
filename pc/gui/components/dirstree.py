@@ -50,6 +50,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemImage(item_root, self._icon_idx, wx.TreeItemIcon_Normal)
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
 		self._root = item_root
+		
+		self.Bind(wx.EVT_TREE_DELETE_ITEM, self._on_tree_delete_item)
 
 
 	@property
@@ -114,6 +116,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	
 
 	def update_node_catalog(self, catalog, recursive=True):
+		_LOG.debug('update_node_catalog %s' % catalog.name)
 		catalog_node = catalog.tree_node
 		
 		if catalog_node is None or not catalog_node.IsOk():
@@ -128,12 +131,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			self.update_node_tags(catalog.tags_provider)
 
 			for disk in catalog.childs:
-				_LOG.debug('_update_node_catalog add_disk %s' % disk.name)
 				self.update_node_disk(disk)
 
 
 
 	def update_node_disk(self, disk, recursive=True):
+		_LOG.debug('update_node_disk %s'  % disk.name)
 		disk_node = disk.tree_node
 		
 		if disk_node is None or not disk_node.IsOk():
@@ -144,12 +147,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			
 		if recursive:
 			self.DeleteChildren(disk_node)
-			for dir in disk.childs:
-				_LOG.debug('_update_node_disk add_dir %s' % dir.name)			
+			for dir in disk.childs:	
 				self.update_node_directory(dir)
 
 
 	def update_node_directory(self, dir, recursive=True):
+		_LOG.debug('update_node_directory %s'  % dir.name)
 		dir_node = dir.tree_node
 		
 		if dir_node is None or not dir_node.IsOk():
@@ -165,7 +168,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		if recursive:
 			self.DeleteChildren(dir_node)
 			for subdir in dir.childs:
-				_LOG.debug('_update_node_directory add_dir %s' % dir.name)
 				self.update_node_directory(subdir)
 
 
@@ -232,8 +234,15 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			add_subdir(node, dir)
 
 
-
-
+	def _on_tree_delete_item(self, evt):
+		''' usuwane elementy musza miec czyszczone tree_node - w wxgtk nie dziala dobrze IsOk'''
+		node = evt.GetItem()
+		if node.IsOk():
+			item = self.GetItemData(node)
+			if item is not None:
+				data = item.GetData()
+				if hasattr(data, 'tree_node'):
+					data.tree_node = None
 
 
 
