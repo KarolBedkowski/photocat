@@ -188,13 +188,15 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 					self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
 				else:
 					self.SetItemText(tag.tree_node, tag.caption)
-					tags.current_tags_nodes.remove(tag.tree_node)
+					if tags.current_tags_nodes.count(tag.tree_node) > 0:
+						tags.current_tags_nodes.remove(tag.tree_node)
 				self.update_node_tag(tag)
 			else:
 				if tag.tree_node is not None:
 					self.DeleteChildren(tag.tree_node)
 					self.Delete(tag.tree_node)
-					stags.current_tags_nodes.remove(tag.tree_node)
+					if tags.current_tags_nodes.count(tag.tree_node) > 0:
+						tags.current_tags_nodes.remove(tag.tree_node)
 					tag.tree_node = None
 
 		for tree_node in tags.current_tags_nodes:

@@ -103,7 +103,8 @@ class CatalogFile(StorageObject):
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		StorageObject.delete(self)
-		if self.tags is not None and len(self.tags):
+		if self.tags is not None and len(self.tags) > 0:
+			_LOG.debug('delete tags from %s' % self.name)
 			self.disk.catalog.tags_provider.remove_item(self)
 
 

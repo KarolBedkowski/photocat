@@ -427,6 +427,7 @@ class WndMain(wx.Frame):
 			catalog = tree_selected.catalog
 			catalog.remove_disk(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
+			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
 
 
 	def _on_catalog_del_dir(self, evt):
