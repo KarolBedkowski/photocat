@@ -751,7 +751,7 @@ class WndMain(wx.Frame):
 				self.__save_catalog(catalog, True)
 				#self._dirs_tree.add_catalog(catalog)
 				self._dirs_tree.update_node_disk(disk)
-				self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
+				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
 			except Exception, err:
 				_LOG.exception('MainWnd.__add_or_update_disk()')
 				self.SetCursor(wx.STANDARD_CURSOR)
