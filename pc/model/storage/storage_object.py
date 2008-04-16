@@ -57,6 +57,7 @@ _id_provider = _IdProvider()
 class StorageObject(object):
 	def __init__(self, id, *args, **kwargs):
 		self._id = None
+		self._invalid = False
 
 		if id is not None:
 			self._id = _id_provider.set(id)
@@ -74,11 +75,16 @@ class StorageObject(object):
 		self._id = _id_provider.set(id)
 
 	id = property(_get_id, _set_id)
-
+	
 
 	@property
 	def childs_to_store(self):
 		return []
+	
+
+	def delete(self):
+		''' metoda uruchamiana przy usuwaniu obiektu '''
+		self._invalid = True
 
 
 	@classmethod

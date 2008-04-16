@@ -71,6 +71,13 @@ class Directory(CatalogFile, TreeItem):
 		return sum(self.directory_size)
 
 
+	def delete(self):
+		''' metoda uruchamiana przy usuwaniu obiektu '''
+		CatalogFile.delete(self)
+		[ sfile.delete() for sfile in self.files ]
+		[ subdir.delete() for subdir in self.subdirs ]
+
+
 	def add_child(self, item):
 		if isinstance(item, Directory):
 			self.subdirs.append(item)
@@ -105,11 +112,13 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def remove_subdir(self, subdir):
+		subdir.delete()
 		self.subdirs.remove(subdir)
 		self.catalog.dirty = True
 
 
 	def remove_file(self, file):
+		file.delete()
 		self.files.remove(file)
 		self.catalog.dirty = True
 

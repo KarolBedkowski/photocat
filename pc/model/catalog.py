@@ -86,6 +86,7 @@ class Catalog(TreeItem):
 
 	def remove_disk(self, disk):
 		if disk in self.disks:
+			disk.delete()
 			self.disks.remove(disk)
 			self.dirty = True
 			return True

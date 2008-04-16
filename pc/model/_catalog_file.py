@@ -99,6 +99,13 @@ class CatalogFile(StorageObject):
 		return os.path.join(self.parent.path, self.name)
 
 
+	def delete(self):
+		''' metoda uruchamiana przy usuwaniu obiektu '''
+		StorageObject.delete(self)
+		if self.tags is not None and len(self.tags):
+			self.disk.catalog.tags_provider.remove_item(self)
+
+
 	def load(self, path, options, on_update):
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
@@ -151,7 +158,6 @@ class CatalogFile(StorageObject):
 				('desc', str), ('parent_id', int), ('disk_id', int)
 		))
 		return attribs
-
 
 
 

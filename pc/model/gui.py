@@ -29,7 +29,6 @@ __revision__	= '$Id$'
 class TreeItem(object):
 	def __init__(self):
 		self.tree_node		= None
-		self.tree_tag_nodes	= None
 
 
 	@property
@@ -40,6 +39,8 @@ class TreeItem(object):
 	@property
 	def childs(self):
 		return None
+
+
 
 
 

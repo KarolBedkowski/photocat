@@ -169,18 +169,20 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				self.update_node_directory(subdir)
 
 
-	def update_node_tags(self, tags):
+	def update_node_tags(self, tags, clear=False):
 		node = tags.tree_node
 
 		if node is None:
 			node = tags.tree_node = self.AppendItem(tags.catalog.tree_node, _('Tags'),
 					data=wx.TreeItemData(tags.catalog.tags_provider))
 			self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+		elif clear:
+			self.DeleteChildren(node)
 		
 		current_nodes = []		
 		for tag_name, tag in tags.tags_items:
 			if tag.count > 0:
-				if tag.tree_node is None:
+				if tag.tree_node is None or clear:
 					_LOG.debug('_update_node_tags %s' % tag.name)
 					tag.tree_node = tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
 					self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
@@ -188,7 +190,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 					self.SetItemText(tag.tree_node, tag.caption)
 					tags.current_tags_nodes.remove(tag.tree_node)
 				self.update_node_tag(tag)
-				current_nodes.append(tag.tree_node)
 			else:
 				if tag.tree_node is not None:
 					self.DeleteChildren(tag.tree_node)
@@ -227,7 +228,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 		for dir in tag.dirs:
 			add_subdir(node, dir)
-
 
 
 

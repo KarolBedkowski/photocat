@@ -442,7 +442,7 @@ class WndMain(wx.Frame):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
-			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider)
+			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
 
 
 	def _on_catalog_del_image(self, evt):
