@@ -304,7 +304,7 @@ class Directory(CatalogFile, TreeItem):
 
 		if update_obj.desc is None or len(update_obj.desc) == 0:
 			desc = ( file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) )
-			update_obj.desc = '\n'.join(desc)
+			update_obj.desc = unicode('\n'.join(desc))
 
 
 

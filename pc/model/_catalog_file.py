@@ -28,6 +28,7 @@ __revision__	= '$Id$'
 
 import os
 import time
+import types
 
 import logging
 _LOG = logging.getLogger(__name__)
@@ -48,6 +49,8 @@ class CatalogFile(StorageObject):
 		self.date = kwargs.get('date')
 		self.tags = kwargs.get('tags')
 		self.desc = kwargs.get('desc')
+		if self.desc is not None and type(self.desc) != types.UnicodeType:
+			self.desc = unicode(self.desc)
 
 		StorageObject.__init__(self, id, *args, **kwargs)
 
