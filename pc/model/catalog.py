@@ -32,6 +32,7 @@ from gui		import TreeItem
 from disk		import Disk
 from storage	import DataProvider
 from tag		import Tags
+from timeline	import Timeline
 
 
 
@@ -50,6 +51,7 @@ class Catalog(TreeItem):
 
 		self.data_provider		= DataProvider(filename)
 		self.tags_provider		= Tags(self)
+		self.timeline			= Timeline(None, self)
 		
 		self.current_disks		= []
 
