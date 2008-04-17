@@ -11,9 +11,6 @@ __revision__	= '$Id$'
 __all__			= ['DirsTree']
 
 
-import gettext
-_ = gettext.gettext
-
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -23,6 +20,8 @@ from kpylibs.eventgenerator	import EventGenerator
 from kpylibs.iconprovider	import IconProvider
 
 from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags
+
+_ = wx.GetTranslation
 
 
 

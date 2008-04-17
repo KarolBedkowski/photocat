@@ -30,10 +30,11 @@ import time
 import logging
 _LOG = logging.getLogger(__name__)
 
-import gettext
-_ = gettext.gettext
+import wx
 
 from directory	import Directory
+
+_ = wx.GetTranslation
 
 
 

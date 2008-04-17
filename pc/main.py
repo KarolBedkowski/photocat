@@ -60,7 +60,7 @@ logging_setup('pc.log', debug)
 _LOG = logging.getLogger(__name__)
 
 
-import gettext
+#import gettext
 import wx
 
 from kpylibs.appconfig		import AppConfig
@@ -81,16 +81,12 @@ class App(wx.App):
 		app_config = AppConfig()
 		locales_dir = app_config.locales_dir
 		_LOG.info('run: locale dir: %s' % locales_dir)
-		locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-		locale.AddCatalogLookupPathPrefix(locales_dir)
+		self.locale = locale = wx.Locale(wx.LANGUAGE_DEFAULT)
+		locale.AddCatalogLookupPathPrefix(locales_dir)		
 		locale.AddCatalog('wxstd')
 		locale.AddCatalog('kpylibs')
 		locale.AddCatalog('pc')
-
-		gettext.bindtextdomain('pc', locales_dir)
-		gettext.bindtextdomain('kpylibs', locales_dir)
-		gettext.textdomain('pc')
-
+		_LOG.info('locale: %s' % locale.GetName())
 
 		from kpylibs.iconprovider	import IconProvider
 	

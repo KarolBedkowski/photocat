@@ -29,12 +29,10 @@ __all__			= ['DlgAbout']
 
 import sys
 
-import gettext
-_ = gettext.gettext
-
 import wx
 import wx.html
 
+_ = wx.GetTranslation
 
 _ABOUT_TEXT = '''
 <html>

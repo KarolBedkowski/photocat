@@ -33,9 +33,6 @@ import sys
 import logging
 _LOG = logging.getLogger(__name__)
 
-import gettext
-_ = gettext.gettext
-
 import wx
 
 from kpylibs.guitools		import create_button
@@ -44,6 +41,8 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
 
 from pc.model		import Catalog, Directory, Disk, FileImage
+
+_ = wx.GetTranslation
 
 
 

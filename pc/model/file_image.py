@@ -32,16 +32,17 @@ import re
 import logging
 _LOG = logging.getLogger(__name__)
 
-import gettext
-_ = gettext.gettext
+import wx
 
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin
 PILImage._initialized = 3
-#from PIL.ExifTags import TAGS
+
 from pc.lib					import EXIF
 
 from _catalog_file			import CatalogFile
+
+_ = wx.GetTranslation
 
 
 

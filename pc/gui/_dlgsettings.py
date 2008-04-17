@@ -31,9 +31,6 @@ import sys
 import os
 import time
 
-import gettext
-_ = gettext.gettext
-
 import wx
 
 from kpylibs.guitools	import create_button
@@ -42,7 +39,7 @@ from kpylibs.validators	import MyValidator, validators
 
 from pc.model			import Catalog, Directory, Disk, FileImage
 
-
+_ = wx.GetTranslation
 
 _SETTINGS_KEYS = (
 		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50)

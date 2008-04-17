@@ -40,14 +40,13 @@ if __name__ == '__main__':
 import sys
 import os
 
-import gettext
-_ = gettext.gettext
-
 import wx
 
 from kpylibs.appconfig		import AppConfig
 from kpylibs.dialogs		import message_box_error
 from kpylibs.validators		import MyValidator, validators
+
+_ = wx.GetTranslation
 
 
 

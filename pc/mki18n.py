@@ -398,6 +398,7 @@ def unixpath(thePath) :
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # 
 if __name__ == "__main__":
+    app = wx.PySimpleApp() 
     import getopt     # command line parsing
     argc = len(sys.argv)
     if argc == 1:

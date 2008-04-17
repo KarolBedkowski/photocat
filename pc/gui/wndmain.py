@@ -35,9 +35,6 @@ import os.path
 import logging
 _LOG = logging.getLogger(__name__)
 
-import gettext
-_ = gettext.gettext
-
 import wx
 
 from kpylibs				import dialogs
@@ -62,6 +59,7 @@ from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
 from _dlgsettings			import DlgSettings
 
+_ = wx.GetTranslation
 
 _DEFAULT_ADD_OPTIONS = {
 		'filter_folder_names': None,

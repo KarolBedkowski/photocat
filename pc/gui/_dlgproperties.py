@@ -31,15 +31,14 @@ import sys
 import os
 import time
 
-import gettext
-_ = gettext.gettext
-
 import wx
 
 from kpylibs.guitools	import create_button
 from kpylibs.appconfig	import AppConfig
 
 from pc.model			import Catalog, Directory, Disk, FileImage
+
+_ = wx.GetTranslation
 
 
 
