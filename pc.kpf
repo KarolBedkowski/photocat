@@ -68,7 +68,7 @@
   <string id="userEnvironment"></string>
 </preference-set>
 </preference-set>
-  <string id="lastInvocation">Project</string>
+  <string id="lastInvocation">default</string>
 </preference-set>
 <preference-set idref="a75c3ebf-b7e4-47c8-9d47-c581ae14a1f6/pc/gui/_dlgabout.py">
 <preference-set id="Invocations">
