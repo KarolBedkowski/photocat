@@ -46,10 +46,13 @@ try:
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
+
+##########################################################################
 # logowanie
 import logging
 from kpylibs.logging_setup	import logging_setup
 from kpylibs.logging_wx		import logging_setup_wx
+
 
 debug = sys.argv.count('-d') > 0
 if debug:
@@ -60,7 +63,9 @@ logging_setup('pc.log', debug)
 _LOG = logging.getLogger(__name__)
 
 
-#import gettext
+##########################################################################
+
+
 import wx
 
 from kpylibs.appconfig		import AppConfig
@@ -117,6 +122,7 @@ class App(wx.App):
 		wx.App.OnFatalException(self)
 
 
+##########################################################################
 
 
 def run():
@@ -130,7 +136,6 @@ def run():
 
 	_LOG.info('run: starting app...')
 	app = App(None)
-
 
 	_LOG.info('run: starting app main loop...')
 	app.MainLoop()

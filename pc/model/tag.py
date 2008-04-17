@@ -58,6 +58,8 @@ class Tag(object):
 	def caption(self):
 		return '%s (%d/%d)' % (self.name, len(self.files), len(self.dirs))
 
+	##########################################################################
+
 
 	def remove_item(self, item):
 		if isinstance(item, FileImage):
@@ -70,8 +72,8 @@ class Tag(object):
 	def add_item(self, item):
 		if isinstance(item, FileImage):
 			self.files.append(item)
-			return
-		self.dirs.append(item)
+		else:
+			self.dirs.append(item)
 
 
 
@@ -81,14 +83,10 @@ class Tag(object):
 
 class Tags(object):
 	def __init__(self, catalog):
-		self.reset()
+		self._tags = {}
 		self.catalog = catalog
 		self.current_tags_nodes = []
 		self.tree_node = None
-
-
-	def reset(self):
-		self._tags = {}
 
 
 	def __getitem__(self, key, default=None):
@@ -96,6 +94,9 @@ class Tags(object):
 
 	def __settem__(self, key, value):
 		self._tags[key] = value
+
+
+	##########################################################################
 
 
 	@property
@@ -106,6 +107,9 @@ class Tags(object):
 	@property
 	def tags_items(self):
 		return self._tags.iteritems()
+
+
+	##########################################################################
 
 
 	def add_item(self, item):
@@ -123,9 +127,12 @@ class Tags(object):
 			[ tag.remove_item(item) for tag in self._tags.itervalues() ]
 
 
+	##########################################################################
+
 	def _get_tag_list(self, tag):
 		if self._tags.has_key(tag):
 			return self._tags[tag]
+
 		tag_obj = Tag(tag, self.catalog)
 		self._tags[tag] = tag_obj
 		return tag_obj

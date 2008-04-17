@@ -74,6 +74,7 @@ class FileImage(CatalogFile):
 			except:
 				_LOG.exception('FileImage.exif_data file=%s' % self.name)
 				self._exif_data = None
+
 		return self._exif_data
 
 
@@ -81,6 +82,7 @@ class FileImage(CatalogFile):
 	def image(self):
 		if self.thumb is None:
 			return None
+
 		return self.disk.catalog.data_provider.get_data(self.thumb)
 
 
@@ -88,6 +90,7 @@ class FileImage(CatalogFile):
 		result = CatalogFile._get_info(self)
 		if self.dimensions is not None:
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
+
 		exif = self.exif_data
 		if exif is not None:
 			date = self.__get_exif_shot_date(exif)
@@ -107,11 +110,15 @@ class FileImage(CatalogFile):
 	info = property(_get_info)
 
 
+	##########################################################################
+
+
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
 			self._load_thumb(path, options)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
+
 			return True
 		return False
 
@@ -123,8 +130,12 @@ class FileImage(CatalogFile):
 				self._load_thumb(path, options)
 				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 					self._load_exif(path)
+
 			return True
 		return False
+
+
+	##########################################################################
 
 
 	def _load_exif(self, path):
@@ -146,8 +157,10 @@ class FileImage(CatalogFile):
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
 					self.exif = self.disk.catalog.data_provider.append(str_exif)
+
 		except StandardError:
 			_LOG.exception('load_exif error file=%s' % path)
+
 		finally:
 			if jpeg_file is not None:
 				jpeg_file.close()
@@ -236,6 +249,8 @@ class FileImage(CatalogFile):
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
 		return None
 
+
+	##########################################################################
 
 
 	@classmethod

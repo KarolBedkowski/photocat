@@ -35,7 +35,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 		self.__icon_provider = IconProvider()
 		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 
-			wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
+				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
 		self.SetImageList(self.__icon_provider.get_image_list())
 		self._icon_idx				= self.__icon_provider.get_image_index(wx.ART_FOLDER)
@@ -45,12 +45,14 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self._icon_tags_idx			= self.__icon_provider.get_image_index('tags')
 		self._icon_tag_idx			= self.__icon_provider.get_image_index('tag')
 
-		item_root = self.AddRoot('')
+		self._root = item_root = self.AddRoot('')
 		self.SetItemImage(item_root, self._icon_idx, wx.TreeItemIcon_Normal)
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
-		self._root = item_root
-		
+
 		self.Bind(wx.EVT_TREE_DELETE_ITEM, self._on_tree_delete_item)
+
+
+	#########################################################################
 
 
 	@property
@@ -72,7 +74,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		parent = None
 		if node.IsOk():
 			parent = self.GetItemParent(node)
-			if not parent.IsOk():
+			if parent is None or not parent.IsOk():
 				parent = None
 		return parent
 
@@ -86,14 +88,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		return node
 
 
-	def get_item_by_xy(self, x, y):
-		node, _flags = self.HitTest(wx.Point(x, y))
-		data = None
-		if node.IsOk():
-			item = self.GetItemData(node)
-			if item is not None:
-				data = item.GetData()
-		return data, node
+	#######################################################################
 
 
 	def add_catalog(self, catalog):
@@ -104,7 +99,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	def update_catalog_node(self, node):
 		self.SetItemText(node.tree_node, node.caption)
 
-	
+
 	def delete_item(self, item):
 		self.DeleteChildren(item.tree_node)
 		self.Delete(item.tree_node)
@@ -112,12 +107,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 	def show_node(self, node):
 		self.EnsureVisible(node.tree_node)
-	
+
 
 	def update_node_catalog(self, catalog, recursive=True):
 		_LOG.debug('update_node_catalog %s' % catalog.name)
 		catalog_node = catalog.tree_node
-		
+
 		if catalog_node is None or not catalog_node.IsOk():
 			catalog_node = catalog.tree_node = self.AppendItem(self._root, catalog.caption, data=wx.TreeItemData(catalog))
 			self.SetItemImage(catalog_node, self._icon_folderimg_idx, wx.TreeItemIcon_Normal)
@@ -133,17 +128,16 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				self.update_node_disk(disk)
 
 
-
 	def update_node_disk(self, disk, recursive=True):
 		_LOG.debug('update_node_disk %s'  % disk.name)
 		disk_node = disk.tree_node
-		
+
 		if disk_node is None or not disk_node.IsOk():
 			disk_node = disk.tree_node = self.AppendItem(disk.catalog.tree_node, disk.caption, data=wx.TreeItemData(disk))
 			self.SetItemImage(disk_node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
 		else:
 			self.SetItemText(disk_node, disk.caption)
-			
+
 		if recursive:
 			self.DeleteChildren(disk_node)
 			for dir in disk.childs:	
@@ -153,7 +147,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	def update_node_directory(self, dir, recursive=True):
 		_LOG.debug('update_node_directory %s'  % dir.name)
 		dir_node = dir.tree_node
-		
+
 		if dir_node is None or not dir_node.IsOk():
 			dir_node = dir.tree_node = self.AppendItem(dir.parent.tree_node, dir.caption, data=wx.TreeItemData(dir))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
@@ -179,7 +173,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
 		elif clear:
 			self.DeleteChildren(node)
-		
+
 		current_nodes = []		
 		for tag_name, tag in tags.tags_items:
 			if tag.count > 0:
@@ -211,7 +205,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		node = tag.tree_node
 
 		self.DeleteChildren(node)
-		
+
 		if tag.count == 0:
 			# jeżeli tag nie ma nic - usunięcie go
 			if tag.tree_node.IsOk():
@@ -233,6 +227,9 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			add_subdir(node, dir)
 
 
+	#####################################################################
+	
+
 	def _on_tree_delete_item(self, evt):
 		''' usuwane elementy musza miec czyszczone tree_node - w wxgtk nie dziala dobrze IsOk'''
 		node = evt.GetItem()
@@ -242,7 +239,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				data = item.GetData()
 				if hasattr(data, 'tree_node'):
 					data.tree_node = None
-
 
 
 # vim: encoding=utf8: ff=unix:

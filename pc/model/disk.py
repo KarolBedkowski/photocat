@@ -61,6 +61,9 @@ class Disk(Directory):
 		return result
 
 	info = property(_get_info)
+	
+	
+	##########################################################################
 
 
 	def load(self, path, options, on_update):
@@ -75,6 +78,9 @@ class Disk(Directory):
 		self.update_date = time.time()
 		self.last_path = path
 		return True
+
+	
+	##########################################################################
 
 
 	@classmethod

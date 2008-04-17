@@ -192,6 +192,7 @@ class DataProvider:
 			if os.path.exists(tmp_filename):
 				os.unlink(tmp_filename)
 			raise StandardError(err)
+
 		else:
 			os.rename(self.filename, old_filename)
 			os.rename(tmp_filename, self.filename)
@@ -208,6 +209,7 @@ class DataProvider:
 
 			# wywalenie starego pliku
 			os.unlink(old_filename)
+
 		finally:
 			if new_file is not None:
 				new_file.close()

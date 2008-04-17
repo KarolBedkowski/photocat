@@ -69,6 +69,9 @@ class Catalog(TreeItem):
 		return self.disks
 
 
+	##########################################################################
+
+
 	def close(self):
 		self.data_provider.close()
 
@@ -110,8 +113,13 @@ class Catalog(TreeItem):
 		return self_result
 
 
+	##########################################################################
+
+
 	@staticmethod
 	def fast_count_files_dirs(path):
+		""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
+
 		_IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
 
 		def count_folder(path):
@@ -121,8 +129,9 @@ class Catalog(TreeItem):
 					if not name.startswith('.')
 			]
 
-			content_size = sum(( os.path.getsize(item) for item
-				in content
+			content_size = sum((
+				os.path.getsize(item)
+				for item in content
 				if os.path.isdir(item)
 					or (os.path.isfile(item)
 						and os.path.splitext(item)[1].lower() in _IMAGE_FILES_EXTENSION
@@ -136,6 +145,10 @@ class Catalog(TreeItem):
 
 	@staticmethod
 	def update_images_from_image(images, master_image):
+		""" Przepisanie atrybutów z jednego obiektu do drugiego.
+			Przepisywane są tylko te, które nie są None.
+			(Do edycji wielu plików na raz)
+		"""
 		desc = master_image.desc
 		tags = master_image.tags
 		changed_tags = {}
@@ -143,9 +156,11 @@ class Catalog(TreeItem):
 		for image in images:
 			if desc is not None:
 				image.desc = desc.strip()
+
 			if tags is not None:
 				ff_changed_tags = image.set_tags(tags)
 				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+
 		return changed_tags.keys()
 
 

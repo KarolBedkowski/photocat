@@ -27,6 +27,7 @@ __revision__	= '$Id$'
 
 __all__			= ['DlgAbout']
 
+
 import sys
 
 import wx

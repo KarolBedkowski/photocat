@@ -27,6 +27,7 @@ __revision__	= '$Id$'
 
 __all__			= ['DlgProperties']
 
+
 import sys
 import os
 import time
@@ -177,6 +178,9 @@ class DlgProperties(wx.Dialog):
 		return panel
 
 
+	#########################################################################
+
+
 	def _show(self, item):
 		if self._item_is_disk:
 			self._tc_name.SetValue(item.name)
@@ -209,6 +213,9 @@ class DlgProperties(wx.Dialog):
 		if item.tags is not None:
 			listbox = self._listbox_tags
 			[ listbox.Append(tag) for tag in item.tags ]
+
+
+	#########################################################################
 
 
 	def _on_ok(self, evt):

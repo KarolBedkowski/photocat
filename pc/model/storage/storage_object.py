@@ -50,7 +50,13 @@ class _IdProvider(Singleton):
 
 
 
+##########################################################################
+
+
 _id_provider = _IdProvider()
+
+
+##########################################################################
 
 
 
@@ -61,9 +67,6 @@ class StorageObject(object):
 
 		if id is not None:
 			self._id = _id_provider.set(id)
-
-		#if kwargs is not None and len(kwargs) > 0:
-		#	self.set_attributes(kwargs)
 
 
 	def _get_id(self):
@@ -82,9 +85,28 @@ class StorageObject(object):
 		return []
 	
 
+	##########################################################################
+	
+
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		self._invalid = True
+
+
+	def set_attributes(self, data):
+		[ setattr(self, key, val) for key, val in data.iteritems() if hasattr(self, key) ]
+
+
+	def encode(self):
+		result = {}
+		for key in self.__preserveattr__().keys():
+			val = getattr(self, key)
+			if val is not None:
+				result[key] = val
+
+		return "%s|%d|%r" % (self.__class__.__name__, self.id, result)
+
+	##########################################################################
 
 
 	@classmethod
@@ -115,28 +137,6 @@ class StorageObject(object):
 			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(eval_data)))
 
 		return eval_data
-
-#		data = dict((
-#				(key, attributes[key](val))
-#				for key, val in eval_data.iteritems()
-#				if attributes.has_key(key)
-#		))
-#		return data
-
-
-	def set_attributes(self, data):
-		[ setattr(self, key, val) for key, val in data.iteritems() if hasattr(self, key) ]
-
-
-	def encode(self):
-		result = {}
-		for key in self.__preserveattr__().keys():
-			val = getattr(self, key)
-			if val is not None:
-				result[key] = val
-		return "%s|%d|%r" % (self.__class__.__name__, self.id, result)
-
-
 
 
 

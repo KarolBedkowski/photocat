@@ -27,6 +27,7 @@ __revision__	= '$Id$'
 
 __all__			= ['DlgSettings']
 
+
 import sys
 import os
 import time
@@ -109,6 +110,9 @@ class DlgSettings(wx.Dialog):
 
 		panel.SetSizerAndFit(sizer)
 		return panel
+	
+
+	#########################################################################
 
 
 	def _on_ok(self, evt):
@@ -134,6 +138,9 @@ class DlgSettings(wx.Dialog):
 	def _on_close(self, evt=None):
 		if evt is not None:
 			evt.Skip()
+
+
+	#########################################################################
 
 
 	def _load_settings(self):

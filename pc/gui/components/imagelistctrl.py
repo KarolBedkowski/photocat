@@ -71,7 +71,6 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 			return
 
 
-
 	def ShowDir(self, dir, filter=THUMB_FILTER_IMAGES):
 		""" Shows Thumbnails For A Particular Folder. """
 
@@ -100,8 +99,7 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 		self.UpdateProp()
 		self.Refresh()
 		self.Scroll(0, 0)
-		
-		
+
 
 	def CalculateBestCaption(self, dc, caption, sw, width):
 		""" Calculate The Best Caption Based On Actual Zoom.
@@ -124,6 +122,10 @@ class MyScrolledThumbnail(ScrolledThumbnail):
 
 
 
+#########################################################################
+
+
+
 class MyThumbnailCtrl(ThumbnailCtrl):
 	def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
 				 size=wx.DefaultSize, thumboutline=THUMB_OUTLINE_IMAGE,
@@ -134,8 +136,7 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 		self._sizer = wx.BoxSizer(wx.VERTICAL)
 
 		self._combo = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
-		self._scrolled = MyScrolledThumbnail(self, -1, thumboutline=thumboutline,
-										   thumbfilter=thumbfilter)
+		self._scrolled = MyScrolledThumbnail(self, -1, thumboutline=thumboutline, thumbfilter=thumbfilter)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
 		subsizer.Add((3, 0), 0)
@@ -192,5 +193,6 @@ class MyThumbnailCtrl(ThumbnailCtrl):
 	@property
 	def selected_items(self):
 		return self._scrolled.selected_items
+
 
 # vim: encoding=utf8: ff=unix:

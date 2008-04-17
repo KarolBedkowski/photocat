@@ -113,6 +113,9 @@ class DlgSearch(wx.Dialog):
 		return listctrl
 
 
+	#########################################################################
+
+
 	def _on_btn_find(self, evt):
 		what = self._tc_text.GetValue().strip()
 		if len(what) == 0:
@@ -131,6 +134,7 @@ class DlgSearch(wx.Dialog):
 				)
 				if text != what
 		]
+		
 		AppConfig().set_items('last_search', 'text', last)
 		self._tc_text.Clear()
 		[ self._tc_text.Append(text) for text in last ]

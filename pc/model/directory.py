@@ -71,6 +71,9 @@ class Directory(CatalogFile, TreeItem):
 		return sum(self.directory_size)
 
 
+	##########################################################################
+
+
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		CatalogFile.delete(self)
@@ -130,6 +133,9 @@ class Directory(CatalogFile, TreeItem):
 		return self_result
 
 
+	##########################################################################
+
+
 	def _load_subdirs(self, path, options, on_update):
 		subdirs					= self.__folder_subdirs_list(path)
 		include_empty_subdirs	= options.get('include_empty_subdirs', False)
@@ -166,6 +172,7 @@ class Directory(CatalogFile, TreeItem):
 				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
+
 			else:
 				dir_subdirs_names.pop(subdir)
 				if not subdir_obj.update(subdir_path, options, on_update):
@@ -188,6 +195,7 @@ class Directory(CatalogFile, TreeItem):
 			fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
 			if not fileimage.load(file_path, options, on_update):
 				return False
+
 			self.files.append(fileimage)
 		return True
 
@@ -251,6 +259,8 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def _load_caption_txt(self, path):
+		''' Ładowanie danych z plików caption.txt (sag) '''
+
 		captions_file_path = os.path.join(path, 'captions.txt')
 		if not os.path.exists(captions_file_path):
 			return
@@ -273,10 +283,12 @@ class Directory(CatalogFile, TreeItem):
 			if current_file_name is None:
 				if line != '':
 					current_file_name = line
+
 			elif line == '':
 				self._load_caption_txt_process_file(current_file_name, current_file_data)
 				current_file_data = {}
 				current_file_name = None
+
 			else:
 				key, dummy, val = line.partition('=')
 				if key in ('Title', 'Subtitle', 'Date', 'Desc') and len(val.strip()) > 0:
@@ -296,14 +308,20 @@ class Directory(CatalogFile, TreeItem):
 
 		if file_name == '.':
 			update_obj = self
+
 		else:
 			find_update_obj = [ image for image in self.files if image.name == file_name]
 			if len(find_update_obj) != 1:
 				return
+
 			update_obj = find_update_obj[0]
 
 		if update_obj.desc is None or len(update_obj.desc) == 0:
-			desc = ( file_data[key] for key in ('Title', 'Subtitle', 'Date', 'Desc') if file_data.has_key(key) )
+			desc = ( file_data[key]
+					for key
+					in ('Title', 'Subtitle', 'Date', 'Desc')
+					if file_data.has_key(key)
+			)
 			update_obj.desc = unicode('\n'.join(desc))
 
 

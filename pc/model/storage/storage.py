@@ -112,10 +112,12 @@ class Storage:
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
 			raise LoadFileError(err)
+
 		except Exception, err:
 			_LOG.exception('Storage.load error')
 			catalog = None
 			raise LoadFileError(err)
+
 		finally:
 			if input_file is not None:
 				input_file.close()
@@ -136,18 +138,20 @@ class Storage:
 
 			def write_item(item):
 				output_file.write(item.encode() + "\n")
-				for child in item.childs_to_store:
-					write_item(child)
+				map(write_item, item.childs_to_store)
 
 			write_item(catalog)
 
 			catalog.dirty = False
+
 		except Exception, err:
 			_LOG.exception('Storage.save')
 			raise SaveFileError(err)
+
 		finally:
 			if output_file is not None:
 				output_file.close()
+
 		_LOG.info('Storage.save catalog finished')
 
 

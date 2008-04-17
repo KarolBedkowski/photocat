@@ -153,6 +153,9 @@ class DlgAddDisk(wx.Dialog):
 		return panel
 
 
+	#########################################################################
+	
+
 	def _on_btn_sel_dir(self, evt):
 		curr_dir = self._path.GetValue()
 		if curr_dir is None or len(curr_dir) == 0 or not os.path.exists(curr_dir) or not os.path.isdir(curr_dir):
@@ -198,6 +201,9 @@ class DlgAddDisk(wx.Dialog):
 		self._data['skip_dirs_list'] = [ dir.strip() for dir in self._data['skip_subdirs'].split(';') ]
 
 		self.EndModal(wx.ID_OK)
+
+
+	#########################################################################
 
 
 	def __get_last_dirs(self):

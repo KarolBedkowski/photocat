@@ -116,6 +116,9 @@ class InfoPanel(wx.Panel, EventGenerator):
 		return panel
 
 
+	#########################################################################
+
+
 	def _show_main(self, image):
 		listctrl = self._listctrl_main
 
@@ -170,6 +173,9 @@ class InfoPanel(wx.Panel, EventGenerator):
 		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 
 
+	#########################################################################
+
+
 	def show(self, image):
 		self.clear()
 		self._image = image
@@ -194,6 +200,9 @@ class InfoPanel(wx.Panel, EventGenerator):
 		self._folder is None
 		self._listctrl_folder.DeleteAllItems()
 		self._textctrl_folder_descr.SetValue('')
+
+
+	#########################################################################
 
 
 	def _on_update_descr(self, evt):
