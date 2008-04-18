@@ -50,7 +50,7 @@ class DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent, catalogs):
-		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE|wx.FULL_REPAINT_ON_RESIZE )
 
 		self._catalogs	= catalogs
 		self._parent	= parent
@@ -61,6 +61,7 @@ class DlgSearch(wx.Dialog):
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._create_layout_adv_search(),	0, wx.EXPAND|wx.ALL, 5)		
 		main_grid.Add(self._create_layout_list(),	1, wx.EXPAND|wx.ALL, 5)
 
 		self._statusbar = wx.StatusBar(self, -1)
@@ -107,12 +108,80 @@ class DlgSearch(wx.Dialog):
 		listctrl.InsertColumn(1, _('Catalog'))
 		listctrl.InsertColumn(2, _('Disk'))
 		listctrl.InsertColumn(3, _('Path'))
+		
+		listctrl.SetMinSize((350, 200))
 
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
 
 		return listctrl
+	
+
+	def _create_layout_adv_search(self):
+		cp = self._cpanel = wx.CollapsiblePane(self, label=_("Advanced"))
+		self._create_pane_adv_search(cp.GetPane())
+		return cp
 
 
+	def _create_pane_adv_search(self, pane):
+		sizer = wx.BoxSizer()
+
+		subsizer1 = wx.BoxSizer(wx.HORIZONTAL)
+
+		box = wx.StaticBox(pane, -1, _("Search in"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		cb = self._cb_search_in_names = wx.CheckBox(pane, -1, _("names"))
+		cb.SetValue(True)
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		cb = self._cb_search_in_descrs = wx.CheckBox(pane, -1, _("descriptions"))
+		cb.SetValue(True)
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		cb = self._cb_search_in_tags = wx.CheckBox(pane, -1, _("tags"))
+		cb.SetValue(True)
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
+		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+
+		box = wx.StaticBox(pane, -1, _("Search for"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		cb = self._cb_search_for_files = wx.CheckBox(pane, -1, _("files"))
+		cb.SetValue(True)
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		cb = self._cb_search_for_dirs = wx.CheckBox(pane, -1, _("dirs"))
+		cb.SetValue(True)
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
+
+		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+
+		sizer.Add(subsizer1, 0, wx.EXPAND)
+		pane.SetSizer(sizer)
+
+
+	#########################################################################
+	
+	
+	def _get_options(self):
+		options = None
+		if self._cpanel.IsExpanded():
+			options = {}
+			names = self._cb_search_in_names.IsChecked()
+			descr = self._cb_search_in_descrs.IsChecked()
+			tags = self._cb_search_in_tags.IsChecked()
+			if not(names == descr and names == tags):
+				options['search_in_names'] = names
+				options['search_in_descr'] = descr
+				options['search_in_tags'] = tags
+			
+			files = self._cb_search_for_files.IsChecked()
+			dirs = self._cb_search_for_dirs.IsChecked()
+			if files != dirs:
+				options['search_for_files'] = files
+				options['search_for_dirs'] = dirs
+
+		return options
+	
+	
 	#########################################################################
 
 
@@ -138,6 +207,7 @@ class DlgSearch(wx.Dialog):
 		AppConfig().set_items('last_search', 'text', last)
 		self._tc_text.Clear()
 		[ self._tc_text.Append(text) for text in last ]
+		self._tc_text.SetValue(what)
 
 		listctrl = self._result_list
 		listctrl.DeleteAllItems()
@@ -162,8 +232,11 @@ class DlgSearch(wx.Dialog):
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
 
+		options = self._get_options()
+		_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
+		
 		for catalog in self._catalogs:
-			result = catalog.check_on_find(what)
+			result = catalog.check_on_find(what, options)
 			[ insert(item) for item in result ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)

@@ -149,12 +149,16 @@ class CatalogFile(StorageObject):
 
 	def check_on_find(self, text, options=None):
 		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
-		if self.desc is not None and self.desc.lower().count(text) > 0:
-			return [self]
-		if self.name is not None and self.name.lower().count(text) > 0:
-			return [self]
-		if self.tags is not None and text in self.tags:
-			return [self]
+		
+		if options is None or options.get('search_in_descr', True):
+			if self.desc is not None and self.desc.lower().count(text) > 0:
+				return [self]
+		if options is None or options.get('search_in_names', True):
+			if self.name is not None and self.name.lower().count(text) > 0:
+				return [self]
+		if options is None or options.get('search_in_tags', True):
+			if self.tags is not None and text in self.tags:
+				return [self]
 		return list()
 
 

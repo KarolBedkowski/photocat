@@ -127,9 +127,15 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def check_on_find(self, text, options=None):
-		self_result = CatalogFile.check_on_find(self, text, options)
+		if options is None or options.get('search_for_dirs', True):
+			self_result = CatalogFile.check_on_find(self, text, options)
+		else:
+			self_result = list()
+
 		[ self_result.extend(subdir.check_on_find(text, options))	for subdir in self.subdirs ]
-		[ self_result.extend(image.check_on_find(text, options))	for image in self.files ]
+
+		if options is None or options.get('search_for_files', True):
+			[ self_result.extend(image.check_on_find(text, options))	for image in self.files ]
 		return self_result
 
 
