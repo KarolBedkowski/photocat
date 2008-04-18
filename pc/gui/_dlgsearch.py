@@ -46,6 +46,11 @@ _ = wx.GetTranslation
 
 
 
+class _OptionsError(StandardError):
+	pass
+
+
+
 class DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
@@ -109,7 +114,7 @@ class DlgSearch(wx.Dialog):
 		listctrl.InsertColumn(2, _('Disk'))
 		listctrl.InsertColumn(3, _('Path'))
 		
-		listctrl.SetMinSize((350, 200))
+		listctrl.SetMinSize((300, 200))
 
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
 
@@ -126,10 +131,11 @@ class DlgSearch(wx.Dialog):
 
 
 	def _create_pane_adv_search(self, pane):
-		sizer = wx.BoxSizer()
+		sizer = wx.BoxSizer(wx.VERTICAL)
 
 		subsizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
+		# szukanie w opisach/nazwach/tagach
 		box = wx.StaticBox(pane, -1, _("Search in"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 		cb = self._cb_search_in_names = wx.CheckBox(pane, -1, _("names"))
@@ -145,6 +151,7 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
+		# szukanie plików/katalogów
 		box = wx.StaticBox(pane, -1, _("Search for"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 		cb = self._cb_search_for_files = wx.CheckBox(pane, -1, _("files"))
@@ -156,6 +163,7 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 		
+		# szukanie w katalogu
 		box = wx.StaticBox(pane, -1, _("Catalog"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 		cb = self._sb_search_in_catalog = wx.ComboBox(pane, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
@@ -164,6 +172,26 @@ class DlgSearch(wx.Dialog):
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		sizer.Add(subsizer1, 0, wx.EXPAND)
+		
+		##############################
+		
+		# szukanie wg dat		
+		box = wx.StaticBox(pane, -1, _("Date"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		
+		self._cb_date = wx.CheckBox(pane, -1, _("Search by date"))
+		bsizer.Add(self._cb_date, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		bsizer.Add(wx.StaticText(pane, -1, _("begin:")), 0, wx.ALIGN_CENTER_VERTICAL)
+		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		bsizer.Add(self._dp_start_date, 0, wx.EXPAND|wx.ALL, 5)		
+		bsizer.Add((10, 10))
+		bsizer.Add(wx.StaticText(pane, -1, _("end:")), 0, wx.ALIGN_CENTER_VERTICAL)
+		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
+		
+		sizer.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
 		pane.SetSizer(sizer)
 
 
@@ -189,6 +217,14 @@ class DlgSearch(wx.Dialog):
 				options['search_for_dirs'] = dirs
 				
 			options['search_in_catalog'] = self._sb_search_in_catalog.GetValue()
+			
+			search_date = options['search_date'] = self._cb_date.IsChecked()
+			if search_date:
+				options['search_date_start'] = self._dp_start_date.GetValue().GetTicks()
+				options['search_date_end'] = self._dp_stop_date.GetValue().GetTicks() + 86399
+				
+				if options['search_date_start'] > options['search_date_end']:
+					raise _OptionsError(_("Wrong date range!"))
 
 		return options
 	
@@ -199,6 +235,13 @@ class DlgSearch(wx.Dialog):
 	def _on_btn_find(self, evt):
 		what = self._tc_text.GetValue().strip()
 		if len(what) == 0:
+			what = '.'
+			
+		try:
+			options = self._get_options()
+			_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
+		except _OptionsError, err:
+			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('PC'))
 			return
 
 		what = what.lower()
@@ -242,9 +285,6 @@ class DlgSearch(wx.Dialog):
 			listctrl.SetStringItem(idx, 3, item.path)
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
-
-		options = self._get_options()
-		_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
 		
 		catalogs_to_search = self._catalogs
 		if options is not None:

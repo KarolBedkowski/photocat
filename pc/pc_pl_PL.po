@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-18 15:01+0200\n"
+"POT-Creation-Date: 2008-04-18 19:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "&Plik"
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
 
-#: gui/_dlgsearch.py:161 gui/_dlgsearch.py:250 gui/_dlgsearch.py:251
+#: gui/_dlgsearch.py:169 gui/_dlgsearch.py:291 gui/_dlgsearch.py:292
 msgid "<all>"
 msgstr "<wszystkie>"
 
@@ -79,15 +79,22 @@ msgstr "Dodaj dysk"
 msgid "Adding disk"
 msgstr "Dodawanie dysky"
 
-#: gui/_dlgsearch.py:120
+#: gui/_dlgsearch.py:125
 msgid "Advanced"
 msgstr "Zaawansowane"
 
-#: model/file_image.py:101
+#: gui/_dlgsearch.py:244
+#, python-format
+msgid ""
+"Bad options:\n"
+"%s"
+msgstr ""
+
+#: model/file_image.py:102
 msgid "Camera"
 msgstr "Aparat"
 
-#: gui/_dlgsearch.py:108 gui/_dlgsearch.py:159 model/_catalog_file.py:75
+#: gui/_dlgsearch.py:113 gui/_dlgsearch.py:167 model/_catalog_file.py:75
 msgid "Catalog"
 msgstr "Katalog"
 
@@ -146,7 +153,7 @@ msgstr "Utwórz nowy katalog"
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
-#: model/file_image.py:98
+#: gui/_dlgsearch.py:179 model/file_image.py:99
 msgid "Date"
 msgstr "Data"
 
@@ -198,7 +205,7 @@ msgstr "Usuń wybrany dysk z katalogu"
 msgid "Description"
 msgstr "Opis"
 
-#: model/file_image.py:92
+#: model/file_image.py:93
 msgid "Dimensions"
 msgstr "Wymiary"
 
@@ -207,7 +214,7 @@ msgstr "Wymiary"
 msgid "Directorys %d;  files: %d"
 msgstr "Katalogów %d;  plików: %d"
 
-#: gui/_dlgsearch.py:109 model/_catalog_file.py:77
+#: gui/_dlgsearch.py:114 model/_catalog_file.py:77
 msgid "Disk"
 msgstr "Dysk"
 
@@ -286,7 +293,7 @@ msgstr "Data pliku"
 msgid "Files: %d"
 msgstr "Plików: %d"
 
-#: gui/_dlgsearch.py:53 gui/_dlgsearch.py:98
+#: gui/_dlgsearch.py:58 gui/_dlgsearch.py:103
 msgid "Find"
 msgstr "Znajdź"
 
@@ -306,7 +313,7 @@ msgstr "Katalog:"
 msgid "Force load files"
 msgstr "Wymus wczytywanie plików"
 
-#: gui/_dlgsearch.py:266
+#: gui/_dlgsearch.py:307
 #, python-format
 msgid "Found %d folders and %d files"
 msgstr "Znaleziono %d katalogów i %d plików"
@@ -340,7 +347,7 @@ msgstr "Ładuj informacje z captions.txt"
 msgid "Main"
 msgstr "Główne"
 
-#: gui/_dlgsearch.py:107 model/_catalog_file.py:71
+#: gui/_dlgsearch.py:112 model/_catalog_file.py:71
 msgid "Name"
 msgstr "Nazwa"
 
@@ -368,7 +375,7 @@ msgstr "Nie wybrano dysku"
 msgid "No files found!"
 msgstr "Nic znaleziono plików!"
 
-#: gui/_dlgsearch.py:264
+#: gui/_dlgsearch.py:305
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
@@ -390,11 +397,11 @@ msgstr "Otwieranie %s.... Proszę czekać..."
 msgid "Options"
 msgstr "Opcje"
 
-#: gui/_dlgsearch.py:264
+#: gui/_dlgsearch.py:244 gui/_dlgsearch.py:305
 msgid "PC"
 msgstr ""
 
-#: gui/_dlgsearch.py:110
+#: gui/_dlgsearch.py:115
 msgid "Path"
 msgstr "Ścieżka"
 
@@ -445,11 +452,15 @@ msgstr "Zapisz katalog"
 msgid "Save current catalog"
 msgstr "Zapisz aktualny katalog"
 
-#: gui/_dlgsearch.py:148
+#: gui/_dlgsearch.py:182
+msgid "Search by date"
+msgstr "Szukaj wg daty"
+
+#: gui/_dlgsearch.py:155
 msgid "Search for"
 msgstr "Szukaj"
 
-#: gui/_dlgsearch.py:133
+#: gui/_dlgsearch.py:139
 msgid "Search in"
 msgstr "Szukaj w"
 
@@ -473,7 +484,7 @@ msgstr "Ustaw opis"
 msgid "Set tags"
 msgstr "Ustaw tagi"
 
-#: model/file_image.py:106
+#: model/file_image.py:107
 msgid "Settings"
 msgstr "Ustawienia"
 
@@ -490,7 +501,7 @@ msgstr ""
 msgid "Tags"
 msgstr "Tagi"
 
-#: gui/_dlgsearch.py:88
+#: gui/_dlgsearch.py:93
 msgid "Text"
 msgstr "Tekst"
 
@@ -547,35 +558,47 @@ msgstr ""
 msgid "Value"
 msgstr "Wartość"
 
+#: gui/_dlgsearch.py:227
+msgid "Wrong date range!"
+msgstr "Zły zakres dat!"
+
+#: gui/_dlgsearch.py:185
+msgid "begin:"
+msgstr "początek:"
+
 #: gui/_dlgsettings.py:107
 msgid "compression"
 msgstr "kompresja"
 
-#: gui/_dlgsearch.py:139
+#: gui/_dlgsearch.py:145
 msgid "descriptions"
 msgstr "opisach"
 
-#: gui/_dlgsearch.py:154
+#: gui/_dlgsearch.py:161
 msgid "dirs"
 msgstr "katalogi"
 
-#: model/file_image.py:216
+#: gui/_dlgsearch.py:189
+msgid "end:"
+msgstr "koniec:"
+
+#: model/file_image.py:242
 msgid "f"
 msgstr ""
 
-#: gui/_dlgsearch.py:150
+#: gui/_dlgsearch.py:157
 msgid "files"
 msgstr "pliki"
 
-#: model/file_image.py:229
+#: model/file_image.py:255
 msgid "flash"
 msgstr "flesz"
 
-#: model/file_image.py:235
+#: model/file_image.py:261
 msgid "focal len."
 msgstr "ogniskowa"
 
-#: model/file_image.py:221 model/file_image.py:225
+#: model/file_image.py:247 model/file_image.py:251
 msgid "iso"
 msgstr ""
 
@@ -583,7 +606,7 @@ msgstr ""
 msgid "name"
 msgstr "nazwa"
 
-#: gui/_dlgsearch.py:135
+#: gui/_dlgsearch.py:141
 msgid "names"
 msgstr "nazwach"
 
@@ -591,11 +614,11 @@ msgstr "nazwach"
 msgid "path"
 msgstr "ścieżka"
 
-#: model/file_image.py:210
+#: model/file_image.py:236
 msgid "t"
 msgstr ""
 
-#: gui/_dlgsearch.py:143
+#: gui/_dlgsearch.py:149
 msgid "tags"
 msgstr "tagach"
 
