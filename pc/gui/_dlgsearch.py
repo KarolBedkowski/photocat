@@ -247,11 +247,12 @@ class DlgSearch(wx.Dialog):
 		_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
 		
 		catalogs_to_search = self._catalogs
-		search_in_catalog = options.get('search_in_catalog', _("<all>"))
-		if search_in_catalog != _("<all>"):
-			catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
+		if options is not None:
+			search_in_catalog = options.get('search_in_catalog', _("<all>"))
+			if search_in_catalog != _("<all>"):
+				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
 		
-		for catalog in self._catalogs:
+		for catalog in catalogs_to_search:
 			result = catalog.check_on_find(what, options)
 			[ insert(item) for item in result ]
 
