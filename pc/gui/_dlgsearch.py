@@ -119,6 +119,9 @@ class DlgSearch(wx.Dialog):
 	def _create_layout_adv_search(self):
 		cp = self._cpanel = wx.CollapsiblePane(self, label=_("Advanced"))
 		self._create_pane_adv_search(cp.GetPane())
+		
+		self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self._on_panel_advsearch_changed, cp)
+		
 		return cp
 
 
@@ -151,7 +154,13 @@ class DlgSearch(wx.Dialog):
 		cb = self._cb_search_for_dirs = wx.CheckBox(pane, -1, _("dirs"))
 		cb.SetValue(True)
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
-
+		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
+		box = wx.StaticBox(pane, -1, _("Catalog"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		cb = self._sb_search_in_catalog = wx.ComboBox(pane, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
+		[ cb.Append(cat.name) for cat in self._catalogs ]
+		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		sizer.Add(subsizer1, 0, wx.EXPAND)
@@ -178,6 +187,8 @@ class DlgSearch(wx.Dialog):
 			if files != dirs:
 				options['search_for_files'] = files
 				options['search_for_dirs'] = dirs
+				
+			options['search_in_catalog'] = self._sb_search_in_catalog.GetValue()
 
 		return options
 	
@@ -235,6 +246,11 @@ class DlgSearch(wx.Dialog):
 		options = self._get_options()
 		_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
 		
+		catalogs_to_search = self._catalogs
+		search_in_catalog = options.get('search_in_catalog', _("<all>"))
+		if search_in_catalog != _("<all>"):
+			catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
+		
 		for catalog in self._catalogs:
 			result = catalog.check_on_find(what, options)
 			[ insert(item) for item in result ]
@@ -270,6 +286,10 @@ class DlgSearch(wx.Dialog):
 
 		evt.Skip()
 
+	
+	def _on_panel_advsearch_changed(self, evt):
+		# hack na win32
+		self.Refresh()
 
 
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-18 14:26+0200\n"
+"POT-Creation-Date: 2008-04-18 15:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,10 @@ msgstr ""
 msgid "&Update disk..."
 msgstr ""
 
+#: gui/_dlgsearch.py:161 gui/_dlgsearch.py:250 gui/_dlgsearch.py:251
+msgid "<all>"
+msgstr ""
+
 #: gui/_dlgabout.py:80
 msgid "About"
 msgstr ""
@@ -84,7 +88,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: gui/_dlgsearch.py:108 model/_catalog_file.py:75
+#: gui/_dlgsearch.py:108 gui/_dlgsearch.py:159 model/_catalog_file.py:75
 msgid "Catalog"
 msgstr ""
 
@@ -294,7 +298,7 @@ msgstr ""
 msgid "Force load files"
 msgstr ""
 
-#: gui/_dlgsearch.py:250
+#: gui/_dlgsearch.py:266
 #, possible-python-format
 msgid "Found %d folders and %d files"
 msgstr ""
@@ -356,7 +360,7 @@ msgstr ""
 msgid "No files found!"
 msgstr ""
 
-#: gui/_dlgsearch.py:248
+#: gui/_dlgsearch.py:264
 msgid "Not found"
 msgstr ""
 
@@ -378,7 +382,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: gui/_dlgsearch.py:248
+#: gui/_dlgsearch.py:264
 msgid "PC"
 msgstr ""
 
@@ -429,11 +433,11 @@ msgstr ""
 msgid "Save current catalog"
 msgstr ""
 
-#: gui/_dlgsearch.py:145
+#: gui/_dlgsearch.py:148
 msgid "Search for"
 msgstr ""
 
-#: gui/_dlgsearch.py:130
+#: gui/_dlgsearch.py:133
 msgid "Search in"
 msgstr ""
 
@@ -533,11 +537,11 @@ msgstr ""
 msgid "compression"
 msgstr ""
 
-#: gui/_dlgsearch.py:136
+#: gui/_dlgsearch.py:139
 msgid "descriptions"
 msgstr ""
 
-#: gui/_dlgsearch.py:151
+#: gui/_dlgsearch.py:154
 msgid "dirs"
 msgstr ""
 
@@ -545,7 +549,7 @@ msgstr ""
 msgid "f"
 msgstr ""
 
-#: gui/_dlgsearch.py:147
+#: gui/_dlgsearch.py:150
 msgid "files"
 msgstr ""
 
@@ -565,7 +569,7 @@ msgstr ""
 msgid "name"
 msgstr ""
 
-#: gui/_dlgsearch.py:132
+#: gui/_dlgsearch.py:135
 msgid "names"
 msgstr ""
 
@@ -577,7 +581,7 @@ msgstr ""
 msgid "t"
 msgstr ""
 
-#: gui/_dlgsearch.py:140
+#: gui/_dlgsearch.py:143
 msgid "tags"
 msgstr ""
 
