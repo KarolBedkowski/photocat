@@ -60,6 +60,7 @@ class FileImage(CatalogFile):
 		self.thumb		= kwargs.get('thumb')
 		self.dimensions	= kwargs.get('dimensions')
 		self.exif		= kwargs.get('exif')
+		self.shot_date	= kwargs.get('shot_date')
 
 		self._exif_data = None
 
@@ -108,6 +109,23 @@ class FileImage(CatalogFile):
 		return result
 
 	info = property(_get_info)
+	
+	
+	@property
+	def date_to_check(self):
+		""" pobranie daty do wyszukania.
+			Jeżeli nie jest wypełniony shot_date (wersja 2.1-) to próba pobrania z exifa.
+			Jeżeli nie ma w exifie - data pliku.
+		"""
+		if self.shot_date is not None:
+			return self.shot_date
+		
+		if self.exif is not None:
+				shot_date = self.__get_exif_shot_date_value(self.exif_data)
+				if shot_date is not None:
+					self.shot_date = time.mktime(shot_date)
+
+		return self.shot_date or self.date	
 
 
 	##########################################################################
@@ -118,6 +136,10 @@ class FileImage(CatalogFile):
 			self._load_thumb(path, options)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
+				shot_date = self.__get_exif_shot_date_value(self._exif_data)
+				self.shot_date = None
+				if shot_date is not None:
+					self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
@@ -130,6 +152,10 @@ class FileImage(CatalogFile):
 				self._load_thumb(path, options)
 				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 					self._load_exif(path)
+					shot_date = self.__get_exif_shot_date_value(self._exif_data)
+					self.shot_date = None
+					if shot_date is not None:
+						self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
@@ -239,16 +265,22 @@ class FileImage(CatalogFile):
 		return shot_info
 
 
-	def __get_exif_shot_date(self, exif):
+	def __get_exif_shot_date_value(self, exif):
 		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
 			if exif.has_key(exif_key):
 				try:
-					ddate = time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
-					return time.strftime('%c', ddate)
+					return time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
 				except:
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
 		return None
 
+
+	def __get_exif_shot_date(self, exif):
+		ddate = self.__get_exif_shot_date_value(exif)
+		if ddate is None:
+			return None
+		return time.strftime('%c', ddate)
+	
 
 	##########################################################################
 
@@ -256,7 +288,7 @@ class FileImage(CatalogFile):
 	@classmethod
 	def _attrlist(cls):
 		attribs = CatalogFile._attrlist()
-		attribs.extend((('thumb', tuple), ('dimensions', tuple), ('exif', tuple)))
+		attribs.extend((('shot_date', int), ('thumb', tuple), ('dimensions', tuple), ('exif', tuple)))
 		return attribs
 
 

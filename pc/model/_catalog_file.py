@@ -104,6 +104,15 @@ class CatalogFile(StorageObject):
 		return os.path.join(self.parent.path, self.name)
 
 
+	@property
+	def date_to_check(self):
+		''' data do sprawdzenia przy wyszukiwaniu '''
+		return self.date
+
+
+	##########################################################################
+
+
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		StorageObject.delete(self)
@@ -149,13 +158,39 @@ class CatalogFile(StorageObject):
 
 	def check_on_find(self, text, options=None):
 		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
-		if self.desc is not None and self.desc.lower().count(text) > 0:
-			return [self]
-		if self.name is not None and self.name.lower().count(text) > 0:
-			return [self]
-		if self.tags is not None and text in self.tags:
-			return [self]
+		
+		if options is None or options.get('search_in_descr', True):
+			if self.desc is not None and self.desc.lower().count(text) > 0:
+				return self._check_on_find_date(options)
+		if options is None or options.get('search_in_names', True):
+			if self.name is not None and self.name.lower().count(text) > 0:
+				return self._check_on_find_date(options)
+		if options is None or options.get('search_in_tags', True):
+			if self.tags is not None and text in self.tags:
+				return self._check_on_find_date(options)
+
 		return list()
+	
+
+	##########################################################################
+
+
+	def _check_on_find_date(self, options):
+		''' sprawdznie czy obiekt zawiera sie w danym zakresie  dat. '''
+		date = self.date_to_check
+		if options is None or date is None:
+			return [self]
+
+		if not options.get('search_date', False):
+			return [self]
+
+		if date >= options.get('search_date_start') and date <= options.get('search_date_end'):
+			return [self]
+
+		return list()
+
+
+	##########################################################################
 
 
 	@classmethod

@@ -14,8 +14,6 @@
 ./gui/components/imagelistctrl.py
 ./gui/components/infopanel.py
 ./gui/wndmain.py
-./icons/__init__.py
-./icons/icons.py
 ./lib/ThumbnailCtrl.py
 ./lib/__init__.py
 ./main.py
@@ -32,4 +30,3 @@
 ./model/storage/storage_errors.py
 ./model/storage/storage_object.py
 ./model/tag.py
-
