@@ -506,7 +506,7 @@ class WndMain(wx.Frame):
 			changed_tags = Catalog.update_images_from_image(selected_items, image)
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
-			self.__update_changed_tags(folder.catalog.tags_provider, folder.catalog.tree_tags_node, changed_tags)
+			self.__update_changed_tags(folder.catalog.tags_provider, changed_tags)
 		dlg.Destroy()
 
 
@@ -552,7 +552,7 @@ class WndMain(wx.Frame):
 			item.catalog.dirty = True
 			self._info_panel.show_folder(item)
 			self._dirs_tree.update_catalog_node(item.catalog)
-			self.__update_changed_tags(item.catalog.tags_provider, item.catalog.tree_tags_node, dlg.changed_tags)
+			self.__update_changed_tags(item.catalog.tags_provider, dlg.changed_tags)
 			if isinstance(item, Disk):
 				self._dirs_tree.update_node_disk(item, False)
 			else:
@@ -580,7 +580,7 @@ class WndMain(wx.Frame):
 				self._info_panel.show(selected)
 				selected.catalog.dirty = True
 				self._dirs_tree.update_catalog_node(selected.catalog)
-				self.__update_changed_tags(selected.catalog.tags_provider, selected.catalog.tree_tags_node, dlg.changed_tags)
+				self.__update_changed_tags(selected.catalog.tags_provider, dlg.changed_tags)
 			dlg.Destroy()
 
 
@@ -775,7 +775,7 @@ class WndMain(wx.Frame):
 		return catalog
 
 
-	def __update_changed_tags(self, tags_provider, tree_tags_node, changed_tags):
+	def __update_changed_tags(self, tags_provider, changed_tags):
 		""" aktualizacja tagów w drzewie """
 		if changed_tags is not None and len(changed_tags) > 0:
 			[ self._dirs_tree.update_node_tag(tag_item)
