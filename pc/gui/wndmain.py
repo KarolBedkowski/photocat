@@ -549,14 +549,16 @@ class WndMain(wx.Frame):
 
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:
-			item.catalog.dirty = True
+			item.catalog.dirty = True		
 			self._info_panel.show_folder(item)
-			self._dirs_tree.update_catalog_node(item.catalog)
-			self.__update_changed_tags(item.catalog.tags_provider, dlg.changed_tags)
+
 			if isinstance(item, Disk):
 				self._dirs_tree.update_node_disk(item, False)
 			else:
 				self._dirs_tree.update_node_directory(item, False)
+
+			self._dirs_tree.update_catalog_node(item.catalog)
+			self.__update_changed_tags(item.catalog.tags_provider, dlg.changed_tags)
 		dlg.Destroy()
 
 

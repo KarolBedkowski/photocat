@@ -149,10 +149,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		dir_node = dir.tree_node
 
 		if dir_node is None or not dir_node.IsOk():
+			#print 'create node ', dir.name, dir_node
 			dir_node = dir.tree_node = self.AppendItem(dir.parent.tree_node, dir.caption, data=wx.TreeItemData(dir))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
 		elif dir_node.IsOk():
+			#print 'update node ', dir.name
 			self.SetItemText(dir_node, dir.caption)
 		else:
 			dir.tree_node = None
@@ -178,7 +180,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		for tag_name, tag in tags.tags_items:
 			if tag.count > 0:
 				if tag.tree_node is None or clear:
-					_LOG.debug('_update_node_tags %s' % tag.name)
+					#_LOG.debug('_update_node_tags %s' % tag.name)
 					tag.tree_node = tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
 					self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
 				else:
@@ -237,7 +239,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			item = self.GetItemData(node)
 			if item is not None:
 				data = item.GetData()
-				if hasattr(data, 'tree_node'):
+				if hasattr(data, 'tree_node') and data.tree_node == node:
 					data.tree_node = None
 
 
