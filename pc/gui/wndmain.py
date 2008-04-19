@@ -53,7 +53,7 @@ from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
-from _dlgabout				import DlgAbout
+from _dlgabout				import show_about_box
 from _dlgadddisk			import DlgAddDisk
 from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
@@ -376,9 +376,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_help_about(self, evt):
-		dlg = DlgAbout(self)
-		dlg.ShowModal()
-		dlg.Destroy()
+		show_about_box(self)
 		evt.Skip()
 
 
