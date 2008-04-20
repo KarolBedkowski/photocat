@@ -200,6 +200,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			self.DeleteChildren(tree_node)
 			self.Delete(tree_node)
 		tags.current_tags_nodes = current_nodes
+		
+		self.SortChildren(node)
 
 
 	def update_node_tag(self, tag):
@@ -224,9 +226,11 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
 			for subdir in item.childs:
 				add_subdir(node, subdir)
+			self.SortChildren(node)
 
 		for dir in tag.dirs:
 			add_subdir(node, dir)
+			self.SortChildren(node)
 
 
 	#####################################################################
