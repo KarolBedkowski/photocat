@@ -33,6 +33,7 @@ import os
 import time
 
 import wx
+from wx.lib import masked
 
 from kpylibs.guitools	import create_button
 from kpylibs.appconfig	import AppConfig
@@ -84,28 +85,19 @@ class DlgSettings(wx.Dialog):
 			sizer.Add(control, 1, wx.EXPAND)
 			return control
 
-		self._tc_thumb_width = add(_('Thumb width:'), wx.TextCtrl(panel, -1,
-				validator=MyValidator(
-						data_key=(self._data, 'thumb_width'), 
-						validators=[validators.NotEmptyValidator(), validators.IntValidator()], 
-						field=_('thumb width')
-				)
+		self._tc_thumb_width = add(_('Thumb width:'), masked.NumCtrl(panel, -1,
+				integerWidth=3, allowNegative=False, min=50, max=500,
+				validator=MyValidator(data_key=(self._data, 'thumb_width'))
 		))
 
-		self._tc_thumb_height = add(_('Thumb height:'), wx.TextCtrl(panel, -1,
-				validator=MyValidator(
-						data_key=(self._data, 'thumb_height'), 
-						validators=[validators.NotEmptyValidator(), validators.IntValidator()], 
-						field=_('thumb height')
-				)
+		self._tc_thumb_height = add(_('Thumb height:'), masked.NumCtrl(panel, -1,
+				integerWidth=3, allowNegative=False, min=50, max=500,
+				validator=MyValidator(data_key=(self._data, 'thumb_height'))
 		))
 
-		self._tc_thumb_compression = add(_('Compression:'), wx.TextCtrl(panel, -1,
-				validator=MyValidator(
-						data_key=(self._data, 'thumb_compression'), 
-						validators=[validators.NotEmptyValidator(), validators.IntValidator()], 
-						field=_('compression')
-				)
+		self._tc_thumb_compression = add(_('Compression:'), masked.NumCtrl(panel, -1,
+				integerWidth=3, allowNegative=False, min=20, max=100,
+				validator=MyValidator(data_key=(self._data, 'thumb_compression'))
 		))
 
 		panel.SetSizerAndFit(sizer)
@@ -122,7 +114,7 @@ class DlgSettings(wx.Dialog):
 		if not self.TransferDataFromWindow():
 			return
 
-		if self._data['thumb_height'] < 25 or self._data['thumb_height'] > 500:
+		if self._data['thumb_height'] < 25 or self._data['thumb_height'] > 500:			
 			self._data['thumb_height'] = 200
 
 		if self._data['thumb_width'] < 25 or self._data['thumb_width'] > 500:
