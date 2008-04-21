@@ -33,6 +33,7 @@ import os
 import time
 
 import wx
+from wx.lib import masked
 
 from kpylibs.guitools	import create_button
 from kpylibs.appconfig	import AppConfig
@@ -92,6 +93,7 @@ class DlgProperties(wx.Dialog):
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
 		notebook.AddPage(self._create_layout_page_tage(notebook),		_('Tags'))
+		notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
 		return notebook
 
 
@@ -176,6 +178,23 @@ class DlgProperties(wx.Dialog):
 		panel.SetSizerAndFit(sizer)
 
 		return panel
+	
+
+	def _create_layout_page_other(self, parent):
+		panel = wx.Panel(parent, -1)		
+		sizer = wx.BoxSizer(wx.VERTICAL)
+
+		subsizer = wx.BoxSizer(wx.HORIZONTAL)
+		self._cb_shot_date = wx.CheckBox(panel, 1, _("Shot date:"))
+		subsizer.Add(self._cb_shot_date, 0, wx.EXPAND|wx.ALL, 5)
+		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1), style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY)
+		subsizer.Add(self._dp_shot_date, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
+		self._tc_shot_time = masked.TimeCtrl(panel , -1, fmt24hr=True)
+		subsizer.Add(self._tc_shot_time, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
+		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
+		panel.SetSizerAndFit(sizer)
+
+		return panel
 
 
 	#########################################################################
@@ -214,6 +233,17 @@ class DlgProperties(wx.Dialog):
 			listbox = self._listbox_tags
 			[ listbox.Append(tag) for tag in item.tags ]
 
+		if self._item_is_image and not self._item_is_fake:
+			shot_date_present = item.shot_date is not None and item.shot_date > 0
+			self._cb_shot_date.SetValue(shot_date_present)
+			self._dp_shot_date.Enable(shot_date_present)
+			self._tc_shot_time.Enable(shot_date_present)
+			if shot_date_present:
+				date = wx.DateTime()
+				date.SetTimeT(item.shot_date)
+				self._dp_shot_date.SetValue(date)
+				self._tc_shot_time.SetValue(date)
+			
 
 	#########################################################################
 
@@ -253,6 +283,17 @@ class DlgProperties(wx.Dialog):
 				changed = True
 		else:
 			item.tags = None
+			
+		if self._item_is_image and not self._item_is_fake and self._cb_shot_date.IsChecked():
+			sdate = self._dp_shot_date.GetValue()
+			stime = self._tc_shot_time.GetValue(as_wxDateTime=True)
+			sdate.SetHour(stime.GetHour())
+			sdate.SetMinute(stime.GetMinute())
+			sdate.SetSecond(stime.GetSecond())
+			sdate_val = sdate.GetTicks()
+			if item.shot_date != sdate_val:
+				item.shot_date = sdate_val
+				changed = True
 
 		self._on_close()
 		if changed:

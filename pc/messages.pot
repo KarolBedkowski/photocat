@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-18 23:26+0200\n"
+"POT-Creation-Date: 2008-04-21 21:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:169 gui/wndmain.py:693
+#: gui/wndmain.py:169 gui/wndmain.py:695
 msgid "&Delete disk..."
 msgstr ""
 
-#: gui/wndmain.py:713
+#: gui/wndmain.py:715
 msgid "&Delete file..."
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:168 gui/wndmain.py:692
+#: gui/wndmain.py:168 gui/wndmain.py:694
 msgid "&Update disk..."
 msgstr ""
 
@@ -60,7 +60,7 @@ msgstr ""
 msgid "About selected calalog..."
 msgstr ""
 
-#: gui/_dlgproperties.py:158
+#: gui/_dlgproperties.py:160
 msgid "Add"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "Add disk..."
 msgstr ""
 
-#: gui/wndmain.py:729
+#: gui/wndmain.py:731
 msgid "Adding disk"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: model/file_image.py:102
+#: model/file_image.py:109
 msgid "Camera"
 msgstr ""
 
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:148 gui/wndmain.py:698
+#: gui/wndmain.py:148 gui/wndmain.py:700
 msgid "Close catalog"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "Close program?"
 msgstr ""
 
-#: gui/_dlgsettings.py:103
+#: gui/_dlgsettings.py:98
 msgid "Compression:"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgsearch.py:213 model/file_image.py:99
+#: gui/_dlgsearch.py:213 model/file_image.py:106
 msgid "Date"
 msgstr ""
 
@@ -158,7 +158,7 @@ msgstr ""
 msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr ""
 
-#: gui/_dlgproperties.py:159
+#: gui/_dlgproperties.py:161
 msgid "Del"
 msgstr ""
 
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Delete disk %s?"
 msgstr ""
 
-#: gui/wndmain.py:171 gui/wndmain.py:695
+#: gui/wndmain.py:171 gui/wndmain.py:697
 msgid "Delete selected &dir..."
 msgstr ""
 
@@ -197,7 +197,7 @@ msgstr ""
 msgid "Delete selected disk from catalog"
 msgstr ""
 
-#: gui/_dlgproperties.py:91 gui/components/infopanel.py:71
+#: gui/_dlgproperties.py:92 gui/components/infopanel.py:71
 #: gui/components/infopanel.py:108
 msgid "Description"
 msgstr ""
@@ -239,35 +239,35 @@ msgid ""
 "Files: %(files)d"
 msgstr ""
 
-#: gui/wndmain.py:759
+#: gui/wndmain.py:761
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:638
+#: gui/wndmain.py:640
 #, python-format
 msgid "Error openning file %s"
 msgstr ""
 
-#: gui/wndmain.py:625
+#: gui/wndmain.py:627
 #, python-format
 msgid ""
 "Error openning file %s!\n"
 "File don't exists."
 msgstr ""
 
-#: gui/wndmain.py:670
+#: gui/wndmain.py:672
 #, python-format
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: gui/wndmain.py:756
+#: gui/wndmain.py:758
 #, python-format
 msgid ""
 "Error:\n"
 "%s"
 msgstr ""
 
-#: gui/_dlgproperties.py:93 gui/components/infopanel.py:57
+#: gui/_dlgproperties.py:94 gui/components/infopanel.py:57
 #: gui/components/infopanel.py:147
 msgid "Exif"
 msgstr ""
@@ -334,7 +334,7 @@ msgstr ""
 msgid "Load info from captions.txt"
 msgstr ""
 
-#: gui/_dlgadddisk.py:78 gui/_dlgproperties.py:90
+#: gui/_dlgadddisk.py:78 gui/_dlgproperties.py:91
 #: gui/components/infopanel.py:56
 msgid "Main"
 msgstr ""
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Name already exists in catalog!"
 msgstr ""
 
-#: gui/_dlgproperties.py:105
+#: gui/_dlgproperties.py:107
 msgid "Name:"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "No disk selected"
 msgstr ""
 
-#: gui/wndmain.py:732
+#: gui/wndmain.py:734
 msgid "No files found!"
 msgstr ""
 
@@ -371,22 +371,26 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/wndmain.py:657
+#: gui/wndmain.py:659
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:301 gui/wndmain.py:625 gui/wndmain.py:638
+#: gui/wndmain.py:301 gui/wndmain.py:627 gui/wndmain.py:640
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:628
+#: gui/wndmain.py:630
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
 
 #: gui/_dlgadddisk.py:79
 msgid "Options"
+msgstr ""
+
+#: gui/_dlgproperties.py:96
+msgid "Other"
 msgstr ""
 
 #: gui/_dlgsearch.py:279 gui/_dlgsearch.py:340
@@ -397,12 +401,12 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: gui/_dlgsettings.py:55 gui/wndmain.py:152
+#: gui/_dlgsettings.py:56 gui/wndmain.py:152
 msgid "Program settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:50 gui/_dlgsearch.py:128 gui/wndmain.py:689
-#: gui/wndmain.py:711
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:128 gui/wndmain.py:691
+#: gui/wndmain.py:713
 msgid "Properties"
 msgstr ""
 
@@ -433,7 +437,7 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/wndmain.py:210 gui/wndmain.py:670
+#: gui/wndmain.py:210 gui/wndmain.py:672
 msgid "Save catalog"
 msgstr ""
 
@@ -465,16 +469,20 @@ msgstr ""
 msgid "Selected dir don't exists!"
 msgstr ""
 
-#: gui/_dlgproperties.py:129
+#: gui/_dlgproperties.py:131
 msgid "Set description"
 msgstr ""
 
-#: gui/_dlgproperties.py:164
+#: gui/_dlgproperties.py:166
 msgid "Set tags"
 msgstr ""
 
-#: model/file_image.py:107
+#: model/file_image.py:114
 msgid "Settings"
+msgstr ""
+
+#: gui/_dlgproperties.py:188
+msgid "Shot date:"
 msgstr ""
 
 #: gui/_dlgadddisk.py:149
@@ -485,7 +493,7 @@ msgstr ""
 msgid "Tag"
 msgstr ""
 
-#: gui/_dlgproperties.py:94 gui/components/dirstree.py:171
+#: gui/_dlgproperties.py:95 gui/components/dirstree.py:173
 #: model/_catalog_file.py:73
 msgid "Tags"
 msgstr ""
@@ -494,15 +502,15 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: gui/_dlgsettings.py:95
+#: gui/_dlgsettings.py:93
 msgid "Thumb height:"
 msgstr ""
 
-#: gui/_dlgsettings.py:87
+#: gui/_dlgsettings.py:88
 msgid "Thumb width:"
 msgstr ""
 
-#: gui/_dlgsettings.py:73
+#: gui/_dlgsettings.py:74
 msgid "Thumbs"
 msgstr ""
 
@@ -526,7 +534,7 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: gui/wndmain.py:729
+#: gui/wndmain.py:731
 msgid "Updating disk"
 msgstr ""
 
@@ -553,10 +561,6 @@ msgstr ""
 msgid "begin:"
 msgstr ""
 
-#: gui/_dlgsettings.py:107
-msgid "compression"
-msgstr ""
-
 #: gui/_dlgsearch.py:179
 msgid "descriptions"
 msgstr ""
@@ -569,7 +573,7 @@ msgstr ""
 msgid "end:"
 msgstr ""
 
-#: model/file_image.py:242
+#: model/file_image.py:249
 msgid "f"
 msgstr ""
 
@@ -577,15 +581,15 @@ msgstr ""
 msgid "files"
 msgstr ""
 
-#: model/file_image.py:255
+#: model/file_image.py:262
 msgid "flash"
 msgstr ""
 
-#: model/file_image.py:261
+#: model/file_image.py:268
 msgid "focal len."
 msgstr ""
 
-#: model/file_image.py:247 model/file_image.py:251
+#: model/file_image.py:254 model/file_image.py:258
 msgid "iso"
 msgstr ""
 
@@ -601,18 +605,10 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: model/file_image.py:236
+#: model/file_image.py:243
 msgid "t"
 msgstr ""
 
 #: gui/_dlgsearch.py:183
 msgid "tags"
-msgstr ""
-
-#: gui/_dlgsettings.py:99
-msgid "thumb height"
-msgstr ""
-
-#: gui/_dlgsettings.py:91
-msgid "thumb width"
 msgstr ""
