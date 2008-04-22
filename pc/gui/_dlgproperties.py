@@ -194,6 +194,8 @@ class DlgProperties(wx.Dialog):
 		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
+		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
+		
 		return panel
 
 
@@ -326,6 +328,12 @@ class DlgProperties(wx.Dialog):
 
 		if evt is not None:
 			evt.Skip()
+
+	
+	def _on_checkbox_short_date(self, evt):
+		value = evt.IsChecked()
+		self._dp_shot_date.Enable(value)
+		self._tc_shot_time.Enable(value)
 
 
 # vim: encoding=utf8:
