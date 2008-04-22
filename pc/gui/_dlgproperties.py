@@ -286,15 +286,19 @@ class DlgProperties(wx.Dialog):
 		else:
 			item.tags = None
 			
-		if self._item_is_image and not self._item_is_fake and self._cb_shot_date.IsChecked():
-			sdate = self._dp_shot_date.GetValue()
-			stime = self._tc_shot_time.GetValue(as_wxDateTime=True)
-			sdate.SetHour(stime.GetHour())
-			sdate.SetMinute(stime.GetMinute())
-			sdate.SetSecond(stime.GetSecond())
-			sdate_val = sdate.GetTicks()
-			if item.shot_date != sdate_val:
-				item.shot_date = sdate_val
+		if self._item_is_image and not self._item_is_fake:
+			if self._cb_shot_date.IsChecked():
+				sdate = self._dp_shot_date.GetValue()
+				stime = self._tc_shot_time.GetValue(as_wxDateTime=True)
+				sdate.SetHour(stime.GetHour())
+				sdate.SetMinute(stime.GetMinute())
+				sdate.SetSecond(stime.GetSecond())
+				sdate_val = sdate.GetTicks()
+				if item.shot_date is None or item.shot_date != sdate_val:
+					item.shot_date = sdate_val
+					changed = True
+			elif item.shot_date is not None:
+				item.shot_date = None
 				changed = True
 
 		self._on_close()

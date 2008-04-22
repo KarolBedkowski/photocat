@@ -92,18 +92,21 @@ class FileImage(CatalogFile):
 		if self.dimensions is not None:
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 
+		date = None
+		if self.shot_date:
+			try:
+				date = time.strftime('%c', time.localtime(self.shot_date))	
+			except:
+				_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
+			else:
+				result.append((51, _('Date'), date))
+
 		exif = self.exif_data
 		if exif is not None:
-			date = None
-			if self.shot_date:
-				try:
-					date = time.strftime('%c', time.localtime(self.shot_date))	
-				except:
-					_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
 			if date is None:
-				self.__get_exif_shot_date(exif)
-			if date is not None:
-				result.append((51, _('Date'), date))
+				date = self.__get_exif_shot_date(exif)
+				if date is not None:
+					result.append((51, _('Date'), date))
 
 			if exif.has_key('Image Model'):
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
