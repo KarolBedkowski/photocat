@@ -93,7 +93,8 @@ class DlgProperties(wx.Dialog):
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
 		notebook.AddPage(self._create_layout_page_tage(notebook),		_('Tags'))
-		notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
+		if self._item_is_image or self._item_is_fake:
+			notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
 		return notebook
 
 
@@ -235,7 +236,7 @@ class DlgProperties(wx.Dialog):
 			listbox = self._listbox_tags
 			[ listbox.Append(tag) for tag in item.tags ]
 
-		if self._item_is_image and not self._item_is_fake:
+		if self._item_is_image:
 			shot_date_present = item.shot_date is not None and item.shot_date > 0
 			self._cb_shot_date.SetValue(shot_date_present)
 			self._dp_shot_date.Enable(shot_date_present)
@@ -286,7 +287,7 @@ class DlgProperties(wx.Dialog):
 		else:
 			item.tags = None
 			
-		if self._item_is_image and not self._item_is_fake:
+		if self._item_is_image or self._item_is_fake:
 			if self._cb_shot_date.IsChecked():
 				sdate = self._dp_shot_date.GetValue()
 				stime = self._tc_shot_time.GetValue(as_wxDateTime=True)

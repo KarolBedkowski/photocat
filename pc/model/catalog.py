@@ -151,6 +151,7 @@ class Catalog(TreeItem):
 		"""
 		desc = master_image.desc
 		tags = master_image.tags
+		shot_date = master_image.shot_date
 		changed_tags = {}
 
 		for image in images:
@@ -160,6 +161,9 @@ class Catalog(TreeItem):
 			if tags is not None:
 				ff_changed_tags = image.set_tags(tags)
 				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+				
+			if shot_date is not None:
+				image.shot_date = shot_date
 
 		return changed_tags.keys()
 
