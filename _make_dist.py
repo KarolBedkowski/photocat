@@ -15,6 +15,7 @@ import py2exe
 import pc
 
 version	= pc.__version__
+release = pc.__release__
 build	= time.asctime()
 
 manifest_template = '''
@@ -49,9 +50,9 @@ pc = dict(
 	script = "pc.py",
 	name = "pc",
 	version = version,
-	description = "pc - PhotoCatalog %s buld %s" % (version, build),
+	description = "pc - PhotoCatalog %s (%s) (build: %s)" % (version, release, build),
 	company_name = "Karol Będkowski",
-	copyright = "Copyright (C) Karol Będkowski 2007r.",
+	copyright = "Copyright (C) Karol Będkowski 2007, 2008",
 	icon_resources = [(0, "pc/icons/icon.ico")],
 	other_resources = [("VERSIONTAG", 1, build), (RT_MANIFEST, 1, manifest_template % dict(prog="pc"))],
 )

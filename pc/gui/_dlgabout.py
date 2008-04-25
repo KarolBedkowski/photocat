@@ -42,7 +42,7 @@ _ABOUT_TEXT = '''
 	</head>
 	<body>
 		<h1>PC</h1>
-		<p>ver. %(version)s</p>
+		<p>version %(version)s &nbsp;&nbsp;&nbsp;&nbsp; build %(release)s</p>
 		<p><i>Copyright &copy; Karol Będkowski 2007,2008</i></p>
 		<p>
 			PC is free software; you can redistribute it and/or modify it under the
@@ -98,6 +98,7 @@ class DlgAbout(wx.Dialog):
 
 		params = {
 			'version': pc.__version__,
+			'release': pc.__release__,
 			'wxversion': wx.VERSION_STRING,
 			'pyversion': sys.version,
 		}

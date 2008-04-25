@@ -28,6 +28,9 @@ __all__			= ['run']
 
 
 __version__		= '0.3.0'
+__release__		= '2008-04-25'
+
+
 
 
 from pc.main import run
