@@ -117,8 +117,12 @@ class Timeline(object):
 
 		[ add_dir(item) for item in self.catalog.disks ]
 		
-		# sortowanie plikow wg daty wykonania zdjecia
-		self.files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
+		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie
+		def sort_subdir(subdir):
+			subdir.files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
+			[ sort_subdir(subsubdir) for subsubdir in subdir.dirs.itervalues() ]
+			
+		[ sort_subdir(subdir) for subdir in self.dirs.itervalues()]
 
 
 
