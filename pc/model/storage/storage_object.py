@@ -130,7 +130,7 @@ class StorageObject(object):
 
 	@classmethod
 	def decode(cls, data):
-		attributes = cls.__preserveattr__()
+		#attributes = cls.__preserveattr__() # nie potrzebne?
 		eval_data = eval(data)
 
 		if type(eval_data) != DictType:
