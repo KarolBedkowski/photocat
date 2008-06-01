@@ -130,8 +130,6 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		if recursive:
 			for disk in catalog.childs:
 				self.update_node_disk(disk)
-				
-
 
 
 	def update_node_disk(self, disk, recursive=True):
@@ -253,6 +251,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			
 		def add_subdir(parent_node, item):
 			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
+			item.tree_node = node
 			self.SetItemImage(node, self._icon_calendar_idx, wx.TreeItemIcon_Normal)
 			
 			[ add_subdir(node, subdir) for subdir in item.subdirs ]

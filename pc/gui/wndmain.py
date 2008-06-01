@@ -46,7 +46,7 @@ from kpylibs.formaters		import format_size
 
 import pc
 
-from pc.model				import Catalog, Directory, Disk, FileImage, Tag
+from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
 
 from components.dirstree	import DirsTree
@@ -519,6 +519,10 @@ class WndMain(wx.Frame):
 		if isinstance(item, Tag):
 			item = item.files
 			show_info = False
+		elif isinstance(item, Timeline):
+			# wyświtelanie timeline
+			item = item.files
+			show_info = False
 		elif not isinstance(item, Directory):
 			self._photo_list.ShowDir([])
 			return
@@ -546,6 +550,10 @@ class WndMain(wx.Frame):
 		self._info_panel.clear_folder()
 		if isinstance(item, Catalog):
 			return
+		
+		#if isinstance(item, Timeline):
+		#	self._dirs_tree.Toggle(item.tree_node)
+		#	return
 
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:

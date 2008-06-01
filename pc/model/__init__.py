@@ -33,6 +33,7 @@ from disk			import Disk
 from file_image		import FileImage
 from catalog		import Catalog
 from tag			import Tag, Tags
+from timeline		import Timeline
 
 
 # vim: encoding=utf8: ff=unix:
