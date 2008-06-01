@@ -79,10 +79,8 @@ class Timeline(object):
 	
 	@property
 	def subdirs(self):
-		def items_cmp(x, y):
-			return cmp(x.date, y.date)
-
-		return sorted(self.dirs.values(), items_cmp)
+		# z sortowaniem wg daty
+		return sorted(self.dirs.values(), lambda x,y: cmp(x.date, y.date))
 
 
 	def __add_item(self, item):
@@ -90,7 +88,8 @@ class Timeline(object):
 		if date is None or date == 0:
 			return
 		
-		self.files.append(item)
+		if self.level > 0:
+			self.files.append(item)
 		
 		if self.level == 3:
 			return
@@ -117,6 +116,9 @@ class Timeline(object):
 			[ add_dir(subdir) for subdir in dir.subdirs ]
 
 		[ add_dir(item) for item in self.catalog.disks ]
+		
+		# sortowanie plikow wg daty wykonania zdjecia
+		self.files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
 
 
 

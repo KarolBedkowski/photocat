@@ -529,6 +529,7 @@ class WndMain(wx.Frame):
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
 					self._photo_list.ShowDir([])
+					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
 			item = item.files
 			show_info = False
