@@ -34,7 +34,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		EventGenerator.__init__(self, ['change_selection'])
 
 		self.__icon_provider = IconProvider()
-		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 
+		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 'calendar',
 				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
 		self.SetImageList(self.__icon_provider.get_image_list())
@@ -44,6 +44,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self._icon_disk_idx			= self.__icon_provider.get_image_index(wx.ART_CDROM)
 		self._icon_tags_idx			= self.__icon_provider.get_image_index('tags')
 		self._icon_tag_idx			= self.__icon_provider.get_image_index('tag')
+		self._icon_calendar_idx		= self.__icon_provider.get_image_index('calendar')
 
 		self._root = item_root = self.AddRoot('')
 		self.SetItemImage(item_root, self._icon_idx, wx.TreeItemIcon_Normal)
@@ -124,8 +125,13 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 			self.update_node_tags(catalog.tags_provider)
 
+		self.update_timeline_node(catalog.timeline)
+		
+		if recursive:
 			for disk in catalog.childs:
 				self.update_node_disk(disk)
+				
+
 
 
 	def update_node_disk(self, disk, recursive=True):
@@ -232,6 +238,26 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			add_subdir(node, dir)
 			self.SortChildren(node)
 
+	#####################################################################
+
+	def update_timeline_node(self, timeline):
+		node = timeline.tree_node
+		if node is None or not node.IsOk():
+			node = timeline.tree_node = self.AppendItem(timeline.catalog.tree_node, _('Timeline'),
+					data=wx.TreeItemData(timeline))
+			self.SetItemImage(node, self._icon_calendar_idx, wx.TreeItemIcon_Normal)
+		else:
+			self.DeleteChildren(node)
+			
+		timeline.load()
+			
+		def add_subdir(parent_node, item):
+			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
+			self.SetItemImage(node, self._icon_calendar_idx, wx.TreeItemIcon_Normal)
+			
+			[ add_subdir(node, subdir) for subdir in item.subdirs ]
+		
+		[ add_subdir(node, subdir) for subdir in timeline.subdirs ]
 
 	#####################################################################
 	
