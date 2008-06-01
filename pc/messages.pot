@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-21 21:20+0200\n"
+"POT-Creation-Date: 2008-06-01 12:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:169 gui/wndmain.py:695
+#: gui/wndmain.py:169 gui/wndmain.py:713
 msgid "&Delete disk..."
 msgstr ""
 
-#: gui/wndmain.py:715
+#: gui/wndmain.py:733
 msgid "&Delete file..."
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:168 gui/wndmain.py:694
+#: gui/wndmain.py:168 gui/wndmain.py:712
 msgid "&Update disk..."
 msgstr ""
 
@@ -60,7 +60,7 @@ msgstr ""
 msgid "About selected calalog..."
 msgstr ""
 
-#: gui/_dlgproperties.py:160
+#: gui/_dlgproperties.py:161
 msgid "Add"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "Add disk..."
 msgstr ""
 
-#: gui/wndmain.py:731
+#: gui/wndmain.py:749
 msgid "Adding disk"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: model/file_image.py:109
+#: model/file_image.py:112
 msgid "Camera"
 msgstr ""
 
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:148 gui/wndmain.py:700
+#: gui/wndmain.py:148 gui/wndmain.py:718
 msgid "Close catalog"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgsearch.py:213 model/file_image.py:106
+#: gui/_dlgsearch.py:213 model/file_image.py:102 model/file_image.py:109
 msgid "Date"
 msgstr ""
 
@@ -158,7 +158,7 @@ msgstr ""
 msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr ""
 
-#: gui/_dlgproperties.py:161
+#: gui/_dlgproperties.py:162
 msgid "Del"
 msgstr ""
 
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Delete disk %s?"
 msgstr ""
 
-#: gui/wndmain.py:171 gui/wndmain.py:697
+#: gui/wndmain.py:171 gui/wndmain.py:715
 msgid "Delete selected &dir..."
 msgstr ""
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: gui/wndmain.py:538
+#: gui/wndmain.py:552
 #, python-format
 msgid "Directorys %d;  files: %d"
 msgstr ""
@@ -239,28 +239,28 @@ msgid ""
 "Files: %(files)d"
 msgstr ""
 
-#: gui/wndmain.py:761
+#: gui/wndmain.py:779
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:640
+#: gui/wndmain.py:658
 #, python-format
 msgid "Error openning file %s"
 msgstr ""
 
-#: gui/wndmain.py:627
+#: gui/wndmain.py:645
 #, python-format
 msgid ""
 "Error openning file %s!\n"
 "File don't exists."
 msgstr ""
 
-#: gui/wndmain.py:672
+#: gui/wndmain.py:690
 #, python-format
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: gui/wndmain.py:758
+#: gui/wndmain.py:776
 #, python-format
 msgid ""
 "Error:\n"
@@ -280,7 +280,7 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
-#: gui/wndmain.py:540
+#: gui/wndmain.py:532 gui/wndmain.py:554
 #, python-format
 msgid "Files: %d"
 msgstr ""
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Name already exists in catalog!"
 msgstr ""
 
-#: gui/_dlgproperties.py:107
+#: gui/_dlgproperties.py:108
 msgid "Name:"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "No disk selected"
 msgstr ""
 
-#: gui/wndmain.py:734
+#: gui/wndmain.py:752
 msgid "No files found!"
 msgstr ""
 
@@ -371,16 +371,23 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/wndmain.py:659
+#: gui/wndmain.py:530
+#, python-format
+msgid ""
+"Number of files exceed 1000!\n"
+"Show %d files?"
+msgstr ""
+
+#: gui/wndmain.py:677
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:301 gui/wndmain.py:627 gui/wndmain.py:640
+#: gui/wndmain.py:301 gui/wndmain.py:645 gui/wndmain.py:658
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:630
+#: gui/wndmain.py:648
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
@@ -389,11 +396,11 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: gui/_dlgproperties.py:96
+#: gui/_dlgproperties.py:97
 msgid "Other"
 msgstr ""
 
-#: gui/_dlgsearch.py:279 gui/_dlgsearch.py:340
+#: gui/_dlgsearch.py:279 gui/_dlgsearch.py:340 gui/wndmain.py:530
 msgid "PC"
 msgstr ""
 
@@ -405,8 +412,8 @@ msgstr ""
 msgid "Program settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:128 gui/wndmain.py:691
-#: gui/wndmain.py:713
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:128 gui/wndmain.py:709
+#: gui/wndmain.py:731
 msgid "Properties"
 msgstr ""
 
@@ -437,7 +444,7 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/wndmain.py:210 gui/wndmain.py:672
+#: gui/wndmain.py:210 gui/wndmain.py:690
 msgid "Save catalog"
 msgstr ""
 
@@ -469,19 +476,19 @@ msgstr ""
 msgid "Selected dir don't exists!"
 msgstr ""
 
-#: gui/_dlgproperties.py:131
+#: gui/_dlgproperties.py:132
 msgid "Set description"
 msgstr ""
 
-#: gui/_dlgproperties.py:166
+#: gui/_dlgproperties.py:167
 msgid "Set tags"
 msgstr ""
 
-#: model/file_image.py:114
+#: model/file_image.py:117
 msgid "Settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:188
+#: gui/_dlgproperties.py:189
 msgid "Shot date:"
 msgstr ""
 
@@ -493,7 +500,7 @@ msgstr ""
 msgid "Tag"
 msgstr ""
 
-#: gui/_dlgproperties.py:95 gui/components/dirstree.py:173
+#: gui/_dlgproperties.py:95 gui/components/dirstree.py:184
 #: model/_catalog_file.py:73
 msgid "Tags"
 msgstr ""
@@ -518,6 +525,10 @@ msgstr ""
 msgid "Time isn't in correct format - HH:MM format required"
 msgstr ""
 
+#: gui/components/dirstree.py:253
+msgid "Timeline"
+msgstr ""
+
 #: ../kpylibs/validators/validators.py:43
 msgid "Too few characters in fields"
 msgstr ""
@@ -534,7 +545,7 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: gui/wndmain.py:731
+#: gui/wndmain.py:749
 msgid "Updating disk"
 msgstr ""
 
@@ -573,7 +584,7 @@ msgstr ""
 msgid "end:"
 msgstr ""
 
-#: model/file_image.py:249
+#: model/file_image.py:252
 msgid "f"
 msgstr ""
 
@@ -581,15 +592,15 @@ msgstr ""
 msgid "files"
 msgstr ""
 
-#: model/file_image.py:262
+#: model/file_image.py:265
 msgid "flash"
 msgstr ""
 
-#: model/file_image.py:268
+#: model/file_image.py:271
 msgid "focal len."
 msgstr ""
 
-#: model/file_image.py:254 model/file_image.py:258
+#: model/file_image.py:257 model/file_image.py:261
 msgid "iso"
 msgstr ""
 
@@ -605,7 +616,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: model/file_image.py:243
+#: model/file_image.py:246
 msgid "t"
 msgstr ""
 
