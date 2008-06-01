@@ -19,7 +19,7 @@ import wx
 from kpylibs.eventgenerator	import EventGenerator
 from kpylibs.iconprovider	import IconProvider
 
-from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags
+from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags, Timeline
 
 _ = wx.GetTranslation
 
@@ -51,6 +51,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self.SetItemImage(item_root, self._icon2_idx, wx.TreeItemIcon_Expanded)
 
 		self.Bind(wx.EVT_TREE_DELETE_ITEM, self._on_tree_delete_item)
+		self.Bind(wx.EVT_TREE_ITEM_EXPANDING, self._on_expanding)
 
 
 	#########################################################################
@@ -239,6 +240,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	#####################################################################
 
 	def update_timeline_node(self, timeline):
+		self.SetCursor(wx.HOURGLASS_CURSOR)
+		
 		node = timeline.tree_node
 		if node is None or not node.IsOk():
 			node = timeline.tree_node = self.AppendItem(timeline.catalog.tree_node, _('Timeline'),
@@ -257,6 +260,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			[ add_subdir(node, subdir) for subdir in item.subdirs ]
 		
 		[ add_subdir(node, subdir) for subdir in timeline.subdirs ]
+		
+		self.SetCursor(wx.STANDARD_CURSOR)
 
 	#####################################################################
 	
@@ -270,6 +275,17 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 				data = item.GetData()
 				if hasattr(data, 'tree_node') and data.tree_node == node:
 					data.tree_node = None
+
+
+	def _on_expanding(self, evt):
+		node = evt.GetItem()
+		item = self.GetItemData(node).GetData()
+
+		#self.update_node(node, item)
+		if isinstance(item, Timeline):
+			if item.level == 0:
+				self.update_timeline_node(item)
+
 
 
 # vim: encoding=utf8: ff=unix:

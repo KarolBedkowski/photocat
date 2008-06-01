@@ -41,7 +41,7 @@ class Timeline(object):
 		self.tree_node	= None
 		
 		self.parent		= parent
-		self._level		= level
+		self.level		= level
 		
 		self.reset()
 
@@ -68,7 +68,7 @@ class Timeline(object):
 
 	@property
 	def _date(self):
-		if self._level < 2:
+		if self.level < 2:
 			return '%02d' % self.date
 		return '%s-%02d' % (self.parent._date, self.date)
 
@@ -92,15 +92,15 @@ class Timeline(object):
 		
 		self.files.append(item)
 		
-		if self._level == 3:
+		if self.level == 3:
 			return
 		
 		date = time.localtime(date)
-		date_part = date[self._level]
+		date_part = date[self.level]
 		
 		subdir = self.dirs.get(date_part)
 		if subdir is None:
-			subdir = Timeline(date_part, self.catalog, self, self._level+1)
+			subdir = Timeline(date_part, self.catalog, self, self.level+1)
 			self.dirs[date_part] = subdir
 		
 		subdir.__add_item(item)
@@ -109,7 +109,7 @@ class Timeline(object):
 	def load(self):
 		self.reset()
 		
-		if self._level != 0:
+		if self.level != 0:
 			return
 		
 		def add_dir(dir):
