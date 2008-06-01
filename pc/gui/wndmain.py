@@ -426,6 +426,7 @@ class WndMain(wx.Frame):
 			catalog.remove_disk(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
 			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
+			self._dirs_tree.update_timeline_node(tree_selected.catalog.timeline)
 
 
 	def _on_catalog_del_dir(self, evt):
@@ -770,6 +771,7 @@ class WndMain(wx.Frame):
 				#self._dirs_tree.add_catalog(catalog)
 				self._dirs_tree.update_node_disk(disk)
 				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+				self._dirs_tree.update_timeline_node(catalog.timeline)
 			except Exception, err:
 				_LOG.exception('MainWnd.__add_or_update_disk()')
 				self.SetCursor(wx.STANDARD_CURSOR)

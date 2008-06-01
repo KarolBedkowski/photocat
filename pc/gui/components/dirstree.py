@@ -246,6 +246,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 	#####################################################################
 
 	def update_timeline_node(self, timeline):
+		_LOG.debug('update_timeline_node cat= %s' % timeline.catalog.name)
+		
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 		
 		node = timeline.tree_node
@@ -254,7 +256,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 					data=wx.TreeItemData(timeline))
 			self.SetItemImage(node, self._icon_timeline_idx, wx.TreeItemIcon_Normal)
 		else:
-			self.DeleteChildren(node)
+			self.CollapseAndReset(node)
 			
 		timeline.load()
 			
