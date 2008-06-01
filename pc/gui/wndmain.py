@@ -521,6 +521,15 @@ class WndMain(wx.Frame):
 			show_info = False
 		elif isinstance(item, Timeline):
 			# wyświtelanie timeline
+			if item.level == 0:
+				# nie wyświetlamy wszystkiego
+				self._photo_list.ShowDir([])
+				return
+			elif len(item.files) > 1000:
+				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
+				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
+					self._photo_list.ShowDir([])
+					return
 			item = item.files
 			show_info = False
 		elif not isinstance(item, Directory):
