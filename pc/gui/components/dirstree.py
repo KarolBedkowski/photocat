@@ -35,6 +35,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 		self.__icon_provider = IconProvider()
 		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 'calendar',
+				'date', 'calendar_view_month', 'calendar_view_day', 'calendar_view_week',
 				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
 		self.SetImageList(self.__icon_provider.get_image_list())
@@ -44,7 +45,12 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		self._icon_disk_idx			= self.__icon_provider.get_image_index(wx.ART_CDROM)
 		self._icon_tags_idx			= self.__icon_provider.get_image_index('tags')
 		self._icon_tag_idx			= self.__icon_provider.get_image_index('tag')
-		self._icon_calendar_idx		= self.__icon_provider.get_image_index('calendar')
+		self._icon_timeline_idx		= self.__icon_provider.get_image_index('date')
+		self._icon_calendars_idxs = [
+			self.__icon_provider.get_image_index('calendar_view_month'),
+			self.__icon_provider.get_image_index('calendar_view_week'),
+			self.__icon_provider.get_image_index('calendar_view_day'),
+		]
 
 		self._root = item_root = self.AddRoot('')
 		self.SetItemImage(item_root, self._icon_idx, wx.TreeItemIcon_Normal)
@@ -246,7 +252,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		if node is None or not node.IsOk():
 			node = timeline.tree_node = self.AppendItem(timeline.catalog.tree_node, _('Timeline'),
 					data=wx.TreeItemData(timeline))
-			self.SetItemImage(node, self._icon_calendar_idx, wx.TreeItemIcon_Normal)
+			self.SetItemImage(node, self._icon_timeline_idx, wx.TreeItemIcon_Normal)
 		else:
 			self.DeleteChildren(node)
 			
@@ -255,7 +261,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		def add_subdir(parent_node, item):
 			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
 			item.tree_node = node
-			self.SetItemImage(node, self._icon_calendar_idx, wx.TreeItemIcon_Normal)
+			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1], wx.TreeItemIcon_Normal)
 			
 			[ add_subdir(node, subdir) for subdir in item.subdirs ]
 		
