@@ -48,6 +48,12 @@ class Thumb:
 			img = wx.EmptyImage(1, 1)		
 		
 		self._img = img
+		
+		self.reset()
+		
+		
+	def reset(self):
+		img = self._img
 		self._bitmap = img.ConvertToBitmap()
 		self._org_img_width = self.imgwidth = img.GetWidth()
 		self._org_img_height = self.imgheight = img.GetHeight()
@@ -57,12 +63,12 @@ class Thumb:
 
 	def get_bitmap(self, width, height):
 		if width < self.imgwidth or height < self.imgheight:
-			scale = max(float(width) / self._org_img_width, float(height) / self._org_img_height)
+			scale = min(float(width) / self._org_img_width, float(height) / self._org_img_height)
 			self.imgwidth = int(self._org_img_width * scale)
 			self.imgheight = int(self._org_img_height * scale)
 			img = self._img.Scale(self.imgwidth, self.imgheight)
-			bmp = self._bitmap = img.ConvertToBitmap()
-			return bmp
+			self._bitmap = img.ConvertToBitmap()
+			return self._bitmap
 
 		return self._bitmap
 	
