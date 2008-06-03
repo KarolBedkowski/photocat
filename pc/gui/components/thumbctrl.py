@@ -56,7 +56,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 	def clear(self):
 		self._items = []
-		self._selected = -1
 		self._selectedarray = []
 		
 		self._update()
@@ -124,9 +123,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.PrepareDC(dc)
 		dc.BeginDrawing()
 
-		dc.SetPen(wx.Pen(wx.BLACK, 0, wx.TRANSPARENT))
+		dc.SetPen(wx.Pen(wx.BLUE, 1, wx.DOT))
 		dc.SetBrush(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
 		dc.SetFont(self._caption_font)
+		dc.SetTextForeground("#7D7D7D")
 
 		# items
 		row = -1
@@ -135,6 +135,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		twm = tw + 5
 		thm = th + 20
 		twc = self._thumb_width -10
+		
+		has_selected = len(self._selectedarray) > 0 
 
 		for ii, item  in enumerate(self._items):
 			col = ii % self._cols
@@ -149,6 +151,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if not paintRect.Intersects(wx.Rect(tx, ty, twm, thm)):
 				continue
 			
+			if has_selected:
+				if ii in self._selectedarray:
+					dc.DrawRectangle(tx+3, ty+3, tw-6, th-6)
+			
 			img = item.get_bitmap(tw, th)
 		
 			txi = tx + (tw - item.imgwidth) / 2
@@ -160,7 +166,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 			caption, caption_width = item.get_caption(twc, self._caption_font)
 			txc = tx + (tw - caption_width) / 2
 
-			dc.SetTextForeground("#7D7D7D")
 			dc.DrawText(caption, txc, ty + th)
 			
 		dc.EndDrawing()
