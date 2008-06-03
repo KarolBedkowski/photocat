@@ -263,7 +263,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 			
 	def __on_mouse_right_down(self, evt):
-		if self._selected == -1:
+		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
+
+		lastselected = self._selected
+		selected = self._get_item_idx_on_xy(x, y)		
+		if self._selected != selected:
 			self.__on_mouse_down(evt)
 
 
