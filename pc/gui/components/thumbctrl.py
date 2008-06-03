@@ -135,7 +135,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if col >= self._cols or col < 0:
 			return None
 
-		row = (y - 5) / (self._thumb_height + 20)
+		row = (y - 5) / (self._thumb_height + 30)
 
 		if row < 0:
 			row = 0
