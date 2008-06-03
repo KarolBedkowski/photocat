@@ -87,7 +87,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self._update()
 		self.Refresh()
-		
 	
 
 	def set_thumb_size(self, thumb_width, thumb_height):
@@ -114,12 +113,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 	def _update(self):
 		width = self.GetClientSize().GetWidth()
-		self._cols = max((width - 5)/(self._thumb_width + 5), 1)
+		self._cols = max((width - 20)/(self._thumb_width + 10), 1)
 		self._rows = math.ceil(len(self._items)/float(self._cols))
 		
 		self.SetVirtualSize((
-			self._cols * (self._thumb_width + 10) + 5,
-			self._rows * (self._thumb_height + 30) + 5
+			self._cols * (self._thumb_width + 10) + 10,
+			self._rows * (self._thumb_height + 30) + 10
 		))
 		
 		# przesuniecie x aby ikonki byly na środku
@@ -261,8 +260,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		if lastselected != self._selected:
 			wx.PostEvent(self, ThumbSelectionChangeEvent(idx=self._selected))
-			
-			
+
+
 	def __on_mouse_right_down(self, evt):
 		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
 
