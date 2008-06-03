@@ -163,7 +163,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			dc.DrawBitmap(img, txi, tyi, True)
 			
 			# caption
-			caption, caption_width = item.get_caption(twc, self._caption_font)
+			caption, caption_width = item.get_caption(twc, dc)
 			txc = tx + (tw - caption_width) / 2
 
 			dc.DrawText(caption, txc, ty + th)

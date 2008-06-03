@@ -67,17 +67,12 @@ class Thumb:
 		return self._bitmap
 	
 	
-	def get_caption(self, width, font):
+	def get_caption(self, width, dc):
 		if width == self._last_caption_width:
 			return self._caption_prepared, self._caption_width
 		
 		end = len(self._caption)-1
-		
-		dc = wx.MemoryDC()
-		bmp = wx.EmptyBitmap(10,10)
-		dc.SelectObject(bmp)
-		dc.SetFont(font)
-		
+
 		caption = None
 		while end > 0:
 			caption = self._caption[:end]
@@ -88,8 +83,6 @@ class Thumb:
 			
 			end -= 1
 			
-		dc.SelectObject(wx.NullBitmap)
-		
 		self._caption_prepared = caption
 		self._last_caption_width = width
 		
