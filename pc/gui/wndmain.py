@@ -52,6 +52,7 @@ from pc.model.storage		import Storage
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
 from components.infopanel	import InfoPanel
+from components.thumbctrl	import ThumbCtrl
 
 from _dlgabout				import DlgAbout
 from _dlgadddisk			import DlgAddDisk
@@ -227,8 +228,7 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout_photolist(self, parent):
-		self._photo_list = MyThumbnailCtrl(parent)
-		self._photo_list.ShowFileNames()
+		self._photo_list = ThumbCtrl(parent)
 		self._photo_list.SetPopupMenu(self.__create_popup_menu_image())
 
 		appconfig = AppConfig()
