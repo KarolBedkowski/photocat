@@ -37,7 +37,7 @@ import wx
 
 class Thumb:
 	def __init__(self, image):
-		self._caption = image.name
+		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
 		self.image = image
 		
 		try:
@@ -82,7 +82,7 @@ class Thumb:
 		end = len(self._caption)
 
 		# ucinanie za długiego napisu
-		caption = None
+		caption = '.'
 		while end > 0:
 			caption = self._caption[:end]
 			sw, sh = dc.GetTextExtent(caption)
@@ -93,7 +93,7 @@ class Thumb:
 			end -= 1
 			
 		# doklejanie ... na koncu odcietego napisu
-		if caption != self._caption:
+		if len(caption) < len(self._caption):
 			if len(caption) > 4:
 				caption = caption[:-4] + '...'
 			
