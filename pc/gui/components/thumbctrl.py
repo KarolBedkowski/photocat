@@ -52,7 +52,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_width = 200
 		self._thumb_height = 200
 		
-		self._caption_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
+		self._caption_font	= wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
+		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
+		self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
 		
 		self.clear()
 		
@@ -165,8 +167,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.PrepareDC(dc)
 		dc.BeginDrawing()
 
-		dc.SetPen(wx.Pen(wx.BLUE, 1, wx.DOT))
-		dc.SetBrush(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
+		dc.SetPen(self._pen)
+		dc.SetBrush(self._brush)
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground("#7D7D7D")
 
@@ -177,6 +179,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		twm = tw + 10
 		thm = th + 30
 		twc = self._thumb_width - 10
+		padding = self._padding + 5
 		
 		has_selected = len(self._selected_list) > 0 
 
@@ -186,28 +189,31 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if col == 0:
 				row += 1
 
-			tx = 5 + col * twm + self._padding
-			ty = 5 + row * thm
-			
-			# visible?
+			# pozycja
+			tx = col * twm + padding
+			ty = row * thm + 5
+
+			# czy rysowac
 			if not paintRect.Intersects(wx.Rect(tx, ty, twm, thm)):
 				continue
 			
+			# zaznaczenie
 			if has_selected:
 				if ii in self._selected_list:
 					dc.DrawRectangle(tx-3, ty-3, tw+6, th+6)
 			
 			img = item.get_bitmap(tw, th)
 		
+			# centrowanie
 			txi = tx + (tw - item.imgwidth) / 2
 			tyi = ty + (th - item.imgheight) / 2
-
+			
+			# rysowanie
 			dc.DrawBitmap(img, txi, tyi, True)
 			
 			# caption
 			caption, caption_width = item.get_caption(twc, dc)
 			txc = tx + (tw - caption_width) / 2
-
 			dc.DrawText(caption, txc, ty + th)
 			
 		dc.EndDrawing()
