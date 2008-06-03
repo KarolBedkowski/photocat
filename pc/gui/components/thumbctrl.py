@@ -46,6 +46,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_width = 200
 		self._thumb_height = 200
 		
+		self._caption_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD, False)
+		
 		self.clear()
 		
 		self.Bind(wx.EVT_SIZE, self.__on_resize)
@@ -124,6 +126,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		dc.SetPen(wx.Pen(wx.BLACK, 0, wx.TRANSPARENT))
 		dc.SetBrush(wx.Brush(self.GetBackgroundColour(), wx.SOLID))
+		dc.SetFont(self._caption_font)
 
 		# items
 		row = -1
@@ -131,6 +134,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		th = self._thumb_height
 		twm = tw + 5
 		thm = th + 20
+		twc = self._thumb_width -10
 
 		for ii, item  in enumerate(self._items):
 			col = ii % self._cols
@@ -147,10 +151,17 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 			img = item.get_bitmap(tw, th)
 		
-			tx += (tw - item.imgwidth) / 2
-			ty += (th - item.imgheight) / 2
+			txi = tx + (tw - item.imgwidth) / 2
+			tyi = ty + (th - item.imgheight) / 2
 
-			dc.DrawBitmap(img, tx, ty, True)
+			dc.DrawBitmap(img, txi, tyi, True)
+			
+			# caption
+			caption, caption_width = item.get_caption(twc, self._caption_font)
+			txc = tx + (tw - caption_width) / 2
+
+			dc.SetTextForeground("#7D7D7D")
+			dc.DrawText(caption, txc, ty + th)
 			
 		dc.EndDrawing()
 		

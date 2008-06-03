@@ -51,6 +51,8 @@ class Thumb:
 		self._bitmap = img.ConvertToBitmap()
 		self._org_img_width = self.imgwidth = img.GetWidth()
 		self._org_img_height = self.imgheight = img.GetHeight()
+		self._last_caption_width = -1
+		self._caption_width = -1
 
 
 	def get_bitmap(self, width, height):
@@ -60,31 +62,38 @@ class Thumb:
 			self.imgheight = int(self._org_img_height * scale)
 			img = self._img.Scale(self.imgwidth, self.imgheight)
 			bmp = self._bitmap = img.ConvertToBitmap()
-		else:
-			bmp = self._bitmap
+			return bmp
+
+		return self._bitmap
+	
+	
+	def get_caption(self, width, font):
+		if width == self._last_caption_width:
+			return self._caption_prepared, self._caption_width
 		
-		return bmp
-	
-	
-	def get_caption(self, width):
 		end = len(self._caption)-1
 		
 		dc = wx.MemoryDC()
 		bmp = wx.EmptyBitmap(10,10)
 		dc.SelectObject(bmp)
+		dc.SetFont(font)
 		
 		caption = None
 		while end > 0:
 			caption = self._caption[:end]
-			sw, sh = dc.GetTextExtent(capion)
+			sw, sh = dc.GetTextExtent(caption)
 			if sw <= width:
+				self._caption_width = sw
 				break
 			
 			end -= 1
 			
 		dc.SelectObject(wx.NullBitmap)
-
-		return caption
+		
+		self._caption_prepared = caption
+		self._last_caption_width = width
+		
+		return caption, self._caption_width
 
 
 # vim: encoding=utf8: ff=unix:
