@@ -50,7 +50,6 @@ from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
 
 from components.dirstree	import DirsTree
-from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
 from components.infopanel	import InfoPanel
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
@@ -230,10 +229,9 @@ class WndMain(wx.Frame):
 
 	def _create_layout_photolist(self, parent):
 		self._photo_list = ThumbCtrl(parent)
-		self._photo_list.SetPopupMenu(self.__create_popup_menu_image())
 
 		appconfig = AppConfig()
-		self._photo_list.SetThumbSize(
+		self._photo_list.set_thumb_size(
 				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
 		)
 		return self._photo_list
@@ -371,7 +369,7 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 		appconfig = AppConfig()
 		if res == wx.ID_OK:
-			self._photo_list.SetThumbSize(
+			self._photo_list.set_thumb_size(
 					appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
 			)
 
@@ -461,7 +459,7 @@ class WndMain(wx.Frame):
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
 			for image in selected_items:
 				folder.remove_file(image)
-			self._photo_list.ShowDir(folder)
+			self._photo_list.show_dir(folder)
 			self._info_panel.show_folder(folder)
 			self._dirs_tree.update_catalog_node(folder.catalog)
 
@@ -525,18 +523,18 @@ class WndMain(wx.Frame):
 			# wyświtelanie timeline
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
-				self._photo_list.ShowDir([])
+				self._photo_list.show_dir([])
 				return
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
-					self._photo_list.ShowDir([])
+					self._photo_list.show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
 			item = item.files
 			show_info = False
 		elif not isinstance(item, Directory):
-			self._photo_list.ShowDir([])
+			self._photo_list.show_dir([])
 			return
 
 		self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -544,7 +542,7 @@ class WndMain(wx.Frame):
 		if item is not None:
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				self._photo_list.ShowDir(item)
+				self._photo_list.show_dir(item)
 				if show_info:
 					self._info_panel.show_folder(item)
 			finally:

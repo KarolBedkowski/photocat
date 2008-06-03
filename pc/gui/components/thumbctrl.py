@@ -52,7 +52,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_width = 200
 		self._thumb_height = 200
 		
-		self._caption_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD, False)
+		self._caption_font = wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
 		
 		self.clear()
 		
@@ -71,15 +71,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self._update()
 		self.Refresh()
-		
-		
-	def bind_on_char(self, func):
-		""" TODO: remove """
-		self.Bind(wx.EVT_CHAR, func)
 
 
-	def ShowDir(self, dir):
-		""" TODO: rename """
+	def show_dir(self, dir):
 		if isinstance(dir, list) or isinstance(dir, tuple):
 			images = dir
 		else:
@@ -94,14 +88,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._update()
 		self.Refresh()
 		
-			
-	def SetPopupMenu(self, *argv, **kwargs):
-		""" TODO: implement """
-		pass
 	
 
-	def SetThumbSize(self, thumb_width, thumb_height):
-		""" TODO: rename """
+	def set_thumb_size(self, thumb_width, thumb_height):
 		self._thumb_width = thumb_width
 		self._thumb_height = thumb_height
 		self._update()
