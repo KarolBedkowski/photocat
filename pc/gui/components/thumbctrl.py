@@ -66,6 +66,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._items = []
 		self._selected = -1
 		self._selected_list = []
+		self._padding = 0
 		
 		self._update()
 		self.Refresh()
@@ -84,7 +85,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 			images = dir.files
 		
 		self._items = [ Thumb(image) for image in images ]
-		self._selectedarray = []
+		self._selected_list = []
+		self._selected = -1
 		
 		self.Scroll(0, 0)
 		
@@ -125,16 +127,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._rows = math.ceil(len(self._items)/float(self._cols))
 		
 		self.SetVirtualSize((
-			self._cols * (self._thumb_width + 5) + 5,
-			self._rows * (self._thumb_height + 20) + 5
+			self._cols * (self._thumb_width + 10) + 5,
+			self._rows * (self._thumb_height + 30) + 5
 		))
-			
+		
+		# przesuniecie x aby ikonki byly na środku
+		self._padding = (width - self._cols * (self._thumb_width + 10)) / 2
+
 		self.SetSizeHints(self._thumb_width + 28, self._thumb_height + 30)
 		self.SetScrollRate((self._thumb_width + 5)/4, (self._thumb_height + 5)/4)
 
 
 	def _get_item_idx_on_xy(self, x, y):
-		col = (x - 5) / (self._thumb_width + 5)
+		col = (x - 5 - self._padding) / (self._thumb_width + 5)
 		if col >= self._cols:
 			col = self._cols - 1
 
@@ -177,9 +182,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		row = -1
 		tw = self._thumb_width 
 		th = self._thumb_height
-		twm = tw + 5
-		thm = th + 20
-		twc = self._thumb_width -10
+		twm = tw + 10
+		thm = th + 30
+		twc = self._thumb_width - 10
 		
 		has_selected = len(self._selected_list) > 0 
 
@@ -189,7 +194,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if col == 0:
 				row += 1
 
-			tx = 5 + col * twm
+			tx = 5 + col * twm + self._padding
 			ty = 5 + row * thm
 			
 			# visible?
@@ -198,7 +203,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 			if has_selected:
 				if ii in self._selected_list:
-					dc.DrawRectangle(tx+3, ty+3, tw-6, th-6)
+					dc.DrawRectangle(tx-3, ty-3, tw+6, th+6)
 			
 			img = item.get_bitmap(tw, th)
 		
