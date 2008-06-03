@@ -32,8 +32,14 @@ _LOG = logging.getLogger(__name__)
 import math
 
 import wx
+import wx.lib.newevent
 
 from _thumb import Thumb
+
+
+(ThumbSelectionChangeEvent,		EVT_THUMB_SELECTION_CHANGE)		= wx.lib.newevent.NewEvent()
+(ThumbDblClickEvent,			EVT_THUMB_DBCLICK)				= wx.lib.newevent.NewEvent()
+
 
 
 class ThumbCtrl(wx.ScrolledWindow):
@@ -52,11 +58,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self.Bind(wx.EVT_SIZE, self.__on_resize)
 		self.Bind(wx.EVT_PAINT, self.__on_paint)
+		self.Bind(wx.EVT_LEFT_DOWN, self.__on_mouse_down)
+		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
 		
 		
 	def clear(self):
 		self._items = []
-		self._selectedarray = []
+		self._selected = -1
+		self._selected_list = []
 		
 		self._update()
 		self.Refresh()
@@ -95,6 +104,21 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._update()
 		
 		
+	def is_selected(self, idx):
+		return idx in self._selected_list
+	
+
+	@property
+	def selected_items(self):
+		return [ self._items[idx].image for idx in self._selected_list ]
+		
+	@property
+	def selected_item(self):
+		return self._items[self._selected].image if self._selected > -1 else None
+	
+	#######################################################################################	
+	
+		
 	def _update(self):
 		width = self.GetClientSize().GetWidth()
 		self._cols = max((width - 5)/(self._thumb_width + 5), 1)
@@ -107,6 +131,27 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 		self.SetSizeHints(self._thumb_width + 28, self._thumb_height + 30)
 		self.SetScrollRate((self._thumb_width + 5)/4, (self._thumb_height + 5)/4)
+
+
+	def _get_item_idx_on_xy(self, x, y):
+		col = (x - 5) / (self._thumb_width + 5)
+		if col >= self._cols:
+			col = self._cols - 1
+
+		row = (y - 5) / (self._thumb_height + 20)
+
+		if row < 0:
+			row = 0
+
+		index = row * self._cols + col
+		
+		if index >= len(self._items):
+			index = -1
+
+		return index
+
+
+	##################################################################################
 
 
 	def __on_paint(self, event):
@@ -136,7 +181,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		thm = th + 20
 		twc = self._thumb_width -10
 		
-		has_selected = len(self._selectedarray) > 0 
+		has_selected = len(self._selected_list) > 0 
 
 		for ii, item  in enumerate(self._items):
 			col = ii % self._cols
@@ -152,7 +197,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 				continue
 			
 			if has_selected:
-				if ii in self._selectedarray:
+				if ii in self._selected_list:
 					dc.DrawRectangle(tx+3, ty+3, tw-6, th-6)
 			
 			img = item.get_bitmap(tw, th)
@@ -176,6 +221,63 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Refresh()
 		
 		
+	def __on_mouse_down(self, event):
+		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+
+		lastselected = self._selected
+		self._selected = self._get_item_idx_on_xy(x, y)
+		
+		if event.ControlDown():
+			if self.is_selected(self._selected):
+				self._selected_list.remove(self._selected)
+			else:
+				self._selected_list.append(self._selected)
+
+		elif event.ShiftDown():
+			if self._selected != -1:
+				begindex = self._selected
+				endindex = lastselected
+
+				if lastselected < self._selected:
+					begindex = lastselected
+					endindex = self._selected
+
+				self._selected_list = []
+
+				for ii in xrange(begindex, endindex+1):
+					self._selected_list.append(ii)
+
+			self._selected = lastselected
+
+		else:
+			if self._selected == -1:
+				update = len(self._selected_list) > 0
+				self._selected_list = []
+
+			else:
+				self._selected_list = []
+				self._selected_list.append(self._selected)
+
+		self.Refresh()
+		self.SetFocus()
+		
+		if lastselected != self._selected:
+			wx.PostEvent(self, ThumbSelectionChangeEvent(idx=self._selected))
+		
+
+	def __on_mouse_up(self, event):
+		""" Handles The wx.EVT_LEFT_UP And wx.EVT_RIGHT_UP Events For ThumbnailCtrl. """
+		# Popup menu
+#		if event.RightUp():
+#			x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+
+
+	def __on_mouse_dbclick(self, event):
+		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+		self._selected = self._get_item_idx_on_xy(x, y)
+		if self._selected > -1:
+			wx.PostEvent(self, ThumbDblClickEvent(idx=self._selected))
+
 
 
 # vim: encoding=utf8: ff=unix:

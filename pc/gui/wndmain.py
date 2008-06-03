@@ -52,7 +52,7 @@ from pc.model.storage		import Storage
 from components.dirstree	import DirsTree
 from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
 from components.infopanel	import InfoPanel
-from components.thumbctrl	import ThumbCtrl
+from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
 from _dlgabout				import DlgAbout
 from _dlgadddisk			import DlgAddDisk
@@ -106,8 +106,8 @@ class WndMain(wx.Frame):
 		self.Bind(wx.EVT_SIZE, self._on_size)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_dirtree_item_select, self._dirs_tree)
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self._on_dirtree_item_activate, self._dirs_tree)
-		self.Bind(EVT_THUMBNAILS_SEL_CHANGED, self._on_thumb_sel_changed)
-		self.Bind(EVT_THUMBNAILS_DCLICK, self._on_thumb_dclick)
+		self._photo_list.Bind(EVT_THUMB_SELECTION_CHANGE, self._on_thumb_sel_changed)
+		self._photo_list.Bind(EVT_THUMB_DBCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
 		self.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu, self._dirs_tree)
 		self._dirs_tree.Bind(wx.EVT_KEY_DOWN, self._on_dirtree_key_down)

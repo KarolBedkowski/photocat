@@ -38,7 +38,7 @@ import wx
 class Thumb:
 	def __init__(self, image):
 		self._caption = image.name
-		self.assigned_object = image
+		self.image = image
 		
 		try:
 			stream = cStringIO.StringIO(image.image)
@@ -70,7 +70,7 @@ class Thumb:
 	def get_caption(self, width, dc):
 		if width == self._last_caption_width:
 			return self._caption_prepared, self._caption_width
-		
+
 		end = len(self._caption)-1
 
 		caption = None
