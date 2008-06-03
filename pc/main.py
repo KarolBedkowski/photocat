@@ -104,8 +104,8 @@ class App(wx.App):
 		self.SetTopWindow(wnd)
 
 		argv = sys.argv
-		#if len(argv) > 1:
-		#	wnd.open_album(argv[-1])
+		if len(argv) > 1:
+			wnd._open_file(argv[-1])
 
 		return True
 
