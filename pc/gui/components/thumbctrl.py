@@ -60,6 +60,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_PAINT, self.__on_paint)
 		self.Bind(wx.EVT_LEFT_DOWN, self.__on_mouse_down)
 		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
+		self.Bind(wx.EVT_RIGHT_DOWN, self.__on_mouse_right_down)
 		
 		
 	def clear(self):
@@ -112,7 +113,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	@property
 	def selected_items(self):
-		return [ self._items[idx].image for idx in self._selected_list ]
+		return self._selected_list
 		
 	@property
 	def selected_item(self):
@@ -138,10 +139,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.SetScrollRate((self._thumb_width + 5)/4, (self._thumb_height + 5)/4)
 
 
-	def _get_item_idx_on_xy(self, x, y):
+	def _get_item_idx_on_xy(self, x, y):		
 		col = (x - 5 - self._padding) / (self._thumb_width + 5)
-		if col >= self._cols:
-			col = self._cols - 1
+
+		# sprawdzenie czy klikeniecie w obszar
+		if col >= self._cols or col < 0:
+			return None
 
 		row = (y - 5) / (self._thumb_height + 20)
 
@@ -268,13 +271,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		if lastselected != self._selected:
 			wx.PostEvent(self, ThumbSelectionChangeEvent(idx=self._selected))
-		
-
-	def __on_mouse_up(self, event):
-		""" Handles The wx.EVT_LEFT_UP And wx.EVT_RIGHT_UP Events For ThumbnailCtrl. """
-		# Popup menu
-#		if event.RightUp():
-#			x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
+			
+			
+	def __on_mouse_right_down(self, evt):
+		if self._selected == -1:
+			self.__on_mouse_down(evt)
 
 
 	def __on_mouse_dbclick(self, event):
