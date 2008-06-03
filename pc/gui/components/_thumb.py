@@ -71,8 +71,9 @@ class Thumb:
 		if width == self._last_caption_width:
 			return self._caption_prepared, self._caption_width
 
-		end = len(self._caption)-1
+		end = len(self._caption)
 
+		# ucinanie za długiego napisu
 		caption = None
 		while end > 0:
 			caption = self._caption[:end]
@@ -82,6 +83,11 @@ class Thumb:
 				break
 			
 			end -= 1
+			
+		# doklejanie ... na koncu odcietego napisu
+		if caption != self._caption:
+			if len(caption) > 4:
+				caption = caption[:-4] + '...'
 			
 		self._caption_prepared = caption
 		self._last_caption_width = width
