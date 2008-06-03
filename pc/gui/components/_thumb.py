@@ -54,7 +54,7 @@ class Thumb:
 		
 	def reset(self):
 		img = self._img
-		self._bitmap = img.ConvertToBitmap()
+		self._bitmap = None
 		self._org_img_width = self.imgwidth = img.GetWidth()
 		self._org_img_height = self.imgheight = img.GetHeight()
 		self._last_caption_width = -1
@@ -68,7 +68,9 @@ class Thumb:
 			self.imgheight = int(self._org_img_height * scale)
 			img = self._img.Scale(self.imgwidth, self.imgheight)
 			self._bitmap = img.ConvertToBitmap()
-			return self._bitmap
+
+		elif self._bitmap is None:
+			self._bitmap = self._img.ConvertToBitmap()
 
 		return self._bitmap
 	
