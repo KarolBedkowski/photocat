@@ -63,6 +63,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_LEFT_DOWN, self.__on_mouse_down)
 		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
 		self.Bind(wx.EVT_RIGHT_DOWN, self.__on_mouse_right_down)
+		self.Bind(wx.EVT_IDLE, self.__on_idle)
 		
 		
 	def clear(self):
@@ -70,6 +71,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._selected = -1
 		self._selected_list = []
 		self._padding = 0
+		self._last_preloaded = -1
 		
 		self._update()
 		self.Refresh()
@@ -84,6 +86,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._items = [ Thumb(image) for image in images ]
 		self._selected_list = []
 		self._selected = -1
+		self._last_preloaded = -1
 		
 		self.Scroll(0, 0)
 		
@@ -295,6 +298,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if self._selected > -1:
 			wx.PostEvent(self, ThumbDblClickEvent(idx=self._selected))
 
+
+	def __on_idle(self, evt):
+		# ładowanie w tle miniaturek
+		if self._last_preloaded < len(self._items) -1 :
+			self._last_preloaded += 1
+			self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
+			evt.RequestMore(True)
+		evt.Skip()
 
 
 # vim: encoding=utf8: ff=unix:
