@@ -4,7 +4,7 @@ SetCompressorDictSize 16
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "PC"
-!define PRODUCT_VERSION "0.2.1"
+!define PRODUCT_VERSION "0.5.0b"
 !define PRODUCT_PUBLISHER "Karol Bêdkowski"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\pc.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -36,7 +36,7 @@ var ICONS_GROUP
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\sag3.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\pc.exe"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -48,7 +48,7 @@ var ICONS_GROUP
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "Setup.exe"
+OutFile "setup_${PRODUCT_NAME}_${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\pc"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
