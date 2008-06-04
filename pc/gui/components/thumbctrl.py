@@ -212,7 +212,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			# zaznaczenie
 			if has_selected:
 				if ii in self._selected_list:
-					dc.DrawRectangle(tx-3, ty-3, tw+6, th+6)
+					dc.DrawRectangle(tx-3, ty-3, tw+6, th+25)
 			
 			img = item.get_bitmap(tw, th)
 		
