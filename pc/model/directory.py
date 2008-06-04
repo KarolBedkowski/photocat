@@ -139,6 +139,11 @@ class Directory(CatalogFile, TreeItem):
 		return self_result
 
 
+	def fill_shot_date(self):
+		[ image.fill_shot_date() for image in self.files ]
+		[ subdir.fill_shot_date() for subdir in self.subdirs ]
+
+
 	##########################################################################
 
 

@@ -115,6 +115,10 @@ class Catalog(TreeItem):
 		return self_result
 
 
+	def fill_shot_date(self):
+		[ disk.fill_shot_date() for disk in self.disks ]
+		
+
 	##########################################################################
 
 

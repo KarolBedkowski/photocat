@@ -190,6 +190,7 @@ class WndMain(wx.Frame):
 	def _create_main_menu_debug(self):
 		menu = create_menu(self, (
 			('Shell', 'Ctrl+L', '', self._on_debug_shell, None),
+			('Fill shot date', None, '', self._on_debug_fill_shot_date, None),
 		))
 		return menu
 
@@ -383,6 +384,12 @@ class WndMain(wx.Frame):
 
 	def _on_debug_shell(self, evt):
 		WndShell(self, locals()).Show()
+		
+		
+	def _on_debug_fill_shot_date(self, evt):
+		catalog = self.__get_selected_catalog()
+		if catalog is not None:
+			catalog.fill_shot_date()
 
 
 	def _on_file_history(self, evt):

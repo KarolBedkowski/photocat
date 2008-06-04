@@ -170,6 +170,15 @@ class FileImage(CatalogFile):
 			return True
 		return False
 
+	
+	def fill_shot_date(self):
+		if self.shot_date is None and self.exif is not None:
+			exif = self.exif_data
+			if exif is not None:
+				shot_date = self.__get_exif_shot_date_value(exif)
+				if shot_date is not None:
+					self.shot_date = time.mktime(shot_date)
+	
 
 	##########################################################################
 
