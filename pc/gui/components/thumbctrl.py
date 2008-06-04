@@ -44,7 +44,7 @@ from _thumb import Thumb
 
 class ThumbCtrl(wx.ScrolledWindow):
 	def __init__(self, parent, wxid=wx.ID_ANY):
-		wx.ScrolledWindow.__init__(self, parent, wxid)
+		wx.ScrolledWindow.__init__(self, parent, wxid, style=wx.BORDER_SUNKEN|wx.HSCROLL|wx.VSCROLL)
 		
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
 		
@@ -115,27 +115,39 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 	def _update(self):
 		width = self.GetClientSize().GetWidth()
-		self._cols = max((width - 20)/(self._thumb_width + 10), 1)
-		self._rows = math.ceil(len(self._items)/float(self._cols))
+		cols = max((width - 30) / self._thumb_width, 1)
+		
+		# przesuniecie x aby ikonki byly na środku
+		padding = (width - cols * self._thumb_width) / (cols + 1)
+
+		# muszą być jakieś odstępy między miniaturkami
+		if padding < 6 and cols > 1:
+			cols -= 1
+			padding = (width -  cols * self._thumb_width) / (cols + 1)
+			
+		self._padding = padding
+		self._cols = cols
+		self._rows = math.ceil(len(self._items) / float(cols))
 		
 		self.SetVirtualSize((
-			self._cols * (self._thumb_width + 10) + 10,
+			self._cols * (self._thumb_width + padding),
 			self._rows * (self._thumb_height + 30) + 10
 		))
 		
-		# przesuniecie x aby ikonki byly na środku
-		self._padding = (width - self._cols * (self._thumb_width + 10)) / 2
-
-		self.SetSizeHints(self._thumb_width + 28, self._thumb_height + 30)
-		self.SetScrollRate((self._thumb_width + 5)/4, (self._thumb_height + 5)/4)
+		self.SetSizeHints(self._thumb_width + padding, self._thumb_height + 30)
+		self.SetScrollRate((self._thumb_width + padding) / 4, (self._thumb_height + 30)/4)
 
 
 	def _get_item_idx_on_xy(self, x, y):		
-		col = (x - 5 - self._padding) / (self._thumb_width + 5)
-
+		col = (x - self._padding) / (self._thumb_width + self._padding)
+		
 		# sprawdzenie czy klikeniecie w obszar
-		if col >= self._cols or col < 0:
+		if col > self._cols or col < 0:
 			return None
+		
+		# sprawdzenie, czy nie klikniecie miedzy miniaturkami
+		if x > (col + 1) * (self._thumb_width + self._padding) + 5:
+			return None	
 
 		row = (y - 5) / (self._thumb_height + 30)
 
@@ -176,10 +188,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 		row = -1
 		tw = self._thumb_width 
 		th = self._thumb_height
-		twm = tw + 10
+		twm = tw + self._padding
 		thm = th + 30
 		twc = self._thumb_width - 10
-		padding = self._padding + 5
+		padding = self._padding
 		
 		has_selected = len(self._selected_list) > 0 
 
