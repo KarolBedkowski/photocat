@@ -39,38 +39,47 @@ class Thumb:
 	def __init__(self, image):
 		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
 		self.image = image
-		
-		try:
-			stream = cStringIO.StringIO(image.image)
-			img = wx.ImageFromStream(stream)
-		except:
-			_LOG.exception('Thumb.__init__/LoadImages  %r' % image)
-			img = wx.EmptyImage(1, 1)		
-		
-		self._img = img
-		
 		self.reset()
-		
-		
+
+
 	def reset(self):
-		img = self._img
 		self._bitmap = None
-		self._org_img_width = self.imgwidth = img.GetWidth()
-		self._org_img_height = self.imgheight = img.GetHeight()
+		self.imgwidth = None
+		self.imgheight = None
 		self._last_caption_width = -1
 		self._caption_width = -1
+	
+	
+	def _load_image(self):
+		try:
+			stream = cStringIO.StringIO(self.image.image)
+			img = wx.ImageFromStream(stream)			
+		except:
+			_LOG.exception('Thumb._load_image %r' % self.image)
+			img = wx.EmptyImage(1, 1)
+		else:
+			self.imgwidth = img.GetWidth()
+			self.imgheight = img.GetHeight()
+
+		return img
 
 
 	def get_bitmap(self, width, height):
+		img = None
+		if self.imgwidth is None:
+			img = self._load_image()
+
 		if width < self.imgwidth or height < self.imgheight:
-			scale = min(float(width) / self._org_img_width, float(height) / self._org_img_height)
-			self.imgwidth = int(self._org_img_width * scale)
-			self.imgheight = int(self._org_img_height * scale)
-			img = self._img.Scale(self.imgwidth, self.imgheight)
+			if img is None:
+				img = self._load_image()
+			scale = min(float(width) / self.imgwidth, float(height) / self.imgheight)
+			self.imgwidth = int(self.imgwidth * scale)
+			self.imgheight = int(self.imgheight * scale)
+			img = img.Scale(self.imgwidth, self.imgheight)
 			self._bitmap = img.ConvertToBitmap()
 
 		elif self._bitmap is None:
-			self._bitmap = self._img.ConvertToBitmap()
+			self._bitmap = img.ConvertToBitmap()
 
 		return self._bitmap
 	
