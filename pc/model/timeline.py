@@ -87,16 +87,20 @@ class Timeline(object):
 		date = item.shot_date
 		if date is None or date == 0:
 			return
-		
+
+		try:
+			date = time.localtime(date)
+		except:
+			return
+
 		if self.level > 0:
 			self.files.append(item)
 		
 		if self.level == 3:
 			return
 		
-		date = time.localtime(date)
 		date_part = date[self.level]
-		
+
 		subdir = self.dirs.get(date_part)
 		if subdir is None:
 			subdir = Timeline(date_part, self.catalog, self, self.level+1)
@@ -111,7 +115,7 @@ class Timeline(object):
 		if self.level != 0:
 			return
 		
-		def add_dir(dir):
+		def add_dir(dir):			
 			[ self.__add_item(item) for item in dir.files ]
 			[ add_dir(subdir) for subdir in dir.subdirs ]
 
