@@ -64,8 +64,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
 		self.Bind(wx.EVT_RIGHT_DOWN, self.__on_mouse_right_down)
 		self.Bind(wx.EVT_IDLE, self.__on_idle)
-		
-		
+
+
 	def clear(self):
 		self._items = []
 		self._selected = -1
@@ -301,10 +301,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	def __on_idle(self, evt):
 		# ładowanie w tle miniaturek
-		if self._last_preloaded < len(self._items) -1 :
+		len_items = len(self._items)
+		if self._last_preloaded <  len_items -1 :
 			self._last_preloaded += 1
 			self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
+			self.GetParent().GetParent().GetParent().SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)	
 			evt.RequestMore(True)
+		else:
+			self.GetParent().GetParent().GetParent().SetStatusText("", 1)	
 		evt.Skip()
 
 

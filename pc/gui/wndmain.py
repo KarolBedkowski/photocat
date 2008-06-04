@@ -93,7 +93,7 @@ class WndMain(wx.Frame):
 		self.SetMenuBar(self._create_main_menu())
 		self._create_toolbar()
 		self._create_layout(appconfig)
-		self.CreateStatusBar(1, wx.ST_SIZEGRIP)
+		self.CreateStatusBar(2, wx.ST_SIZEGRIP)
 
 		position = appconfig.get('main_wnd', 'position')
 		if position is None:
