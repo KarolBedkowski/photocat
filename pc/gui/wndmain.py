@@ -565,12 +565,17 @@ class WndMain(wx.Frame):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
+
 		if isinstance(item, Catalog):
 			return
 		
-		#if isinstance(item, Timeline):
-		#	self._dirs_tree.Toggle(item.tree_node)
-		#	return
+		if isinstance(item, Timeline):
+			if item.level == 0:
+				if not self._dirs_tree.IsExpanded(item.tree_node):
+					if item.dirs_count == 0:
+						self._dirs_tree.update_timeline_node(item)
+				self._dirs_tree.Toggle(item.tree_node)
+			return
 
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:
