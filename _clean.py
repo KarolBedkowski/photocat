@@ -3,24 +3,26 @@
 
 import os
 
-to_delete = []
-
-def __add_file(args, path, files):
-	[ to_delete.append(os.path.join(path, name)) 
-			for name in files 
-			if name.endswith('.pyd') or name.endswith('.pyc') or name.endswith('~') or name.endswith('.pyo')
-				or name.endswith('.log')
-	]
-
-
 if __name__ == '__main__':
-	os.path.walk('.', __add_file, None)
+	for root, dirs, files in os.walk('.', topdown=False):
+		for name in files:
+			if name.endswith('.pyd') or name.endswith('.pyc') or name.endswith('~') or name.endswith('.pyo') \
+					or name.endswith('.log'):
+				filename = os.path.join(root, name) 
+				print 'Delete ', filename
+				os.remove(filename)
+	
+	if os.path.exists('build'):
+		for root, dirs, files in os.walk('build', topdown=False):
+			for name in files:
+				filename = os.path.join(root, name)
+				print 'Delete ', filename
+				os.remove(filename)
+			for name in dirs:
+				filename = os.path.join(root, name)
+				print 'Delete dir ', filename
+				os.rmdir(filename)
 
-
-	for filename in to_delete:
-		print 'Delete ', filename
-		os.unlink(filename)
-		
-
+		os.removedirs('build')
 
 # vim: encoding=utf8:ff=unix:
