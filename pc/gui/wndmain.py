@@ -108,7 +108,8 @@ class WndMain(wx.Frame):
 		self._photo_list.Bind(EVT_THUMB_SELECTION_CHANGE, self._on_thumb_sel_changed)
 		self._photo_list.Bind(EVT_THUMB_DBCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
-		self.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu, self._dirs_tree)
+		self.Bind(wx.EVT_TREE_ITEM_MENU	, self._on_dirtree_context_menu, self._dirs_tree)
+		self._dirs_tree.Bind(wx.EVT_RIGHT_DOWN, self._on_dirtree_right_down, self._dirs_tree)
 		self._dirs_tree.Bind(wx.EVT_KEY_DOWN, self._on_dirtree_key_down)
 		self._photo_list.Bind(wx.EVT_CHAR, self._on_photolist_key_down)
 		self._photo_list.Bind(wx.EVT_RIGHT_UP, self._on_photolist_popupmenu)
@@ -623,11 +624,13 @@ class WndMain(wx.Frame):
 
 
 	def _on_dirtree_context_menu(self, evt):
-		item = self._dirs_tree.selected_item
-		if item is None:
-			return
-
-		self.PopupMenu(self.__create_popup_menu(item))
+		tree_item = evt.GetItem()
+		if tree_item is not None:
+			item = self._dirs_tree.GetItemData(tree_item)
+			if item is not None:
+				data = item.GetData()
+				if data is not None:
+					self.PopupMenu(self.__create_popup_menu(data))
 
 
 	def _on_dirtree_key_down(self, evt):
@@ -642,6 +645,13 @@ class WndMain(wx.Frame):
 				self._on_catalog_del_disk(None)
 			elif isinstance(tree_selected, Directory):
 				self._on_catalog_del_dir(None)
+
+
+	def _on_dirtree_right_down(self, evt):
+		pt = evt.GetPosition()
+		item, flags = self._dirs_tree.HitTest(pt)
+		if item:
+			self._dirs_tree.SelectItem(item)
 
 
 	def _on_photolist_key_down(self, evt):
