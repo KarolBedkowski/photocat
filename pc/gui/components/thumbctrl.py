@@ -43,7 +43,7 @@ from _thumb import Thumb
 
 
 class ThumbCtrl(wx.ScrolledWindow):
-	def __init__(self, parent, wxid=wx.ID_ANY):
+	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None):
 		wx.ScrolledWindow.__init__(self, parent, wxid, style=wx.BORDER_SUNKEN|wx.HSCROLL|wx.VSCROLL)
 		
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
@@ -51,6 +51,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._cols = 0
 		self._thumb_width = 200
 		self._thumb_height = 200
+		
+		self._status_wnd = status_wnd
 		
 		self._caption_font	= wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
@@ -305,10 +307,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if self._last_preloaded <  len_items -1 :
 			self._last_preloaded += 1
 			self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
-			self.GetParent().GetParent().GetParent().SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)	
+			if self._status_wnd is not None:
+				self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)	
 			evt.RequestMore(True)
-		else:
-			self.GetParent().GetParent().GetParent().SetStatusText("", 1)	
+		elif self._status_wnd:
+			self._status_wnd.SetStatusText("", 1)	
 		evt.Skip()
 
 

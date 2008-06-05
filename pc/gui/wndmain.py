@@ -230,7 +230,7 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout_photolist(self, parent):
-		self._photo_list = ThumbCtrl(parent)
+		self._photo_list = ThumbCtrl(parent, status_wnd=self)
 
 		appconfig = AppConfig()
 		self._photo_list.set_thumb_size(
