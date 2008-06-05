@@ -426,6 +426,13 @@ class DlgSearch(wx.Dialog):
 		
 	def _on_btn_icons(self, evt):
 		icons = evt.GetIsDown()
+		
+		if icons and len(self._result) > 1000:
+			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
+			if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(self._result), _('PC')):
+				self._btn_icons.SetToggle(False)
+				return
+		
 		self._thumbctrl.Show(icons)
 		self._result_list.Show(not icons)
 		self.Layout()
