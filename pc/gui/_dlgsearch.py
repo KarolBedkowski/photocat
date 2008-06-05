@@ -36,6 +36,7 @@ _LOG = logging.getLogger(__name__)
 import cStringIO
 
 import wx
+import wx.lib.buttons  as  buttons
 
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
@@ -43,6 +44,8 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
 
 from pc.model		import Catalog, Directory, Disk, FileImage
+
+from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
 from _dlgproperties	import DlgProperties
 
@@ -114,6 +117,7 @@ class DlgSearch(wx.Dialog):
 	def _create_layout_result(self):
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 		grid.Add(self._create_layout_list(), 1, wx.EXPAND|wx.ALL, 5)
+		grid.Add(self._create_layout_thumbctrl(), 1, wx.EXPAND|wx.ALL, 5)
 		grid.Add(self._create_layout_preview(), 0, wx.EXPAND|wx.ALL, 5)
 		return grid
 
@@ -127,6 +131,10 @@ class DlgSearch(wx.Dialog):
 		
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
 		grid.Add(self._btn_properties, 0, wx.EXPAND|wx.ALL, 5)
+		
+		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
+		grid.Add(self._btn_icons, 0, wx.EXPAND|wx.ALL, 5)
+		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
 
 		panel.SetSizer(grid)
 		panel.Show(False)
@@ -162,6 +170,16 @@ class DlgSearch(wx.Dialog):
 		self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self._on_panel_advsearch_changed, cp)
 		
 		return cp
+	
+
+	def _create_layout_thumbctrl(self):
+		self._thumbctrl = ThumbCtrl(self)
+		self._thumbctrl.Hide()
+		
+		self._thumbctrl.Bind(EVT_THUMB_SELECTION_CHANGE, self._on_thumb_sel_changed)
+		self._thumbctrl.Bind(EVT_THUMB_DBCLICK, self._on_thumb_dclick)
+		
+		return self._thumbctrl
 
 
 	def _create_pane_adv_search(self, pane):
@@ -347,8 +365,11 @@ class DlgSearch(wx.Dialog):
 
 	def _on_btn_properties(self, evt):
 		''' Wyświetlenie właściwości pliku '''
-		# FIXME: po edycji powinno się aktualizować drzewo 
-		item = self._get_selected_result_item()
+		# FIXME: po edycji powinno się aktualizować drzewo
+		if self._thumbctrl.IsShown():
+			item = self._thumbctrl.selected_item
+		else:
+			item = self._get_selected_result_item()
 		if item is not None:
 			dlg = DlgProperties(self, item)
 			dlg.ShowModal()
@@ -402,8 +423,32 @@ class DlgSearch(wx.Dialog):
 		''' callback na zwinięcie/rozwinięcie panelu '''
 		# trzeba przebudować layout po zwinięciu/rozwinięciu panelu
 		self.Layout()
-	
 		
+	def _on_btn_icons(self, evt):
+		icons = evt.GetIsDown()
+		self._thumbctrl.Show(icons)
+		self._result_list.Show(not icons)
+		self.Layout()
+
+		if icons:
+			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
+			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
+		else:
+			self._thumbctrl.clear()
+
+
+	def _on_thumb_sel_changed(self, evt):
+		item = self._thumbctrl.selected_item
+		self._btn_properties.Enable(item is not None)
+
+	
+	def _on_thumb_dclick(self, evt):
+		item = self._thumbctrl.selected_item
+		if item is not None:
+			if isinstance(item, FileImage):
+				self._parent.show_item(item.parent)
+	
+	
 	##########################################################################
 
 
