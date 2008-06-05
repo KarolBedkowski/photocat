@@ -378,12 +378,14 @@ class DlgSearch(wx.Dialog):
 		else:
 			img = wx.EmptyImage(1, 1)
 			
+		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._bmp_preview.SetBitmap(img.ConvertToBitmap())
+		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 	
 
 	def _on_list_item_deselected(self, evt):
-		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''
+		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._btn_properties.Enable(False)
 
