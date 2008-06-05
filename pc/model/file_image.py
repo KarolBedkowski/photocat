@@ -288,7 +288,8 @@ class FileImage(CatalogFile):
 		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
 			if exif.has_key(exif_key):
 				try:
-					return time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
+					value = exif[exif_key]
+					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
 				except:
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
 		return None
