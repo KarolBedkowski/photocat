@@ -139,6 +139,9 @@ class DataProvider:
 		new_file		= None
 		tmp_filename	= self.filename + '.tmp'
 		old_filename	= self.filename + '.old'
+		
+		old_objects_count = self.objects_count
+		self.objects_count = 0
 
 		try:
 			new_file = file(tmp_filename, 'w+b')
@@ -186,6 +189,7 @@ class DataProvider:
 			self._file = None
 
 		except IOError, err:
+			self.objects_count = old_objects_count
 			_LOG.exception('DataProvider.rebuild error')
 			if os.path.exists(tmp_filename):
 				os.unlink(tmp_filename)
@@ -273,9 +277,6 @@ class DataProvider:
 		dest_file.write(self._DATA_FILE_HEADER_ID)
 
 		# wersji
-		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
-		
-		# ilosc obiektow
 		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
 
 		# kolejny offset
