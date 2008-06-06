@@ -94,6 +94,7 @@ class WndMain(wx.Frame):
 		self._create_toolbar()
 		self._create_layout(appconfig)
 		self.CreateStatusBar(2, wx.ST_SIZEGRIP)
+		self.SetStatusWidths([-1, 50])
 
 		position = appconfig.get('main_wnd', 'position')
 		if position is None:
