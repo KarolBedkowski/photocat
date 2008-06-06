@@ -146,7 +146,7 @@ class DataProvider:
 
 			# kopiowanie danych
 			def copy_data(offset, new_offset):
-				data = self.get_data((offset, size))
+				data = self.get_data(offset)
 				next_offset = self._write_block(new_file, new_offset, len(data), data)
 				return next_offset
 
