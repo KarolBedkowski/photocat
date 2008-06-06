@@ -78,6 +78,8 @@ class DlgSearch(wx.Dialog):
 		main_grid.Add(self._create_layout_result(),	1, wx.EXPAND|wx.ALL, 5)
 
 		self._statusbar = wx.StatusBar(self, -1)
+		self._statusbar.SetFieldsCount(2)
+		self._statusbar.SetStatusWidths([-1, 50])
 		main_grid.Add(self._statusbar, 0, wx.EXPAND)
 
 		self.SetSizerAndFit(main_grid)
@@ -93,6 +95,10 @@ class DlgSearch(wx.Dialog):
 			self.Move(position)
 		
 		self.Bind(wx.EVT_CLOSE, self._on_close)
+
+
+	def SetStatusText(self, text, idx=0):
+		self._statusbar.SetStatusText(text, idx)
 
 
 	def _create_layout_fields(self):
@@ -173,7 +179,7 @@ class DlgSearch(wx.Dialog):
 	
 
 	def _create_layout_thumbctrl(self):
-		self._thumbctrl = ThumbCtrl(self)
+		self._thumbctrl = ThumbCtrl(self, status_wnd=self)
 		self._thumbctrl.Hide()
 		
 		self._thumbctrl.Bind(EVT_THUMB_SELECTION_CHANGE, self._on_thumb_sel_changed)
