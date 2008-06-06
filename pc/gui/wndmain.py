@@ -653,6 +653,7 @@ class WndMain(wx.Frame):
 		item, flags = self._dirs_tree.HitTest(pt)
 		if item:
 			self._dirs_tree.SelectItem(item)
+		evt.Skip()
 
 
 	def _on_photolist_key_down(self, evt):
