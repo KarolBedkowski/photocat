@@ -144,6 +144,11 @@ class FileImage(CatalogFile):
 
 		return self.shot_date or self.date	
 
+	
+	@property
+	def data_objects_count(self):
+		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
+
 
 	##########################################################################
 

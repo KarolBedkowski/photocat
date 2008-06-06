@@ -113,6 +113,8 @@ class Storage:
 
 			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
+			
+			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d' % (filename, catalog.object_in_files))
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')

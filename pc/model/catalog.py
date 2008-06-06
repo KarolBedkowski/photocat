@@ -69,6 +69,26 @@ class Catalog(TreeItem):
 	@property
 	def childs_to_store(self):
 		return self.disks
+	
+	
+	@property
+	def object_in_files(self):
+		def count_objects_in_dir(dir):
+			return sum((image.data_objects_count for image in dir.files)) + \
+					sum(( count_objects_in_dir(subdir) for subdir in dir.subdirs ))
+			
+		return sum(( count_objects_in_dir(disk) for disk in self.disks ))
+	
+
+	@property
+	def dirty_objects_count(self):
+		objects_count = self.data_provider.objects_count
+		if objects_count == 0:
+			return
+		object_in_files = self.object_in_files		
+		dirty = objects_count - object_in_files
+		dirtyp = 100*dirty/objects_count
+		return dirty, dirtyp
 
 
 	##########################################################################
