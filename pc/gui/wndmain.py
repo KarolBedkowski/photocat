@@ -479,8 +479,10 @@ class WndMain(wx.Frame):
 			files_count		+= disk_files_count + disk_files_count2
 			subdirs_count	+= disk_subdirs_count + disk_subdirs_count2
 
-		data = dict(disks=len(catalog.disks), files=files_count, dirs=subdirs_count)
-		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d') % data
+		dirty, dirtyp = catalog.dirty_objects_count
+
+		data = dict(disks=len(catalog.disks), files=files_count, dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
+		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty entries: %(dirty)d (%(dirtyp)d%%)') % data
 		dialogs.message_box_info(self, info, 'PC')
 
 
