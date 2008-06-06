@@ -36,6 +36,7 @@ _LOG = logging.getLogger(__name__)
 class DataProvider:
 	_DATA_FILE_HEADER_SIZE	= 52
 	_DATA_FILE_HEADER_ID	= 'PhotoCatalog_DataFile'
+	_DATA_FILE_VERSION_MIN	= 2
 	_DATA_FILE_VERSION_MAX	= 2
 	_DATA_BLOCK_HEADER_SIZE	= calcsize('LLL')
 	_DATA_BLOCK_HEADER_PREFIX = 0x01010101
@@ -240,8 +241,11 @@ class DataProvider:
 
 		# sprawdzenie wersji
 		version = unpack("I", dest_file.read(calcsize("I")))[0]
-		if version > self._DATA_FILE_VERSION_MAX:
-			raise IOError('Invalid file version: %d (supported %d)' % (version, self._DATA_FILE_VERSION_MAX))
+		if version > self._DATA_FILE_VERSION_MAX or version < self._DATA_FILE_VERSION_MIN:
+			raise IOError(
+				'Invalid file version: %d (supported %d-%d)' % \
+					(version, self._DATA_FILE_VERSION_MIN, self._DATA_FILE_VERSION_MAX)
+			)
 
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
