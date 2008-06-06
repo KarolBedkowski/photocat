@@ -486,7 +486,6 @@ class WndMain(wx.Frame):
 		dialogs.message_box_info(self, info, 'PC')
 
 
-
 	def _on_catalog_edit_multi(self, evt):
 		folder = self._dirs_tree.selected_item
 		if folder is None or isinstance(folder, Catalog):
@@ -843,7 +842,7 @@ class WndMain(wx.Frame):
 			self.__save_catalog(catalog)
 			dialogs.message_box_info(self,
 					_('Rebuild catalog finished\nSaved space: %sB') %
-							format_size(saved_space, True, reduce_at=1024*1024, separate=True),
+							format_size(saved_space, True, reduce_at=1024, separate=True, format="%0.2f").upper(),
 					'PC')
 		except Exception, err:
 			_LOG.exception('rebuild error')

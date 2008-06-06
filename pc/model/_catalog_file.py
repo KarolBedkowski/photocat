@@ -78,6 +78,8 @@ class CatalogFile(StorageObject):
 		result.append((199, '', ''))
 		if self.date is not None:
 			result.append((200, _('File date'), time.strftime('%c', time.localtime(self.date))))
+		if self.size is not None:
+			result.append((201, _('File size'), format_size(self.size, True)))
 		return result
 	
 	info = property(_get_info)

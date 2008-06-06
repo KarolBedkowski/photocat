@@ -33,7 +33,6 @@ import wx
 
 from kpylibs.guitools	import create_button
 from kpylibs.eventgenerator import EventGenerator
-from kpylibs.formaters	import format_size
 
 _ = wx.GetTranslation
 
