@@ -671,13 +671,15 @@ class WndMain(wx.Frame):
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
 				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
+				catalog = None
 			else:
-				dirty, dirtyp = catalog.dirty_objects_count
-				_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
-				if dirtyp > 10:
-					if dialogs.message_box_warning_yesno(self,
-							_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, _('PC')):
-						self._rebuild_catalog(catalog)
+				if catalog is not None:
+					dirty, dirtyp = catalog.dirty_objects_count
+					_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
+					if dirtyp > 10:
+						if dialogs.message_box_warning_yesno(self,
+								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, _('PC')):
+							self._rebuild_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 
