@@ -29,6 +29,7 @@ import os
 import string
 import time
 import re
+import types
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -63,7 +64,13 @@ class FileImage(CatalogFile):
 		self.shot_date	= kwargs.get('shot_date')
 
 		self._exif_data = None
-
+		
+		# format pliku wer 1
+		if self.thumb is not None and type(self.thumb) == types.TupleType:
+			self.thumb = self.thumb[0]
+		if self.exif is not None and type(self.exif) == types.TupleType:
+			self.exif = self.exif[0]
+		
 		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
 
 

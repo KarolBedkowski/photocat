@@ -38,6 +38,9 @@ from storage_errors	import LoadFileError, InvalidFileError
 
 class Storage:
 	''' Klasa statyczna do zapisywania i wczytywania katalogów '''
+	
+	SUPPORTED_FILE_VERSION = 2
+	
 	def __init__(self):
 		raise Exception('Static class')
 
@@ -56,7 +59,8 @@ class Storage:
 			input_file = gzip.open(filename)
 
 			line = input_file.readline()
-			if not Storage.__check_header(line):
+			fileok, version = Storage.__check_header(line)
+			if not fileok:
 				raise InvalidFileError()
 
 			while True:
@@ -107,7 +111,7 @@ class Storage:
 					raise InvalidFileError()
 
 			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
-			catalog.dirty = False
+			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
@@ -163,16 +167,16 @@ class Storage:
 		try:
 			header, version, date = line.split('|')
 			version = int(version)
-			return header == 'PhotoCatalog_IndexFile' and version <= 1
+			return header == 'PhotoCatalog_IndexFile' and version <= Storage.SUPPORTED_FILE_VERSION, version
 		except:
 			_LOG.exception('Storage.__check_header line = "%s"' % line)
-		return False
+		return False, None
 
 
 	@staticmethod
 	def __get_header():
 		header	= 'PhotoCatalog_IndexFile'
-		version	= 1
+		version	= Storage.SUPPORTED_FILE_VERSION
 		date	= time.asctime()
 		return "|".join((header, str(version), date))
 

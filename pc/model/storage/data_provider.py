@@ -53,13 +53,12 @@ class DataProvider:
 		self.close()
 
 
-	def get_data(self, offset_size, src_file=None):
+	def get_data(self, offset, src_file=None):
 		''' DataProvider.get_data(offset_size) -> str -- pobranie danych
 			@param offset_size (offset, size) danych do pobrania
 			@return dane
 		'''
-		offset, size = offset_size
-		_LOG.debug('DataProvider.get_data(%d, %d)' % (offset, size))
+		_LOG.debug('DataProvider.get_data(%d)' % offset)
 		src_file = src_file or self._file
 		if src_file is None:
 			_LOG.warn('DataProvider.get: file closed')
@@ -71,13 +70,12 @@ class DataProvider:
 		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(self._DATA_BLOCK_HEADER_SIZE))
 		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
 		offset_dont_match = h_offset != offset
-		size_dont_match = h_length != size
-		if prefix_dont_match or offset_dont_match or size_dont_match:
-			raise StandardError('Invalid block prefix=%r  offset=%r  size=%r' %
-					(prefix_dont_match, offset_dont_match, size_dont_match)
+		if prefix_dont_match or offset_dont_match:
+			raise StandardError('Invalid block prefix=%r  offset=%r' %
+					(prefix_dont_match, offset_dont_match)
 			)
 
-		return src_file.read(size)
+		return src_file.read(h_length)
 
 
 	def append(self, data):
@@ -91,7 +89,7 @@ class DataProvider:
 
 		self.next_offset = self._write_block(self._file, offset, length, data)
 
-		return (offset, length)
+		return offset
 
 
 	def open(self, force_new=False):
@@ -147,11 +145,9 @@ class DataProvider:
 			files_to_update = []
 
 			# kopiowanie danych
-			def copy_data(offset, size, new_offset):
+			def copy_data(offset, new_offset):
 				data = self.get_data((offset, size))
-				#off = new_offset
-				next_offset = self._write_block(new_file, new_offset, size, data)
-				#sdata = self.get_data((off, size), new_file)
+				next_offset = self._write_block(new_file, new_offset, len(data), data)
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
@@ -161,14 +157,14 @@ class DataProvider:
 					image_exif	= None
 
 					if image.thumb is not None:
-						offset, size = image.thumb
-						image_thumb = (next_offset, size)
-						next_offset = copy_data(offset, size, next_offset)
+						offset = image.thumb
+						image_thumb = next_offset
+						next_offset = copy_data(offset, next_offset)
 
 					if image.exif is not None:
-						offset, size = image.exif
-						image_exif = (next_offset, size)
-						next_offset = copy_data(offset, size, next_offset)
+						offset = image.exif
+						image_exif = next_offset
+						next_offset = copy_data(offset, next_offset)
 
 					files_to_update.append((image, image_thumb, image_exif))
 
