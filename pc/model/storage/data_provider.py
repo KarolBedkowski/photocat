@@ -45,6 +45,7 @@ class DataProvider:
 	def __init__(self, filename):
 		self.next_offset	= 0
 		self.filename		= os.path.splitext(filename)[0] + ".data"
+		self.objects_count	= 0
 
 		self._file					= None
 		self._last_offset_file_pos	= len(self._DATA_FILE_HEADER_ID) + calcsize("I")
@@ -97,7 +98,7 @@ class DataProvider:
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
-		_LOG.debug('DataProvider.open(%s)' % self.filename)
+		_LOG.debug('DataProvider.open(%s)' % self.filename)		
 
 		self.close()
 
@@ -250,6 +251,11 @@ class DataProvider:
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
 		_LOG.debug('DataProvider._check_file: next_offset=%d' % self.next_offset)
+		
+		# liczba plikow
+		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]	
+		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
+
 		return next_offset
 
 
@@ -268,6 +274,9 @@ class DataProvider:
 
 		# wersji
 		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
+		
+		# ilosc obiektow
+		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
 
 		# kolejny offset
 		next_offset = self._DATA_FILE_HEADER_SIZE
@@ -285,7 +294,7 @@ class DataProvider:
 		'''
 		current_offset = dest_file.tell()
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("L", next_offset))
+		dest_file.write(pack("LL", next_offset, self.objects_count))
 		dest_file.seek(current_offset)
 
 
@@ -305,6 +314,9 @@ class DataProvider:
 		dest_file.write(data)
 		# kolejny offset
 		next_offset = self._next_offset(dest_file.tell())
+		
+		self.objects_count += 1
+		
 		self._write_next_offset(dest_file, next_offset)
 		dest_file.flush()#
 		return next_offset
