@@ -170,6 +170,15 @@ class FileImage(CatalogFile):
 			return True
 		return False
 
+	
+	def fill_shot_date(self):
+		if self.shot_date is None and self.exif is not None:
+			exif = self.exif_data
+			if exif is not None:
+				shot_date = self.__get_exif_shot_date_value(exif)
+				if shot_date is not None:
+					self.shot_date = time.mktime(shot_date)
+	
 
 	##########################################################################
 
@@ -279,7 +288,8 @@ class FileImage(CatalogFile):
 		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
 			if exif.has_key(exif_key):
 				try:
-					return time.strptime(exif[exif_key], '%Y:%m:%d %H:%M:%S')
+					value = exif[exif_key]
+					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
 				except:
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
 		return None

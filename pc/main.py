@@ -105,7 +105,7 @@ class App(wx.App):
 
 		argv = sys.argv
 		if len(argv) > 1:
-			wnd.open_album(argv[-1])
+			wnd._open_file(argv[-1])
 
 		return True
 

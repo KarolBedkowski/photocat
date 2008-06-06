@@ -50,8 +50,8 @@ from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
 
 from components.dirstree	import DirsTree
-from components.imagelistctrl	import MyThumbnailCtrl, EVT_THUMBNAILS_SEL_CHANGED, EVT_THUMBNAILS_DCLICK
 from components.infopanel	import InfoPanel
+from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
 from _dlgabout				import DlgAbout
 from _dlgadddisk			import DlgAddDisk
@@ -93,7 +93,8 @@ class WndMain(wx.Frame):
 		self.SetMenuBar(self._create_main_menu())
 		self._create_toolbar()
 		self._create_layout(appconfig)
-		self.CreateStatusBar(1, wx.ST_SIZEGRIP)
+		self.CreateStatusBar(2, wx.ST_SIZEGRIP)
+		self.SetStatusWidths([-1, 50])
 
 		position = appconfig.get('main_wnd', 'position')
 		if position is None:
@@ -105,12 +106,14 @@ class WndMain(wx.Frame):
 		self.Bind(wx.EVT_SIZE, self._on_size)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_dirtree_item_select, self._dirs_tree)
 		self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self._on_dirtree_item_activate, self._dirs_tree)
-		self.Bind(EVT_THUMBNAILS_SEL_CHANGED, self._on_thumb_sel_changed)
-		self.Bind(EVT_THUMBNAILS_DCLICK, self._on_thumb_dclick)
+		self._photo_list.Bind(EVT_THUMB_SELECTION_CHANGE, self._on_thumb_sel_changed)
+		self._photo_list.Bind(EVT_THUMB_DBCLICK, self._on_thumb_dclick)
 		self.Bind(wx.EVT_MENU_RANGE, self._on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
-		self.Bind(wx.EVT_CONTEXT_MENU, self._on_dirtree_context_menu, self._dirs_tree)
+		self.Bind(wx.EVT_TREE_ITEM_MENU	, self._on_dirtree_context_menu, self._dirs_tree)
+		self._dirs_tree.Bind(wx.EVT_RIGHT_DOWN, self._on_dirtree_right_down, self._dirs_tree)
 		self._dirs_tree.Bind(wx.EVT_KEY_DOWN, self._on_dirtree_key_down)
-		self._photo_list.bind_on_char(self._on_photolist_key_down)
+		self._photo_list.Bind(wx.EVT_CHAR, self._on_photolist_key_down)
+		self._photo_list.Bind(wx.EVT_RIGHT_UP, self._on_photolist_popupmenu)
 
 		self.__update_last_open_files()
 
@@ -189,6 +192,7 @@ class WndMain(wx.Frame):
 	def _create_main_menu_debug(self):
 		menu = create_menu(self, (
 			('Shell', 'Ctrl+L', '', self._on_debug_shell, None),
+			('Fill shot date', None, '', self._on_debug_fill_shot_date, None),
 		))
 		return menu
 
@@ -227,12 +231,10 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout_photolist(self, parent):
-		self._photo_list = MyThumbnailCtrl(parent)
-		self._photo_list.ShowFileNames()
-		self._photo_list.SetPopupMenu(self.__create_popup_menu_image())
+		self._photo_list = ThumbCtrl(parent, status_wnd=self)
 
 		appconfig = AppConfig()
-		self._photo_list.SetThumbSize(
+		self._photo_list.set_thumb_size(
 				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
 		)
 		return self._photo_list
@@ -370,7 +372,7 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 		appconfig = AppConfig()
 		if res == wx.ID_OK:
-			self._photo_list.SetThumbSize(
+			self._photo_list.set_thumb_size(
 					appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
 			)
 
@@ -384,6 +386,12 @@ class WndMain(wx.Frame):
 
 	def _on_debug_shell(self, evt):
 		WndShell(self, locals()).Show()
+		
+		
+	def _on_debug_fill_shot_date(self, evt):
+		catalog = self.__get_selected_catalog()
+		if catalog is not None:
+			catalog.fill_shot_date()
 
 
 	def _on_file_history(self, evt):
@@ -460,7 +468,7 @@ class WndMain(wx.Frame):
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
 			for image in selected_items:
 				folder.remove_file(image)
-			self._photo_list.ShowDir(folder)
+			self._photo_list.show_dir(folder)
 			self._info_panel.show_folder(folder)
 			self._dirs_tree.update_catalog_node(folder.catalog)
 
@@ -524,18 +532,18 @@ class WndMain(wx.Frame):
 			# wyświtelanie timeline
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
-				self._photo_list.ShowDir([])
+				self._photo_list.show_dir([])
 				return
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
-					self._photo_list.ShowDir([])
+					self._photo_list.show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
 			item = item.files
 			show_info = False
 		elif not isinstance(item, Directory):
-			self._photo_list.ShowDir([])
+			self._photo_list.show_dir([])
 			return
 
 		self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -543,7 +551,7 @@ class WndMain(wx.Frame):
 		if item is not None:
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				self._photo_list.ShowDir(item)
+				self._photo_list.show_dir(item)
 				if show_info:
 					self._info_panel.show_folder(item)
 			finally:
@@ -559,12 +567,17 @@ class WndMain(wx.Frame):
 		item = self._dirs_tree.selected_item
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
+
 		if isinstance(item, Catalog):
 			return
 		
-		#if isinstance(item, Timeline):
-		#	self._dirs_tree.Toggle(item.tree_node)
-		#	return
+		if isinstance(item, Timeline):
+			if item.level == 0:
+				if not self._dirs_tree.IsExpanded(item.tree_node):
+					if item.dirs_count == 0:
+						self._dirs_tree.update_timeline_node(item)
+				self._dirs_tree.Toggle(item.tree_node)
+			return
 
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -612,11 +625,13 @@ class WndMain(wx.Frame):
 
 
 	def _on_dirtree_context_menu(self, evt):
-		item = self._dirs_tree.selected_item
-		if item is None:
-			return
-
-		self.PopupMenu(self.__create_popup_menu(item))
+		tree_item = evt.GetItem()
+		if tree_item is not None:
+			item = self._dirs_tree.GetItemData(tree_item)
+			if item is not None:
+				data = item.GetData()
+				if data is not None:
+					self.PopupMenu(self.__create_popup_menu(data))
 
 
 	def _on_dirtree_key_down(self, evt):
@@ -633,9 +648,22 @@ class WndMain(wx.Frame):
 				self._on_catalog_del_dir(None)
 
 
+	def _on_dirtree_right_down(self, evt):
+		pt = evt.GetPosition()
+		item, flags = self._dirs_tree.HitTest(pt)
+		if item:
+			self._dirs_tree.SelectItem(item)
+
+
 	def _on_photolist_key_down(self, evt):
 		if evt.m_keyCode == wx.WXK_DELETE:
 			self._on_catalog_del_image(None)
+		evt.Skip()
+			
+			
+	def _on_photolist_popupmenu(self, evt):
+		if self._photo_list.selected_item is not None:
+			self._photo_list.PopupMenu(self.__create_popup_menu_image(), evt.GetPosition())
 
 	################################################################################
 

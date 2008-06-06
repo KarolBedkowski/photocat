@@ -10,13 +10,14 @@
 ./gui/_dlgsearch.py
 ./gui/_dlgsettings.py
 ./gui/components/__init__.py
+./gui/components/_thumb.py
 ./gui/components/dirstree.py
-./gui/components/imagelistctrl.py
 ./gui/components/infopanel.py
+./gui/components/thumbctrl.py
 ./gui/wndmain.py
-./lib/ThumbnailCtrl.py
 ./lib/__init__.py
 ./main.py
+./mki18n.py
 ./model/__init__.py
 ./model/_catalog_file.py
 ./model/catalog.py
@@ -30,3 +31,4 @@
 ./model/storage/storage_errors.py
 ./model/storage/storage_object.py
 ./model/tag.py
+./model/timeline.py
