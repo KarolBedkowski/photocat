@@ -349,21 +349,7 @@ class WndMain(wx.Frame):
 		if not dialogs.message_box_question_yesno(self, _('Rebuild catalog %s?') % catalog.caption, 'PC'):
 			return
 
-		try:
-			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = catalog.data_provider.rebuild(catalog)
-			self.__save_catalog(catalog)
-			dialogs.message_box_info(self,
-					_('Rebuild catalog finished\nSaved space: %sB') %
-							format_size(saved_space, True, reduce_at=1024*1024, separate=True),
-					'PC')
-		except Exception, err:
-			_LOG.exception('rebuild error')
-			dialogs.message_box_error(self,
-					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
-					'PC')
-		finally:
-			self.SetCursor(wx.STANDARD_CURSOR)
+		self._rebuild_catalog(catalog)
 
 
 	def _on_file_settings(self, evt):
@@ -685,8 +671,17 @@ class WndMain(wx.Frame):
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
 				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
+			else:
+				dirty, dirtyp = catalog.dirty_objects_count
+				_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
+				if dirtyp > 10:
+					if dialogs.message_box_warning_yesno(self,
+							_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, _('PC')):
+						self._rebuild_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
+
+
 
 
 	def __update_last_open_files(self, filename=None):
@@ -834,6 +829,24 @@ class WndMain(wx.Frame):
 				if tag_item.tree_node is not None
 			]
 			self._dirs_tree.update_node_tags(tags_provider)
+			
+			
+	def _rebuild_catalog(self, catalog):
+		try:
+			self.SetCursor(wx.HOURGLASS_CURSOR)
+			saved_space = catalog.data_provider.rebuild(catalog)
+			self.__save_catalog(catalog)
+			dialogs.message_box_info(self,
+					_('Rebuild catalog finished\nSaved space: %sB') %
+							format_size(saved_space, True, reduce_at=1024*1024, separate=True),
+					'PC')
+		except Exception, err:
+			_LOG.exception('rebuild error')
+			dialogs.message_box_error(self,
+					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
+					'PC')
+		finally:
+			self.SetCursor(wx.STANDARD_CURSOR)
 
 
 # vim: encoding=utf8:

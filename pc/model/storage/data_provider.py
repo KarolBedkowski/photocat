@@ -36,6 +36,7 @@ _LOG = logging.getLogger(__name__)
 class DataProvider:
 	_DATA_FILE_HEADER_SIZE	= 52
 	_DATA_FILE_HEADER_ID	= 'PhotoCatalog_DataFile'
+	_DATA_FILE_VERSION_MIN	= 2
 	_DATA_FILE_VERSION_MAX	= 2
 	_DATA_BLOCK_HEADER_SIZE	= calcsize('LLL')
 	_DATA_BLOCK_HEADER_PREFIX = 0x01010101
@@ -44,6 +45,7 @@ class DataProvider:
 	def __init__(self, filename):
 		self.next_offset	= 0
 		self.filename		= os.path.splitext(filename)[0] + ".data"
+		self.objects_count	= 0
 
 		self._file					= None
 		self._last_offset_file_pos	= len(self._DATA_FILE_HEADER_ID) + calcsize("I")
@@ -53,13 +55,12 @@ class DataProvider:
 		self.close()
 
 
-	def get_data(self, offset_size, src_file=None):
+	def get_data(self, offset, src_file=None):
 		''' DataProvider.get_data(offset_size) -> str -- pobranie danych
 			@param offset_size (offset, size) danych do pobrania
 			@return dane
 		'''
-		offset, size = offset_size
-		_LOG.debug('DataProvider.get_data(%d, %d)' % (offset, size))
+		_LOG.debug('DataProvider.get_data(%d)' % offset)
 		src_file = src_file or self._file
 		if src_file is None:
 			_LOG.warn('DataProvider.get: file closed')
@@ -71,13 +72,12 @@ class DataProvider:
 		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(self._DATA_BLOCK_HEADER_SIZE))
 		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
 		offset_dont_match = h_offset != offset
-		size_dont_match = h_length != size
-		if prefix_dont_match or offset_dont_match or size_dont_match:
-			raise StandardError('Invalid block prefix=%r  offset=%r  size=%r' %
-					(prefix_dont_match, offset_dont_match, size_dont_match)
+		if prefix_dont_match or offset_dont_match:
+			raise StandardError('Invalid block prefix=%r  offset=%r' %
+					(prefix_dont_match, offset_dont_match)
 			)
 
-		return src_file.read(size)
+		return src_file.read(h_length)
 
 
 	def append(self, data):
@@ -91,14 +91,14 @@ class DataProvider:
 
 		self.next_offset = self._write_block(self._file, offset, length, data)
 
-		return (offset, length)
+		return offset
 
 
 	def open(self, force_new=False):
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
-		_LOG.debug('DataProvider.open(%s)' % self.filename)
+		_LOG.debug('DataProvider.open(%s)' % self.filename)		
 
 		self.close()
 
@@ -147,11 +147,9 @@ class DataProvider:
 			files_to_update = []
 
 			# kopiowanie danych
-			def copy_data(offset, size, new_offset):
-				data = self.get_data((offset, size))
-				#off = new_offset
-				next_offset = self._write_block(new_file, new_offset, size, data)
-				#sdata = self.get_data((off, size), new_file)
+			def copy_data(offset, new_offset):
+				data = self.get_data(offset)
+				next_offset = self._write_block(new_file, new_offset, len(data), data)
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
@@ -161,14 +159,14 @@ class DataProvider:
 					image_exif	= None
 
 					if image.thumb is not None:
-						offset, size = image.thumb
-						image_thumb = (next_offset, size)
-						next_offset = copy_data(offset, size, next_offset)
+						offset = image.thumb
+						image_thumb = next_offset
+						next_offset = copy_data(offset, next_offset)
 
 					if image.exif is not None:
-						offset, size = image.exif
-						image_exif = (next_offset, size)
-						next_offset = copy_data(offset, size, next_offset)
+						offset = image.exif
+						image_exif = next_offset
+						next_offset = copy_data(offset, next_offset)
 
 					files_to_update.append((image, image_thumb, image_exif))
 
@@ -244,12 +242,20 @@ class DataProvider:
 
 		# sprawdzenie wersji
 		version = unpack("I", dest_file.read(calcsize("I")))[0]
-		if version > self._DATA_FILE_VERSION_MAX:
-			raise IOError('Invalid file version: %d (supported %d)' % (version, self._DATA_FILE_VERSION_MAX))
+		if version > self._DATA_FILE_VERSION_MAX or version < self._DATA_FILE_VERSION_MIN:
+			raise IOError(
+				'Invalid file version: %d (supported %d-%d)' % \
+					(version, self._DATA_FILE_VERSION_MIN, self._DATA_FILE_VERSION_MAX)
+			)
 
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
 		_LOG.debug('DataProvider._check_file: next_offset=%d' % self.next_offset)
+		
+		# liczba plikow
+		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]	
+		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
+
 		return next_offset
 
 
@@ -268,6 +274,9 @@ class DataProvider:
 
 		# wersji
 		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
+		
+		# ilosc obiektow
+		dest_file.write(pack("I", self._DATA_FILE_VERSION_MAX))
 
 		# kolejny offset
 		next_offset = self._DATA_FILE_HEADER_SIZE
@@ -285,7 +294,7 @@ class DataProvider:
 		'''
 		current_offset = dest_file.tell()
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("L", next_offset))
+		dest_file.write(pack("LL", next_offset, self.objects_count))
 		dest_file.seek(current_offset)
 
 
@@ -305,6 +314,9 @@ class DataProvider:
 		dest_file.write(data)
 		# kolejny offset
 		next_offset = self._next_offset(dest_file.tell())
+		
+		self.objects_count += 1
+		
 		self._write_next_offset(dest_file, next_offset)
 		dest_file.flush()#
 		return next_offset
