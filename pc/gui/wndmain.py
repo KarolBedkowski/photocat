@@ -626,7 +626,7 @@ class WndMain(wx.Frame):
 
 	def _on_dirtree_context_menu(self, evt):
 		tree_item = evt.GetItem()
-		if tree_item is not None:
+		if tree_item is not None and tree_item.IsOk():			
 			item = self._dirs_tree.GetItemData(tree_item)
 			if item is not None:
 				data = item.GetData()
