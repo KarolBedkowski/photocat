@@ -303,16 +303,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	def __on_idle(self, evt):
 		# ładowanie w tle miniaturek
-		len_items = len(self._items)
-		if self._last_preloaded <  len_items -1 :
-			self._last_preloaded += 1
-			self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
-			if self._status_wnd is not None:
-				self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)	
-			evt.RequestMore(True)
-		elif self._status_wnd:
-			self._status_wnd.SetStatusText("", 1)	
+		if self.IsShownOnScreen():
+			len_items = len(self._items)
+			if self._last_preloaded <  len_items -1 :
+				self._last_preloaded += 1
+				self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
+				if self._status_wnd is not None:
+					self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)
+				evt.RequestMore(True)
+			elif self._status_wnd:
+				self._status_wnd.SetStatusText("", 1)	
 		evt.Skip()
-
+		
+		
+	
 
 # vim: encoding=utf8: ff=unix:
