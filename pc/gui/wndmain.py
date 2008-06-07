@@ -772,9 +772,15 @@ class WndMain(wx.Frame):
 		data.update(dict(appconfig.get_items('settings') or []))
 		dlg = DlgAddDisk(self, data, update=update, catalog=catalog)
 		if dlg.ShowModal() == wx.ID_OK:
-			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
-				
+			
 			title = update and _("Updating disk") or _("Adding disk")
+			
+			dlg_progress = wx.ProgressDialog(title, _("Counting files..."), parent=self, maximum=1,
+					style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
+
+			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
+
+			dlg_progress.Destroy()
 
 			if allfiles == 1:
 				dialogs.message_box_error(self, _('No files found!'), title)
@@ -782,6 +788,7 @@ class WndMain(wx.Frame):
 
 			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=self, maximum=allfiles,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+
 
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + os.path.getsize(msg)
