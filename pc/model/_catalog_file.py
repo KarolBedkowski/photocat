@@ -35,8 +35,6 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs.formaters	import format_size
-
 from storage import StorageObject
 
 _ = wx.GetTranslation
@@ -78,8 +76,6 @@ class CatalogFile(StorageObject):
 		result.append((199, '', ''))
 		if self.date is not None:
 			result.append((200, _('File date'), time.strftime('%c', time.localtime(self.date))))
-		if self.size is not None:
-			result.append((201, _('File size'), format_size(self.size, True)))
 		return result
 	
 	info = property(_get_info)

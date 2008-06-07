@@ -39,6 +39,8 @@ import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin
 PILImage._initialized = 3
 
+from kpylibs.formaters		import format_human_size
+
 from pc.lib					import EXIF
 
 from _catalog_file			import CatalogFile
@@ -122,6 +124,9 @@ class FileImage(CatalogFile):
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
+				
+		if self.size is not None:
+			result.append((201, _('File size'), format_human_size(self.size)))
 
 		return result
 
