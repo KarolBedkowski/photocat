@@ -33,6 +33,7 @@ import sys
 import logging
 _LOG = logging.getLogger(__name__)
 
+import time
 import cStringIO
 
 import wx
@@ -42,6 +43,7 @@ from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
+from kpylibs.formaters		import format_human_size
 
 from pc.model		import Catalog, Directory, Disk, FileImage
 
@@ -159,6 +161,8 @@ class DlgSearch(wx.Dialog):
 		listctrl.InsertColumn(1, _('Catalog'))
 		listctrl.InsertColumn(2, _('Disk'))
 		listctrl.InsertColumn(3, _('Path'))
+		listctrl.InsertColumn(4, _('File date'))
+		listctrl.InsertColumn(5, _('File size'))
 		
 		listctrl.SetMinSize((200, 200))
 
@@ -292,6 +296,8 @@ class DlgSearch(wx.Dialog):
 
 	def _on_btn_find(self, evt):
 		what = self._tc_text.GetValue().strip()
+		if len(what) == 0:
+			return
 		
 		self._panel_preview.Show(False)
 		self._btn_properties.Enable(False)
@@ -342,6 +348,8 @@ class DlgSearch(wx.Dialog):
 			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
 			listctrl.SetStringItem(idx, 2, str(item.disk.name))
 			listctrl.SetStringItem(idx, 3, item.path)
+			listctrl.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
+			listctrl.SetStringItem(idx, 5, format_human_size(item.size))
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
 		
