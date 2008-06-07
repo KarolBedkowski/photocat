@@ -90,6 +90,10 @@ class Catalog(TreeItem):
 		return dirty, dirtyp
 
 
+	@property
+	def subdirs_count(self):
+		return sum(( disk.subdirs_count for disk in self.disks ))
+
 	##########################################################################
 
 
@@ -128,10 +132,8 @@ class Catalog(TreeItem):
 		return ''
 
 
-	def check_on_find(self, text, options=None):
-		self_result = []
-		[ self_result.extend(disk.check_on_find(text, options)) for disk in self.disks ]
-		return self_result
+	def check_on_find(self, text, add_callback, options=None, progress_callback=None):
+		[ disk.check_on_find(text, add_callback, options, progress_callback) for disk in self.disks ]
 
 
 	def fill_shot_date(self):

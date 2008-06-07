@@ -71,6 +71,10 @@ class Directory(CatalogFile, TreeItem):
 		return sum(self.directory_size)
 
 
+	@property
+	def subdirs_count(self):
+		return sum((subdir.subdirs_count for subdir in self.subdirs)) + len(self.subdirs)
+
 	##########################################################################
 
 
@@ -126,17 +130,18 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
-	def check_on_find(self, text, options=None):
+	def check_on_find(self, text, add_callback, options=None, progress_callback=None):
+		if progress_callback is not None:
+			if not progress_callback(self.name):
+				return
+		
 		if options is None or options.get('search_for_dirs', True):
-			self_result = CatalogFile.check_on_find(self, text, options)
-		else:
-			self_result = list()
+			CatalogFile.check_on_find(self, text, add_callback, options, progress_callback)
 
-		[ self_result.extend(subdir.check_on_find(text, options))	for subdir in self.subdirs ]
+		[ subdir.check_on_find(text, add_callback, options, progress_callback)	for subdir in self.subdirs ]
 
 		if options is None or options.get('search_for_files', True):
-			[ self_result.extend(image.check_on_find(text, options))	for image in self.files ]
-		return self_result
+			[ image.check_on_find(text, add_callback, options, progress_callback)	for image in self.files ]
 
 
 	def fill_shot_date(self):

@@ -97,6 +97,8 @@ class DlgSearch(wx.Dialog):
 			self.Move(position)
 		
 		self.Bind(wx.EVT_CLOSE, self._on_close)
+		
+		self._tc_text.SetFocus()
 
 
 	def SetStatusText(self, text, idx=0):
@@ -349,7 +351,8 @@ class DlgSearch(wx.Dialog):
 			listctrl.SetStringItem(idx, 2, str(item.disk.name))
 			listctrl.SetStringItem(idx, 3, item.path)
 			listctrl.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
-			listctrl.SetStringItem(idx, 5, format_human_size(item.size))
+			if ico == icon_image_idx:
+				listctrl.SetStringItem(idx, 5, format_human_size(item.size))
 			listctrl.SetItemData(idx, len(self._result))
 			self._result.append(item)
 		
@@ -358,15 +361,25 @@ class DlgSearch(wx.Dialog):
 			search_in_catalog = options.get('search_in_catalog', _("<all>"))
 			if search_in_catalog != _("<all>"):
 				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
+				
+		subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
 		
-		for catalog in catalogs_to_search:
-			result = catalog.check_on_find(what, options)
-			[ insert(item) for item in result ]
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
+		
+		def update_dlg_progress(name, cntr=[0]):
+			""" aktualizacja progress bara w dlg """
+			cntr[0] = cntr[0] + 1
+			return dlg_progress.Update(cntr[0], name)[0]
+		
+		[ catalog.check_on_find(what, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+
+		dlg_progress.Destroy()
 
 		if len(self._result) == 0:
 			dialogs.message_box_info(self, _('Not found'), _('PC'))
