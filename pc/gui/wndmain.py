@@ -42,7 +42,7 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
 from kpylibs.wnd_shell		import WndShell
-from kpylibs.formaters		import format_size
+from kpylibs.formaters		import format_human_size
 
 import pc
 
@@ -841,8 +841,7 @@ class WndMain(wx.Frame):
 			saved_space = catalog.data_provider.rebuild(catalog)
 			self.__save_catalog(catalog)
 			dialogs.message_box_info(self,
-					_('Rebuild catalog finished\nSaved space: %sB') %
-							format_size(saved_space, True, reduce_at=1024, separate=True, format="%0.2f").upper(),
+					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
 					'PC')
 		except Exception, err:
 			_LOG.exception('rebuild error')
