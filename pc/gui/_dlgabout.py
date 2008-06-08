@@ -52,15 +52,10 @@ def show_about_box(parent):
 	#info.Description = wordwrap('''''', 350, wx.ClientDC(parent))
 	#info.WebSite = ("http://en.wikipedia.org/wiki/Hello_world", "Hello World home page")
 	info.Developers = [ "Karol Będkowski" ]	
-	info.License = '''
-PC is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation, version 2.
+	info.License = wordwrap('''
+PC is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 
-PC is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-details.
+PC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 
 Python %(pyversion)s
@@ -71,7 +66,7 @@ Copyright (c) 1998 Julian Smart, Robert Roebling et al
 
 EXIF.py (15-02-2004)
 Copyright 2002 Gene Cash All rights reserved.
-''' % params
+''' % params, 500, wx.ClientDC(parent))
 	wx.AboutBox(info)
 	
 
