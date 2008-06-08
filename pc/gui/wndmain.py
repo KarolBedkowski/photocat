@@ -792,7 +792,7 @@ class WndMain(wx.Frame):
 
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + os.path.getsize(msg)
-				return dlg_progress.Update(cntr[0], msg)
+				return dlg_progress.Update(cntr[0], msg)[0]
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
@@ -840,12 +840,21 @@ class WndMain(wx.Frame):
 				if tag_item.tree_node is not None
 			]
 			self._dirs_tree.update_node_tags(tags_provider)
-			
-			
+
+
 	def _rebuild_catalog(self, catalog):
+		objects_count = catalog.object_in_files
+		
+		dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=self,
+				maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
+		
+		def update_progress(count):
+			dlg_progress.Update(count)
+		
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = catalog.data_provider.rebuild(catalog)
+			saved_space = catalog.data_provider.rebuild(catalog, update_progress)
+			dlg_progress.Update(objects_count+1, _("Saving..."))
 			self.__save_catalog(catalog)
 			dialogs.message_box_info(self,
 					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
@@ -856,6 +865,7 @@ class WndMain(wx.Frame):
 					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
 					'PC')
 		finally:
+			dlg_progress.Destroy()
 			self.SetCursor(wx.STANDARD_CURSOR)
 
 

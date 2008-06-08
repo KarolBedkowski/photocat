@@ -126,7 +126,7 @@ class DataProvider:
 			self._file = None
 
 
-	def rebuild(self, catalog):
+	def rebuild(self, catalog, progress_callback=None):
 		''' DataProvider.rebuild(catalog) -> int -- przebudowanie pliku danych.
 			Przebudowywuje plik danych i usuwa z niego śmieci.
 
@@ -153,6 +153,8 @@ class DataProvider:
 			def copy_data(offset, new_offset):
 				data = self.get_data(offset)
 				next_offset = self._write_block(new_file, new_offset, len(data), data)
+				if progress_callback:
+					progress_callback(self.objects_count)
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
