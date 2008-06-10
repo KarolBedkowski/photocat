@@ -132,8 +132,8 @@ class Catalog(TreeItem):
 		return ''
 
 
-	def check_on_find(self, text, add_callback, options=None, progress_callback=None):
-		[ disk.check_on_find(text, add_callback, options, progress_callback) for disk in self.disks ]
+	def check_on_find(self, text, textre, add_callback, options=None, progress_callback=None):
+		[ disk.check_on_find(text, textre, add_callback, options, progress_callback) for disk in self.disks ]
 
 
 	def fill_shot_date(self):

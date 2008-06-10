@@ -35,6 +35,7 @@ _LOG = logging.getLogger(__name__)
 
 import time
 import cStringIO
+import re
 
 import wx
 import wx.lib.buttons  as  buttons
@@ -363,8 +364,8 @@ class DlgSearch(wx.Dialog):
 				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
 				
 		subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
-		
-		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count,
+			
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
 		def update_dlg_progress(name, cntr=[0]):
@@ -372,8 +373,10 @@ class DlgSearch(wx.Dialog):
 			cntr[0] = cntr[0] + 1
 			return dlg_progress.Update(cntr[0], name)[0]
 		
-		[ catalog.check_on_find(what, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
-
+		whatre = re.compile(what, re.I)
+		
+		[ catalog.check_on_find(what, whatre, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
+		
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
