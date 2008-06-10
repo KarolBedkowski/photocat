@@ -461,7 +461,7 @@ class WndMain(wx.Frame):
 		if len(self._catalogs) == 0:
 			return
 
-		dlg = DlgSearch(self, self._catalogs)
+		dlg = DlgSearch(self, self._catalogs, self._dirs_tree.selected_item)
 		dlg.Show()
 
 

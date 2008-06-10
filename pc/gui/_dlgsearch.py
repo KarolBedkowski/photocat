@@ -64,13 +64,14 @@ class _OptionsError(StandardError):
 class DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
-	def __init__(self, parent, catalogs):
+	def __init__(self, parent, catalogs, selected_item=None):
 		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 		#|wx.FULL_REPAINT_ON_RESIZE
 
 		self._catalogs	= catalogs
 		self._parent	= parent
 		self._result	= []
+		self._selected_item = selected_item
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
@@ -228,11 +229,21 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 		
-		# szukanie w katalogu
-		box = wx.StaticBox(pane, -1, _("Catalog"))
+		# szukanie w ...
+		box = wx.StaticBox(pane, -1, _("Search in:"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 		cb = self._sb_search_in_catalog = wx.ComboBox(pane, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
-		[ cb.Append(cat.name) for cat in self._catalogs ]
+
+		if self._selected_item is not None:
+			if isinstance(self._selected_item, Disk):
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+			elif isinstance(self._selected_item, Directory):
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>"), _("<current dir>")) ]
+			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:	
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+			
+		[ cb.Append(_("catalog: %s") % cat.name) for cat in self._catalogs ]
+		
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
@@ -384,7 +395,16 @@ class DlgSearch(wx.Dialog):
 		catalogs_to_search = self._catalogs
 		if options is not None:
 			search_in_catalog = options.get('search_in_catalog', _("<all>"))
-			if search_in_catalog != _("<all>"):
+			if search_in_catalog == _("<all>"):
+				pass
+			elif search_in_catalog == _("<current catalog>"):
+				catalogs_to_search = [ self._selected_item.catalog ]
+			elif search_in_catalog == _("<current disk>"):
+				catalogs_to_search = [ self._selected_item.disk ]
+			elif search_in_catalog == _("<current dir>"):
+				catalogs_to_search = [ self._selected_item ]
+			else:
+				search_in_catalog = search_in_catalog.split(": ", 1)[1]
 				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
 				
 		subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
@@ -398,7 +418,7 @@ class DlgSearch(wx.Dialog):
 			return dlg_progress.Update(cntr[0], name)[0]
 			
 		if regex:
-			textre = re.compile(what, (re.I if not match_case else 0))
+			textre = re.compile(what, (0 if match_case else re.I))
 			cmpfunc = lambda x: textre.search(x)
 		else:
 			if match_case:
