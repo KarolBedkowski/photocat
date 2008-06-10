@@ -92,7 +92,7 @@ class Catalog(TreeItem):
 
 	@property
 	def subdirs_count(self):
-		return sum(( disk.subdirs_count for disk in self.disks ))
+		return sum(( disk.subdirs_count+1 for disk in self.disks )) # dysk tez jest katalogiem
 
 	##########################################################################
 
