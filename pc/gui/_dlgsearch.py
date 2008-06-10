@@ -113,11 +113,7 @@ class DlgSearch(wx.Dialog):
 		grid.AddGrowableCol(1)
 		grid.Add(wx.StaticText(self, -1, _('Text')), 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
 
-		last = AppConfig().get_items('last_search')
-		if last is None:
-			last = []
-		else:
-			last = [l[1] for l in last]
+		last = search.get_last_search()
 
 		self._tc_text = wx.ComboBox(self, -1, choices=last)
 		grid.Add(self._tc_text, 1, wx.EXPAND)

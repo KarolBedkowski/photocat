@@ -98,16 +98,24 @@ def find(what, options, catalogs, insert_func, progress_funct):
 def update_last_search(text):
 	''' update_last_search(text) -> [] -- aktualzacja listy poptrzednich wyszukiwań
 	'''
+	last = get_last_search()
+	if len(last) > 19:
+		last = last[:19]
+	last.insert(0, text)
+	AppConfig().set_items('last_search', 'text', last)
+	return last
+
+
+def get_last_search():
+	''' get_last_search() -> [] -- lista ostatnich wyszukian
+	'''
 	last = AppConfig().get_items('last_search')
 	if last is None:
 		last = []
 	else:
 		last = [l[1] for l in last]
-		if len(last) > 19:
-			last = last[:19]
-	last.insert(0, text)
-	AppConfig().set_items('last_search', 'text', last)
 	return last
+	
 
 
 # vim: encoding=utf8: ff=unix:
