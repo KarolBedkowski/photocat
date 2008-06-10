@@ -46,7 +46,8 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
 from kpylibs.formaters		import format_human_size
 
-from pc.model		import Catalog, Directory, Disk, FileImage
+from pc.model				import Catalog, Directory, Disk, FileImage
+from pc.engine				import search
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
@@ -343,36 +344,14 @@ class DlgSearch(wx.Dialog):
 			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('PC'))
 			return
 
-		match_case = options is not None and options.get('opt_match_case', False)
-		regex = options is not None and options.get('opt_regex', False)
-			
-		if not match_case:
-			what = what.lower()
-
-		_LOG.debug('DlgSearch._on_btn_find: "%s"' % what)
-		last_search_text_ctrl = self._tc_text
-
-		last = [what] + [ text 
-				for text 
-				in (last_search_text_ctrl.GetString(idx) 
-						for idx 
-						in xrange(min(last_search_text_ctrl.GetCount(), 10))
-				)
-				if text != what
-		]
-		
-		AppConfig().set_items('last_search', 'text', last)
-		self._tc_text.Clear()
-		[ self._tc_text.Append(text) for text in last ]
-		self._tc_text.SetValue(what)
-
 		listctrl = self._result_list
+		listctrl.Freeze()
 		listctrl.DeleteAllItems()
 
 		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
 
-		self._result = []
+		result = self._result = []
 		counters = [0, 0]
 
 		def insert(item):
@@ -390,25 +369,10 @@ class DlgSearch(wx.Dialog):
 			if ico == icon_image_idx:
 				listctrl.SetStringItem(idx, 5, format_human_size(item.size))
 			listctrl.SetItemData(idx, len(self._result))
-			self._result.append(item)
-		
-		catalogs_to_search = self._catalogs
-		if options is not None:
-			search_in_catalog = options.get('search_in_catalog', _("<all>"))
-			if search_in_catalog == _("<all>"):
-				pass
-			elif search_in_catalog == _("<current catalog>"):
-				catalogs_to_search = [ self._selected_item.catalog ]
-			elif search_in_catalog == _("<current disk>"):
-				catalogs_to_search = [ self._selected_item.disk ]
-			elif search_in_catalog == _("<current dir>"):
-				catalogs_to_search = [ self._selected_item ]
-			else:
-				search_in_catalog = search_in_catalog.split(": ", 1)[1]
-				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
-				
-		subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
+			result.append(item)
 			
+		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
+		
 		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
@@ -416,19 +380,8 @@ class DlgSearch(wx.Dialog):
 			""" aktualizacja progress bara w dlg """
 			cntr[0] = cntr[0] + 1
 			return dlg_progress.Update(cntr[0], name)[0]
-			
-		if regex:
-			textre = re.compile(what, (0 if match_case else re.I))
-			cmpfunc = lambda x: textre.search(x)
-		else:
-			if match_case:
-				cmpfunc = lambda x: (x.find(what) > -1)
-			else:
-				cmpfunc = lambda x: (x.lower().find(what) > -1)
-		
-		listctrl.Freeze()
-		
-		[ catalog.check_on_find(cmpfunc, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
+
+		what = search.find(what, options, catalogs, insert, update_dlg_progress)
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -444,6 +397,11 @@ class DlgSearch(wx.Dialog):
 		else:
 			self._panel_preview.Show(True)
 			self.Layout()
+			
+		last_search_text_ctrl = self._tc_text
+		last_search_text_ctrl.Clear()
+		[ last_search_text_ctrl.Append(text) for text in search.update_last_search(what) ]
+		last_search_text_ctrl.SetValue(what)
 
 		self._statusbar.SetStatusText(_('Found %d folders and %d files') % (counters[1], counters[0]))
 
