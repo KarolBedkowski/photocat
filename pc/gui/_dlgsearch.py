@@ -47,7 +47,7 @@ from kpylibs				import dialogs
 from kpylibs.formaters		import format_human_size
 
 from pc.model				import Catalog, Directory, Disk, FileImage
-from pc.engine				import search
+from pc.engine				import search, image
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
@@ -432,18 +432,11 @@ class DlgSearch(wx.Dialog):
 		''' callback na zaznacznie rezultatu - wyświetlenie podglądu '''
 		itemidx	= evt.GetData()
 		item	= self._result[itemidx]
-		if isinstance(item, FileImage):
-			try:
-				stream = cStringIO.StringIO(item.image)
-				img		= wx.ImageFromStream(stream)
-			except Exception, err:
-				_LOG.exception('Show item %s error' % item.name)
-				img = wx.EmptyImage(1, 1)
-		else:
-			img = wx.EmptyImage(1, 1)
-			
+		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		self._bmp_preview.SetBitmap(img.ConvertToBitmap())
+		
+		img = image.load_bitmap_from_item(item)
+		self._bmp_preview.SetBitmap(img)
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 	
