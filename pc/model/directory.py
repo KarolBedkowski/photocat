@@ -130,18 +130,18 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
-	def check_on_find(self, text, textre, add_callback, options=None, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
 		if progress_callback is not None:
 			if not progress_callback(self.name):
 				return
 		
 		if options is None or options.get('search_for_dirs', True):
-			CatalogFile.check_on_find(self, text, textre, add_callback, options, progress_callback)
+			CatalogFile.check_on_find(self, cmpfunc, add_callback, options, progress_callback)
 
-		[ subdir.check_on_find(text, textre, add_callback, options, progress_callback)	for subdir in self.subdirs ]
+		[ subdir.check_on_find(cmpfunc, add_callback, options, progress_callback)	for subdir in self.subdirs ]
 
 		if options is None or options.get('search_for_files', True):
-			[ image.check_on_find(text, textre, add_callback, options, progress_callback)	for image in self.files ]
+			[ image.check_on_find(cmpfunc, add_callback, options, progress_callback)	for image in self.files ]
 
 
 	def fill_shot_date(self):

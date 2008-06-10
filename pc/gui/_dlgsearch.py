@@ -240,6 +240,9 @@ class DlgSearch(wx.Dialog):
 		
 		##############################
 		
+		
+		subsizer2 = wx.BoxSizer(wx.HORIZONTAL)
+		
 		# szukanie wg dat		
 		box = wx.StaticBox(pane, -1, _("Date"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
@@ -255,7 +258,21 @@ class DlgSearch(wx.Dialog):
 		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
 		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
 		
-		sizer.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
+		# opcje	
+		box = wx.StaticBox(pane, -1, _("Options"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		
+		self._cb_regex = wx.CheckBox(pane, -1, _("Regex"))
+		bsizer.Add(self._cb_regex, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		self._cb_match_case = wx.CheckBox(pane, -1, _("Match case"))
+		bsizer.Add(self._cb_match_case, 0, wx.EXPAND|wx.ALL, 5)
+		
+		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
+		sizer.Add(subsizer2, 0, wx.EXPAND)
 		
 		pane.SetSizer(sizer)
 
@@ -291,6 +308,9 @@ class DlgSearch(wx.Dialog):
 				if options['search_date_start'] > options['search_date_end']:
 					raise _OptionsError(_("Wrong date range!"))
 
+			options['opt_regex'] = self._cb_regex.GetValue()
+			options['opt_match_case'] = self._cb_match_case.GetValue()
+
 		return options
 	
 	
@@ -312,7 +332,11 @@ class DlgSearch(wx.Dialog):
 			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('PC'))
 			return
 
-		what = what.lower()
+		match_case = options is not None and options.get('opt_match_case', False)
+		regex = options is not None and options.get('opt_regex', False)
+			
+		if not match_case:
+			what = what.lower()
 
 		_LOG.debug('DlgSearch._on_btn_find: "%s"' % what)
 		last_search_text_ctrl = self._tc_text
@@ -372,15 +396,26 @@ class DlgSearch(wx.Dialog):
 			""" aktualizacja progress bara w dlg """
 			cntr[0] = cntr[0] + 1
 			return dlg_progress.Update(cntr[0], name)[0]
+			
+		if regex:
+			textre = re.compile(what, (re.I if not match_case else 0))
+			cmpfunc = lambda x: textre.search(x)
+		else:
+			if match_case:
+				cmpfunc = lambda x: (x.find(what) > -1)
+			else:
+				cmpfunc = lambda x: (x.lower().find(what) > -1)
 		
-		whatre = re.compile(what, re.I)
+		listctrl.Freeze()
 		
-		[ catalog.check_on_find(what, whatre, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
-		
+		[ catalog.check_on_find(cmpfunc, insert, options, update_dlg_progress) for catalog in catalogs_to_search ]
+
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+		
+		listctrl.Thaw()
 
 		dlg_progress.Destroy()
 
