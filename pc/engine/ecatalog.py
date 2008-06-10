@@ -37,7 +37,7 @@ from kpylibs				import dialogs
 from kpylibs.appconfig		import AppConfig
 
 from pc.model				import Catalog
-from pc.gui._dlgadddisk		import DlgAddDisk
+from pc.gui.dlgadddisk		import DlgAddDisk
 
 import errors
 
@@ -110,6 +110,8 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 			finally:
 				parent_wnd.SetCursor(wx.STANDARD_CURSOR)
 				dlg_progress.Destroy()
+	else:
+		disk = None
 	
 	return disk
 

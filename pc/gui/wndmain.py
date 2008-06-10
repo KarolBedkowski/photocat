@@ -388,15 +388,17 @@ class WndMain(wx.Frame):
 	def _on_catalog_add(self, evt):
 		catalog = self.__get_selected_catalog()
 		if catalog is not None:
+			disk = None
 			try:
 				disk = ecatalog.add_disk_to_catalog(catalog, self)
 			except Exception, err:
 				_LOG.exception('WndMain._on_catalog_add()')
 			else:
-				self.__save_catalog(catalog, True)
-				self._dirs_tree.update_node_disk(disk)
-				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-				self._dirs_tree.update_timeline_node(catalog.timeline)
+				if disk is not None:
+					self.__save_catalog(catalog, True)
+					self._dirs_tree.update_node_disk(disk)
+					self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+					self._dirs_tree.update_timeline_node(catalog.timeline)
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -413,11 +415,12 @@ class WndMain(wx.Frame):
 		except Exception, err:
 			_LOG.exception('WndMain._on_catalog_update_disk()')
 		else:
-			catalog = disk.catalog
-			self.__save_catalog(catalog, True)
-			self._dirs_tree.update_node_disk(disk)
-			self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-			self._dirs_tree.update_timeline_node(catalog.timeline)
+			if disk is not None:
+				catalog = disk.catalog
+				self.__save_catalog(catalog, True)
+				self._dirs_tree.update_node_disk(disk)
+				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+				self._dirs_tree.update_timeline_node(catalog.timeline)
 
 
 	def _on_catalog_del_disk(self, evt):
