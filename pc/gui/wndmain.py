@@ -48,13 +48,13 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
+from pc.engine				import ecatalog
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
 from _dlgabout				import show_about_box
-from _dlgadddisk			import DlgAddDisk
 from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
 from _dlgsettings			import DlgSettings
@@ -388,7 +388,15 @@ class WndMain(wx.Frame):
 	def _on_catalog_add(self, evt):
 		catalog = self.__get_selected_catalog()
 		if catalog is not None:
-			self.__add_or_update_disk(catalog)
+			try:
+				disk = ecatalog.add_disk_to_catalog(catalog, self)
+			except Exception, err:
+				_LOG.exception('WndMain._on_catalog_add()')
+			else:
+				self.__save_catalog(catalog, True)
+				self._dirs_tree.update_node_disk(disk)
+				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+				self._dirs_tree.update_timeline_node(catalog.timeline)
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -400,7 +408,16 @@ class WndMain(wx.Frame):
 			return
 
 		disk = tree_selected.disk
-		self.__add_or_update_disk(disk.catalog, disk, True)
+		try:
+			ecatalog.update_disk_in_catalog(disk.catalog, disk, self)
+		except Exception, err:
+			_LOG.exception('WndMain._on_catalog_update_disk()')
+		else:
+			catalog = disk.catalog
+			self.__save_catalog(catalog, True)
+			self._dirs_tree.update_node_disk(disk)
+			self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+			self._dirs_tree.update_timeline_node(catalog.timeline)
 
 
 	def _on_catalog_del_disk(self, evt):
@@ -759,60 +776,6 @@ class WndMain(wx.Frame):
 		append(_('&Delete file...'), self._on_catalog_del_image)
 
 		return popup_menu
-
-
-	def __add_or_update_disk(self, catalog, disk=None, update=False):
-		if update:
-			data = dict(name=disk.name, descr=disk.desc)
-		else:
-			data = {}
-		appconfig = AppConfig()
-		data.update(dict(appconfig.get_items('settings') or []))
-		dlg = DlgAddDisk(self, data, update=update, catalog=catalog)
-		if dlg.ShowModal() == wx.ID_OK:
-			
-			title = update and _("Updating disk") or _("Adding disk")
-			
-			dlg_progress = wx.ProgressDialog(title, _("Counting files..."), parent=self, maximum=1,
-					style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
-
-			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
-
-			dlg_progress.Destroy()
-
-			if allfiles == 1:
-				dialogs.message_box_error(self, _('No files found!'), title)
-				return
-
-			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-
-
-			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + os.path.getsize(msg)
-				return dlg_progress.Update(cntr[0], msg)[0]
-
-			try:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				if update:
-					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data, 
-							on_update=update_progress, name=data['name'])
-				else:
-					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
-				self.__save_catalog(catalog, True)
-				#self._dirs_tree.add_catalog(catalog)
-				self._dirs_tree.update_node_disk(disk)
-				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-				self._dirs_tree.update_timeline_node(catalog.timeline)
-			except Exception, err:
-				_LOG.exception('MainWnd.__add_or_update_disk()')
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dialogs.message_box_error(self, _('Error:\n%s') % err, title)
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dlg_progress.Update(allfiles, _('Done!'))
-				dlg_progress.Destroy()
-		dlg.Destroy()
 
 
 	def __get_selected_catalog(self):

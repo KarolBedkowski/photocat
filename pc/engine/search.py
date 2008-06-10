@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
@@ -28,7 +28,6 @@ __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
-__all__			= ['DlgProperties']
 
 
 import logging

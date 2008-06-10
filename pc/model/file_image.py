@@ -203,6 +203,7 @@ class FileImage(CatalogFile):
 	def _load_exif(self, path):
 		_LOG.debug('FileImage._load_exif(%s)' % path)
 		self.exif = None
+		jpeg_file = None
 		try:
 			jpeg_file = open(path, 'rb')
 			exif = EXIF.process_file(jpeg_file)

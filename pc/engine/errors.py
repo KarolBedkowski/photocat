@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
-pc.engine.image
- -- engine do obsługi obrazów
+pc.engine.errors
+ -- klasy wyjątków wyrzucanych przez engine
 
  Photo Catalog v 1.0  (pc)
  Copyright (c) Karol Będkowski, 2004, 2005, 2006 
@@ -33,35 +33,12 @@ __revision__	= '$Id$'
 import logging
 _LOG = logging.getLogger(__name__)
 
-import cStringIO
-
-import wx
-
-from pc.model				import FileImage
 
 
-
-def load_image_from_item(item):
-	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka z katalogu.
-	'''
-	img = None
-	if isinstance(item, FileImage):
-		try:
-			stream = cStringIO.StringIO(item.image)
-			img		= wx.ImageFromStream(stream)
-		except Exception, err:
-			_LOG.exception('load_image_from_item %s error' % item.name)
-			img = wx.EmptyImage(1, 1)
-	else:
-		img = wx.EmptyImage(1, 1)
-	return img
+class UpdateDiskError(StandardError):
+	pass
 
 
-def load_bitmap_from_item(item):
-	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka z katalogu.
-	'''
-	img = load_image_from_item(item)
-	return img.ConvertToBitmap() if img is not None else None
 
 
 
