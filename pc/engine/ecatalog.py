@@ -51,6 +51,11 @@ _ = wx.GetTranslation
 
 def _count_files(path, parent_wnd, title):
 	''' _count_files(path, parent_wnd, title) -> int -- polieczenie plików w podanej ścieżce
+	
+		@param path			-- ścieżka
+		@param parent_wnd	-- okno nadrzędne
+		@param title		-- tytuł okien
+		@return liczba plików do dodania/aktualizacji
 	'''
 	dlg_progress = wx.ProgressDialog(title, _("Counting files..."), parent=parent_wnd, maximum=1,
 			style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
@@ -69,6 +74,12 @@ def _count_files(path, parent_wnd, title):
 
 def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	''' _add_or_update_catalog(catalog, title, data, parent_wnd) -> Disk -- dodanie lub aktualizacja dysku
+	
+		@param catalog		-- katalog do którego jest dodawany dysk
+		@param title		-- tytuł okien
+		@param data			-- dane przebudowy/aktualizacji
+		@param parent_wnd	-- okno nadrzędne
+		@return zaktualizowany/dodany dysk
 	'''
 	appconfig = AppConfig()
 	data.update(dict(appconfig.get_items('settings') or []))
@@ -120,6 +131,10 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 
 def add_disk_to_catalog(catalog, parent_wnd):
 	''' add_disk_to_catalog(catalog, parent_wnd) -> Disk -- dodanie dysku
+	
+		@param catalog		-- katalog do którego jest dodawany dysk
+		@param parent_wnd	-- okno nadrzędne
+		@return dodany dysk 
 	'''
 	data = dict(disk=None, update=False)
 	return _add_or_update_catalog(catalog, _("Adding disk"), data, parent_wnd)
@@ -128,12 +143,23 @@ def add_disk_to_catalog(catalog, parent_wnd):
 
 def update_disk_in_catalog(catalog, disk, parent_wnd):
 	''' update_disk_in_catalog(catalog, disk, parent_wnd) -> Disk -- aktualizacja dysku
+	
+		@param catalog		-- katalog w którym jest aktualizowany dysk
+		@param disk			-- dysk do aktualizacji
+		@param parent_wnd	-- okno nadrzędne
+		@return zaktualizowany dysk
 	'''
 	data = dict(name=disk.name, descr=disk.desc, disk=disk, update=True)
 	return _add_or_update_catalog(catalog, _("Updating disk"), data, parent_wnd)
 
 
 def rebuild(catalog, parent_wnd):
+	''' rebuild(catalog, parent_wnd) -> bool -- przebudowa katalogu
+	
+		@param catalog		-- katalog do przebudowania
+		@param parent_wnd	-- okno nadrzędne
+		@return True=sukces
+	'''
 	objects_count = catalog.object_in_files
 	result = False
 	
