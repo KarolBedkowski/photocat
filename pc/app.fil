@@ -5,7 +5,7 @@
 ./__init__.py
 ./gui/__init__.py
 ./gui/_dlgabout.py
-./gui/_dlgadddisk.py
+./gui/dlgadddisk.py
 ./gui/_dlgproperties.py
 ./gui/_dlgsearch.py
 ./gui/_dlgsettings.py
@@ -32,3 +32,8 @@
 ./model/storage/storage_object.py
 ./model/tag.py
 ./model/timeline.py
+./engine/__init__.py
+./engine/ecatalog.py
+./engine/errors.py
+./engine/image.py
+./engine/search.py

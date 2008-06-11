@@ -821,7 +821,7 @@ class WndMain(wx.Frame):
 			dlg_progress.Update(objects_count+1, _("Saving..."))
 			self.__save_catalog(catalog)
 			if saved_space < 0:
-				dlg_progress.Update(objects_count + 2,	_('Rebuild catalog abborted'))
+				dlg_progress.Update(objects_count + 2,	_('Rebuild catalog aborted'))
 			else:
 				dlg_progress.Update(objects_count + 2,
 						_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
