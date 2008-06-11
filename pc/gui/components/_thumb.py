@@ -29,9 +29,9 @@ __revision__	= '$Id$'
 import logging
 _LOG = logging.getLogger(__name__)
 
-import cStringIO
-
 import wx
+
+from pc.engine.image		import load_image_from_item
 
 
 
@@ -51,16 +51,9 @@ class Thumb:
 	
 	
 	def _load_image(self):
-		try:
-			stream = cStringIO.StringIO(self.image.image)
-			img = wx.ImageFromStream(stream)			
-		except:
-			_LOG.exception('Thumb._load_image %r' % self.image)
-			img = wx.EmptyImage(1, 1)
-		else:
-			self.imgwidth = img.GetWidth()
-			self.imgheight = img.GetHeight()
-
+		img = load_image_from_item(self.image)
+		self.imgwidth = img.GetWidth()
+		self.imgheight = img.GetHeight()
 		return img
 
 
@@ -72,10 +65,13 @@ class Thumb:
 		if width < self.imgwidth or height < self.imgheight:
 			if img is None:
 				img = self._load_image()
+				
 			scale = min(float(width) / self.imgwidth, float(height) / self.imgheight)
 			self.imgwidth = int(self.imgwidth * scale)
 			self.imgheight = int(self.imgheight * scale)
+
 			img = img.Scale(self.imgwidth, self.imgheight)
+
 			self._bitmap = img.ConvertToBitmap()
 
 		elif self._bitmap is None:
