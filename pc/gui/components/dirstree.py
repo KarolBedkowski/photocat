@@ -100,8 +100,10 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 
 	def add_catalog(self, catalog):
+		self.Freeze()
 		self.update_node_catalog(catalog)
 		self.Expand(catalog.tree_node)
+		self.Thaw()
 
 
 	def update_catalog_node(self, node):
@@ -119,6 +121,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 	def update_node_catalog(self, catalog, recursive=True):
 		_LOG.debug('update_node_catalog %s' % catalog.name)
+		self.Freeze()
+		
 		catalog_node = catalog.tree_node
 
 		if catalog_node is None or not catalog_node.IsOk():
@@ -137,6 +141,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		if recursive:
 			for disk in catalog.childs:
 				self.update_node_disk(disk)
+				
+		self.Thaw()
 
 
 	def update_node_disk(self, disk, recursive=True):

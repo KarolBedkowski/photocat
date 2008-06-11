@@ -333,7 +333,6 @@ class DataProvider:
 		self.objects_count += 1
 		
 		self._write_next_offset(dest_file, next_offset)
-		#dest_file.flush()
 		return next_offset
 
 
