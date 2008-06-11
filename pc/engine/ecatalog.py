@@ -35,6 +35,7 @@ import wx
 
 from kpylibs				import dialogs
 from kpylibs.appconfig		import AppConfig
+from kpylibs.formaters		import format_human_size
 
 from pc.model				import Catalog
 from pc.gui.dlgadddisk		import DlgAddDisk
@@ -131,5 +132,40 @@ def update_disk_in_catalog(catalog, disk, parent_wnd):
 	data = dict(name=disk.name, descr=disk.desc, disk=disk, update=True)
 	return _add_or_update_catalog(catalog, _("Updating disk"), data, parent_wnd)
 
+
+def rebuild(catalog, parent_wnd):
+	objects_count = catalog.object_in_files
+	result = False
+	
+	dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=parent_wnd,
+			maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+	
+	def update_progress(count):
+		return dlg_progress.Update(count)[0]
+	
+	try:
+		parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
+		saved_space = catalog.data_provider.rebuild(catalog, update_progress)
+		dlg_progress.Update(objects_count+1, _("Saving..."))
+		
+		if saved_space < 0:
+			dlg_progress.Update(objects_count + 2,	_('Rebuild catalog aborted'))
+		else:
+			dlg_progress.Update(objects_count + 2,
+					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
+			)
+		result = True
+
+	except Exception, err:
+		_LOG.exception('rebuild error')
+		dialogs.message_box_error(parent_wnd,
+				_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
+				'PC')
+
+	finally:
+		dlg_progress.Destroy()
+		parent_wnd.SetCursor(wx.STANDARD_CURSOR)
+		
+	return result
 
 # vim: encoding=utf8: ff=unix:

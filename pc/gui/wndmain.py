@@ -349,7 +349,8 @@ class WndMain(wx.Frame):
 		if not dialogs.message_box_question_yesno(self, _('Rebuild catalog %s?') % catalog.caption, 'PC'):
 			return
 
-		self._rebuild_catalog(catalog)
+		if ecatalog.rebuild(catalog, self):
+			self.__save_catalog(catalog)
 
 
 	def _on_file_settings(self, evt):
@@ -699,7 +700,8 @@ class WndMain(wx.Frame):
 					if dirtyp > 10:
 						if dialogs.message_box_warning_yesno(self,
 								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, _('PC')):
-							self._rebuild_catalog(catalog)
+							if ecatalog.rebuild(catalog, self):
+								self.__save_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 
@@ -805,35 +807,6 @@ class WndMain(wx.Frame):
 			]
 			self._dirs_tree.update_node_tags(tags_provider)
 
-
-	def _rebuild_catalog(self, catalog):
-		objects_count = catalog.object_in_files
-		
-		dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=self,
-				maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-		
-		def update_progress(count):
-			return dlg_progress.Update(count)[0]
-		
-		try:
-			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = catalog.data_provider.rebuild(catalog, update_progress)
-			dlg_progress.Update(objects_count+1, _("Saving..."))
-			self.__save_catalog(catalog)
-			if saved_space < 0:
-				dlg_progress.Update(objects_count + 2,	_('Rebuild catalog aborted'))
-			else:
-				dlg_progress.Update(objects_count + 2,
-						_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
-				)
-		except Exception, err:
-			_LOG.exception('rebuild error')
-			dialogs.message_box_error(self,
-					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
-					'PC')
-		finally:
-			dlg_progress.Destroy()
-			self.SetCursor(wx.STANDARD_CURSOR)
 
 
 # vim: encoding=utf8:
