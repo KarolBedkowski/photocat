@@ -198,7 +198,7 @@ class DataProvider:
 			self._file = None
 
 		except AbortRebuild:
-			_LOG.exception('DataProvider.rebuild: abort')
+			_LOG.info('DataProvider.rebuild: abort')
 			self.objects_count = old_objects_count
 
 		except IOError, err:
