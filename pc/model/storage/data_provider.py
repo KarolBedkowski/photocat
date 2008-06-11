@@ -33,6 +33,11 @@ _LOG = logging.getLogger(__name__)
 
 
 
+
+class AbortRebuild(StandardError):
+	pass
+
+
 class DataProvider:
 	_DATA_FILE_HEADER_SIZE	= 52
 	_DATA_FILE_HEADER_ID	= 'PhotoCatalog_DataFile'
@@ -135,7 +140,7 @@ class DataProvider:
 		'''
 		self._file.flush()
 
-		saved_space		= 0
+		saved_space		= -1
 		new_file		= None
 		tmp_filename	= self.filename + '.tmp'
 		old_filename	= self.filename + '.old'
@@ -154,7 +159,8 @@ class DataProvider:
 				data = self.get_data(offset)
 				next_offset = self._write_block(new_file, new_offset, len(data), data)
 				if progress_callback:
-					progress_callback(self.objects_count)
+					if not progress_callback(self.objects_count):
+						raise AbortRebuild()
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
@@ -190,13 +196,23 @@ class DataProvider:
 			self._file.close()
 			self._file = None
 
+		except AbortRebuild:
+			self.objects_count = old_objects_count
+			if new_file is not None:
+				new_file.close()
+				new_file = None
+			if os.path.exists(tmp_filename):
+				os.unlink(tmp_filename)
+				
 		except IOError, err:
 			self.objects_count = old_objects_count
 			_LOG.exception('DataProvider.rebuild error')
+			if new_file is not None:
+				new_file.close()
+				new_file = None
 			if os.path.exists(tmp_filename):
 				os.unlink(tmp_filename)
 			raise StandardError(err)
-
 		else:
 			os.rename(self.filename, old_filename)
 			os.rename(tmp_filename, self.filename)

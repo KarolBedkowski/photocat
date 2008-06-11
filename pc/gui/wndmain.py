@@ -810,19 +810,22 @@ class WndMain(wx.Frame):
 		objects_count = catalog.object_in_files
 		
 		dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=self,
-				maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME)
+				maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 		
 		def update_progress(count):
-			dlg_progress.Update(count)
+			return dlg_progress.Update(count)[0]
 		
 		try:
 			self.SetCursor(wx.HOURGLASS_CURSOR)
 			saved_space = catalog.data_provider.rebuild(catalog, update_progress)
 			dlg_progress.Update(objects_count+1, _("Saving..."))
 			self.__save_catalog(catalog)
-			dialogs.message_box_info(self,
-					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
-					'PC')
+			if saved_space < 0:
+				dlg_progress.Update(objects_count + 2,	_('Rebuild catalog abborted'))
+			else:
+				dlg_progress.Update(objects_count + 2,
+						_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
+				)
 		except Exception, err:
 			_LOG.exception('rebuild error')
 			dialogs.message_box_error(self,
