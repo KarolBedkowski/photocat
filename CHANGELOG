@@ -1,15 +1,31 @@
+2008-06-11 (v0.6.0)
+
+Karol Bêdkowski (37):
+	a: obs³uga formatu idx v2
+	a: zliczanie zbêdnych, u¿ywanych obiektów w datafile, ewentualna przebudowa po wczytaniu
+	a: info o zbednych obiektach w informacjach o katalogu
+	a: dlgsearch: zabezpieczenie na puste wyszukiwanie, wy¶wietlanie daty i rozmiaru pliku
+	a: wy¶wietlanie postêpu przy liczeniu plików przy dodawaniu/aktualizacji, wyszukiwaniu, przebudowie
+	a: mo¿liwo¶æ przerwania wyszukiwania, przebudowy
+	f: problem z liczeniem katalogów przy dodawaniu/aktualizacji dysków
+	a: szukanie z uwzglêdnieniem regex, match case, w aktualnym katalogu/dysku/folderze
+
+
 2008-06-06 (v0.5.0) 
 
 Karol Bêdkowski:
-	a: zmiana sposobu wyœwietlania miniaturek (szybciej)
-	f: b³¹d uruchamiania gdy podano z³e parametry
-	d: dodanie wypelniania shot_date
-	a: wyœwietlanie miniaturek w wyszukiwaniu
+	a: zmiana sposobu wy¶wietlania miniaturek (szybciej)
+	f: b³±d uruchamiania gdy podano z³e parametry
+	d: dodanie wype³niania shot_date
+	a: wy¶wietlanie miniaturek w wyszukiwaniu
 	f: pomniejsze poprawki i optymalizacje
- 
- 
+
+
 2008-06-03 (v0.4.0) 
 
 Karol Bêdkowski:
-    a: dodanie Timeline
-	f: pomniejsze poprawki	
+	a: dodanie Timeline
+	f: pomniejsze poprawki
+
+
+# vim: encoding=utf8: ff=unix: 
