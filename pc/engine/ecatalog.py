@@ -81,8 +81,8 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 		allfiles = _count_files(data['path'], parent_wnd, title)
 		
 		if allfiles > 0:
-			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=parent_wnd, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=parent_wnd, maximum=allfiles+100,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 
 			def update_progress(msg, cntr=[0]):
 				cntr[0] = cntr[0] + os.path.getsize(msg)
@@ -100,7 +100,7 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data,
 							on_update=update_progress)
 
-				dlg_progress.Update(allfiles, _('Done!'))
+				dlg_progress.Update(allfiles+100, _('Done!'))
 				
 			except Exception, err:
 				_LOG.exception('_add_or_update_catalog(%r)' % data)
