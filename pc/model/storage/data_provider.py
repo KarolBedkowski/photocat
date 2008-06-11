@@ -115,10 +115,12 @@ class DataProvider:
 			try:
 				self._file = file(self.filename, 'r+b')
 				self.next_offset = self._check_file(self._file)
+
 			except Exception, e:
 				_LOG.exception('DataProvider.open(%s) error ' % self.filename)
 				self.close()
 				raise StandardError(e)
+
 		else:
 			self._file = file(self.filename, 'w+b')
 			self.next_offset = self._write_header(self._file)
@@ -161,6 +163,7 @@ class DataProvider:
 				if progress_callback:
 					if not progress_callback(self.objects_count):
 						raise AbortRebuild()
+
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
@@ -170,14 +173,12 @@ class DataProvider:
 					image_exif	= None
 
 					if image.thumb is not None:
-						offset = image.thumb
 						image_thumb = next_offset
-						next_offset = copy_data(offset, next_offset)
+						next_offset = copy_data(image.thumb, next_offset)
 
 					if image.exif is not None:
-						offset = image.exif
 						image_exif = next_offset
-						next_offset = copy_data(offset, next_offset)
+						next_offset = copy_data(image.exif, next_offset)
 
 					files_to_update.append((image, image_thumb, image_exif))
 
@@ -197,22 +198,14 @@ class DataProvider:
 			self._file = None
 
 		except AbortRebuild:
+			_LOG.exception('DataProvider.rebuild: abort')
 			self.objects_count = old_objects_count
-			if new_file is not None:
-				new_file.close()
-				new_file = None
-			if os.path.exists(tmp_filename):
-				os.unlink(tmp_filename)
-				
+
 		except IOError, err:
-			self.objects_count = old_objects_count
 			_LOG.exception('DataProvider.rebuild error')
-			if new_file is not None:
-				new_file.close()
-				new_file = None
-			if os.path.exists(tmp_filename):
-				os.unlink(tmp_filename)
+			self.objects_count = old_objects_count
 			raise StandardError(err)
+
 		else:
 			os.rename(self.filename, old_filename)
 			os.rename(tmp_filename, self.filename)
@@ -233,9 +226,14 @@ class DataProvider:
 		finally:
 			if new_file is not None:
 				new_file.close()
+
+			if os.path.exists(tmp_filename):
+				os.unlink(tmp_filename)
+
 			if self._file is not None:
 				self._file.close()
 				self._file = None
+
 			self.open()
 			catalog.dirty = True
 
@@ -311,10 +309,8 @@ class DataProvider:
 			@param dest_file	plik do którego są zapisywane
 			@param next_offset	koniec danych
 		'''
-		current_offset = dest_file.tell()
 		dest_file.seek(self._last_offset_file_pos)
 		dest_file.write(pack("LL", next_offset, self.objects_count))
-		dest_file.seek(current_offset)
 
 
 	def _write_block(self, dest_file, offset, size, data):
@@ -337,7 +333,7 @@ class DataProvider:
 		self.objects_count += 1
 		
 		self._write_next_offset(dest_file, next_offset)
-		dest_file.flush()#
+		#dest_file.flush()
 		return next_offset
 
 
