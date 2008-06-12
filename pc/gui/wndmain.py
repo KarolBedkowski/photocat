@@ -116,6 +116,7 @@ class WndMain(wx.Frame):
 		self._photo_list.Bind(wx.EVT_RIGHT_UP, self._on_photolist_popupmenu)
 
 		self.__update_last_open_files()
+		self.__update_menus_toolbars()
 
 
 	def _create_layout(self, appconfig):
@@ -134,7 +135,7 @@ class WndMain(wx.Frame):
 
 
 	def _create_main_menu(self):
-		menu_bar = wx.MenuBar()
+		self.__menu_bar = menu_bar = wx.MenuBar()
 		menu_bar.Append(self._create_main_menu_file(),		_('&File'))
 		menu_bar.Append(self._create_main_menu_catalog(),	_('&Catalog'))
 		menu_bar.Append(self._create_main_menu_help(),		wx.GetStockLabel(wx.ID_HELP, True))
@@ -179,6 +180,7 @@ class WndMain(wx.Frame):
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
 		))
+		self._main_menu_catalog = menu
 		return menu
 
 
@@ -199,7 +201,7 @@ class WndMain(wx.Frame):
 
 	def _create_toolbar(self):
 		''' Utworzenie toolbar-a '''
-		toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.NO_BORDER|wx.TB_FLAT|wx.TB_TEXT)
+		self.__toolbar = toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.NO_BORDER|wx.TB_FLAT|wx.TB_TEXT)
 		toolbar.SetToolBitmapSize((16, 16))
 
 		def cbtn(label, function, iconname, description=''):
@@ -215,11 +217,11 @@ class WndMain(wx.Frame):
 
 		toolbar.AddSeparator()
 
-		cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
+		self.__tb_find = cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
 		
 		toolbar.AddSeparator()
 
-		cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
+		self.__tb_add_disk = cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
 
 		toolbar.AddSeparator()
 		toolbar.Realize()
@@ -296,6 +298,7 @@ class WndMain(wx.Frame):
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
 					self.__update_last_open_files(filename)
+					self.__update_menus_toolbars()
 		evt.Skip()
 
 
@@ -305,6 +308,7 @@ class WndMain(wx.Frame):
 			if not filename.endswith('.index'):
 				filename = filename + '.index'
 			self._open_file(filename)
+			self.__update_menus_toolbars()
 		evt.Skip()
 
 
@@ -339,6 +343,7 @@ class WndMain(wx.Frame):
 		self._dirs_tree.delete_item(catalog)
 		catalog.close()
 		self._catalogs.remove(catalog)
+		self.__update_menus_toolbars()
 
 
 	def _on_file_rebuild(self, evt):
@@ -400,6 +405,7 @@ class WndMain(wx.Frame):
 					self._dirs_tree.update_node_disk(disk)
 					self._dirs_tree.update_node_tags(catalog.tags_provider, True)
 					self._dirs_tree.update_timeline_node(catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -422,6 +428,7 @@ class WndMain(wx.Frame):
 				self._dirs_tree.update_node_disk(disk)
 				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
 				self._dirs_tree.update_timeline_node(catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_disk(self, evt):
@@ -440,6 +447,7 @@ class WndMain(wx.Frame):
 			self._dirs_tree.update_catalog_node(catalog)
 			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
 			self._dirs_tree.update_timeline_node(tree_selected.catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_dir(self, evt):
@@ -456,6 +464,7 @@ class WndMain(wx.Frame):
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
 			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_image(self, evt):
@@ -530,6 +539,8 @@ class WndMain(wx.Frame):
 		self._info_panel.clear()
 		self._info_panel.clear_folder()
 		show_info = True
+
+		self.__update_menus_toolbars()
 
 		if isinstance(item, Tag):
 			item = item.files
@@ -610,6 +621,7 @@ class WndMain(wx.Frame):
 				self._info_panel.show(selected)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
+		self.__update_menus_toolbars()
 
 
 	def _on_thumb_dclick(self, evt):
@@ -704,8 +716,7 @@ class WndMain(wx.Frame):
 								self.__save_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
-
-
+			self.__update_menus_toolbars()
 
 
 	def __update_last_open_files(self, filename=None):
@@ -807,6 +818,35 @@ class WndMain(wx.Frame):
 			]
 			self._dirs_tree.update_node_tags(tags_provider)
 
+	
+	def __update_menus_toolbars(self):
+		""" wndmain.__update_menus_toolbars() -- włączanie/wyłączanie pozycji menu/toolbar """
+		catalog_loaded = len(self._catalogs) > 0
+		
+		self.__menu_bar.EnableTop(1, catalog_loaded)
+		
+		mm_items = self._main_menu_file.GetMenuItems()
+		mm_items[2].Enable(catalog_loaded)
+		mm_items[4].Enable(catalog_loaded)
+		mm_items[6].Enable(catalog_loaded)
+		
+		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
+		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
+		
+		if catalog_loaded:
+			selected_tree_item = self._dirs_tree.selected_item
+			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
+			dir_selected = not disk_selected and (isinstance(selected_tree_item, Directory) if selected_tree_item is not None else False)
+			file_selected = len(self._photo_list.selected_items) > 0
+
+			mm_items = self._main_menu_catalog.GetMenuItems()
+			mm_items[1].Enable(disk_selected)
+			mm_items[2].Enable(disk_selected)
+			mm_items[4].Enable(dir_selected)
+			mm_items[5].Enable(file_selected)
+			mm_items[7].Enable(file_selected)
+			
+		
 
 
 # vim: encoding=utf8:
