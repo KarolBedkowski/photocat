@@ -399,7 +399,8 @@ class DlgSearch(wx.Dialog):
 		[ last_search_text_ctrl.Append(text) for text in search.update_last_search(what) ]
 		last_search_text_ctrl.SetValue(what)
 
-		self._statusbar.SetStatusText(_('Found %d folders and %d files') % (counters[1], counters[0]))
+		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
+				dict(folders=counters[1], files=counters[0]))
 
 
 	def _on_btn_properties(self, evt):
