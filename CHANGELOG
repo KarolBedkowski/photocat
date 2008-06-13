@@ -1,31 +1,37 @@
+2008-06-13 (v.0.7.0)
+
+Karol B臋dkowski:
+	f: problemy z usuni臋tymi obiektami w timeline
+	a: wygaszanie zb臋dnych pozycji menu
+
+
 2008-06-11 (v0.6.0)
 
-Karol B阣kowski (37):
-	a: obs硊ga formatu idx v2
-	a: zliczanie zb阣nych, u縴wanych obiekt體 w datafile, ewentualna przebudowa po wczytaniu
-	a: info o zbednych obiektach w informacjach o katalogu
-	a: dlgsearch: zabezpieczenie na puste wyszukiwanie, wy秝ietlanie daty i rozmiaru pliku
-	a: wy秝ietlanie post阷u przy liczeniu plik體 przy dodawaniu/aktualizacji, wyszukiwaniu, przebudowie
-	a: mo縧iwo舵 przerwania wyszukiwania, przebudowy
-	f: problem z liczeniem katalog體 przy dodawaniu/aktualizacji dysk體
-	a: szukanie z uwzgl阣nieniem regex, match case, w aktualnym katalogu/dysku/folderze
+Karol B臋dkowski:
+	a: obs艂uga formatu idx v2
+	a: zliczanie zb臋dnych, u偶ywanych obiekt贸w w datafile, ewentualna przebudowa po wczytaniu
+	a: info o zb臋dnych obiektach w informacjach o katalogu
+	a: dlgsearch: zabezpieczenie na puste wyszukiwanie, wy艣wietlanie daty i rozmiaru pliku
+	a: wy艣wietlanie post臋pu przy liczeniu plik贸w przy dodawaniu/aktualizacji, wyszukiwaniu, przebudowie
+	a: mo偶liwo艣膰 przerwania wyszukiwania, przebudowy
+	f: problem z liczeniem katalog贸w przy dodawaniu/aktualizacji dysk贸w
+	a: szukanie z uwzgl臋dnieniem regex, match case, w aktualnym katalogu/dysku/folderze
 
 
 2008-06-06 (v0.5.0) 
 
-Karol B阣kowski:
-	a: zmiana sposobu wy秝ietlania miniaturek (szybciej)
-	f: b潮d uruchamiania gdy podano z砮 parametry
-	d: dodanie wype硁iania shot_date
-	a: wy秝ietlanie miniaturek w wyszukiwaniu
+Karol B臋dkowski:
+	a: zmiana sposobu wy艣wietlania miniaturek (szybciej)
+	f: b艂膮d uruchamiania gdy podano z鲁e parametry
+	d: dodanie wype艂niania shot_date
+	a: wy艂wietlanie miniaturek w wyszukiwaniu
 	f: pomniejsze poprawki i optymalizacje
 
 
 2008-06-03 (v0.4.0) 
 
-Karol B阣kowski:
+Karol B臋dkowski:
 	a: dodanie Timeline
 	f: pomniejsze poprawki
-
 
 # vim: encoding=utf8: ff=unix: 
