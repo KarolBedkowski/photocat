@@ -575,7 +575,8 @@ class WndMain(wx.Frame):
 				self.SetCursor(wx.STANDARD_CURSOR)
 				if show_info:
 					files_count, subdirs_count, dummy, dummy = item.directory_size
-					self.SetStatusText(_('Directorys %d;  files: %d') % (subdirs_count, files_count))
+					self.SetStatusText(_('Directorys %(dirs)d;  files: %(files)d') %
+							dict(dirs=subdirs_count, files=files_count))
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
 
