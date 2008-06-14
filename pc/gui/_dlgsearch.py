@@ -73,6 +73,7 @@ class DlgSearch(wx.Dialog):
 		self._parent	= parent
 		self._result	= []
 		self._selected_item = selected_item
+		self._sort_order = None
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
@@ -184,6 +185,7 @@ class DlgSearch(wx.Dialog):
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_list_item_selected, listctrl)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_list_item_deselected, listctrl)
+		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_list_col_click, listctrl)
 
 		return listctrl
 	
@@ -363,6 +365,7 @@ class DlgSearch(wx.Dialog):
 
 		result = self._result = []
 		counters = [0, 0]
+		self._sort_order = None
 
 		def insert(item):
 			if isinstance(item, FileImage):
@@ -422,6 +425,8 @@ class DlgSearch(wx.Dialog):
 
 		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
 				dict(folders=counters[1], files=counters[0]))
+		
+		self._set_list_header()
 
 
 	def _on_btn_properties(self, evt):
@@ -469,6 +474,11 @@ class DlgSearch(wx.Dialog):
 		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._btn_properties.Enable(False)
+
+
+	def _on_list_col_click(self, evt):
+		if len(self._result) > 1:
+			self._sort_results(evt.m_col)
 
 
 	def _on_close(self, evt):
@@ -552,6 +562,48 @@ class DlgSearch(wx.Dialog):
 			
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		
+		
+	def _sort_results(self, col):
+		if self._sort_order is None:
+			self._sort_order = (col, 0)
+		elif self._sort_order[0] == col:
+			self._sort_order = (col, 1-self._sort_order[1])
+		else:
+			self._sort_order = (col, 0)
+			
+		if col == 0:
+			sortfnc = lambda x,y: cmp(x.name, y.name)
+		elif col == 1:
+			sortfnc = lambda x,y: cmp(x.catalog.name, y.catalog.name)
+		elif col == 2:
+			sortfnc = lambda x,y: cmp(x.disk.name, y.disk.name)
+		elif col == 3:
+			sortfnc = lambda x,y: cmp(x.date, y.date)
+		elif col == 4:
+			sortfnc = lambda x,y: cmp(x.size, y.size)
+		else:
+			return
+		
+		self._result.sort(sortfnc)
+		# TODO: wyswietlenie listy
+		
+		self._set_list_header()
+		
+		
+	def _set_list_header(self):
+		sort_col = self._sort_order[0] if self._sort_order is not None else -1
+		listctrl = self._result_list
+		
+		for idx, label in ((0, _('Name')), (1, _('Catalog')), (2, _('Disk')), (3, _('Path')), (4, _('File date')),
+				(5, _('File size'))):
+			listitem = listctrl.GetColumn(idx)
+			if  idx == sort_col:
+				listitem.SetText("%s %s" % ( label, ('+', '-')[self._sort_order[1]] ))
+			else:
+				listitem.SetText(label)
+			listitem.SetColumn(idx, listitem)
+				
 
 
 # vim: encoding=utf8: ff=unix:
