@@ -145,12 +145,19 @@ class DlgSearch(wx.Dialog):
 		self._image_info.InsertColumn(1, '')
 		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
 		
+		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
+		
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
-		grid.Add(self._btn_properties, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_properties, 1, wx.EXPAND|wx.ALL, 1)
+		
+		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
+		grid_btns.Add(self._btn_goto, 1, wx.EXPAND|wx.ALL, 1)
 		
 		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid.Add(self._btn_icons, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_icons, 1, wx.EXPAND|wx.ALL, 1)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+		
+		grid.Add(grid_btns, 0, wx.EXPAND)
 
 		panel.SetSizer(grid)
 		panel.Show(False)
@@ -423,6 +430,10 @@ class DlgSearch(wx.Dialog):
 			dlg.Destroy()
 		
 
+	def _on_btn_goto(self, evt):
+		self._on_list_activate(None)
+		
+
 	def _on_list_activate(self, evt):
 		item = self._get_selected_result_item()
 		if item is not None:
@@ -478,6 +489,15 @@ class DlgSearch(wx.Dialog):
 		
 		self._thumbctrl.Show(icons)
 		self._result_list.Show(not icons)
+		
+		if icons:
+			size = (1, 1)
+		else:
+			appconfig = AppConfig()
+			size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))
+
+		self._bmp_preview.SetMinSize(size)
+		
 		self.Layout()
 
 		self._image_info.DeleteAllItems()

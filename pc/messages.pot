@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-14 17:09+0200\n"
+"POT-Creation-Date: 2008-06-14 19:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,20 +48,20 @@ msgstr ""
 msgid "&Update disk..."
 msgstr ""
 
-#: gui/_dlgsearch.py:232 engine/search.py:52 engine/search.py:53
+#: gui/_dlgsearch.py:246 engine/search.py:52 engine/search.py:53
 msgid "<all>"
 msgstr ""
 
-#: gui/_dlgsearch.py:236 gui/_dlgsearch.py:238 gui/_dlgsearch.py:240
+#: gui/_dlgsearch.py:250 gui/_dlgsearch.py:252 gui/_dlgsearch.py:254
 #: engine/search.py:55
 msgid "<current catalog>"
 msgstr ""
 
-#: gui/_dlgsearch.py:238 engine/search.py:59
+#: gui/_dlgsearch.py:252 engine/search.py:59
 msgid "<current dir>"
 msgstr ""
 
-#: gui/_dlgsearch.py:236 gui/_dlgsearch.py:238 gui/_dlgsearch.py:240
+#: gui/_dlgsearch.py:250 gui/_dlgsearch.py:252 gui/_dlgsearch.py:254
 #: engine/search.py:57
 msgid "<current disk>"
 msgstr ""
@@ -90,11 +90,11 @@ msgstr ""
 msgid "Adding disk"
 msgstr ""
 
-#: gui/_dlgsearch.py:178
+#: gui/_dlgsearch.py:192
 msgid "Advanced"
 msgstr ""
 
-#: gui/_dlgsearch.py:340
+#: gui/_dlgsearch.py:354
 #, python-format
 msgid ""
 "Bad options:\n"
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: gui/_dlgsearch.py:162 model/_catalog_file.py:73
+#: gui/_dlgsearch.py:176 model/_catalog_file.py:73
 msgid "Catalog"
 msgstr ""
 
@@ -171,7 +171,7 @@ msgstr ""
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgsearch.py:255 model/file_image.py:111 model/file_image.py:118
+#: gui/_dlgsearch.py:269 model/file_image.py:111 model/file_image.py:118
 msgid "Date"
 msgstr ""
 
@@ -232,7 +232,7 @@ msgstr ""
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr ""
 
-#: gui/_dlgsearch.py:163 model/_catalog_file.py:75
+#: gui/_dlgsearch.py:177 model/_catalog_file.py:75
 msgid "Disk"
 msgstr ""
 
@@ -298,11 +298,11 @@ msgstr ""
 msgid "Field must by not empty"
 msgstr ""
 
-#: gui/_dlgsearch.py:165 model/_catalog_file.py:78
+#: gui/_dlgsearch.py:179 model/_catalog_file.py:78
 msgid "File date"
 msgstr ""
 
-#: gui/_dlgsearch.py:166 model/file_image.py:129
+#: gui/_dlgsearch.py:180 model/file_image.py:129
 msgid "File size"
 msgstr ""
 
@@ -311,7 +311,7 @@ msgstr ""
 msgid "Files: %d"
 msgstr ""
 
-#: gui/_dlgsearch.py:69 gui/_dlgsearch.py:120
+#: gui/_dlgsearch.py:69 gui/_dlgsearch.py:122
 msgid "Find"
 msgstr ""
 
@@ -331,12 +331,16 @@ msgstr ""
 msgid "Force load files"
 msgstr ""
 
-#: gui/_dlgsearch.py:402
+#: gui/_dlgsearch.py:416
 #, python-format
 msgid "Found %(folders)d folders and %(files)d files"
 msgstr ""
 
-#: gui/_dlgsearch.py:144
+#: gui/_dlgsearch.py:153
+msgid "Go to..."
+msgstr ""
+
+#: gui/_dlgsearch.py:156
 msgid "Icons"
 msgstr ""
 
@@ -369,11 +373,11 @@ msgstr ""
 msgid "Main"
 msgstr ""
 
-#: gui/_dlgsearch.py:278
+#: gui/_dlgsearch.py:292
 msgid "Match case"
 msgstr ""
 
-#: gui/_dlgsearch.py:161 model/_catalog_file.py:69
+#: gui/_dlgsearch.py:175 model/_catalog_file.py:69
 msgid "Name"
 msgstr ""
 
@@ -401,11 +405,11 @@ msgstr ""
 msgid "No files found!"
 msgstr ""
 
-#: gui/_dlgsearch.py:392
+#: gui/_dlgsearch.py:406
 msgid "Not found"
 msgstr ""
 
-#: gui/_dlgsearch.py:466 gui/wndmain.py:549
+#: gui/_dlgsearch.py:486 gui/wndmain.py:549
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -426,7 +430,7 @@ msgstr ""
 msgid "Opening %s....  Please wait..."
 msgstr ""
 
-#: gui/dlgadddisk.py:79 gui/_dlgsearch.py:272
+#: gui/dlgadddisk.py:79 gui/_dlgsearch.py:286
 msgid "Options"
 msgstr ""
 
@@ -434,7 +438,7 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: gui/_dlgsearch.py:164
+#: gui/_dlgsearch.py:178
 msgid "Path"
 msgstr ""
 
@@ -442,7 +446,7 @@ msgstr ""
 msgid "Program settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:141 gui/wndmain.py:762
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:150 gui/wndmain.py:762
 #: gui/wndmain.py:784
 msgid "Properties"
 msgstr ""
@@ -484,7 +488,7 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/_dlgsearch.py:275
+#: gui/_dlgsearch.py:289
 msgid "Regex"
 msgstr ""
 
@@ -500,15 +504,15 @@ msgstr ""
 msgid "Saving..."
 msgstr ""
 
-#: gui/_dlgsearch.py:258
+#: gui/_dlgsearch.py:272
 msgid "Search by date"
 msgstr ""
 
-#: gui/_dlgsearch.py:218
+#: gui/_dlgsearch.py:232
 msgid "Search for"
 msgstr ""
 
-#: gui/_dlgsearch.py:202
+#: gui/_dlgsearch.py:216
 msgid "Search in"
 msgstr ""
 
@@ -516,11 +520,11 @@ msgstr ""
 msgid "Search in calalogs"
 msgstr ""
 
-#: gui/_dlgsearch.py:230
+#: gui/_dlgsearch.py:244
 msgid "Search in:"
 msgstr ""
 
-#: gui/_dlgsearch.py:372
+#: gui/_dlgsearch.py:386
 msgid "Searching..."
 msgstr ""
 
@@ -565,7 +569,7 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: gui/_dlgsearch.py:114
+#: gui/_dlgsearch.py:116
 msgid "Text"
 msgstr ""
 
@@ -632,28 +636,28 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: gui/_dlgsearch.py:317
+#: gui/_dlgsearch.py:331
 msgid "Wrong date range!"
 msgstr ""
 
-#: gui/_dlgsearch.py:261
+#: gui/_dlgsearch.py:275
 msgid "begin:"
 msgstr ""
 
-#: gui/_dlgsearch.py:242
+#: gui/_dlgsearch.py:256
 #, python-format
 msgid "catalog: %s"
 msgstr ""
 
-#: gui/_dlgsearch.py:208
+#: gui/_dlgsearch.py:222
 msgid "descriptions"
 msgstr ""
 
-#: gui/_dlgsearch.py:224
+#: gui/_dlgsearch.py:238
 msgid "dirs"
 msgstr ""
 
-#: gui/_dlgsearch.py:265
+#: gui/_dlgsearch.py:279
 msgid "end:"
 msgstr ""
 
@@ -661,7 +665,7 @@ msgstr ""
 msgid "f"
 msgstr ""
 
-#: gui/_dlgsearch.py:220
+#: gui/_dlgsearch.py:234
 msgid "files"
 msgstr ""
 
@@ -681,7 +685,7 @@ msgstr ""
 msgid "name"
 msgstr ""
 
-#: gui/_dlgsearch.py:204
+#: gui/_dlgsearch.py:218
 msgid "names"
 msgstr ""
 
@@ -693,6 +697,6 @@ msgstr ""
 msgid "t"
 msgstr ""
 
-#: gui/_dlgsearch.py:212
+#: gui/_dlgsearch.py:226
 msgid "tags"
 msgstr ""
