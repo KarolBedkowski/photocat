@@ -553,7 +553,7 @@ class WndMain(wx.Frame):
 				return
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
-				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
+				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
 					self._photo_list.show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
@@ -575,7 +575,7 @@ class WndMain(wx.Frame):
 				self.SetCursor(wx.STANDARD_CURSOR)
 				if show_info:
 					files_count, subdirs_count, dummy, dummy = item.directory_size
-					self.SetStatusText(_('Directorys %(dirs)d;  files: %(files)d') %
+					self.SetStatusText(_('Directories %(dirs)d;  files: %(files)d') %
 							dict(dirs=subdirs_count, files=files_count))
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
@@ -691,7 +691,7 @@ class WndMain(wx.Frame):
 	def _open_file(self, filename):
 		if sum(( 1 for cat in self._catalogs if cat.catalog_filename == filename )) == 0:
 			if not os.path.exists(filename):
-				dialogs.message_box_error(self, _("Error openning file %s!\nFile don't exists.") % filename, _('Open file'))
+				dialogs.message_box_error(self, _("Error opening file %s!\nFile don't exists.") % filename, _('Open file'))
 				return
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
@@ -704,7 +704,7 @@ class WndMain(wx.Frame):
 				self.SetStatusText(filename)
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
-				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
+				dialogs.message_box_error(self, _('Error opening file %s') % filename, _('Open file'))
 				catalog = None
 			else:
 				if catalog is not None:
@@ -712,7 +712,7 @@ class WndMain(wx.Frame):
 					_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
 					if dirtyp > 10:
 						if dialogs.message_box_warning_yesno(self,
-								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, _('PC')):
+								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
 							if ecatalog.rebuild(catalog, self):
 								self.__save_catalog(catalog)
 			finally:
