@@ -140,6 +140,11 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
 		grid.Add(self._bmp_preview, 0, wx.EXPAND|wx.ALL, 5)
 		
+		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER)
+		self._image_info.InsertColumn(0, '')
+		self._image_info.InsertColumn(1, '')
+		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
+		
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
 		grid.Add(self._btn_properties, 0, wx.EXPAND|wx.ALL, 5)
 		
@@ -149,7 +154,7 @@ class DlgSearch(wx.Dialog):
 
 		panel.SetSizer(grid)
 		panel.Show(False)
-		
+				
 		appconfig = AppConfig()
 		size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))		
 		self._bmp_preview.SetMinSize(size)
@@ -439,6 +444,8 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 	
+		self._show_image_info(item)
+	
 
 	def _on_list_item_deselected(self, evt):
 		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
@@ -473,6 +480,8 @@ class DlgSearch(wx.Dialog):
 		self._result_list.Show(not icons)
 		self.Layout()
 
+		self._image_info.DeleteAllItems()
+
 		if icons:
 			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
 			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
@@ -483,6 +492,7 @@ class DlgSearch(wx.Dialog):
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
+		self._show_image_info(item)
 
 	
 	def _on_thumb_dclick(self, evt):
@@ -503,6 +513,18 @@ class DlgSearch(wx.Dialog):
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 		return item
+
+	
+	def _show_image_info(self, item):
+		listctrl = self._image_info
+		listctrl.DeleteAllItems()
+		
+		for dummy, key, val in sorted(item.info):
+			idx = listctrl.InsertStringItem(sys.maxint, str(key))
+			listctrl.SetStringItem(idx, 1, str(val))
+			
+		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 
 # vim: encoding=utf8: ff=unix:
