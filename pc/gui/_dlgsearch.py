@@ -140,16 +140,28 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
 		grid.Add(self._bmp_preview, 0, wx.EXPAND|wx.ALL, 5)
 		
+		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER)
+		self._image_info.InsertColumn(0, '')
+		self._image_info.InsertColumn(1, '')
+		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
+		
+		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
+		
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
-		grid.Add(self._btn_properties, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_properties, 1, wx.EXPAND|wx.ALL, 1)
+		
+		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
+		grid_btns.Add(self._btn_goto, 1, wx.EXPAND|wx.ALL, 1)
 		
 		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid.Add(self._btn_icons, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_icons, 1, wx.EXPAND|wx.ALL, 1)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+		
+		grid.Add(grid_btns, 0, wx.EXPAND)
 
 		panel.SetSizer(grid)
 		panel.Show(False)
-		
+				
 		appconfig = AppConfig()
 		size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))		
 		self._bmp_preview.SetMinSize(size)
@@ -371,13 +383,20 @@ class DlgSearch(wx.Dialog):
 			
 		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
 		
-		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "\n", parent=self, maximum=subdirs_count+1,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
-		def update_dlg_progress(name, cntr=[0]):
+		def update_dlg_progress(name, cntr=[0, True, True]):
 			""" aktualizacja progress bara w dlg """
 			cntr[0] = cntr[0] + 1
-			return dlg_progress.Update(cntr[0], name)[0]
+			found = len(result)
+			cont = dlg_progress.Update(cntr[0], _("%(msg)s\nFound: %(found)d") % dict(msg=name, found=found))[0]
+
+			if cont and cntr[1] and found > 1000:
+				if not dialogs.message_box_warning_yesno(self, _("Found more than 1000 items.\nContinue?"), "PC"):
+					cntr[2] = False					
+				cntr[1] = False
+			return cont & cntr[2]
 
 		what = search.find(what, options, catalogs, insert, update_dlg_progress)
 
@@ -418,6 +437,10 @@ class DlgSearch(wx.Dialog):
 			dlg.Destroy()
 		
 
+	def _on_btn_goto(self, evt):
+		self._on_list_activate(None)
+		
+
 	def _on_list_activate(self, evt):
 		item = self._get_selected_result_item()
 		if item is not None:
@@ -438,6 +461,8 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview.SetBitmap(img)
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
+	
+		self._show_image_info(item)
 	
 
 	def _on_list_item_deselected(self, evt):
@@ -471,7 +496,18 @@ class DlgSearch(wx.Dialog):
 		
 		self._thumbctrl.Show(icons)
 		self._result_list.Show(not icons)
+		
+		if icons:
+			size = (1, 1)
+		else:
+			appconfig = AppConfig()
+			size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))
+
+		self._bmp_preview.SetMinSize(size)
+		
 		self.Layout()
+
+		self._image_info.DeleteAllItems()
 
 		if icons:
 			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
@@ -483,6 +519,7 @@ class DlgSearch(wx.Dialog):
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
+		self._show_image_info(item)
 
 	
 	def _on_thumb_dclick(self, evt):
@@ -503,6 +540,18 @@ class DlgSearch(wx.Dialog):
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 		return item
+
+	
+	def _show_image_info(self, item):
+		listctrl = self._image_info
+		listctrl.DeleteAllItems()
+		
+		for dummy, key, val in sorted(item.info):
+			idx = listctrl.InsertStringItem(sys.maxint, str(key))
+			listctrl.SetStringItem(idx, 1, str(val))
+			
+		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 
 # vim: encoding=utf8: ff=unix:
