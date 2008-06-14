@@ -43,14 +43,24 @@ from _thumb import Thumb
 
 
 class ThumbCtrl(wx.ScrolledWindow):
-	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None):
+	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, thumbs_preload=True, show_captions=True):
+		''' ThumbCtrl(parent, [wxid], [status_wnd], [thumbs_preload]) -> new object -- konstruktor
+		
+			@param parent		-- okno nadrzędne
+			@param wxid			-- id tworzonego obiektu
+			@param status_wnd	-- okno, w którego statusbarze będzie ustawiany procent załadowania
+			@param thumbs_preload	-- bool: włącza ładowanie w tle miniaturek
+			@param show_captions	-- bool: włącza wyświetlanie podpisów
+		'''
 		wx.ScrolledWindow.__init__(self, parent, wxid, style=wx.BORDER_SUNKEN|wx.HSCROLL|wx.VSCROLL)
 		
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
 		
 		self._cols = 0
 		self._thumb_width = 200
-		self._thumb_height = 200
+		self._thumb_height = 200		
+		self.thumbs_preload = thumbs_preload
+		self.show_captions = show_captions
 		
 		self._status_wnd = status_wnd
 		
@@ -88,7 +98,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._items = [ Thumb(image) for image in images ]
 		self._selected_list = []
 		self._selected = -1
-		self._last_preloaded = -1
+		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
 		
 		self.Scroll(0, 0)
 		
@@ -114,6 +124,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 	@property
 	def selected_item(self):
 		return self._items[self._selected].image if self._selected > -1 else None
+	
 	
 	#######################################################################################	
 	
@@ -189,16 +200,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground("#7D7D7D")
 
+		show_captions = self.show_captions
+
 		# items
 		row = -1
 		tw = self._thumb_width 
 		th = self._thumb_height
 		twm = tw + self._padding
-		thm = th + 30
+		thm = th + (30 if show_captions else 10)
+		selected_bottom = (25 if show_captions else 6)
 		twc = self._thumb_width - 10
 		padding = self._padding
 		
-		has_selected = len(self._selected_list) > 0 
+		has_selected = len(self._selected_list) > 0		
 
 		for ii, item  in enumerate(self._items):
 			col = ii % self._cols
@@ -217,7 +231,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			# zaznaczenie
 			if has_selected:
 				if ii in self._selected_list:
-					dc.DrawRectangle(tx-3, ty-3, tw+6, th+25)
+					dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
 			
 			img = item.get_bitmap(tw, th)
 		
@@ -229,9 +243,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 			dc.DrawBitmap(img, txi, tyi, True)
 			
 			# caption
-			caption, caption_width = item.get_caption(twc, dc)
-			txc = tx + (tw - caption_width) / 2
-			dc.DrawText(caption, txc, ty + th)
+			if show_captions:
+				caption, caption_width = item.get_caption(twc, dc)
+				txc = tx + (tw - caption_width) / 2
+				dc.DrawText(caption, txc, ty + th)
 			
 		dc.EndDrawing()
 		

@@ -98,6 +98,8 @@ class DlgSearch(wx.Dialog):
 			self.Centre(wx.BOTH)
 		else:
 			self.Move(position)
+			
+		self._thumbctrl.thumbs_preload = appconfig.get('settings', 'view_preload', True)
 		
 		self.Bind(wx.EVT_CLOSE, self._on_close)
 		

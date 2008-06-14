@@ -44,7 +44,8 @@ from pc.model			import Catalog, Directory, Disk, FileImage
 _ = wx.GetTranslation
 
 _SETTINGS_KEYS = (
-		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50)
+		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),
+		('view_preload', True), ('view_show_captions', True)
 )
 
 
@@ -72,6 +73,7 @@ class DlgSettings(wx.Dialog):
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
 		notebook.AddPage(self._create_layout_page_thumbs(notebook),		_('Thumbs'))
+		notebook.AddPage(self._create_layout_page_view(notebook),		_('View'))
 		return notebook
 
 
@@ -103,6 +105,30 @@ class DlgSettings(wx.Dialog):
 		panel.SetSizerAndFit(sizer)
 		return panel
 	
+
+	def _create_layout_page_view(self, parent):
+		panel = wx.Panel(parent, -1)
+
+		sizer = wx.FlexGridSizer(2, 2, 5, 5)
+
+		def add(label, control):
+			if label is None:
+				sizer.Add((1, 1))
+			else:
+				sizer.Add(wx.StaticText(panel, -1, label), 0, wx.LEFT|wx.TOP, 2)
+			sizer.Add(control, 1, wx.EXPAND)
+			return control
+
+		self._tc_thumb_width = add(None, wx.CheckBox(panel, -1, _('Thumb preload'),
+				validator=MyValidator(data_key=(self._data, 'view_preload'))
+		))
+
+		self._tc_thumb_height = add(None, wx.CheckBox(panel, -1, _('Show captions'), 
+				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
+		))
+
+		panel.SetSizerAndFit(sizer)
+		return panel
 
 	#########################################################################
 
