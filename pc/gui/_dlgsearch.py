@@ -337,7 +337,7 @@ class DlgSearch(wx.Dialog):
 			options = self._get_options()
 			_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
 		except _OptionsError, err:
-			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('PC'))
+			dialogs.message_box_info(self, _("Bad options:\n%s") % err, 'PC')
 			return
 
 		listctrl = self._result_list
@@ -389,7 +389,7 @@ class DlgSearch(wx.Dialog):
 		dlg_progress.Destroy()
 
 		if len(self._result) == 0:
-			dialogs.message_box_info(self, _('Not found'), _('PC'))
+			dialogs.message_box_info(self, _('Not found'), 'PC')
 		else:
 			self._panel_preview.Show(True)
 			self.Layout()
@@ -462,7 +462,8 @@ class DlgSearch(wx.Dialog):
 		
 		if icons and len(self._result) > 1000:
 			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
-			if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(self._result), _('PC')):
+			if not dialogs.message_box_warning_yesno(self,
+					_('Number of files exceed 1000!\nShow %d files?') % len(self._result), 'PC'):
 				self._btn_icons.SetToggle(False)
 				return
 		

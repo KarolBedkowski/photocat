@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-13 20:11+0200\n"
+"POT-Creation-Date: 2008-06-14 12:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,7 +229,7 @@ msgstr ""
 
 #: gui/wndmain.py:578
 #, python-format
-msgid "Directorys %(dirs)d;  files: %(files)d"
+msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr ""
 
 #: gui/_dlgsearch.py:163 model/_catalog_file.py:75
@@ -267,13 +267,13 @@ msgstr ""
 
 #: gui/wndmain.py:707
 #, python-format
-msgid "Error openning file %s"
+msgid "Error opening file %s"
 msgstr ""
 
 #: gui/wndmain.py:694
 #, python-format
 msgid ""
-"Error openning file %s!\n"
+"Error opening file %s!\n"
 "File don't exists."
 msgstr ""
 
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/_dlgsearch.py:465 gui/wndmain.py:556
+#: gui/_dlgsearch.py:466 gui/wndmain.py:556
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -432,11 +432,6 @@ msgstr ""
 
 #: gui/_dlgproperties.py:97
 msgid "Other"
-msgstr ""
-
-#: gui/_dlgsearch.py:340 gui/_dlgsearch.py:392 gui/_dlgsearch.py:465
-#: gui/wndmain.py:556 gui/wndmain.py:715
-msgid "PC"
 msgstr ""
 
 #: gui/_dlgsearch.py:164
