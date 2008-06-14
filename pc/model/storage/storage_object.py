@@ -85,6 +85,11 @@ class StorageObject(object):
 		return []
 	
 
+	@property
+	def is_valid(self):
+		return not self._invalid
+	
+
 	##########################################################################
 	
 

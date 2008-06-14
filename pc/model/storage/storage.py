@@ -38,6 +38,10 @@ from storage_errors	import LoadFileError, InvalidFileError
 
 class Storage:
 	''' Klasa statyczna do zapisywania i wczytywania katalogów '''
+	
+	SUPPORTED_FILE_VERSION_MAX = 2
+	SUPPORTED_FILE_VERSION_MIN = 1
+	
 	def __init__(self):
 		raise Exception('Static class')
 
@@ -52,11 +56,14 @@ class Storage:
 		class_names	= {'Directory': model.Directory, 'Disk': model.Disk, 'FileImage': model.FileImage}
 		objects		= {}
 
+		time_start = time.time()
+
 		try:
 			input_file = gzip.open(filename)
 
 			line = input_file.readline()
-			if not Storage.__check_header(line):
+			fileok, version = Storage.__check_header(line)
+			if not fileok:
 				raise InvalidFileError()
 
 			while True:
@@ -83,12 +90,15 @@ class Storage:
 					data['catalog'] = catalog
 
 					# wstawienie obiektow nadrzędnych
-					if data.has_key('parent_id'):		data['parent']	= objects.get(data['parent_id'])
+					if data.has_key('parent_id'):
+						data['parent']	= objects.get(data['parent_id'])
 
 					if data.has_key('disk_id'):
 						disk_id = data['disk_id']
 						if objects.has_key(disk_id):
 							data['disk']	= objects.get(disk_id)
+						elif class_name != 'Disk':
+							_LOG.warn("no disk id=%d line='%s'" % (disk_id, line))
 
 					# utworzenie klasy
 					objects[id] = new_object = klass(id, **data)
@@ -96,6 +106,8 @@ class Storage:
 					if data.get('parent') is None:
 						if class_name == 'Disk':
 							catalog.disks.append(new_object)
+						else:
+							_LOG.warn('id without parent "%s"' % line)
 					else:
 						data['parent'].add_child(new_object)
 
@@ -107,7 +119,9 @@ class Storage:
 					raise InvalidFileError()
 
 			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
-			catalog.dirty = False
+			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
+			
+			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d' % (filename, catalog.object_in_files))
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
@@ -122,7 +136,7 @@ class Storage:
 			if input_file is not None:
 				input_file.close()
 
-		_LOG.info('Storage.load finished')
+		_LOG.info('Storage.load finished in %0.2f sec' % (time.time() - time_start))
 		return catalog
 
 
@@ -130,6 +144,7 @@ class Storage:
 	def save(catalog):
 		_LOG.info('Storage.save catalog=%s' % catalog.catalog_filename)
 		output_file = None
+		time_start = time.time()
 		try:
 			output_file = gzip.open(catalog.catalog_filename, 'w')
 			output_file.write(Storage.__get_header() + '\n')
@@ -152,7 +167,7 @@ class Storage:
 			if output_file is not None:
 				output_file.close()
 
-		_LOG.info('Storage.save catalog finished')
+		_LOG.info('Storage.save catalog finished in %0.2f sec' % (time.time() - time_start))
 
 
 	######################################################
@@ -163,16 +178,20 @@ class Storage:
 		try:
 			header, version, date = line.split('|')
 			version = int(version)
-			return header == 'PhotoCatalog_IndexFile' and version <= 1
+			return (
+					header == 'PhotoCatalog_IndexFile'
+					and version >= Storage.SUPPORTED_FILE_VERSION_MIN
+					and version <= Storage.SUPPORTED_FILE_VERSION_MAX), version
+
 		except:
 			_LOG.exception('Storage.__check_header line = "%s"' % line)
-		return False
+		return False, None
 
 
 	@staticmethod
 	def __get_header():
 		header	= 'PhotoCatalog_IndexFile'
-		version	= 1
+		version	= Storage.SUPPORTED_FILE_VERSION_MAX
 		date	= time.asctime()
 		return "|".join((header, str(version), date))
 

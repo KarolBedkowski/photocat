@@ -69,7 +69,30 @@ class Catalog(TreeItem):
 	@property
 	def childs_to_store(self):
 		return self.disks
+	
+	
+	@property
+	def object_in_files(self):
+		def count_objects_in_dir(directory):
+			return sum((image.data_objects_count for image in directory.files)) + \
+					sum(( count_objects_in_dir(subdir) for subdir in directory.subdirs ))
+		return sum(( count_objects_in_dir(disk) for disk in self.disks ))
+	
 
+	@property
+	def dirty_objects_count(self):
+		objects_count = self.data_provider.objects_count
+		if objects_count == 0:
+			return 0, 0
+		object_in_files = self.object_in_files
+		dirty = objects_count - object_in_files
+		dirtyp = 100*dirty/objects_count
+		return dirty, dirtyp
+
+
+	@property
+	def subdirs_count(self):
+		return sum(( disk.subdirs_count+1 for disk in self.disks )) # dysk tez jest katalogiem
 
 	##########################################################################
 
@@ -109,10 +132,8 @@ class Catalog(TreeItem):
 		return ''
 
 
-	def check_on_find(self, text, options=None):
-		self_result = []
-		[ self_result.extend(disk.check_on_find(text, options)) for disk in self.disks ]
-		return self_result
+	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
+		[ disk.check_on_find(cmpfunc, add_callback, options, progress_callback) for disk in self.disks ]
 
 
 	def fill_shot_date(self):

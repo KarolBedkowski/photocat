@@ -35,7 +35,16 @@ from file_image	import FileImage
 
 
 class Timeline(object):
+	''' Obiekt przechowywujący linię czasu - zdjęcia pogrupowane wg daty '''
+	
 	def __init__(self, date=None, catalog=None, parent=None, level=0):
+		''' Timeline(data, [catalog], [parent], [level]) -- konstruktor
+		
+			@param date		-- data (str)
+			@param catalog	-- katalog do którego jest przypisany timeline
+			@param parent	-- nadrzędny obiekt Timeline
+			@param level	-- poziom zagnieżdzenia timeline (0=root)
+		'''
 		self.date		= date
 		self.catalog	= catalog
 		self.tree_node	= None
@@ -47,23 +56,30 @@ class Timeline(object):
 
 
 	def reset(self):
+		''' timeline.reset() -- wyczyszczenie obiektu '''
 		self.dirs		= {}
-		self.files		= []		
+		self._files		= []		
 
+
+	###################################################################################
+	
 
 	@property
 	def files_count(self):
-		return len(self.files)
+		''' timeline.files_count -> int -- liczba plików w obiekcie '''
+		return len(self._files)
 
 
 	@property
 	def dirs_count(self):
+		''' timeline.dirs_count -> int -- liczba pod-obiektów Timeline '''
 		return len(self.dirs)
 	
 	
 	@property
 	def count(self):
-		return len(self.dirs) + len(self.files)
+		''' timeline.count -> int -- liczba podobiektów '''
+		return len(self.dirs) + len(self._files)
 
 
 	@property
@@ -72,18 +88,35 @@ class Timeline(object):
 			return '%02d' % self.date
 		return '%s-%02d' % (self.parent._date, self.date)
 
+
 	@property
 	def caption(self):
-		return '%s (%d)' % (self._date, len(self.files))
+		''' timeline.caption -> str -- etykieta dla drzewa '''
+		return '%s (%d)' % (self._date, len(self._files))
 		
 	
 	@property
 	def subdirs(self):
-		# z sortowaniem wg daty
+		''' timeline.subdirs -> [] -- lista pod-obiektów Timeline sortowana wg daty '''
 		return sorted(self.dirs.values(), lambda x,y: cmp(x.date, y.date))
+	
+
+	@property
+	def files(self):
+		""" timeline.files -> [] -- lista ob FileImage
+		
+			Lista  jest filtrowana - tylko poprawne obiekty są zwracane
+		"""
+		files = filter(lambda x: x.is_valid, self._files)
+		self._files = files
+		return files
+
+
+	###################################################################################
 
 
 	def __add_item(self, item):
+		''' timeline.__add_item(item) -- dodanie obiektu '''
 		date = item.shot_date
 		if date is None or date == 0:
 			return
@@ -94,7 +127,7 @@ class Timeline(object):
 			return
 
 		if self.level > 0:
-			self.files.append(item)
+			self._files.append(item)
 		
 		if self.level == 3:
 			return
@@ -109,21 +142,25 @@ class Timeline(object):
 		subdir.__add_item(item)
 
 
+	###################################################################################
+
+
 	def load(self):
+		""" timeline.load() -- załadowanie obiektów do timeline """
 		self.reset()
 		
 		if self.level != 0:
 			return
 		
 		def add_dir(dir):			
-			[ self.__add_item(item) for item in dir.files ]
-			[ add_dir(subdir) for subdir in dir.subdirs ]
+			[ self.__add_item(item) for item in dir.files if item.is_valid ]
+			[ add_dir(subdir) for subdir in dir.subdirs if subdir.is_valid ]
 
 		[ add_dir(item) for item in self.catalog.disks ]
 		
 		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie
 		def sort_subdir(subdir):
-			subdir.files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
+			subdir._files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
 			[ sort_subdir(subsubdir) for subsubdir in subdir.dirs.itervalues() ]
 			
 		[ sort_subdir(subdir) for subdir in self.dirs.itervalues()]

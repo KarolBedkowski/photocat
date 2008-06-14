@@ -1,15 +1,44 @@
-2008-06-06 (v0.5.2) 
+2008-06-14 (v.1.0.0)
+
+Karol Będkowski:
+	f: drobne błędy
+
+
+2008-06-13 (v.0.7.2)
+
+Karol Będkowski:
+	f: problemy z usuniętymi obiektami w timeline
+	a: wygaszanie zbędnych pozycji menu
+	f: tłumaczenie
+
+
+2008-06-11 (v0.6.0)
+
+Karol Będkowski:
+	a: obsługa formatu idx v2
+	a: zliczanie zbędnych, używanych obiektów w datafile, ewentualna przebudowa po wczytaniu
+	a: info o zbędnych obiektach w informacjach o katalogu
+	a: dlgsearch: zabezpieczenie na puste wyszukiwanie, wyświetlanie daty i rozmiaru pliku
+	a: wyświetlanie postępu przy liczeniu plików przy dodawaniu/aktualizacji, wyszukiwaniu, przebudowie
+	a: możliwość przerwania wyszukiwania, przebudowy
+	f: problem z liczeniem katalogów przy dodawaniu/aktualizacji dysków
+	a: szukanie z uwzględnieniem regex, match case, w aktualnym katalogu/dysku/folderze
+
+
+2008-06-06 (v0.5.0) 
 
 Karol Będkowski:
 	a: zmiana sposobu wyświetlania miniaturek (szybciej)
-	f: błąd uruchamiania gdy podano złe parametry
-	d: dodanie wypelniania shot_date
-	a: wyświetlanie miniaturek w wyszukiwaniu
+	f: błąd uruchamiania gdy podano z³e parametry
+	d: dodanie wypełniania shot_date
+	a: wyłwietlanie miniaturek w wyszukiwaniu
 	f: pomniejsze poprawki i optymalizacje
- 
- 
+
+
 2008-06-03 (v0.4.0) 
 
 Karol Będkowski:
-    a: dodanie Timeline
-	f: pomniejsze poprawki	
+	a: dodanie Timeline
+	f: pomniejsze poprawki
+
+# vim: encoding=utf8: ff=unix: 

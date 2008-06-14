@@ -9,7 +9,5 @@ __revision__	= '$Id$'
 __all__			= []
 
 
-from wndmain	import WndMain
-
 
 # vim: encoding=utf8: ff=unix: 

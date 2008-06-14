@@ -1,0 +1,64 @@
+#!/usr/bin/python2.4
+# -*- coding: utf8 -*-
+"""
+Logging setup.
+
+2008-04-17 [k]: umieszczanie loga w tempie jeżeli jest frozen lub wybrany katalog jest ro.
+"""
+__author__		= 'Karol Będkowski'
+__copyright__	= 'Copyright (C) Karol Będkowski 2006'
+__revision__	= '$Id$'
+
+__all__ = ['logging_setup']
+
+import os.path
+import sys
+import logging
+import imp
+import tempfile
+
+
+def _is_frozen():
+	return (hasattr(sys, "frozen")		# new py2exe
+			or hasattr(sys, "importers")	# old py2exe
+			or imp.is_frozen("__main__"))	# tools/freeze
+
+
+def logging_setup(filename, debug=False):
+	
+	log_fullpath = os.path.abspath(filename)
+	log_dir = os.path.dirname(log_fullpath)
+	log_dir_access = os.access(log_dir, os.W_OK)
+		
+	if os.path.isabs(filename):
+		if not log_dir_access:
+			log_fullpath = os.path.join(tempfile.gettempdir(), filename)
+	else:
+		if _is_frozen() or not log_dir_access:
+			log_fullpath = os.path.join(tempfile.gettempdir(), filename)
+		
+	print 'Logging to %s' % log_fullpath
+
+	if debug:
+		level_console	= logging.DEBUG
+		level_file		= logging.DEBUG
+	else:
+		level_console	= logging.INFO
+		level_file		= logging.ERROR
+
+	logging.basicConfig(level=level_file, format='%(asctime)s %(levelname)-8s %(name)s - %(message)s', 
+			filename=log_fullpath, filemode='w')
+	console = logging.StreamHandler()
+	console.setLevel(level_console)
+
+	console.setFormatter(logging.Formatter('%(levelname)-8s %(name)s - %(message)s'))
+	logging.getLogger('').addHandler(console)
+
+	logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+	logging.getLogger('sqlalchemy.orm.unitofwork').setLevel(logging.WARN)
+
+	_LOG = logging.getLogger(__name__)
+	_LOG.debug('logging_setup() finished')
+
+
+# vim: ff=unix: encoding=utf8: 

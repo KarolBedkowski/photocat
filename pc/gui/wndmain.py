@@ -42,19 +42,19 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button
 from kpylibs.wnd_shell		import WndShell
-from kpylibs.formaters		import format_size
+from kpylibs.formaters		import format_human_size
 
 import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
+from pc.engine				import ecatalog
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
-from _dlgabout				import DlgAbout
-from _dlgadddisk			import DlgAddDisk
+from _dlgabout				import show_about_box
 from _dlgproperties			import DlgProperties
 from _dlgsearch				import DlgSearch
 from _dlgsettings			import DlgSettings
@@ -116,6 +116,7 @@ class WndMain(wx.Frame):
 		self._photo_list.Bind(wx.EVT_RIGHT_UP, self._on_photolist_popupmenu)
 
 		self.__update_last_open_files()
+		self.__update_menus_toolbars()
 
 
 	def _create_layout(self, appconfig):
@@ -134,7 +135,7 @@ class WndMain(wx.Frame):
 
 
 	def _create_main_menu(self):
-		menu_bar = wx.MenuBar()
+		self.__menu_bar = menu_bar = wx.MenuBar()
 		menu_bar.Append(self._create_main_menu_file(),		_('&File'))
 		menu_bar.Append(self._create_main_menu_catalog(),	_('&Catalog'))
 		menu_bar.Append(self._create_main_menu_help(),		wx.GetStockLabel(wx.ID_HELP, True))
@@ -179,6 +180,7 @@ class WndMain(wx.Frame):
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
 		))
+		self._main_menu_catalog = menu
 		return menu
 
 
@@ -199,7 +201,7 @@ class WndMain(wx.Frame):
 
 	def _create_toolbar(self):
 		''' Utworzenie toolbar-a '''
-		toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.NO_BORDER|wx.TB_FLAT|wx.TB_TEXT)
+		self.__toolbar = toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.NO_BORDER|wx.TB_FLAT|wx.TB_TEXT)
 		toolbar.SetToolBitmapSize((16, 16))
 
 		def cbtn(label, function, iconname, description=''):
@@ -215,11 +217,11 @@ class WndMain(wx.Frame):
 
 		toolbar.AddSeparator()
 
-		cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
+		self.__tb_find = cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
 		
 		toolbar.AddSeparator()
 
-		cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
+		self.__tb_add_disk = cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
 
 		toolbar.AddSeparator()
 		toolbar.Realize()
@@ -296,6 +298,7 @@ class WndMain(wx.Frame):
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
 					self.__update_last_open_files(filename)
+					self.__update_menus_toolbars()
 		evt.Skip()
 
 
@@ -305,6 +308,7 @@ class WndMain(wx.Frame):
 			if not filename.endswith('.index'):
 				filename = filename + '.index'
 			self._open_file(filename)
+			self.__update_menus_toolbars()
 		evt.Skip()
 
 
@@ -339,6 +343,7 @@ class WndMain(wx.Frame):
 		self._dirs_tree.delete_item(catalog)
 		catalog.close()
 		self._catalogs.remove(catalog)
+		self.__update_menus_toolbars()
 
 
 	def _on_file_rebuild(self, evt):
@@ -349,21 +354,8 @@ class WndMain(wx.Frame):
 		if not dialogs.message_box_question_yesno(self, _('Rebuild catalog %s?') % catalog.caption, 'PC'):
 			return
 
-		try:
-			self.SetCursor(wx.HOURGLASS_CURSOR)
-			saved_space = catalog.data_provider.rebuild(catalog)
+		if ecatalog.rebuild(catalog, self):
 			self.__save_catalog(catalog)
-			dialogs.message_box_info(self,
-					_('Rebuild catalog finished\nSaved space: %sB') %
-							format_size(saved_space, True, reduce_at=1024*1024, separate=True),
-					'PC')
-		except Exception, err:
-			_LOG.exception('rebuild error')
-			dialogs.message_box_error(self,
-					_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
-					'PC')
-		finally:
-			self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_file_settings(self, evt):
@@ -378,9 +370,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_help_about(self, evt):
-		dlg = DlgAbout(self)
-		dlg.ShowModal()
-		dlg.Destroy()
+		show_about_box(self)
 		evt.Skip()
 
 
@@ -404,7 +394,18 @@ class WndMain(wx.Frame):
 	def _on_catalog_add(self, evt):
 		catalog = self.__get_selected_catalog()
 		if catalog is not None:
-			self.__add_or_update_disk(catalog)
+			disk = None
+			try:
+				disk = ecatalog.add_disk_to_catalog(catalog, self)
+			except Exception, err:
+				_LOG.exception('WndMain._on_catalog_add()')
+			else:
+				if disk is not None:
+					self.__save_catalog(catalog, True)
+					self._dirs_tree.update_node_disk(disk)
+					self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+					self._dirs_tree.update_timeline_node(catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_update_disk(self, evt):
@@ -416,7 +417,18 @@ class WndMain(wx.Frame):
 			return
 
 		disk = tree_selected.disk
-		self.__add_or_update_disk(disk.catalog, disk, True)
+		try:
+			ecatalog.update_disk_in_catalog(disk.catalog, disk, self)
+		except Exception, err:
+			_LOG.exception('WndMain._on_catalog_update_disk()')
+		else:
+			if disk is not None:
+				catalog = disk.catalog
+				self.__save_catalog(catalog, True)
+				self._dirs_tree.update_node_disk(disk)
+				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+				self._dirs_tree.update_timeline_node(catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_disk(self, evt):
@@ -435,6 +447,7 @@ class WndMain(wx.Frame):
 			self._dirs_tree.update_catalog_node(catalog)
 			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
 			self._dirs_tree.update_timeline_node(tree_selected.catalog.timeline)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_dir(self, evt):
@@ -451,6 +464,7 @@ class WndMain(wx.Frame):
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
 			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
+			self.__update_menus_toolbars()
 
 
 	def _on_catalog_del_image(self, evt):
@@ -477,7 +491,7 @@ class WndMain(wx.Frame):
 		if len(self._catalogs) == 0:
 			return
 
-		dlg = DlgSearch(self, self._catalogs)
+		dlg = DlgSearch(self, self._catalogs, self._dirs_tree.selected_item)
 		dlg.Show()
 
 
@@ -493,10 +507,11 @@ class WndMain(wx.Frame):
 			files_count		+= disk_files_count + disk_files_count2
 			subdirs_count	+= disk_subdirs_count + disk_subdirs_count2
 
-		data = dict(disks=len(catalog.disks), files=files_count, dirs=subdirs_count)
-		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d') % data
-		dialogs.message_box_info(self, info, 'PC')
+		dirty, dirtyp = catalog.dirty_objects_count
 
+		data = dict(disks=len(catalog.disks), files=files_count, dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
+		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty entries: %(dirty)d (%(dirtyp)d%%)') % data
+		dialogs.message_box_info(self, info, 'PC')
 
 
 	def _on_catalog_edit_multi(self, evt):
@@ -525,6 +540,8 @@ class WndMain(wx.Frame):
 		self._info_panel.clear_folder()
 		show_info = True
 
+		self.__update_menus_toolbars()
+
 		if isinstance(item, Tag):
 			item = item.files
 			show_info = False
@@ -536,7 +553,7 @@ class WndMain(wx.Frame):
 				return
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
-				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), _('PC')):
+				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
 					self._photo_list.show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
@@ -558,7 +575,8 @@ class WndMain(wx.Frame):
 				self.SetCursor(wx.STANDARD_CURSOR)
 				if show_info:
 					files_count, subdirs_count, dummy, dummy = item.directory_size
-					self.SetStatusText(_('Directorys %d;  files: %d') % (subdirs_count, files_count))
+					self.SetStatusText(_('Directories %(dirs)d;  files: %(files)d') %
+							dict(dirs=subdirs_count, files=files_count))
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
 
@@ -604,6 +622,7 @@ class WndMain(wx.Frame):
 				self._info_panel.show(selected)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
+		self.__update_menus_toolbars()
 
 
 	def _on_thumb_dclick(self, evt):
@@ -672,7 +691,7 @@ class WndMain(wx.Frame):
 	def _open_file(self, filename):
 		if sum(( 1 for cat in self._catalogs if cat.catalog_filename == filename )) == 0:
 			if not os.path.exists(filename):
-				dialogs.message_box_error(self, _("Error openning file %s!\nFile don't exists.") % filename, _('Open file'))
+				dialogs.message_box_error(self, _("Error opening file %s!\nFile don't exists.") % filename, _('Open file'))
 				return
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
@@ -685,9 +704,20 @@ class WndMain(wx.Frame):
 				self.SetStatusText(filename)
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
-				dialogs.message_box_error(self, _('Error openning file %s') % filename, _('Open file'))
+				dialogs.message_box_error(self, _('Error opening file %s') % filename, _('Open file'))
+				catalog = None
+			else:
+				if catalog is not None:
+					dirty, dirtyp = catalog.dirty_objects_count
+					_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
+					if dirtyp > 10:
+						if dialogs.message_box_warning_yesno(self,
+								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
+							if ecatalog.rebuild(catalog, self):
+								self.__save_catalog(catalog)
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
+			self.__update_menus_toolbars()
 
 
 	def __update_last_open_files(self, filename=None):
@@ -765,53 +795,6 @@ class WndMain(wx.Frame):
 		return popup_menu
 
 
-	def __add_or_update_disk(self, catalog, disk=None, update=False):
-		if update:
-			data = dict(name=disk.name, descr=disk.desc)
-		else:
-			data = {}
-		appconfig = AppConfig()
-		data.update(dict(appconfig.get_items('settings') or []))
-		dlg = DlgAddDisk(self, data, update=update, catalog=catalog)
-		if dlg.ShowModal() == wx.ID_OK:
-			allfiles = Catalog.fast_count_files_dirs(data['path']) + 1
-				
-			title = update and _("Updating disk") or _("Adding disk")
-
-			if allfiles == 1:
-				dialogs.message_box_error(self, _('No files found!'), title)
-				return
-
-			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=self, maximum=allfiles,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_AUTO_HIDE|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-
-			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + os.path.getsize(msg)
-				return dlg_progress.Update(cntr[0], msg)
-
-			try:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				if update:
-					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data, 
-							on_update=update_progress, name=data['name'])
-				else:
-					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data, on_update=update_progress)
-				self.__save_catalog(catalog, True)
-				#self._dirs_tree.add_catalog(catalog)
-				self._dirs_tree.update_node_disk(disk)
-				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-				self._dirs_tree.update_timeline_node(catalog.timeline)
-			except Exception, err:
-				_LOG.exception('MainWnd.__add_or_update_disk()')
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dialogs.message_box_error(self, _('Error:\n%s') % err, title)
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
-				dlg_progress.Update(allfiles, _('Done!'))
-				dlg_progress.Destroy()
-		dlg.Destroy()
-
-
 	def __get_selected_catalog(self):
 		if len(self._catalogs) == 0:
 			return None
@@ -835,6 +818,36 @@ class WndMain(wx.Frame):
 				if tag_item.tree_node is not None
 			]
 			self._dirs_tree.update_node_tags(tags_provider)
+
+	
+	def __update_menus_toolbars(self):
+		""" wndmain.__update_menus_toolbars() -- włączanie/wyłączanie pozycji menu/toolbar """
+		catalog_loaded = len(self._catalogs) > 0
+		
+		self.__menu_bar.EnableTop(1, catalog_loaded)
+		
+		mm_items = self._main_menu_file.GetMenuItems()
+		mm_items[2].Enable(catalog_loaded)
+		mm_items[4].Enable(catalog_loaded)
+		mm_items[6].Enable(catalog_loaded)
+		
+		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
+		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
+		
+		if catalog_loaded:
+			selected_tree_item = self._dirs_tree.selected_item
+			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
+			dir_selected = not disk_selected and (isinstance(selected_tree_item, Directory) if selected_tree_item is not None else False)
+			file_selected = len(self._photo_list.selected_items) > 0
+
+			mm_items = self._main_menu_catalog.GetMenuItems()
+			mm_items[1].Enable(disk_selected)
+			mm_items[2].Enable(disk_selected)
+			mm_items[4].Enable(dir_selected)
+			mm_items[5].Enable(file_selected)
+			mm_items[7].Enable(file_selected)
+			
+		
 
 
 # vim: encoding=utf8:

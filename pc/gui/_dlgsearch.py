@@ -33,7 +33,9 @@ import sys
 import logging
 _LOG = logging.getLogger(__name__)
 
+import time
 import cStringIO
+import re
 
 import wx
 import wx.lib.buttons  as  buttons
@@ -42,8 +44,10 @@ from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
+from kpylibs.formaters		import format_human_size
 
-from pc.model		import Catalog, Directory, Disk, FileImage
+from pc.model				import Catalog, Directory, Disk, FileImage
+from pc.engine				import search, image
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
@@ -61,13 +65,14 @@ class _OptionsError(StandardError):
 class DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
-	def __init__(self, parent, catalogs):
+	def __init__(self, parent, catalogs, selected_item=None):
 		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 		#|wx.FULL_REPAINT_ON_RESIZE
 
 		self._catalogs	= catalogs
 		self._parent	= parent
 		self._result	= []
+		self._selected_item = selected_item
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
@@ -95,6 +100,8 @@ class DlgSearch(wx.Dialog):
 			self.Move(position)
 		
 		self.Bind(wx.EVT_CLOSE, self._on_close)
+		
+		self._tc_text.SetFocus()
 
 
 	def SetStatusText(self, text, idx=0):
@@ -106,11 +113,7 @@ class DlgSearch(wx.Dialog):
 		grid.AddGrowableCol(1)
 		grid.Add(wx.StaticText(self, -1, _('Text')), 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
 
-		last = AppConfig().get_items('last_search')
-		if last is None:
-			last = []
-		else:
-			last = [l[1] for l in last]
+		last = search.get_last_search()
 
 		self._tc_text = wx.ComboBox(self, -1, choices=last)
 		grid.Add(self._tc_text, 1, wx.EXPAND)
@@ -159,6 +162,8 @@ class DlgSearch(wx.Dialog):
 		listctrl.InsertColumn(1, _('Catalog'))
 		listctrl.InsertColumn(2, _('Disk'))
 		listctrl.InsertColumn(3, _('Path'))
+		listctrl.InsertColumn(4, _('File date'))
+		listctrl.InsertColumn(5, _('File size'))
 		
 		listctrl.SetMinSize((200, 200))
 
@@ -221,17 +226,30 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 		
-		# szukanie w katalogu
-		box = wx.StaticBox(pane, -1, _("Catalog"))
+		# szukanie w ...
+		box = wx.StaticBox(pane, -1, _("Search in:"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 		cb = self._sb_search_in_catalog = wx.ComboBox(pane, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
-		[ cb.Append(cat.name) for cat in self._catalogs ]
+
+		if self._selected_item is not None:
+			if isinstance(self._selected_item, Disk):
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+			elif isinstance(self._selected_item, Directory):
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>"), _("<current dir>")) ]
+			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:	
+				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+			
+		[ cb.Append(_("catalog: %s") % cat.name) for cat in self._catalogs ]
+		
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		sizer.Add(subsizer1, 0, wx.EXPAND)
 		
 		##############################
+		
+		
+		subsizer2 = wx.BoxSizer(wx.HORIZONTAL)
 		
 		# szukanie wg dat		
 		box = wx.StaticBox(pane, -1, _("Date"))
@@ -248,7 +266,21 @@ class DlgSearch(wx.Dialog):
 		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
 		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
 		
-		sizer.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
+		# opcje	
+		box = wx.StaticBox(pane, -1, _("Options"))
+		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
+		
+		self._cb_regex = wx.CheckBox(pane, -1, _("Regex"))
+		bsizer.Add(self._cb_regex, 0, wx.EXPAND|wx.ALL, 5)
+		bsizer.Add((10, 10))
+		self._cb_match_case = wx.CheckBox(pane, -1, _("Match case"))
+		bsizer.Add(self._cb_match_case, 0, wx.EXPAND|wx.ALL, 5)
+		
+		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
+		
+		sizer.Add(subsizer2, 0, wx.EXPAND)
 		
 		pane.SetSizer(sizer)
 
@@ -284,6 +316,9 @@ class DlgSearch(wx.Dialog):
 				if options['search_date_start'] > options['search_date_end']:
 					raise _OptionsError(_("Wrong date range!"))
 
+			options['opt_regex'] = self._cb_regex.GetValue()
+			options['opt_match_case'] = self._cb_match_case.GetValue()
+
 		return options
 	
 	
@@ -292,6 +327,8 @@ class DlgSearch(wx.Dialog):
 
 	def _on_btn_find(self, evt):
 		what = self._tc_text.GetValue().strip()
+		if len(what) == 0:
+			return
 		
 		self._panel_preview.Show(False)
 		self._btn_properties.Enable(False)
@@ -300,35 +337,17 @@ class DlgSearch(wx.Dialog):
 			options = self._get_options()
 			_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
 		except _OptionsError, err:
-			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('PC'))
+			dialogs.message_box_info(self, _("Bad options:\n%s") % err, 'PC')
 			return
 
-		what = what.lower()
-
-		_LOG.debug('DlgSearch._on_btn_find: "%s"' % what)
-		last_search_text_ctrl = self._tc_text
-
-		last = [what] + [ text 
-				for text 
-				in (last_search_text_ctrl.GetString(idx) 
-						for idx 
-						in xrange(min(last_search_text_ctrl.GetCount(), 10))
-				)
-				if text != what
-		]
-		
-		AppConfig().set_items('last_search', 'text', last)
-		self._tc_text.Clear()
-		[ self._tc_text.Append(text) for text in last ]
-		self._tc_text.SetValue(what)
-
 		listctrl = self._result_list
+		listctrl.Freeze()
 		listctrl.DeleteAllItems()
 
 		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
 
-		self._result = []
+		result = self._result = []
 		counters = [0, 0]
 
 		def insert(item):
@@ -342,31 +361,46 @@ class DlgSearch(wx.Dialog):
 			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
 			listctrl.SetStringItem(idx, 2, str(item.disk.name))
 			listctrl.SetStringItem(idx, 3, item.path)
+			listctrl.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
+			if ico == icon_image_idx:
+				listctrl.SetStringItem(idx, 5, format_human_size(item.size))
 			listctrl.SetItemData(idx, len(self._result))
-			self._result.append(item)
+			result.append(item)
+			
+		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
 		
-		catalogs_to_search = self._catalogs
-		if options is not None:
-			search_in_catalog = options.get('search_in_catalog', _("<all>"))
-			if search_in_catalog != _("<all>"):
-				catalogs_to_search = [cat for cat in self._catalogs if cat.name == search_in_catalog ]
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
+					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
-		for catalog in catalogs_to_search:
-			result = catalog.check_on_find(what, options)
-			[ insert(item) for item in result ]
+		def update_dlg_progress(name, cntr=[0]):
+			""" aktualizacja progress bara w dlg """
+			cntr[0] = cntr[0] + 1
+			return dlg_progress.Update(cntr[0], name)[0]
+
+		what = search.find(what, options, catalogs, insert, update_dlg_progress)
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+		
+		listctrl.Thaw()
+
+		dlg_progress.Destroy()
 
 		if len(self._result) == 0:
-			dialogs.message_box_info(self, _('Not found'), _('PC'))
+			dialogs.message_box_info(self, _('Not found'), 'PC')
 		else:
 			self._panel_preview.Show(True)
 			self.Layout()
+			
+		last_search_text_ctrl = self._tc_text
+		last_search_text_ctrl.Clear()
+		[ last_search_text_ctrl.Append(text) for text in search.update_last_search(what) ]
+		last_search_text_ctrl.SetValue(what)
 
-		self._statusbar.SetStatusText(_('Found %d folders and %d files') % (counters[1], counters[0]))
+		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
+				dict(folders=counters[1], files=counters[0]))
 
 
 	def _on_btn_properties(self, evt):
@@ -395,18 +429,11 @@ class DlgSearch(wx.Dialog):
 		''' callback na zaznacznie rezultatu - wyświetlenie podglądu '''
 		itemidx	= evt.GetData()
 		item	= self._result[itemidx]
-		if isinstance(item, FileImage):
-			try:
-				stream = cStringIO.StringIO(item.image)
-				img		= wx.ImageFromStream(stream)
-			except Exception, err:
-				_LOG.exception('Show item %s error' % item.name)
-				img = wx.EmptyImage(1, 1)
-		else:
-			img = wx.EmptyImage(1, 1)
-			
+		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		self._bmp_preview.SetBitmap(img.ConvertToBitmap())
+		
+		img = image.load_bitmap_from_item(item)
+		self._bmp_preview.SetBitmap(img)
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 	
@@ -435,7 +462,8 @@ class DlgSearch(wx.Dialog):
 		
 		if icons and len(self._result) > 1000:
 			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
-			if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(self._result), _('PC')):
+			if not dialogs.message_box_warning_yesno(self,
+					_('Number of files exceed 1000!\nShow %d files?') % len(self._result), 'PC'):
 				self._btn_icons.SetToggle(False)
 				return
 		

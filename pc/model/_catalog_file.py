@@ -35,8 +35,6 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs.formaters	import format_size
-
 from storage import StorageObject
 
 _ = wx.GetTranslation
@@ -156,21 +154,26 @@ class CatalogFile(StorageObject):
 		return updated_tags
 
 
-	def check_on_find(self, text, options=None):
+	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
 		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
 		
-		if options is None or options.get('search_in_descr', True):
-			if self.desc is not None and self.desc.lower().count(text) > 0:
-				return self._check_on_find_date(options)
 		if options is None or options.get('search_in_names', True):
-			if self.name is not None and self.name.lower().count(text) > 0:
-				return self._check_on_find_date(options)
+			if self.name is not None and cmpfunc(self.name):
+				if self._check_on_find_date(options):
+					add_callback(self)
+					return
 		if options is None or options.get('search_in_tags', True):
-			if self.tags is not None and text in self.tags:
-				return self._check_on_find_date(options)
+			if self.tags is not None and self._check_on_find_date(options):
+				for tag in self.tags:
+					if cmpfunc(tag):
+						add_callback(self)
+						return
 
-		return list()
-	
+		if options is None or options.get('search_in_descr', True):
+			if self.desc is not None and cmpfunc(self.desc):
+				if self._check_on_find_date(options):
+					add_callback(self)
+					return
 
 	##########################################################################
 
@@ -179,15 +182,15 @@ class CatalogFile(StorageObject):
 		''' sprawdznie czy obiekt zawiera sie w danym zakresie  dat. '''
 		date = self.date_to_check
 		if options is None or date is None:
-			return [self]
+			return True
 
 		if not options.get('search_date', False):
-			return [self]
+			return True
 
 		if date >= options.get('search_date_start') and date <= options.get('search_date_end'):
-			return [self]
+			return True
 
-		return list()
+		return False
 
 
 	##########################################################################

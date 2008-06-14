@@ -29,6 +29,7 @@ import os
 import string
 import time
 import re
+import types
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -37,6 +38,8 @@ import wx
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin
 PILImage._initialized = 3
+
+from kpylibs.formaters		import format_human_size
 
 from pc.lib					import EXIF
 
@@ -63,7 +66,13 @@ class FileImage(CatalogFile):
 		self.shot_date	= kwargs.get('shot_date')
 
 		self._exif_data = None
-
+		
+		# format pliku wer 1
+		if self.thumb is not None and type(self.thumb) == types.TupleType:
+			self.thumb = self.thumb[0]
+		if self.exif is not None and type(self.exif) == types.TupleType:
+			self.exif = self.exif[0]
+		
 		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
 
 
@@ -115,6 +124,9 @@ class FileImage(CatalogFile):
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
+				
+		if self.size is not None:
+			result.append((201, _('File size'), format_human_size(self.size)))
 
 		return result
 
@@ -136,6 +148,11 @@ class FileImage(CatalogFile):
 					self.shot_date = time.mktime(shot_date)
 
 		return self.shot_date or self.date	
+
+	
+	@property
+	def data_objects_count(self):
+		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
 
 
 	##########################################################################
@@ -186,6 +203,7 @@ class FileImage(CatalogFile):
 	def _load_exif(self, path):
 		_LOG.debug('FileImage._load_exif(%s)' % path)
 		self.exif = None
+		jpeg_file = None
 		try:
 			jpeg_file = open(path, 'rb')
 			exif = EXIF.process_file(jpeg_file)

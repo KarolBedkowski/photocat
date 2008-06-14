@@ -98,7 +98,7 @@ class App(wx.App):
 		_LOG.info('App.OnInit: preparing iconprovider...')
 		icon_provider = IconProvider(icons)
 
-		from pc.gui	import WndMain
+		from pc.gui.wndmain	import WndMain
 		wnd = WndMain(self, self.debug)
 		wnd.Show(True)
 		self.SetTopWindow(wnd)
