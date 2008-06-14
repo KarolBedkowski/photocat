@@ -383,13 +383,20 @@ class DlgSearch(wx.Dialog):
 			
 		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
 		
-		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "\n", parent=self, maximum=subdirs_count+1,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
-		def update_dlg_progress(name, cntr=[0]):
+		def update_dlg_progress(name, cntr=[0, True, True]):
 			""" aktualizacja progress bara w dlg """
 			cntr[0] = cntr[0] + 1
-			return dlg_progress.Update(cntr[0], name)[0]
+			found = len(result)
+			cont = dlg_progress.Update(cntr[0], _("%(msg)s\nFound: %(found)d") % dict(msg=name, found=found))[0]
+
+			if cont and cntr[1] and found > 1000:
+				if not dialogs.message_box_warning_yesno(self, _("Found more than 1000 items.\nContinue?"), "PC"):
+					cntr[2] = False					
+				cntr[1] = False
+			return cont & cntr[2]
 
 		what = search.find(what, options, catalogs, insert, update_dlg_progress)
 

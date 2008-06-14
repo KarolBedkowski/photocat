@@ -7,13 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-14 19:50+0200\n"
+"POT-Creation-Date: 2008-06-14 21:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: gui/_dlgsearch.py:393
+#, python-format
+msgid ""
+"%(msg)s\n"
+"Found: %(found)d"
+msgstr ""
+"%(msg)s\n"
+"Znaleziono: %(found)d"
 
 #: gui/wndmain.py:189
 msgid "&About..."
@@ -346,10 +355,18 @@ msgstr "Katalog:"
 msgid "Force load files"
 msgstr "Wymuś wczytywanie plików"
 
-#: gui/_dlgsearch.py:416
+#: gui/_dlgsearch.py:423
 #, python-format
 msgid "Found %(folders)d folders and %(files)d files"
 msgstr "Znaleziono %(folders)d katalogów i %(files)d plików"
+
+#: gui/_dlgsearch.py:396
+msgid ""
+"Found more than 1000 items.\n"
+"Continue?"
+msgstr ""
+"Znaleziono ponad 1000 elementów.\n"
+"Kontynuować?"
 
 #: gui/_dlgsearch.py:153
 msgid "Go to..."
@@ -420,11 +437,11 @@ msgstr "Nie wybrano dysku"
 msgid "No files found!"
 msgstr "Nic znaleziono plików!"
 
-#: gui/_dlgsearch.py:406
+#: gui/_dlgsearch.py:413
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
-#: gui/_dlgsearch.py:486 gui/wndmain.py:549
+#: gui/_dlgsearch.py:493 gui/wndmain.py:549
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
