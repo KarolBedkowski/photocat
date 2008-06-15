@@ -126,7 +126,7 @@ class DlgSettings(wx.Dialog):
 		)
 		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
 		
-		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', ''))
+		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', _('default')))
 		grid.Add(self._btn_thumb_font, 5, wx.EXPAND|wx.ALL, 5)
 		
 		self.Bind(wx.EVT_BUTTON, self._on_btn_font_font, self._btn_thumb_font)
