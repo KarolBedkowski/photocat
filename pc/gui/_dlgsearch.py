@@ -77,7 +77,7 @@ class DlgSearch(wx.Dialog):
 		self._sort_order = None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
@@ -174,6 +174,8 @@ class DlgSearch(wx.Dialog):
 	def _create_layout_list(self):
 		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
+		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
+				self._icon_provider.get_image_index('sm_down'))
 		
 		listctrl.SetMinSize((200, 200))
 

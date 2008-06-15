@@ -50,6 +50,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		wx.ListCtrl.__init__(self, *argv, **kwargv)
 		listmix.ColumnSorterMixin.__init__(self, 6)
 		
+		self._icons = (-1, -1)
 		self.clear()
 		
 		self.InsertColumn(0, _('Name'))
@@ -78,6 +79,10 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 
 	
 	###########################################################################################
+
+	
+	def set_sort_icons(self, up, down):
+		self._icons = (down, up)
 
 
 	def insert(self, item, index, show_size, ico):
@@ -121,7 +126,13 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		elif col == 5:
 			sortfnc = lambda x,y: cmp(self.itemDataMap[x].size, self.itemDataMap[y].size) * ascending
 			
-		return sortfnc	
+		return sortfnc
+	
+
+	def GetSortImages(self):
+		return self._icons
+		
+	
 
 
 
