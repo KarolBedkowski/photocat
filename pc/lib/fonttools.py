@@ -56,12 +56,9 @@ def data2font(data, prefix, default=None):
 		face		= data[prefix + "_font_face"]
 		
 		font = wx.Font(pointsize, family, style, weight, underline, face)
-		
-	elif default is not None:
-		font = default
-		
+			
 	else:
-		font = wx.NORMAL_FONT
+		font = default
 
 	return font
 
