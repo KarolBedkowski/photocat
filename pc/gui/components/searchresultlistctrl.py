@@ -114,13 +114,17 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		ascending = 1 if self._colSortFlag[col] else -1
 
 		if col == 0:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].name, self.itemDataMap[y].name) * ascending
+			sortfnc = lambda x,y: cmp(
+					self.itemDataMap[x].name.lower(), self.itemDataMap[y].name.lower()) * ascending
 		elif col == 1:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].catalog.name, self.itemDataMap[y].catalog.name) * ascending
+			sortfnc = lambda x,y: cmp(
+					self.itemDataMap[x].catalog.name.lower(), self.itemDataMap[y].catalog.name.lower()) * ascending
 		elif col == 2:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].disk.name, self.itemDataMap[y].disk.name) * ascending
+			sortfnc = lambda x,y: cmp(
+					self.itemDataMap[x].disk.name.lower(), self.itemDataMap[y].disk.name.lower()) * ascending
 		elif col == 3:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].path, self.itemDataMap[y].path) * ascending
+			sortfnc = lambda x,y: cmp(
+					self.itemDataMap[x].path.lower(), self.itemDataMap[y].path.lower()) * ascending
 		elif col == 4:
 			sortfnc = lambda x,y: cmp(self.itemDataMap[x].date, self.itemDataMap[y].date) * ascending
 		elif col == 5:
