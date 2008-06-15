@@ -848,6 +848,7 @@ class WndMain(wx.Frame):
 		)
 		self._photo_list.show_captions	= appconfig.get('settings', 'view_show_captions', True)
 		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
+		self._photo_list.set_captions_font(dict(appconfig.get_items('settings') or []))
 		self._photo_list.Refresh()
 
 

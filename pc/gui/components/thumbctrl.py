@@ -34,6 +34,8 @@ import math
 import wx
 import wx.lib.newevent
 
+from pc.lib	import fonttools
+
 from _thumb import Thumb
 
 
@@ -111,6 +113,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_height = thumb_height
 		[ item.reset() for item in self._items ]
 		self._update()
+		
+	
+	def set_captions_font(self, fontdata):
+		font = fonttools.data2font(fontdata, 'thumb', wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False))
+		self._caption_font = font
 		
 		
 	def is_selected(self, idx):
