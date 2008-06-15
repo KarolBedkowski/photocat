@@ -56,6 +56,8 @@ class CatalogFile(StorageObject):
 		self.parent		= parent
 		self.disk		= disk
 		self.catalog	= disk.catalog
+		
+		self._cached_path = None
 
 
 	@property
@@ -97,9 +99,12 @@ class CatalogFile(StorageObject):
 
 	@property
 	def path(self):
-		if self.parent is None:
-			return self.name
-		return os.path.join(self.parent.path, self.name)
+		if self._cached_path is None:
+			if self.parent is None:
+				self._cached_path = self.name
+			else:
+				self._cached_path = os.path.join(self.parent.path, self.name)
+		return self._cached_path
 
 
 	@property
