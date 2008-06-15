@@ -31,11 +31,15 @@ __revision__	= '$Id$'
 __all__			= ['SearchResultListCtrl']
 
 
+import sys
+import time
 import logging
 _LOG = logging.getLogger(__name__)
 
 import wx
 import wx.lib.mixins.listctrl  as  listmix
+
+from kpylibs.formaters		import format_human_size
 
 _ = wx.GetTranslation
 
@@ -47,10 +51,18 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		listmix.ColumnSorterMixin.__init__(self, 6)
 		
 		self.clear()
+		
+		self.InsertColumn(0, _('Name'))
+		self.InsertColumn(1, _('Catalog'))
+		self.InsertColumn(2, _('Disk'))
+		self.InsertColumn(3, _('Path'))
+		self.InsertColumn(4, _('File date'))
+		self.InsertColumn(5, _('File size'))
 
 
 	def clear(self):
 		self.itemDataMap = []
+		self.DeleteAllItems()
 
 	
 	###########################################################################################
@@ -67,7 +79,23 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 	
 	###########################################################################################
 
-	
+
+	def insert(self, item, index, show_size, ico):
+		idx = self.InsertImageStringItem(sys.maxint, str(item.name), ico)
+		self.SetStringItem(idx, 1, str(item.catalog.name))
+		self.SetStringItem(idx, 2, str(item.disk.name))
+		self.SetStringItem(idx, 3, item.path)
+		self.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
+		if show_size:
+			self.SetStringItem(idx, 5, format_human_size(item.size))
+		self.SetItemData(idx, index)
+		
+		
+	def autosize_cols(self):
+		self.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		self.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		self.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		self.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
 
 	###########################################################################################
