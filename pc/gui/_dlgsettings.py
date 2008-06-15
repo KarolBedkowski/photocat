@@ -40,6 +40,7 @@ from kpylibs.appconfig	import AppConfig
 from kpylibs.validators	import MyValidator, validators
 
 from pc.model			import Catalog, Directory, Disk, FileImage
+from pc.lib				import fonttools
 
 _ = wx.GetTranslation
 
@@ -124,6 +125,11 @@ class DlgSettings(wx.Dialog):
 				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
 		)
 		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
+		
+		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', ''))
+		grid.Add(self._btn_thumb_font, 5, wx.EXPAND|wx.ALL, 5)
+		
+		self.Bind(wx.EVT_BUTTON, self._on_btn_font_font, self._btn_thumb_font)
 
 		panel.SetSizerAndFit(grid)
 		
@@ -155,7 +161,26 @@ class DlgSettings(wx.Dialog):
 	def _on_close(self, evt=None):
 		if evt is not None:
 			evt.Skip()
+			
+			
+	def _on_btn_font_font(self, evt):
+		data = wx.FontData()
+		data.EnableEffects(True)
+		if self._data.get('thumb_font_face') is not None:
+			font = fonttools.data2font(self._data, 'thumb')
+			data.SetInitialFont(font)
 
+		dlg = wx.FontDialog(self, data)
+		if dlg.ShowModal() == wx.ID_OK:
+			data = dlg.GetFontData()
+			font = data.GetChosenFont()
+			
+			fontdata = fonttools.font2data(font, 'thumb')
+			self._data.update(fontdata)
+
+			self._btn_thumb_font.SetLabel(_("Caption font\n%s") % font.GetNativeFontInfo().ToString())
+			
+		dlg.Destroy()
 
 	#########################################################################
 
