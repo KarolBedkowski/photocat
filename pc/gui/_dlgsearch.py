@@ -39,6 +39,7 @@ import re
 
 import wx
 import wx.lib.buttons  as  buttons
+import wx.lib.mixins.listctrl  as  listmix
 
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
@@ -50,6 +51,7 @@ from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
+from components.searchresultlistctrl	import SearchResultListCtrl
 
 from _dlgproperties	import DlgProperties
 
@@ -171,7 +173,7 @@ class DlgSearch(wx.Dialog):
 
 
 	def _create_layout_list(self):
-		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.InsertColumn(0, _('Name'))
 		listctrl.InsertColumn(1, _('Catalog'))
@@ -185,7 +187,6 @@ class DlgSearch(wx.Dialog):
 		self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_activate, listctrl)
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_list_item_selected, listctrl)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_list_item_deselected, listctrl)
-		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_list_col_click, listctrl)
 
 		return listctrl
 	
@@ -402,6 +403,8 @@ class DlgSearch(wx.Dialog):
 			return cont & cntr[2]
 
 		what = search.find(what, options, catalogs, insert, update_dlg_progress)
+		
+		listctrl.result = result
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -425,8 +428,6 @@ class DlgSearch(wx.Dialog):
 
 		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
 				dict(folders=counters[1], files=counters[0]))
-		
-		self._set_list_header()
 
 
 	def _on_btn_properties(self, evt):
@@ -474,11 +475,6 @@ class DlgSearch(wx.Dialog):
 		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._btn_properties.Enable(False)
-
-
-	def _on_list_col_click(self, evt):
-		if len(self._result) > 1:
-			self._sort_results(evt.m_col)
 
 
 	def _on_close(self, evt):
@@ -562,48 +558,7 @@ class DlgSearch(wx.Dialog):
 			
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		
-		
-	def _sort_results(self, col):
-		if self._sort_order is None:
-			self._sort_order = (col, 0)
-		elif self._sort_order[0] == col:
-			self._sort_order = (col, 1-self._sort_order[1])
-		else:
-			self._sort_order = (col, 0)
-			
-		if col == 0:
-			sortfnc = lambda x,y: cmp(x.name, y.name)
-		elif col == 1:
-			sortfnc = lambda x,y: cmp(x.catalog.name, y.catalog.name)
-		elif col == 2:
-			sortfnc = lambda x,y: cmp(x.disk.name, y.disk.name)
-		elif col == 3:
-			sortfnc = lambda x,y: cmp(x.date, y.date)
-		elif col == 4:
-			sortfnc = lambda x,y: cmp(x.size, y.size)
-		else:
-			return
-		
-		self._result.sort(sortfnc)
-		# TODO: wyswietlenie listy
-		
-		self._set_list_header()
-		
-		
-	def _set_list_header(self):
-		sort_col = self._sort_order[0] if self._sort_order is not None else -1
-		listctrl = self._result_list
-		
-		for idx, label in ((0, _('Name')), (1, _('Catalog')), (2, _('Disk')), (3, _('Path')), (4, _('File date')),
-				(5, _('File size'))):
-			listitem = listctrl.GetColumn(idx)
-			if  idx == sort_col:
-				listitem.SetText("%s %s" % ( label, ('+', '-')[self._sort_order[1]] ))
-			else:
-				listitem.SetText(label)
-			listitem.SetColumn(idx, listitem)
-				
+
 
 
 # vim: encoding=utf8: ff=unix:
