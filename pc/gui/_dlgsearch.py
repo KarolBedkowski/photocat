@@ -39,17 +39,18 @@ import re
 
 import wx
 import wx.lib.buttons  as  buttons
+import wx.lib.mixins.listctrl  as  listmix
 
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
-from kpylibs.formaters		import format_human_size
 
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
+from components.searchresultlistctrl	import SearchResultListCtrl
 
 from _dlgproperties	import DlgProperties
 
@@ -73,9 +74,10 @@ class DlgSearch(wx.Dialog):
 		self._parent	= parent
 		self._result	= []
 		self._selected_item = selected_item
+		self._sort_order = None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
@@ -98,6 +100,8 @@ class DlgSearch(wx.Dialog):
 			self.Centre(wx.BOTH)
 		else:
 			self.Move(position)
+			
+		self._thumbctrl.thumbs_preload = appconfig.get('settings', 'view_preload', True)
 		
 		self.Bind(wx.EVT_CLOSE, self._on_close)
 		
@@ -138,16 +142,28 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
 		grid.Add(self._bmp_preview, 0, wx.EXPAND|wx.ALL, 5)
 		
+		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
+		self._image_info.InsertColumn(0, '')
+		self._image_info.InsertColumn(1, '')
+		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
+		
+		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
+		
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
-		grid.Add(self._btn_properties, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_properties, 1, wx.EXPAND|wx.ALL, 1)
+		
+		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
+		grid_btns.Add(self._btn_goto, 1, wx.EXPAND|wx.ALL, 1)
 		
 		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid.Add(self._btn_icons, 0, wx.EXPAND|wx.ALL, 5)
+		grid_btns.Add(self._btn_icons, 1, wx.EXPAND|wx.ALL, 1)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+		
+		grid.Add(grid_btns, 0, wx.EXPAND)
 
 		panel.SetSizer(grid)
 		panel.Show(False)
-		
+				
 		appconfig = AppConfig()
 		size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))		
 		self._bmp_preview.SetMinSize(size)
@@ -156,14 +172,10 @@ class DlgSearch(wx.Dialog):
 
 
 	def _create_layout_list(self):
-		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
-		listctrl.InsertColumn(0, _('Name'))
-		listctrl.InsertColumn(1, _('Catalog'))
-		listctrl.InsertColumn(2, _('Disk'))
-		listctrl.InsertColumn(3, _('Path'))
-		listctrl.InsertColumn(4, _('File date'))
-		listctrl.InsertColumn(5, _('File size'))
+		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
+				self._icon_provider.get_image_index('sm_down'))
 		
 		listctrl.SetMinSize((200, 200))
 
@@ -259,11 +271,16 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(self._cb_date, 0, wx.EXPAND|wx.ALL, 5)
 		bsizer.Add((10, 10))
 		bsizer.Add(wx.StaticText(pane, -1, _("begin:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		
+		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1),
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_start_date, 0, wx.EXPAND|wx.ALL, 5)		
+		
 		bsizer.Add((10, 10))
+		
 		bsizer.Add(wx.StaticText(pane, -1, _("end:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1),
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
 		
 		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -342,7 +359,7 @@ class DlgSearch(wx.Dialog):
 
 		listctrl = self._result_list
 		listctrl.Freeze()
-		listctrl.DeleteAllItems()
+		listctrl.clear()
 
 		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
@@ -357,33 +374,31 @@ class DlgSearch(wx.Dialog):
 			else:
 				ico = icon_folder_idx
 				counters[1] += 1
-			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
-			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
-			listctrl.SetStringItem(idx, 2, str(item.disk.name))
-			listctrl.SetStringItem(idx, 3, item.path)
-			listctrl.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
-			if ico == icon_image_idx:
-				listctrl.SetStringItem(idx, 5, format_human_size(item.size))
-			listctrl.SetItemData(idx, len(self._result))
+			listctrl.insert(item, len(self._result), (ico==icon_image_idx), ico)
 			result.append(item)
 			
 		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
 		
-		dlg_progress = wx.ProgressDialog(_("Searching..."), "", parent=self, maximum=subdirs_count+1,
+		dlg_progress = wx.ProgressDialog(_("Searching..."), "\n", parent=self, maximum=subdirs_count+1,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_AUTO_HIDE|wx.PD_CAN_ABORT)
 		
-		def update_dlg_progress(name, cntr=[0]):
+		def update_dlg_progress(name, cntr=[0, True, True]):
 			""" aktualizacja progress bara w dlg """
 			cntr[0] = cntr[0] + 1
-			return dlg_progress.Update(cntr[0], name)[0]
+			found = len(result)
+			cont = dlg_progress.Update(cntr[0], _("%(msg)s\nFound: %(found)d") % dict(msg=name, found=found))[0]
+
+			if cont and cntr[1] and found > 1000:
+				if not dialogs.message_box_warning_yesno(self, _("Found more than 1000 items.\nContinue?"), "PC"):
+					cntr[2] = False					
+				cntr[1] = False
+			return cont & cntr[2]
 
 		what = search.find(what, options, catalogs, insert, update_dlg_progress)
-
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 		
+		listctrl.result = result
+
+		listctrl.autosize_cols()		
 		listctrl.Thaw()
 
 		dlg_progress.Destroy()
@@ -416,6 +431,10 @@ class DlgSearch(wx.Dialog):
 			dlg.Destroy()
 		
 
+	def _on_btn_goto(self, evt):
+		self._on_list_activate(None)
+		
+
 	def _on_list_activate(self, evt):
 		item = self._get_selected_result_item()
 		if item is not None:
@@ -437,6 +456,8 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 	
+		self._show_image_info(item)
+	
 
 	def _on_list_item_deselected(self, evt):
 		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
@@ -456,7 +477,8 @@ class DlgSearch(wx.Dialog):
 		''' callback na zwinięcie/rozwinięcie panelu '''
 		# trzeba przebudować layout po zwinięciu/rozwinięciu panelu
 		self.Layout()
-		
+
+
 	def _on_btn_icons(self, evt):
 		icons = evt.GetIsDown()
 		
@@ -469,7 +491,18 @@ class DlgSearch(wx.Dialog):
 		
 		self._thumbctrl.Show(icons)
 		self._result_list.Show(not icons)
+		
+		if icons:
+			size = (1, 1)
+		else:
+			appconfig = AppConfig()
+			size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))
+
+		self._bmp_preview.SetMinSize(size)
+		
 		self.Layout()
+
+		self._image_info.DeleteAllItems()
 
 		if icons:
 			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
@@ -481,6 +514,7 @@ class DlgSearch(wx.Dialog):
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
+		self._show_image_info(item)
 
 	
 	def _on_thumb_dclick(self, evt):
@@ -501,6 +535,19 @@ class DlgSearch(wx.Dialog):
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 		return item
+
+	
+	def _show_image_info(self, item):
+		listctrl = self._image_info
+		listctrl.DeleteAllItems()
+		
+		for dummy, key, val in sorted(item.info):
+			idx = listctrl.InsertStringItem(sys.maxint, str(key))
+			listctrl.SetStringItem(idx, 1, str(val))
+			
+		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+
 
 
 # vim: encoding=utf8: ff=unix:

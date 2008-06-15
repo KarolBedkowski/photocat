@@ -40,11 +40,13 @@ from kpylibs.appconfig	import AppConfig
 from kpylibs.validators	import MyValidator, validators
 
 from pc.model			import Catalog, Directory, Disk, FileImage
+from pc.lib				import fonttools
 
 _ = wx.GetTranslation
 
 _SETTINGS_KEYS = (
-		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50)
+		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),
+		('view_preload', True), ('view_show_captions', True)
 )
 
 
@@ -72,11 +74,14 @@ class DlgSettings(wx.Dialog):
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
 		notebook.AddPage(self._create_layout_page_thumbs(notebook),		_('Thumbs'))
+		notebook.AddPage(self._create_layout_page_view(notebook),		_('View'))
 		return notebook
 
 
 	def _create_layout_page_thumbs(self, parent):
 		panel = wx.Panel(parent, -1)
+
+		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		sizer = wx.FlexGridSizer(2, 2, 5, 5)
 
@@ -99,10 +104,36 @@ class DlgSettings(wx.Dialog):
 				integerWidth=3, allowNegative=False, min=20, max=100,
 				validator=MyValidator(data_key=(self._data, 'thumb_compression'))
 		))
+		
+		grid.Add(sizer, 1, wx.EXPAND|wx.ALL, 5)
 
-		panel.SetSizerAndFit(sizer)
+		panel.SetSizerAndFit(grid)
 		return panel
 	
+
+	def _create_layout_page_view(self, parent):
+		panel = wx.Panel(parent, -1)
+		
+		grid = wx.BoxSizer(wx.VERTICAL)
+
+		self._tc_thumb_preload = wx.CheckBox(panel, -1, _('Thumb preload'),
+				validator=MyValidator(data_key=(self._data, 'view_preload'))
+		)
+		grid.Add(self._tc_thumb_preload, 0, wx.EXPAND|wx.ALL, 5)
+
+		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'), 
+				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
+		)
+		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
+		
+		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', _('default')))
+		grid.Add(self._btn_thumb_font, 5, wx.EXPAND|wx.ALL, 5)
+		
+		self.Bind(wx.EVT_BUTTON, self._on_btn_font_font, self._btn_thumb_font)
+
+		panel.SetSizerAndFit(grid)
+		
+		return panel
 
 	#########################################################################
 
@@ -130,7 +161,26 @@ class DlgSettings(wx.Dialog):
 	def _on_close(self, evt=None):
 		if evt is not None:
 			evt.Skip()
+			
+			
+	def _on_btn_font_font(self, evt):
+		data = wx.FontData()
+		data.EnableEffects(True)
+		if self._data.get('thumb_font_face') is not None:
+			font = fonttools.data2font(self._data, 'thumb')
+			data.SetInitialFont(font)
 
+		dlg = wx.FontDialog(self, data)
+		if dlg.ShowModal() == wx.ID_OK:
+			data = dlg.GetFontData()
+			font = data.GetChosenFont()
+			
+			fontdata = fonttools.font2data(font, 'thumb')
+			self._data.update(fontdata)
+
+			self._btn_thumb_font.SetLabel(_("Caption font\n%s") % font.GetNativeFontInfo().ToString())
+			
+		dlg.Destroy()
 
 	#########################################################################
 

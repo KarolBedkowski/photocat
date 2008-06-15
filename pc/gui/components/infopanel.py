@@ -60,7 +60,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 	def _create_layout_page_main(self, parent):
 		panel = wx.Panel(parent, -1)
-		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
+		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
 		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
 		
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -73,8 +73,8 @@ class InfoPanel(wx.Panel, EventGenerator):
 		
 		panel.SetSizerAndFit(sizer)
 
-		listctrl.InsertColumn(0, 'Tag')
-		listctrl.InsertColumn(1, 'Value')
+		listctrl.InsertColumn(0, '')
+		listctrl.InsertColumn(1, '')
 
 		return panel
 
@@ -82,7 +82,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _create_layout_page_exif(self, parent):
 		panel = wx.Panel(parent, -1)
 
-		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
+		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
@@ -97,7 +97,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _create_layout_page_folder(self, parent):
 		panel = wx.Panel(parent, -1)
 
-		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
+		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
 		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -109,8 +109,8 @@ class InfoPanel(wx.Panel, EventGenerator):
 		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
-		listctrl.InsertColumn(0, _('Tag'))
-		listctrl.InsertColumn(1, _('Value'))
+		listctrl.InsertColumn(0, '')
+		listctrl.InsertColumn(1, '')
 
 		return panel
 
