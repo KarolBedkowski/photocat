@@ -142,7 +142,7 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
 		grid.Add(self._bmp_preview, 0, wx.EXPAND|wx.ALL, 5)
 		
-		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER)
+		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
 		self._image_info.InsertColumn(0, '')
 		self._image_info.InsertColumn(1, '')
 		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
@@ -172,7 +172,7 @@ class DlgSearch(wx.Dialog):
 
 
 	def _create_layout_list(self):
-		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT)
+		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
 				self._icon_provider.get_image_index('sm_down'))
@@ -271,11 +271,16 @@ class DlgSearch(wx.Dialog):
 		bsizer.Add(self._cb_date, 0, wx.EXPAND|wx.ALL, 5)
 		bsizer.Add((10, 10))
 		bsizer.Add(wx.StaticText(pane, -1, _("begin:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		
+		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1),
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_start_date, 0, wx.EXPAND|wx.ALL, 5)		
+		
 		bsizer.Add((10, 10))
+		
 		bsizer.Add(wx.StaticText(pane, -1, _("end:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY)
+		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1),
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
 		
 		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)

@@ -87,14 +87,20 @@ class DlgProperties(wx.Dialog):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
+		
 		if not self._item_is_fake:
 			notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
+			
 		notebook.AddPage(self._create_layout_page_desc(notebook),		_('Description'))
+		
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
+			
 		notebook.AddPage(self._create_layout_page_tage(notebook),		_('Tags'))
+		
 		if self._item_is_image or self._item_is_fake:
 			notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
+		
 		return notebook
 
 
@@ -111,12 +117,12 @@ class DlgProperties(wx.Dialog):
 			name_sizer.Add(self._tc_name, 1, wx.EXPAND)
 			sizer.Add(name_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
-		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
-		sizer.Add(listctrl, 1, wx.EXPAND)
+		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER|wx.LC_NO_HEADER)
+		sizer.Add(listctrl, 1, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
-		listctrl.InsertColumn(0, 'Tag')
-		listctrl.InsertColumn(1, 'Value')
+		listctrl.InsertColumn(0, '')
+		listctrl.InsertColumn(1, '')
 
 		return panel
 
@@ -141,14 +147,14 @@ class DlgProperties(wx.Dialog):
 	def _create_layout_page_exif(self, parent):
 		panel = wx.Panel(parent, -1)
 
-		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT)
+		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(listctrl, 1, wx.EXPAND)
+		sizer.Add(listctrl, 1, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
-		listctrl.InsertColumn(0, 'Tag')
-		listctrl.InsertColumn(1, 'Value')
+		listctrl.InsertColumn(0, _('Tag'))
+		listctrl.InsertColumn(1, _('Value'))
 
 		return panel
 
@@ -156,25 +162,27 @@ class DlgProperties(wx.Dialog):
 	def _create_layout_page_tage(self, parent):
 		panel = wx.Panel(parent, -1)
 
-		listbox = self._listbox_tags = wx.ListBox(panel, -1, style=wx.LB_SINGLE)
-		combobox = self._combobox_tags = wx.ComboBox(panel, -1, style=wx.CB_SORT)
-		button1	= create_button(panel, _('Add'), self._on_add_tag)
-		button2	= create_button(panel, _('Del'), self._on_del_tag)
-
 		sizer = wx.BoxSizer(wx.VERTICAL)
-
+		
 		if self._item_is_fake:
 			self._cb_set_tags = wx.CheckBox(panel, -1, _('Set tags'))
 			sizer.Add(self._cb_set_tags, 0, wx.EXPAND|wx.ALL, 5)
 
-		sizer.Add(listbox, 1, wx.EXPAND)
+		listbox = self._listbox_tags = wx.ListBox(panel, -1, style=wx.LB_SINGLE)
+		sizer.Add(listbox, 1, wx.EXPAND|wx.ALL, 5)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
-		subsizer.Add(combobox, 1, wx.EXPAND)
-		subsizer.Add(button1, 0, wx.EXPAND)
-		subsizer.Add(button2, 0, wx.EXPAND)
+		
+		combobox = self._combobox_tags = wx.ComboBox(panel, -1, style=wx.CB_SORT)
+		subsizer.Add(combobox, 1, wx.EXPAND|wx.ALL, 2)
+		
+		button1	= create_button(panel, _('Add'), self._on_add_tag)		
+		subsizer.Add(button1, 0, wx.EXPAND|wx.ALL, 2)
+		
+		button2	= create_button(panel, _('Del'), self._on_del_tag)
+		subsizer.Add(button2, 0, wx.EXPAND|wx.ALL, 2)
 
-		sizer.Add(subsizer, 0, wx.EXPAND)
+		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		panel.SetSizerAndFit(sizer)
 
@@ -188,10 +196,14 @@ class DlgProperties(wx.Dialog):
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
 		self._cb_shot_date = wx.CheckBox(panel, 1, _("Shot date:"))
 		subsizer.Add(self._cb_shot_date, 0, wx.EXPAND|wx.ALL, 5)
-		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1), style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY)
+		
+		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1),
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)		
 		subsizer.Add(self._dp_shot_date, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
+		
 		self._tc_shot_time = masked.TimeCtrl(panel , -1, fmt24hr=True)
 		subsizer.Add(self._tc_shot_time, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
+		
 		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 

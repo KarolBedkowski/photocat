@@ -80,6 +80,8 @@ class DlgSettings(wx.Dialog):
 	def _create_layout_page_thumbs(self, parent):
 		panel = wx.Panel(parent, -1)
 
+		grid = wx.BoxSizer(wx.HORIZONTAL)
+
 		sizer = wx.FlexGridSizer(2, 2, 5, 5)
 
 		def add(label, control):
@@ -101,33 +103,30 @@ class DlgSettings(wx.Dialog):
 				integerWidth=3, allowNegative=False, min=20, max=100,
 				validator=MyValidator(data_key=(self._data, 'thumb_compression'))
 		))
+		
+		grid.Add(sizer, 1, wx.EXPAND|wx.ALL, 5)
 
-		panel.SetSizerAndFit(sizer)
+		panel.SetSizerAndFit(grid)
 		return panel
 	
 
 	def _create_layout_page_view(self, parent):
 		panel = wx.Panel(parent, -1)
+		
+		grid = wx.BoxSizer(wx.VERTICAL)
 
-		sizer = wx.FlexGridSizer(2, 2, 5, 5)
-
-		def add(label, control):
-			if label is None:
-				sizer.Add((1, 1))
-			else:
-				sizer.Add(wx.StaticText(panel, -1, label), 0, wx.LEFT|wx.TOP, 2)
-			sizer.Add(control, 1, wx.EXPAND)
-			return control
-
-		self._tc_thumb_width = add(None, wx.CheckBox(panel, -1, _('Thumb preload'),
+		self._tc_thumb_preload = wx.CheckBox(panel, -1, _('Thumb preload'),
 				validator=MyValidator(data_key=(self._data, 'view_preload'))
-		))
+		)
+		grid.Add(self._tc_thumb_preload, 0, wx.EXPAND|wx.ALL, 5)
 
-		self._tc_thumb_height = add(None, wx.CheckBox(panel, -1, _('Show captions'), 
+		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'), 
 				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
-		))
+		)
+		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
 
-		panel.SetSizerAndFit(sizer)
+		panel.SetSizerAndFit(grid)
+		
 		return panel
 
 	#########################################################################
