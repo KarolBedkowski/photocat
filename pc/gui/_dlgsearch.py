@@ -39,17 +39,18 @@ import re
 
 import wx
 import wx.lib.buttons  as  buttons
+import wx.lib.mixins.listctrl  as  listmix
 
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
-from kpylibs.formaters		import format_human_size
 
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
+from components.searchresultlistctrl	import SearchResultListCtrl
 
 from _dlgproperties	import DlgProperties
 
@@ -73,9 +74,10 @@ class DlgSearch(wx.Dialog):
 		self._parent	= parent
 		self._result	= []
 		self._selected_item = selected_item
+		self._sort_order = None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['image', wx.ART_FOLDER])
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_fields(),	0, wx.EXPAND|wx.ALL, 5)
@@ -170,14 +172,10 @@ class DlgSearch(wx.Dialog):
 
 
 	def _create_layout_list(self):
-		listctrl = self._result_list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
-		listctrl.InsertColumn(0, _('Name'))
-		listctrl.InsertColumn(1, _('Catalog'))
-		listctrl.InsertColumn(2, _('Disk'))
-		listctrl.InsertColumn(3, _('Path'))
-		listctrl.InsertColumn(4, _('File date'))
-		listctrl.InsertColumn(5, _('File size'))
+		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
+				self._icon_provider.get_image_index('sm_down'))
 		
 		listctrl.SetMinSize((200, 200))
 
@@ -356,7 +354,7 @@ class DlgSearch(wx.Dialog):
 
 		listctrl = self._result_list
 		listctrl.Freeze()
-		listctrl.DeleteAllItems()
+		listctrl.clear()
 
 		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
@@ -371,14 +369,7 @@ class DlgSearch(wx.Dialog):
 			else:
 				ico = icon_folder_idx
 				counters[1] += 1
-			idx = listctrl.InsertImageStringItem(sys.maxint, str(item.name), ico)
-			listctrl.SetStringItem(idx, 1, str(item.catalog.name))
-			listctrl.SetStringItem(idx, 2, str(item.disk.name))
-			listctrl.SetStringItem(idx, 3, item.path)
-			listctrl.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
-			if ico == icon_image_idx:
-				listctrl.SetStringItem(idx, 5, format_human_size(item.size))
-			listctrl.SetItemData(idx, len(self._result))
+			listctrl.insert(item, len(self._result), (ico==icon_image_idx), ico)
 			result.append(item)
 			
 		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs, options, self._selected_item)
@@ -399,12 +390,10 @@ class DlgSearch(wx.Dialog):
 			return cont & cntr[2]
 
 		what = search.find(what, options, catalogs, insert, update_dlg_progress)
-
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 		
+		listctrl.result = result
+
+		listctrl.autosize_cols()		
 		listctrl.Thaw()
 
 		dlg_progress.Destroy()
@@ -483,7 +472,8 @@ class DlgSearch(wx.Dialog):
 		''' callback na zwinięcie/rozwinięcie panelu '''
 		# trzeba przebudować layout po zwinięciu/rozwinięciu panelu
 		self.Layout()
-		
+
+
 	def _on_btn_icons(self, evt):
 		icons = evt.GetIsDown()
 		
@@ -552,6 +542,7 @@ class DlgSearch(wx.Dialog):
 			
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+
 
 
 # vim: encoding=utf8: ff=unix:
