@@ -120,7 +120,7 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout(self, appconfig):
-		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH) #|wx.SP_LIVE_UPDATE)
+		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
 
 		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
 		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2), self._create_layout_info(splitter2))
@@ -234,11 +234,7 @@ class WndMain(wx.Frame):
 
 	def _create_layout_photolist(self, parent):
 		self._photo_list = ThumbCtrl(parent, status_wnd=self)
-
-		appconfig = AppConfig()
-		self._photo_list.set_thumb_size(
-				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
-		)
+		self.__update_settings()
 		return self._photo_list
 
 
@@ -362,11 +358,8 @@ class WndMain(wx.Frame):
 		dlg = DlgSettings(self)
 		res = dlg.ShowModal()
 		dlg.Destroy()
-		appconfig = AppConfig()
 		if res == wx.ID_OK:
-			self._photo_list.set_thumb_size(
-					appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
-			)
+			self.__update_settings()
 
 
 	def _on_help_about(self, evt):
@@ -846,8 +839,17 @@ class WndMain(wx.Frame):
 			mm_items[4].Enable(dir_selected)
 			mm_items[5].Enable(file_selected)
 			mm_items[7].Enable(file_selected)
-			
-		
+
+
+	def __update_settings(self):
+		appconfig = AppConfig()
+		self._photo_list.set_thumb_size(
+				appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
+		)
+		self._photo_list.show_captions	= appconfig.get('settings', 'view_show_captions', True)
+		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
+		self._photo_list.set_captions_font(dict(appconfig.get_items('settings') or []))
+		self._photo_list.Refresh()
 
 
 # vim: encoding=utf8:
