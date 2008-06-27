@@ -844,7 +844,7 @@ class WndMain(wx.Frame):
 	def __update_settings(self):
 		appconfig = AppConfig()
 		self._photo_list.set_thumb_size(
-				appconfig.get('settings', 'thumb_width'), appconfig.get('settings', 'thumb_height')
+				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
 		)
 		self._photo_list.show_captions	= appconfig.get('settings', 'view_show_captions', True)
 		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
