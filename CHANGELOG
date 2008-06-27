@@ -1,3 +1,9 @@
+2008-06-27 (v 1.1.1)
+
+Karol Będkowski:
+	conf: fix: brak domyslnej wartości dla thumb_width, thumb_height
+
+
 2008-06-16 (v 1.1.0)
 
 Karol Będkowski:
