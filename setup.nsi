@@ -74,6 +74,7 @@ Section "GrupaGlowna" SEC01
   File "dist\LICENCE_wxPython.txt"
   File "dist\README"
   File "dist\TODO"
+  File "dist\CHANGELOG"
   
   CreateDirectory "$INSTDIR\locale\pl_PL\LC_MESSAGES"
   SetOutPath "$INSTDIR\locale\pl_PL\LC_MESSAGES"
