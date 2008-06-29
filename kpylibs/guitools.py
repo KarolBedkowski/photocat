@@ -79,36 +79,58 @@ def create_button(wnd, label, function, wxid=-1, *args, **kward):
 	return button
 
 
-def create_menu(wnd, items):
-	menu = wx.Menu()
 
-	def add(label, accel, description, function, wxid=None, img=None):
-		if label is None:
-			if wxid is None:
-				label = wx.EmptyString
-			else:
-				if wx.VERSION[1] > 6:
-					label = wx.GetStockLabel(wxid)
-				else:
-					label = wx.GetStockLabel(wxid, True, accel or '')
-		elif type(label) == types.IntType:
-			if wx.VERSION[1] > 6:
-				label = wx.GetStockLabel(label)
-			else:
-				label = wx.GetStockLabel(label, True, accel or '')
-		elif accel is not None:
-			label = '%s\t%s' % (label, accel)
+def create_menu_item(wnd, menu, label, accel, description, function, wxid=None, img=None):
+	""" create_menu_item(wnd, menu, label, accel, description, function, [wxid], [img]) -> (wxid, menu_item)
+			-- dodanie elementu menu
+		
+		@param wnd		okno
+		@param menu 	menu
+		@param label	etykieta - jeżeli None to jeżeli wxid != None - pobranie z Stock etykiety na podstawie wxid
+		@param accel	skrót klawiszowy
+		@param description opis
+		@param function	callback do podpięcia
+		@param wxid		id elementu [opcja] domyslnie - generowany
+		@param img		bitmapa elementu [opcja]
+		@return (wxid, menu_item)
+	"""
+	if label is None:
+		if wxid is None:
+			label = wx.EmptyString
+		elif wx.VERSION[1] > 6:
+			label = wx.GetStockLabel(wxid)
+		else:
+			label = wx.GetStockLabel(wxid, True, accel or '')
+	elif type(label) == types.IntType:
+		if wx.VERSION[1] > 6:
+			label = wx.GetStockLabel(label)
+		else:
+			label = wx.GetStockLabel(label, True, accel or '')
+	elif accel is not None:
+		label = '%s\t%s' % (label, accel)
 
-		if wxid is None or wxid == -1:
-			wxid = wx.NewId()
+	if wxid is None or wxid == -1:
+		wxid = wx.NewId()
 
+	if label.startswith('[x]'):
+		label = label[3:]
+		menu_item = wx.MenuItem(menu, wxid, label, description or '', wx.ITEM_CHECK)
+	else:
 		menu_item = wx.MenuItem(menu, wxid, label, description or '')
 
-		if img is not None:
-			menu_item.SetBitmap(img)
+	if img is not None:
+		menu_item.SetBitmap(img)
 
-		menu.AppendItem(menu_item)
-		return wxid
+	menu.AppendItem(menu_item)
+	if function is not None:
+		wnd.Bind(wx.EVT_MENU, function, id=wxid)
+	
+	return wxid, menu_item
+
+
+def create_menu(wnd, items):
+	''' create_menu(wnd, items) -> wxMenu -- stworzenie menu na podstawie listy '''
+	menu = wx.Menu()
 
 	for item in items:
 		if len(item) == 1 and item == '-':
@@ -118,15 +140,13 @@ def create_menu(wnd, items):
 				label, accel, description, function, wxid, img = item
 				if type(img) == types.UnicodeType:
 					img = wx.ArtProvider_GetBitmap(img, wx.ART_MENU, (16, 16))
-				wxid = add(label, accel, description, function, wxid, img)
+				create_menu_item(wnd, menu, label, accel, description, function, wxid, img)
 			elif len(item) == 5:
 				label, accel, description, function, wxid = item
-				wxid = add(label, accel, description, function, wxid)
+				create_menu_item(wnd, menu, label, accel, description, function, wxid)
 			else:
 				label, accel, description, function = item
-				wxid = add(label, accel, description, function)
-
-			wnd.Bind(wx.EVT_MENU, function, id=wxid)
+				create_menu_item(wnd, menu, label, accel, description, function)
 
 	return menu
 
