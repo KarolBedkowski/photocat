@@ -608,6 +608,8 @@ class WndMain(wx.Frame):
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
 
+		self._show_info_panel_page(2)
+
 
 	def _on_dirtree_item_activate(self, evt):
 		item = self._dirs_tree.selected_item
@@ -648,12 +650,15 @@ class WndMain(wx.Frame):
 		if self._info_panel is not None:
 			if selected is None:
 				self._info_panel.clear()
+				self._show_info_panel_page(2)
 			else:
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					self._info_panel.show(selected)
+					self._show_info_panel_page(0)
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
+
 		self.__update_menus_toolbars()
 
 
@@ -933,6 +938,15 @@ class WndMain(wx.Frame):
 		self._layout_splitter_h.Unsplit()
 		self._info_panel.Destroy()
 		self._info_panel = None
+		
+		
+	def _show_info_panel_page(self, page):		
+		""" wndmain._show_info_panel_page(page) -- pokazanie wybranej karty w info panelu
+		
+			@param page	- strona do pokazania
+		"""
+		if self._info_panel is not None:
+			self._info_panel.show_page(page)
 
 
 # vim: encoding=utf8:

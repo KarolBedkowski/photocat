@@ -51,7 +51,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 
 
 	def _create_layout(self):
-		notebook = self._notebook = wx.Notebook(self, -1)
+		self._notebook = notebook = self._notebook = wx.Notebook(self, -1)
 		notebook.AddPage(self._create_layout_page_main(notebook),	_('Main'))
 		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
 		notebook.AddPage(self._create_layout_page_folder(notebook),	_('Folder'))
@@ -200,6 +200,10 @@ class InfoPanel(wx.Panel, EventGenerator):
 		self._listctrl_folder.DeleteAllItems()
 		self._textctrl_folder_descr.SetValue('')
 
+
+	def show_page(self, page):
+		""" infopanel.show_page(page) -- pokazanie strony o podanym indexie """
+		self._notebook.SetSelection(page)
 
 	#########################################################################
 
