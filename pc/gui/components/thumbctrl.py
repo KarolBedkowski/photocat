@@ -30,6 +30,7 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 import math
+from itertools	import izip
 
 import wx
 import wx.lib.newevent
@@ -86,6 +87,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._selected_list = []
 		self._padding = 0
 		self._last_preloaded = -1
+		self._items_pos = []
 		
 		self._update()
 		self.Refresh()
@@ -159,37 +161,29 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self.SetSizeHints(self._thumb_width + padding, self._thumb_height + 30)
 		self.SetScrollRate((self._thumb_width + padding) / 4, (self._thumb_height + 30)/4)
-
-
-	def _get_item_idx_on_xy(self, x, y):		
-		col = (x - self._padding) / (self._thumb_width + self._padding)
 		
-		# sprawdzenie czy klikeniecie w obszar
-		if col > self._cols or col < 0:
-			return None
+		self.__compute_thumbs_pos()
+
+
+	def _get_item_idx_on_xy(self, x, y):
+		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu elementu o danej współrzędnych
 		
-		# sprawdzenie, czy nie klikniecie miedzy miniaturkami
-		if x > (col + 1) * (self._thumb_width + self._padding) + 5:
-			return None	
+			@param x	- pozycja x
+			@param y	- pozycja y
+			@return index elementu lub -1 jezeli brak
+		'''
+		for index, item, x1, y1, x2, y2, dummy in self._items_pos:
+			if x >= x1 and x <= x2 and y >= y1 and y <= y2:
+				return index
 
-		row = (y - 5) / (self._thumb_height + 30)
-
-		if row < 0:
-			row = 0
-
-		index = row * self._cols + col
-		
-		if index >= len(self._items):
-			index = -1
-
-		return index
+		return -1
 
 
 	##################################################################################
 
 
 	def __on_paint(self, event):
-		""" Handles The wx.EVT_PAINT Event For ThumbnailCtrl. """
+		""" Handles The wx.EVT_PAINT Event For ThumbCtrl. """
 		
 		size = self.GetClientSize()
 		paintRect = wx.Rect(0, 0, size.GetWidth(), size.GetHeight())
@@ -213,32 +207,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 		row = -1
 		tw = self._thumb_width 
 		th = self._thumb_height
-		twm = tw + self._padding
-		thm = th + (30 if show_captions else 10)
 		selected_bottom = (25 if show_captions else 6)
 		twc = self._thumb_width - 10
-		padding = self._padding
 		
 		has_selected = len(self._selected_list) > 0		
 
-		for ii, item  in enumerate(self._items):
-			col = ii % self._cols
-
-			if col == 0:
-				row += 1
-
-			# pozycja
-			tx = col * twm + padding
-			ty = row * thm + 5
-
+		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
 			# czy rysowac
-			if not paintRect.Intersects(wx.Rect(tx, ty, twm, thm)):
+			if not paintRect.Intersects(rect):
 				continue
 			
 			# zaznaczenie
-			if has_selected:
-				if ii in self._selected_list:
-					dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
+			if has_selected and ii in self._selected_list:
+				dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
 			
 			img = item.get_bitmap(tw, th)
 		
@@ -336,8 +317,37 @@ class ThumbCtrl(wx.ScrolledWindow):
 			elif self._status_wnd:
 				self._status_wnd.SetStatusText("", 1)	
 		evt.Skip()
+
+
+	def __compute_thumbs_pos(self):
+		''' thumbctrl.__compute_thumbs_pos() -- wyznaczenie pozycji poszczególnych miniaturek
 		
+			Pozycje miniaturek zapisywane są w self._item_pos jako
+			(index, item, x1, y1, x2, y2, wxRect())
+		'''
+		row = -1
+		show_captions = self.show_captions
+		tw = self._thumb_width 
+		th = self._thumb_height
+		twm = tw + self._padding
+		thm = th + (30 if show_captions else 10)
+		selected_bottom = (25 if show_captions else 6)
+		twc = self._thumb_width - 10
+		padding = self._padding
 		
+		items_pos = self._items_pos = []
+		
+		for ii, item  in enumerate(self._items):
+			col = ii % self._cols
+
+			if col == 0:
+				row += 1
+
+			# pozycja
+			tx = col * twm + padding
+			ty = row * thm + 5
+			
+			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 	
 
 # vim: encoding=utf8: ff=unix:
