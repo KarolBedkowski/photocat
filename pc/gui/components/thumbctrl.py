@@ -59,14 +59,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
 		
-		self._cols = 0
-		self._thumb_width = 200
-		self._thumb_height = 200		
+		self._cols			= 0
+		self._thumb_width	= 200
+		self._thumb_height	= 200		
 		self.thumbs_preload = thumbs_preload
-		self.show_captions = show_captions
-		self.group_by_date = False
+		self.show_captions	= show_captions
+		self.group_by_date	= False
 		
-		self._status_wnd = status_wnd
+		self._status_wnd	= status_wnd
 		
 		self._caption_font	= wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
@@ -84,12 +84,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def clear(self):
-		self._items = []
-		self._selected = -1
+		self._items			= []
+		self._selected		= -1
 		self._selected_list = []
-		self._padding = 0
+		self._padding		= 0
 		self._last_preloaded = -1
-		self._items_pos = []
+		self._items_pos		= []
 		self._timeline_bars = []
 		
 		self._update()
@@ -101,11 +101,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 			@param images - lista obiektów do wyświetlenia
 		'''
-		self._items = [ Thumb(image) for image in images ]
-		self._items_pos = []
+		self._items			= [ Thumb(image) for image in images ]
+		self._items_pos		= []
 		self._selected_list = []
 		self._timeline_bars = []
-		self._selected = -1
+		self._selected		= -1
 		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
 		
 		self.Scroll(0, 0)
@@ -170,8 +170,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self.SetSizeHints(self._thumb_width + padding, self._thumb_height + 30)
 		self.SetScrollRate((self._thumb_width + padding) / 4, (self._thumb_height + 30)/4)
-		
-
 
 
 	def _get_item_idx_on_xy(self, x, y):
@@ -213,15 +211,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground("#7D7D7D")
 
-		show_captions = self.show_captions
-
-		# items
-		tw = self._thumb_width 
-		th = self._thumb_height
-		selected_bottom = (25 if show_captions else 6)
-		twc = self._thumb_width - 10
+		tw		= self._thumb_width 
+		th		= self._thumb_height
+		twc		= self._thumb_width - 10
 		
-		has_selected = len(self._selected_list) > 0		
+		show_captions	= self.show_captions
+		selected_bottom	= (25 if show_captions else 6)
+		has_selected	= len(self._selected_list) > 0		
 
 		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
 			# czy rysowac
@@ -329,14 +325,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 		# ładowanie w tle miniaturek
 		if self.IsShownOnScreen():
 			len_items = len(self._items)
+
 			if self._last_preloaded <  len_items -1 :
 				self._last_preloaded += 1
 				self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
+
 				if self._status_wnd is not None:
 					self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)
+
 				evt.RequestMore(True)
+
 			elif self._status_wnd:
-				self._status_wnd.SetStatusText("", 1)	
+				self._status_wnd.SetStatusText("", 1)
+
 		evt.Skip()
 
 
@@ -362,13 +363,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
-		row = -1
-		tw = self._thumb_width 
-		th = self._thumb_height
-		twm = tw + self._padding
-		thm = th + (30 if self.show_captions else 10)
+		row		= -1
+		tw		= self._thumb_width 
+		th		= self._thumb_height
+		twm		= tw + self._padding
+		thm		= th + (30 if self.show_captions else 10)
 		padding = self._padding
-		cols = self._cols
+		cols	= self._cols
 		
 		items_pos = self._items_pos = []
 		
@@ -393,25 +394,24 @@ class ThumbCtrl(wx.ScrolledWindow):
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
 			
-			@param level -- [opcja] dzielnik daty do grupowania
+			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
-		row = -1
-		col = -1
-		last_date = -1
+		row			= -1
+		col			= -1
+		last_date	= -1
 
-		tw = self._thumb_width 
-		th = self._thumb_height
-		twm = tw + self._padding
-		thm = th + (30 if self.show_captions else 10)
+		tw		= self._thumb_width 
+		th		= self._thumb_height
+		twm		= tw + self._padding
+		thm		= th + (30 if self.show_captions else 10)
 		selected_bottom = (25 if self.show_captions else 6)
-		padding = self._padding
-		cols = self._cols
+		padding	= self._padding
+		cols	= self._cols
 		
-		items_pos = self._items_pos = []
-		timeline_bars = self._timeline_bars = []
+		items_pos		= self._items_pos = []
+		timeline_bars	= self._timeline_bars = []
 	
-		
 		for ii, item  in enumerate(self._items):
 			col += 1
 
