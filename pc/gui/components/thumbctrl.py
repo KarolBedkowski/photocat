@@ -30,7 +30,6 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 import math
-from itertools	import izip
 
 import wx
 import wx.lib.newevent
@@ -93,12 +92,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Refresh()
 
 
-	def show_dir(self, dir):
-		if isinstance(dir, list) or isinstance(dir, tuple):
-			images = dir
-		else:
-			images = dir.files
+	def show_dir(self, images):
+		''' thumbctrl.show_dir(images) -- wyświetlenie listy miniaturek
 		
+			@param images - lista obiektów do wyświetlenia
+		'''
 		self._items = [ Thumb(image) for image in images ]
 		self._selected_list = []
 		self._selected = -1
@@ -204,7 +202,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		show_captions = self.show_captions
 
 		# items
-		row = -1
 		tw = self._thumb_width 
 		th = self._thumb_height
 		selected_bottom = (25 if show_captions else 6)
