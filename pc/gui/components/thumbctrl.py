@@ -30,6 +30,7 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 import math
+import time
 
 import wx
 import wx.lib.newevent
@@ -63,11 +64,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_height = 200		
 		self.thumbs_preload = thumbs_preload
 		self.show_captions = show_captions
+		self.group_by_date = False
 		
 		self._status_wnd = status_wnd
 		
 		self._caption_font	= wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
+		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
 		self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
 		
 		self.clear()
@@ -87,6 +90,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._padding = 0
 		self._last_preloaded = -1
 		self._items_pos = []
+		self._timeline_bars = []
 		
 		self._update()
 		self.Refresh()
@@ -119,6 +123,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		font = fonttools.data2font(fontdata, 'thumb', wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False))
 		self._caption_font = font
 		
+		timeline_font = fonttools.data2font(fontdata, 'thumb', wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False))
+		timeline_font.SetPointSize(timeline_font.GetPointSize()+2)
+		timeline_font.SetWeight(wx.BOLD)
+		self._timeline_font = timeline_font
+		
 		
 	def is_selected(self, idx):
 		return idx in self._selected_list
@@ -150,17 +159,17 @@ class ThumbCtrl(wx.ScrolledWindow):
 			
 		self._padding = padding
 		self._cols = cols
-		self._rows = math.ceil(len(self._items) / float(cols))
 		
-		self.SetVirtualSize((
-			self._cols * (self._thumb_width + padding),
-			self._rows * (self._thumb_height + 30) + 10
-		))
+		rows, height = self.__compute_thumbs_pos()
+		
+		self._rows = rows
+		
+		self.SetVirtualSize((self._cols * (self._thumb_width + padding), height))
 		
 		self.SetSizeHints(self._thumb_width + padding, self._thumb_height + 30)
 		self.SetScrollRate((self._thumb_width + padding) / 4, (self._thumb_height + 30)/4)
 		
-		self.__compute_thumbs_pos()
+
 
 
 	def _get_item_idx_on_xy(self, x, y):
@@ -189,6 +198,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		xu, yu = self.GetScrollPixelsPerUnit()
 		paintRect.x = paintRect.x * xu
 		paintRect.y = paintRect.y * yu
+		
+		painty1 = paintRect.y
+		painty2 = size.GetHeight() + painty1
 		
 		dc = wx.PaintDC(self)
 		self.PrepareDC(dc)
@@ -232,6 +244,16 @@ class ThumbCtrl(wx.ScrolledWindow):
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
 				dc.DrawText(caption, txc, ty + th)
+				
+		# timeline_bars
+		if self.group_by_date:
+			dc.SetFont(self._timeline_font)
+			dc.SetPen(self._pen_timeline)
+			
+			for date, y1, y2 in self._timeline_bars:
+				if painty1 <= y1 and y1 <= painty2:
+					dc.DrawLine(0, y2, size.GetWidth(), y2)
+					dc.DrawText(str(date), 10, y1)
 			
 		dc.EndDrawing()
 		
@@ -321,7 +343,16 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
+			
+			@return (row, height) - liczba wierszy i długość panelu
 		'''
+		
+		if len(self._items) == 0:
+			return 0, 0
+		
+		if self.group_by_date:
+			return self.__compute_thumbs_pos_timeline()
+		
 		row = -1
 		show_captions = self.show_captions
 		tw = self._thumb_width 
@@ -345,6 +376,58 @@ class ThumbCtrl(wx.ScrolledWindow):
 			ty = row * thm + 5
 			
 			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+			
+		return row, ty+thm
+			
+			
+	def __compute_thumbs_pos_timeline(self, level=86400):
+		''' thumbctrl.__compute_thumbs_pos() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		
+			Pozycje miniaturek zapisywane są w self._item_pos jako
+			(index, item, x1, y1, x2, y2, wxRect())
+			
+			@param level -- [opcja] dzielnik daty do grupowania
+			@return (row, height) - liczba wierszy i długość panelu
+		'''
+		row = -1
+		show_captions = self.show_captions
+		tw = self._thumb_width 
+		th = self._thumb_height
+		twm = tw + self._padding
+		thm = th + (30 if show_captions else 10)
+		selected_bottom = (25 if show_captions else 6)
+		twc = self._thumb_width - 10
+		padding = self._padding
+		
+		items_pos = self._items_pos = []
+		timeline_bars = self._timeline_bars = []
+		
+		last_date = -1
+		col = -1
+		
+		for ii, item  in enumerate(self._items):
+			col += 1
+
+			if last_date != int(item.image.date_to_check / level):
+				pos = int((row+1) * thm + 20)
+				label = time.strftime('%x', time.localtime(item.image.date_to_check))
+				timeline_bars.append((label, pos, pos+20))
+				col = 0				
+				row += 1.2
+				last_date = int(item.image.date_to_check / level)
+
+			if col >= self._cols:
+				col = 0
+				row += 1
+
+			# pozycja
+			tx = col * twm + padding
+			ty = int(row * thm + 5)
+			
+			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+		
+		return row, ty+thm
+		
 	
 
 # vim: encoding=utf8: ff=unix:
