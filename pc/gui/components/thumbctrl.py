@@ -102,7 +102,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 		'''
 		self._items = [ Thumb(image) for image in images ]
+		self._items_pos = []
 		self._selected_list = []
+		self._timeline_bars = []
 		self._selected = -1
 		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
 		
@@ -340,10 +342,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	def __compute_thumbs_pos(self):
 		''' thumbctrl.__compute_thumbs_pos() -- wyznaczenie pozycji poszczególnych miniaturek
-		
-			Pozycje miniaturek zapisywane są w self._item_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
-			
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
 		
@@ -353,20 +351,29 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if self.group_by_date:
 			return self.__compute_thumbs_pos_timeline()
 		
+		return self.__compute_thumbs_pos_normal()
+		
+		
+	def __compute_thumbs_pos_normal(self):
+		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji poszczególnych miniaturek - normalne
+		
+			Pozycje miniaturek zapisywane są w self._item_pos jako
+			(index, item, x1, y1, x2, y2, wxRect())
+			
+			@return (row, height) - liczba wierszy i długość panelu
+		'''
 		row = -1
-		show_captions = self.show_captions
 		tw = self._thumb_width 
 		th = self._thumb_height
 		twm = tw + self._padding
-		thm = th + (30 if show_captions else 10)
-		selected_bottom = (25 if show_captions else 6)
-		twc = self._thumb_width - 10
+		thm = th + (30 if self.show_captions else 10)
 		padding = self._padding
+		cols = self._cols
 		
 		items_pos = self._items_pos = []
 		
 		for ii, item  in enumerate(self._items):
-			col = ii % self._cols
+			col = ii % cols
 
 			if col == 0:
 				row += 1
@@ -378,10 +385,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 			
 		return row, ty+thm
-			
-			
+
+
 	def __compute_thumbs_pos_timeline(self, level=86400):
-		''' thumbctrl.__compute_thumbs_pos() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 		
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -390,20 +397,20 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
 		row = -1
-		show_captions = self.show_captions
+		col = -1
+		last_date = -1
+
 		tw = self._thumb_width 
 		th = self._thumb_height
 		twm = tw + self._padding
-		thm = th + (30 if show_captions else 10)
-		selected_bottom = (25 if show_captions else 6)
-		twc = self._thumb_width - 10
+		thm = th + (30 if self.show_captions else 10)
+		selected_bottom = (25 if self.show_captions else 6)
 		padding = self._padding
+		cols = self._cols
 		
 		items_pos = self._items_pos = []
 		timeline_bars = self._timeline_bars = []
-		
-		last_date = -1
-		col = -1
+	
 		
 		for ii, item  in enumerate(self._items):
 			col += 1
@@ -416,7 +423,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 				row += 1.2
 				last_date = int(item.image.date_to_check / level)
 
-			if col >= self._cols:
+			elif col >= cols:
 				col = 0
 				row += 1
 
