@@ -200,8 +200,9 @@ class WndMain(wx.Frame):
 
 		self._menu_view_sort_name = create_menu_item(self, menu, _('[o]Sort by &name '),	self._on_view_sort)[1]
 		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
+		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
 		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
-
+		
 		return menu
 
 
@@ -974,6 +975,7 @@ class WndMain(wx.Frame):
 		if len(images) > 0:
 			# jak sortujemy
 			sort_by_name	= self._menu_view_sort_name.IsChecked()
+			group_by_date	= self._menu_view_group_date.IsChecked()
 			desc			= self._menu_view_sort_desc.IsChecked()
 			cmp_func 		= None
 
@@ -994,6 +996,8 @@ class WndMain(wx.Frame):
 				else:
 					#sort by date asc
 					cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+					
+			self._photo_list.group_by_date = group_by_date
 
 			if cmp_func is not None:
 				images = sorted(images, cmp_func)
