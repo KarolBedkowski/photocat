@@ -190,10 +190,18 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_view(self):
 		menu = wx.Menu()
+		
 		self._menu_view_show_info = create_menu_item(self, menu,
-				_('[x]Show &info'),		'F4',	'', self._on_view_show_hide_info)[1]
+				_('[x]Show &info'),		self._on_view_show_hide_info,		accel='F4')[1]
 		self._menu_view_show_captions = create_menu_item(self, menu,
-				_('[x]Show &captions'),	None,	'',	self._on_view_show_hide_captions)[1]
+				_('[x]Show &captions'),	self._on_view_show_hide_captions)[1]
+
+		menu.AppendSeparator()
+
+		self._menu_view_sort_name = create_menu_item(self, menu, _('[o]Sort by &name '),	self._on_view_sort)[1]
+		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
+		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
+
 		return menu
 
 
@@ -385,7 +393,11 @@ class WndMain(wx.Frame):
 		show_captions = self._menu_view_show_captions.IsChecked()
 		AppConfig().set('settings', 'view_show_captions', show_captions)		
 		self._photo_list.show_captions	= show_captions
-		self._photo_list.Refresh()		
+		self._photo_list.Refresh()
+		
+		
+	def _on_view_sort(self, evt):
+		self._on_dirtree_item_select(None)
 
 
 	def _on_help_about(self, evt):
@@ -501,7 +513,7 @@ class WndMain(wx.Frame):
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
 			for image in selected_items:
 				folder.remove_file(image)
-			self._photo_list.show_dir(folder)
+			self._show_dir(folder)
 			if self._info_panel is not None:
 				self._info_panel.show_folder(folder) 
 			self._dirs_tree.update_catalog_node(folder.catalog)
@@ -571,13 +583,13 @@ class WndMain(wx.Frame):
 			# wyświtelanie timeline
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
-				self._photo_list.show_dir([])
+				self._show_dir([])
 				return
 
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
-					self._photo_list.show_dir([])
+					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
 
@@ -585,7 +597,7 @@ class WndMain(wx.Frame):
 			show_info = False
 
 		elif not isinstance(item, Directory):
-			self._photo_list.show_dir([])
+			self._show_dir([])
 			return
 
 		self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -593,7 +605,7 @@ class WndMain(wx.Frame):
 		if item is not None:
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				self._photo_list.show_dir(item)
+				self._show_dir(item)
 				if show_info:
 					if self._info_panel is not None:
 						self._info_panel.show_folder(item)
@@ -947,6 +959,46 @@ class WndMain(wx.Frame):
 		"""
 		if self._info_panel is not None:
 			self._info_panel.show_page(page)
+			
+			
+	def _show_dir(self, images):
+		''' wndmain._show_dir(images) -- wyświetlenie zawartości katalogu lub listy
+			
+			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania
+		'''
+		
+		images_as_list = isinstance(images, list) or isinstance(images, tuple)
+		if not images_as_list:
+			images = images.files
+
+		if len(images) > 0:
+			# jak sortujemy
+			sort_by_name	= self._menu_view_sort_name.IsChecked()
+			desc			= self._menu_view_sort_desc.IsChecked()
+			cmp_func 		= None
+
+			if sort_by_name:
+				if desc:
+					# sort by name desc
+					cmp_func = lambda x, y: -cmp(x.name, y.name)
+					
+				elif images_as_list:
+					# sort by name asc (tylko gdy dane z listy)
+					cmp_func = lambda x, y: cmp(x.name, y.name)
+					
+			else:
+				if desc:
+					# sort by date desc
+					cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+					
+				else:
+					#sort by date asc
+					cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+
+			if cmp_func is not None:
+				images = sorted(images, cmp_func)
+
+		self._photo_list.show_dir(images)
 
 
 # vim: encoding=utf8:
