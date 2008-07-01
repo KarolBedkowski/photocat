@@ -31,6 +31,7 @@ __all__			= ['DlgSettings']
 
 import wx
 from wx.lib import masked
+import  wx.lib.colourselect as  csel
 
 from kpylibs.appconfig	import AppConfig
 from kpylibs.validators	import MyValidator, validators
@@ -48,8 +49,6 @@ _SETTINGS_KEYS = (
 
 class DlgSettings(wx.Dialog):
 	''' Dialog ustawień programu
-	
-		TODO: wybór koloru pod Linuksem
 	'''
 
 	def __init__(self, parent):
@@ -133,20 +132,28 @@ class DlgSettings(wx.Dialog):
 	
 
 	def _create_layout_page_view_selfonts(self, panel):
-		fgrid = wx.FlexGridSizer(2, 2, 5, 5)
+		fgrid = wx.FlexGridSizer(2, 3, 5, 5)
 		fgrid.AddGrowableCol(1)
 		
-		def add(caption, data_key, function):
+		def add(caption, prefix, function, funcion_sel_color):
 			fgrid.Add(wx.StaticText(panel, -1, caption), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 			
-			btn = wx.Button(panel, -1, self._data.get(data_key, _('default')), size=(150, -1))
+			btn = wx.Button(panel, -1, self._data.get('%s_font' % prefix, _('default')), size=(150, -1))
 			self.Bind(wx.EVT_BUTTON, function, btn)
-			fgrid.Add(btn, 1, wx.EXPAND|wx.ALL, 5)
+			fgrid.Add(btn, 1, wx.EXPAND)
 			
-			return btn
+			color = fonttools.str2color(self._data.get('%s_font_color' % prefix), wx.Colour(127, 127, 127))
+			btn_color = csel.ColourSelect(panel, -1, colour=color)
+			self.Bind(csel.EVT_COLOURSELECT, funcion_sel_color, btn_color)
+			fgrid.Add(btn_color, 0, wx.EXPAND)
+			
+			return btn, btn_color
 		
-		self._btn_thumb_font	= add(_("Caption font:"),	'thumb_font',		self._on_btn_font_font)
-		self._btn_timeline_font = add(_("Timeline font:"),	'timeline_font',	self._on_btn_timeline_font)
+		self._btn_thumb_font, self._btn_thumb_color	= add(
+				_("Caption font:"),		'thumb',		self._on_btn_caption_font,	self._on_btn_caption_color)
+		
+		self._btn_timeline_font, self._btn_timeline_color = add(
+				_("Timeline font:"),	'timeline',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
 		
 		return fgrid
 
@@ -177,18 +184,26 @@ class DlgSettings(wx.Dialog):
 	def _on_close(self, evt=None):
 		if evt is not None:
 			evt.Skip()
-			
-			
-	def _on_btn_font_font(self, evt):
+
+
+	def _on_btn_caption_font(self, evt):
 		font_name = self._select_font('thumb')
 		if font_name is not None:
 			self._btn_thumb_font.SetLabel(font_name)
-		
-		
+
+
+	def _on_btn_caption_color(self, evt):
+		self._data['thumb_font_color'] = fonttools.color2str(evt.GetValue())
+
+
 	def _on_btn_timeline_font(self, evt):
 		font_name = self._select_font('timeline')
 		if font_name is not None:
-			self._btn_timeline_font.SetLabel(font_name)		
+			self._btn_timeline_font.SetLabel(font_name)
+
+
+	def _on_btn_timeline_color(self, evt):
+		self._data['timeline_font_color'] = fonttools.color2str(evt.GetValue())
 
 
 	#########################################################################
@@ -207,22 +222,19 @@ class DlgSettings(wx.Dialog):
 		data = self._data
 		for key, default in data.iteritems():
 			appconfig.set('settings', key, data[key])
-			
+
 
 	def _select_font(self, prefix):
 		data = wx.FontData()
-		data.EnableEffects(True)
+		data.EnableEffects(False)
 		if self._data.get('%s_font_face' % prefix) is not None:
 			font = fonttools.data2font(self._data, prefix)
 			data.SetInitialFont(font)
-			data.SetColour(fonttools.str2color(self._data.get('%s_font_color' % prefix), wx.Colour(127, 127, 127)))
 
 		result = None
 		dlg = wx.FontDialog(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			data = dlg.GetFontData()
-			
-			self._data['%s_font_color' % prefix] = fonttools.color2str(data.GetColour())
 			
 			fontdata = fonttools.font2data(data.GetChosenFont(), prefix)
 			self._data.update(fontdata)
