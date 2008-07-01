@@ -25,7 +25,7 @@ __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
-__all__			= ['DlgSettings']
+__all__			= ['data2font', 'font2data', 'str2color', 'color2str']
 
 
 
@@ -71,8 +71,21 @@ def font2data(font, prefix):
 	data[prefix + '_font_size']		= font.GetPointSize()
 	data[prefix + '_font_weight']	= font.GetWeightString()
 	data[prefix + '_font_underline'] = "true" if font.GetUnderlined() else "false"
-	data[prefix + '_font']			= font.GetNativeFontInfo().ToString()
+	data[prefix + '_font']			= font.GetNativeFontInfoUserDesc()
 	
 	return data
+
+
+def str2color(value, default=None):
+	try:
+		red, green, blue = map(int, value.split(';'))
+		return wx.Colour(red, green, blue)
+	except Exception, err:
+		return default
+	
+
+def color2str(color):
+	return '%d;%d;%d' % (color.Red(), color.Green(), color.Blue())
+
 
 # vim: encoding=utf8:

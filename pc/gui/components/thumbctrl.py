@@ -68,10 +68,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		self._status_wnd	= status_wnd
 		
-		self._caption_font	= wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False)
+		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
 		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
 		self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
+		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
+		self._caption_color = wx.Colour(127, 127, 127)
+		self._timeline_color = wx.Colour(127, 127, 127)
 		
 		self.clear()
 		
@@ -122,13 +125,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 	
 	def set_captions_font(self, fontdata):
-		font = fonttools.data2font(fontdata, 'thumb', wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False))
-		self._caption_font = font
+		self._caption_font = fonttools.data2font(fontdata, 'thumb',
+				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
+		self._caption_color = fonttools.str2color(fontdata.get('thumb_font_color', '127;127;127'))
 		
-		timeline_font = fonttools.data2font(fontdata, 'thumb', wx.Font(8, wx.SWISS, wx.NORMAL, wx.NORMAL, False))
-		timeline_font.SetPointSize(timeline_font.GetPointSize()+2)
-		timeline_font.SetWeight(wx.BOLD)
-		self._timeline_font = timeline_font
+		self._timeline_font = fonttools.data2font(fontdata, 'timeline',
+				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
+		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
 		
 		
 	def is_selected(self, idx):
@@ -209,7 +212,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		dc.SetPen(self._pen)
 		dc.SetBrush(self._brush)
 		dc.SetFont(self._caption_font)
-		dc.SetTextForeground("#7D7D7D")
+		dc.SetTextForeground(self._caption_color)
 
 		tw		= self._thumb_width 
 		th		= self._thumb_height
@@ -247,6 +250,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if self.group_by_date:
 			dc.SetFont(self._timeline_font)
 			dc.SetPen(self._pen_timeline)
+			dc.SetTextForeground(self._timeline_color)
 			
 			for date, y1, y2 in self._timeline_bars:
 				if painty1 <= y1 and y1 <= painty2:

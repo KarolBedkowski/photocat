@@ -84,6 +84,7 @@ class DlgSettings(wx.Dialog):
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		sizer = wx.FlexGridSizer(2, 2, 5, 5)
+		sizer.AddGrowableCol(1)
 
 		def add(label, control):
 			sizer.Add(wx.StaticText(panel, -1, label), 0, wx.LEFT|wx.TOP, 2)
@@ -126,11 +127,23 @@ class DlgSettings(wx.Dialog):
 		)
 		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
 		
-		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', _('default')))
-		grid.Add(self._btn_thumb_font, 5, wx.EXPAND|wx.ALL, 5)
+		fgrid = wx.FlexGridSizer(2, 2, 5, 5)
+		fgrid.AddGrowableCol(1)
 		
+		fgrid.Add(wx.StaticText(panel, -1, _("Caption font:")), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+		
+		self._btn_thumb_font = wx.Button(panel, -1, self._data.get('thumb_font', _('default')), size=(150, -1))
 		self.Bind(wx.EVT_BUTTON, self._on_btn_font_font, self._btn_thumb_font)
-
+		fgrid.Add(self._btn_thumb_font, 1, wx.EXPAND|wx.ALL, 5)
+		
+		fgrid.Add(wx.StaticText(panel, -1, _("Timeline font:")), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+		
+		self._btn_timeline_font = wx.Button(panel, -1, self._data.get('timeline_font', _('default')))
+		self.Bind(wx.EVT_BUTTON, self._on_btn_timeline_font, self._btn_timeline_font)
+		fgrid.Add(self._btn_timeline_font, 1, wx.EXPAND|wx.ALL, 5)
+		
+		grid.Add(fgrid, 0, wx.EXPAND|wx.ALL, 5)
+		
 		panel.SetSizerAndFit(grid)
 		
 		return panel
@@ -169,16 +182,40 @@ class DlgSettings(wx.Dialog):
 		if self._data.get('thumb_font_face') is not None:
 			font = fonttools.data2font(self._data, 'thumb')
 			data.SetInitialFont(font)
+			data.SetColour(fonttools.str2color(self._data.get('thumb_font_color', '127;127;127'), wx.Colour(127, 127, 127)))
 
 		dlg = wx.FontDialog(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			data = dlg.GetFontData()
 			font = data.GetChosenFont()
+			self._data['thumb_font_color'] = fonttools.color2str(data.GetColour())
 			
 			fontdata = fonttools.font2data(font, 'thumb')
 			self._data.update(fontdata)
 
-			self._btn_thumb_font.SetLabel(_("Caption font\n%s") % font.GetNativeFontInfo().ToString())
+			self._btn_thumb_font.SetLabel(fontdata['thumb_font'])
+			
+		dlg.Destroy()
+		
+		
+	def _on_btn_timeline_font(self, evt):
+		data = wx.FontData()
+		data.EnableEffects(True)
+		if self._data.get('timeline_font_face') is not None:
+			font = fonttools.data2font(self._data, 'timeline')
+			data.SetInitialFont(font)
+			data.SetColour(fonttools.str2color(self._data.get('timeline_font_color', '127;127;127'), wx.Colour(127, 127, 127)))
+
+		dlg = wx.FontDialog(self, data)
+		if dlg.ShowModal() == wx.ID_OK:
+			data = dlg.GetFontData()
+			font = data.GetChosenFont()
+			self._data['timeline_font_color'] = fonttools.color2str(data.GetColour())
+			
+			fontdata = fonttools.font2data(font, 'timeline')
+			self._data.update(fontdata)
+
+			self._btn_timeline_font.SetLabel(fontdata['timeline_font'])
 			
 		dlg.Destroy()
 

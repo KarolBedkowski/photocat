@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-30 22:11+0200\n"
+"POT-Creation-Date: 2008-07-01 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,14 +119,9 @@ msgstr ""
 msgid "Camera"
 msgstr "Aparat"
 
-#: gui/_dlgsettings.py:129 gui/_dlgsettings.py:181
-#, python-format
-msgid ""
-"Caption font\n"
-"%s"
-msgstr ""
-"Czcionka podpisów: \n"
-"%s"
+#: gui/_dlgsettings.py:133
+msgid "Caption font:"
+msgstr "Czcionka podpisów:"
 
 #: model/_catalog_file.py:75
 msgid "Catalog"
@@ -184,7 +179,7 @@ msgstr "Zamknij aktualny katalog"
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
-#: gui/_dlgsettings.py:103
+#: gui/_dlgsettings.py:104
 msgid "Compression:"
 msgstr "Kompresja:"
 
@@ -601,7 +596,7 @@ msgstr "Ustawienia"
 msgid "Shot date:"
 msgstr "Data wykonania:"
 
-#: gui/_dlgsettings.py:124
+#: gui/_dlgsettings.py:125
 msgid "Show captions"
 msgstr "Pokaż podpisy"
 
@@ -622,15 +617,15 @@ msgstr "Tagi"
 msgid "Text"
 msgstr "Tekst"
 
-#: gui/_dlgsettings.py:98
+#: gui/_dlgsettings.py:99
 msgid "Thumb height:"
 msgstr "Wysokość miniaturki:"
 
-#: gui/_dlgsettings.py:119
+#: gui/_dlgsettings.py:120
 msgid "Thumb preload"
 msgstr "Ładuj miniaturki w tle"
 
-#: gui/_dlgsettings.py:93
+#: gui/_dlgsettings.py:94
 msgid "Thumb width:"
 msgstr "Szerokość miniaturki:"
 
@@ -645,6 +640,10 @@ msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
 #: gui/components/dirstree.py:261
 msgid "Timeline"
 msgstr "Linia czasu"
+
+#: gui/_dlgsettings.py:139
+msgid "Timeline font:"
+msgstr "Czcionka lini czasu"
 
 #: ../kpylibs/validators/validators.py:43
 msgid "Too few characters in fields"
@@ -724,7 +723,7 @@ msgstr "początek:"
 msgid "catalog: %s"
 msgstr "katalog: %s"
 
-#: gui/_dlgsettings.py:129
+#: gui/_dlgsettings.py:135 gui/_dlgsettings.py:141
 msgid "default"
 msgstr "domyślna"
 
