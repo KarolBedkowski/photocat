@@ -349,6 +349,7 @@ class DlgSearch(wx.Dialog):
 		
 		self._panel_preview.Show(False)
 		self._btn_properties.Enable(False)
+		self._btn_goto.Enable(False)
 
 		try:
 			options = self._get_options()
@@ -455,6 +456,7 @@ class DlgSearch(wx.Dialog):
 		self._bmp_preview.SetBitmap(img)
 		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
+		self._btn_goto.Enable(True)
 	
 		self._show_image_info(item)
 	
@@ -463,6 +465,7 @@ class DlgSearch(wx.Dialog):
 		''' callback na odznaczenie rezultatu - wyświetlenie pustego podglądu '''		
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._btn_properties.Enable(False)
+		self._btn_goto.Enable(False)
 
 
 	def _on_close(self, evt):
@@ -509,11 +512,23 @@ class DlgSearch(wx.Dialog):
 			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		else:
 			self._thumbctrl.clear()
+			
+		self._btn_goto.Enable(False)
+		self._btn_properties.Enable(False)
+		
+		# odznaczenie
+		index = -1
+		while True:
+			index	= self._result_list.GetNextItem(index, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
+			if index == -1:
+				break
+			self._result_list.SetItemState(index, 0, wx.LIST_STATE_SELECTED)
 
 
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
+		self._btn_goto.Enable(item is not None)
 		self._show_image_info(item)
 
 	
@@ -540,6 +555,9 @@ class DlgSearch(wx.Dialog):
 	def _show_image_info(self, item):
 		listctrl = self._image_info
 		listctrl.DeleteAllItems()
+		
+		if item is None:
+			return
 		
 		for dummy, key, val in sorted(item.info):
 			idx = listctrl.InsertStringItem(sys.maxint, str(key))
