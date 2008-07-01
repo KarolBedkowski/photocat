@@ -77,9 +77,13 @@ def font2data(font, prefix):
 
 
 def str2color(value, default=None):
+	if value is None:
+		return default
+	
 	try:
 		red, green, blue = map(int, value.split(';'))
 		return wx.Colour(red, green, blue)
+	
 	except Exception, err:
 		return default
 	
