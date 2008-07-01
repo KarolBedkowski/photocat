@@ -40,7 +40,7 @@ import wx
 from kpylibs				import dialogs
 from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
-from kpylibs.guitools		import create_menu, create_toolbar_button
+from kpylibs.guitools		import create_menu, create_toolbar_button, create_menu_item
 from kpylibs.wnd_shell		import WndShell
 from kpylibs.formaters		import format_human_size
 
@@ -84,6 +84,7 @@ class WndMain(wx.Frame):
 
 		self._catalogs		= []
 		self._layout_splitter	= None
+		self._info_panel_size = None
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['folder_image'])
@@ -101,7 +102,7 @@ class WndMain(wx.Frame):
 			self.Centre(wx.BOTH)
 		else:
 			self.Move(position)
-	
+
 		self.Bind(wx.EVT_CLOSE, self._on_close)
 		self.Bind(wx.EVT_SIZE, self._on_size)
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_dirtree_item_select, self._dirs_tree)
@@ -117,6 +118,7 @@ class WndMain(wx.Frame):
 
 		self.__update_last_open_files()
 		self.__update_menus_toolbars()
+		self.__update_settings()
 
 
 	def _create_layout(self, appconfig):
@@ -124,6 +126,7 @@ class WndMain(wx.Frame):
 
 		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
 		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2), self._create_layout_info(splitter2))
+		splitter2.SetMinimumPaneSize(0)
 
 		splitter.SplitVertically(self._create_layout_tree(splitter), splitter2)
 
@@ -137,6 +140,7 @@ class WndMain(wx.Frame):
 	def _create_main_menu(self):
 		self.__menu_bar = menu_bar = wx.MenuBar()
 		menu_bar.Append(self._create_main_menu_file(),		_('&File'))
+		menu_bar.Append(self._create_main_menu_view(),		_('&View'))
 		menu_bar.Append(self._create_main_menu_catalog(),	_('&Catalog'))
 		menu_bar.Append(self._create_main_menu_help(),		wx.GetStockLabel(wx.ID_HELP, True))
 		if self._debug:
@@ -184,6 +188,24 @@ class WndMain(wx.Frame):
 		return menu
 
 
+	def _create_main_menu_view(self):
+		menu = wx.Menu()
+
+		self._menu_view_show_info = create_menu_item(self, menu,
+				_('[x]Show &info'),		self._on_view_show_hide_info,		accel='F4')[1]
+		self._menu_view_show_captions = create_menu_item(self, menu,
+				_('[x]Show &captions'),	self._on_view_show_hide_captions)[1]
+
+		menu.AppendSeparator()
+
+		self._menu_view_sort_name = create_menu_item(self, menu, _('[o]Sort by &name '),	self._on_view_sort)[1]
+		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
+		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
+		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
+
+		return menu
+
+
 	def _create_main_menu_help(self):
 		menu = create_menu(self, (
 			(_('&About...'),	None,	'',	self._on_help_about,	wx.ID_ABOUT,	wx.ART_INFORMATION),
@@ -218,7 +240,7 @@ class WndMain(wx.Frame):
 		toolbar.AddSeparator()
 
 		self.__tb_find = cbtna(wx.ID_FIND,	self._on_catalog_search, wx.ART_FIND,	_('Search in calalogs'))
-		
+
 		toolbar.AddSeparator()
 
 		self.__tb_add_disk = cbtna(_('Add disk...'),	self._on_catalog_add,	wx.ART_NEW_DIR,	_('Add disk to catalog'))
@@ -234,7 +256,6 @@ class WndMain(wx.Frame):
 
 	def _create_layout_photolist(self, parent):
 		self._photo_list = ThumbCtrl(parent, status_wnd=self)
-		self.__update_settings()
 		return self._photo_list
 
 
@@ -254,8 +275,10 @@ class WndMain(wx.Frame):
 			for catalog in dirty_catalogs:
 				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
+				
 				if res == wx.ID_CANCEL:
 					return
+				
 				elif res == wx.ID_YES:
 					self.__save_catalog(catalog)
 
@@ -285,16 +308,19 @@ class WndMain(wx.Frame):
 			if filename is not None:
 				if not filename.endswith('.index'):
 					filename = filename + '.index'
+					
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					catalog = Catalog(filename)
 					catalog.data_provider.open(True)
 					self._catalogs.append(catalog)
 					self._dirs_tree.add_catalog(catalog)
+					
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
 					self.__update_last_open_files(filename)
 					self.__update_menus_toolbars()
+
 		evt.Skip()
 
 
@@ -303,8 +329,10 @@ class WndMain(wx.Frame):
 		if filename is not None:
 			if not filename.endswith('.index'):
 				filename = filename + '.index'
+
 			self._open_file(filename)
 			self.__update_menus_toolbars()
+
 		evt.Skip()
 
 
@@ -314,9 +342,11 @@ class WndMain(wx.Frame):
 			for cat in self._catalogs:
 				self.__save_catalog(cat)
 				self._dirs_tree.update_catalog_node(cat)
+
 		else:
 			self.__save_catalog(tree_selected.catalog)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
+
 		evt.Skip()
 
 
@@ -329,10 +359,13 @@ class WndMain(wx.Frame):
 			res = dialogs.message_box_warning_yesnocancel(self,
 					_('Catalog %s has unsaved changes!\nSave before close??') % catalog.caption,
 					'PC')
+
 			if res == wx.ID_YES:
 				self.__save_catalog(catalog)
+				
 			elif res == wx.ID_CANCEL:
 				return
+			
 		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.caption, 'PC'):
 			return
 
@@ -356,10 +389,28 @@ class WndMain(wx.Frame):
 
 	def _on_file_settings(self, evt):
 		dlg = DlgSettings(self)
-		res = dlg.ShowModal()
-		dlg.Destroy()
-		if res == wx.ID_OK:
+		if dlg.ShowModal() == wx.ID_OK:
 			self.__update_settings()
+
+		dlg.Destroy()
+
+
+	def _on_view_show_hide_info(self, evt):
+		""" wybór z menu widok->pokaż/ukryj info """
+		AppConfig().set('settings', 'view_show_info', self._menu_view_show_info.IsChecked())
+		self._toggle_info_panel()
+
+
+	def _on_view_show_hide_captions(self, evt):
+		""" wybór z menu widok->pokaż/ukryj podpisy """
+		show_captions = self._menu_view_show_captions.IsChecked()
+		AppConfig().set('settings', 'view_show_captions', show_captions)
+		self._photo_list.show_captions	= show_captions
+		self._photo_list.Refresh()
+
+
+	def _on_view_sort(self, evt):
+		self._on_dirtree_item_select(None)
 
 
 	def _on_help_about(self, evt):
@@ -369,8 +420,8 @@ class WndMain(wx.Frame):
 
 	def _on_debug_shell(self, evt):
 		WndShell(self, locals()).Show()
-		
-		
+
+
 	def _on_debug_fill_shot_date(self, evt):
 		catalog = self.__get_selected_catalog()
 		if catalog is not None:
@@ -390,14 +441,16 @@ class WndMain(wx.Frame):
 			disk = None
 			try:
 				disk = ecatalog.add_disk_to_catalog(catalog, self)
+				
 			except Exception, err:
 				_LOG.exception('WndMain._on_catalog_add()')
+				
 			else:
 				if disk is not None:
 					self.__save_catalog(catalog, True)
 					self._dirs_tree.update_node_disk(disk)
-					self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-					self._dirs_tree.update_timeline_node(catalog.timeline)
+					self.__update_tags_timeline(catalog)
+
 			self.__update_menus_toolbars()
 
 
@@ -412,15 +465,17 @@ class WndMain(wx.Frame):
 		disk = tree_selected.disk
 		try:
 			ecatalog.update_disk_in_catalog(disk.catalog, disk, self)
+
 		except Exception, err:
 			_LOG.exception('WndMain._on_catalog_update_disk()')
+
 		else:
 			if disk is not None:
 				catalog = disk.catalog
 				self.__save_catalog(catalog, True)
 				self._dirs_tree.update_node_disk(disk)
-				self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-				self._dirs_tree.update_timeline_node(catalog.timeline)
+				self.__update_tags_timeline(catalog)
+
 			self.__update_menus_toolbars()
 
 
@@ -438,8 +493,7 @@ class WndMain(wx.Frame):
 			catalog = tree_selected.catalog
 			catalog.remove_disk(tree_selected)
 			self._dirs_tree.update_catalog_node(catalog)
-			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
-			self._dirs_tree.update_timeline_node(tree_selected.catalog.timeline)
+			self.__update_tags_timeline(tree_selected.catalog)
 			self.__update_menus_toolbars()
 
 
@@ -455,8 +509,7 @@ class WndMain(wx.Frame):
 		if dialogs.message_box_warning_yesno(self, _('Delete directory %s?') % tree_selected.name, 'PC'):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
-			self._dirs_tree.update_catalog_node(tree_selected.catalog)
-			self._dirs_tree.update_node_tags(tree_selected.catalog.tags_provider, True)
+			self.__update_tags_timeline(tree_selected.catalog)
 			self.__update_menus_toolbars()
 
 
@@ -473,10 +526,11 @@ class WndMain(wx.Frame):
 			return
 
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
-			for image in selected_items:
-				folder.remove_file(image)
-			self._photo_list.show_dir(folder)
-			self._info_panel.show_folder(folder)
+			[ folder.remove_file(image) for image in selected_items ]
+			self._show_dir(folder)
+			if self._info_panel is not None:
+				self._info_panel.show_folder(folder)
+
 			self._dirs_tree.update_catalog_node(folder.catalog)
 
 
@@ -484,8 +538,7 @@ class WndMain(wx.Frame):
 		if len(self._catalogs) == 0:
 			return
 
-		dlg = DlgSearch(self, self._catalogs, self._dirs_tree.selected_item)
-		dlg.Show()
+		DlgSearch(self, self._catalogs, self._dirs_tree.selected_item).Show()
 
 
 	def _on_catalog_info(self, evt):
@@ -497,8 +550,8 @@ class WndMain(wx.Frame):
 		files_count, subdirs_count = 0, 0
 		for disk in catalog.disks:
 			disk_files_count, disk_subdirs_count, disk_files_count2, disk_subdirs_count2 = disk.directory_size
-			files_count		+= disk_files_count + disk_files_count2
-			subdirs_count	+= disk_subdirs_count + disk_subdirs_count2
+			files_count		+= disk_files_count		+ disk_files_count2
+			subdirs_count	+= disk_subdirs_count	+ disk_subdirs_count2
 
 		dirty, dirtyp = catalog.dirty_objects_count
 
@@ -509,10 +562,7 @@ class WndMain(wx.Frame):
 
 	def _on_catalog_edit_multi(self, evt):
 		folder = self._dirs_tree.selected_item
-		if folder is None or isinstance(folder, Catalog):
-			return
-
-		if len(folder.files) == 0:
+		if folder is None or isinstance(folder, Catalog) or len(folder.files) == 0:
 			return
 
 		image = FileImage(None, None, None, folder.disk, catalog=folder.catalog)
@@ -524,36 +574,40 @@ class WndMain(wx.Frame):
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
 			self.__update_changed_tags(folder.catalog.tags_provider, changed_tags)
+
 		dlg.Destroy()
 
 
 	def _on_dirtree_item_select(self, evt):
 		item = self._dirs_tree.selected_item
-		self._info_panel.clear()
-		self._info_panel.clear_folder()
 		show_info = True
 
+		self.__info_panel_clear()
 		self.__update_menus_toolbars()
 
 		if isinstance(item, Tag):
 			item = item.files
 			show_info = False
+
 		elif isinstance(item, Timeline):
 			# wyświtelanie timeline
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
-				self._photo_list.show_dir([])
+				self._show_dir([])
 				return
+
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
-					self._photo_list.show_dir([])
+					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					return
+
 			item = item.files
 			show_info = False
+
 		elif not isinstance(item, Directory):
-			self._photo_list.show_dir([])
+			self._show_dir([])
 			return
 
 		self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -561,60 +615,76 @@ class WndMain(wx.Frame):
 		if item is not None:
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				self._photo_list.show_dir(item)
+				self._show_dir(item)
 				if show_info:
-					self._info_panel.show_folder(item)
+					if self._info_panel is not None:
+						self._info_panel.show_folder(item)
+
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
 				if show_info:
 					files_count, subdirs_count, dummy, dummy = item.directory_size
 					self.SetStatusText(_('Directories %(dirs)d;  files: %(files)d') %
 							dict(dirs=subdirs_count, files=files_count))
+
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
+
+		self._show_info_panel_page(2)
 
 
 	def _on_dirtree_item_activate(self, evt):
 		item = self._dirs_tree.selected_item
-		self._info_panel.clear()
-		self._info_panel.clear_folder()
+		self.__info_panel_clear()
 
 		if isinstance(item, Catalog):
 			return
-		
+
 		if isinstance(item, Timeline):
 			if item.level == 0:
 				if not self._dirs_tree.IsExpanded(item.tree_node):
 					if item.dirs_count == 0:
 						self._dirs_tree.update_timeline_node(item)
+
 				self._dirs_tree.Toggle(item.tree_node)
+
 			return
 
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:
-			item.catalog.dirty = True		
-			self._info_panel.show_folder(item)
+			item.catalog.dirty = True
+			
+			if self._info_panel is not None:
+				self._info_panel.show_folder(item)
 
 			if isinstance(item, Disk):
 				self._dirs_tree.update_node_disk(item, False)
+
 			else:
 				self._dirs_tree.update_node_directory(item, False)
 
 			self._dirs_tree.update_catalog_node(item.catalog)
 			self.__update_changed_tags(item.catalog.tags_provider, dlg.changed_tags)
+
 		dlg.Destroy()
 
 
 	def _on_thumb_sel_changed(self, evt):
 		selected = self._photo_list.selected_item
-		if selected is None:
-			self._info_panel.clear()
-		else:
-			try:
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				self._info_panel.show(selected)
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
+		if self._info_panel is not None:
+			if selected is None:
+				self._info_panel.clear()
+				self._show_info_panel_page(2)
+
+			else:
+				try:
+					self.SetCursor(wx.HOURGLASS_CURSOR)
+					self._info_panel.show(selected)
+					self._show_info_panel_page(0)
+
+				finally:
+					self.SetCursor(wx.STANDARD_CURSOR)
+
 		self.__update_menus_toolbars()
 
 
@@ -623,10 +693,14 @@ class WndMain(wx.Frame):
 		if selected is not None:
 			dlg = DlgProperties(self, selected)
 			if dlg.ShowModal() == wx.ID_OK:
-				self._info_panel.show(selected)
+
+				if self._info_panel is not None:
+					self._info_panel.show(selected)
+
 				selected.catalog.dirty = True
 				self._dirs_tree.update_catalog_node(selected.catalog)
 				self.__update_changed_tags(selected.catalog.tags_provider, dlg.changed_tags)
+
 			dlg.Destroy()
 
 
@@ -638,7 +712,7 @@ class WndMain(wx.Frame):
 
 	def _on_dirtree_context_menu(self, evt):
 		tree_item = evt.GetItem()
-		if tree_item is not None and tree_item.IsOk():			
+		if tree_item is not None and tree_item.IsOk():
 			item = self._dirs_tree.GetItemData(tree_item)
 			if item is not None:
 				data = item.GetData()
@@ -654,8 +728,10 @@ class WndMain(wx.Frame):
 			tree_selected = self._dirs_tree.selected_item
 			if tree_selected is None:
 				return
+
 			if isinstance(tree_selected, Disk):
 				self._on_catalog_del_disk(None)
+
 			elif isinstance(tree_selected, Directory):
 				self._on_catalog_del_dir(None)
 
@@ -665,18 +741,21 @@ class WndMain(wx.Frame):
 		item, flags = self._dirs_tree.HitTest(pt)
 		if item:
 			self._dirs_tree.SelectItem(item)
+
 		evt.Skip()
 
 
 	def _on_photolist_key_down(self, evt):
 		if evt.m_keyCode == wx.WXK_DELETE:
 			self._on_catalog_del_image(None)
+
 		evt.Skip()
-			
-			
+
+
 	def _on_photolist_popupmenu(self, evt):
 		if self._photo_list.selected_item is not None:
 			self._photo_list.PopupMenu(self.__create_popup_menu_image(), evt.GetPosition())
+
 
 	################################################################################
 
@@ -686,6 +765,7 @@ class WndMain(wx.Frame):
 			if not os.path.exists(filename):
 				dialogs.message_box_error(self, _("Error opening file %s!\nFile don't exists.") % filename, _('Open file'))
 				return
+
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
@@ -695,10 +775,12 @@ class WndMain(wx.Frame):
 				self._dirs_tree.add_catalog(catalog)
 				self.__update_last_open_files(filename)
 				self.SetStatusText(filename)
+
 			except:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
 				dialogs.message_box_error(self, _('Error opening file %s') % filename, _('Open file'))
 				catalog = None
+
 			else:
 				if catalog is not None:
 					dirty, dirtyp = catalog.dirty_objects_count
@@ -708,8 +790,10 @@ class WndMain(wx.Frame):
 								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
 							if ecatalog.rebuild(catalog, self):
 								self.__save_catalog(catalog)
+
 			finally:
 				self.SetCursor(wx.STANDARD_CURSOR)
+
 			self.__update_menus_toolbars()
 
 
@@ -728,7 +812,9 @@ class WndMain(wx.Frame):
 			for num in xrange(min(len(last_open_files), 10)):
 				filename = os.path.basename(last_open_files[num])
 				menu.Append(wx.ID_FILE1+num, "&%d. %s" % (num+1, filename), _('Open %s') % last_open_files[num])
+
 			self._main_menu_file_recent_item.Enable(True)
+
 		else:
 			self._main_menu_file_recent_item.Enable(False)
 
@@ -738,14 +824,15 @@ class WndMain(wx.Frame):
 		if catalog.dirty or force:
 			try:
 				Storage.save(catalog)
+
 			except:
 				_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)
 				dialogs.message_box_error(self, _('Error saving catalog %s') % catalog.catalog_filename, _('Save catalog'))
+
 		self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def show_item(self, folder):
-		#self._dirs_tree.EnsureVisible(folder.tree_node)
 		self._dirs_tree.show_node(folder)
 		self._dirs_tree.SelectItem(folder.tree_node)
 
@@ -764,8 +851,10 @@ class WndMain(wx.Frame):
 			if isinstance(item, Disk):
 				append(_('&Update disk...'), self._on_catalog_update_disk)
 				append(_('&Delete disk...'), self._on_catalog_del_disk)
+
 			else:
 				append(_('Delete selected &dir...'), self._on_catalog_del_dir)
+
 			popup_menu.AppendSeparator()
 
 		append(_('Close catalog'),	self._on_file_close)
@@ -796,37 +885,41 @@ class WndMain(wx.Frame):
 		if tree_selected is None:
 			if len(self._catalogs) > 1:
 				return None
+
 			catalog = self._catalogs[0]
+
 		else:
 			catalog = tree_selected.catalog
+
 		return catalog
 
 
 	def __update_changed_tags(self, tags_provider, changed_tags):
-		""" aktualizacja tagów w drzewie """
+		""" wndmain.__update_changed_tags(tags_provider, changed_tags) -- aktualizacja tagów w drzewie """
 		if changed_tags is not None and len(changed_tags) > 0:
 			[ self._dirs_tree.update_node_tag(tag_item)
 				for tag_item
 				in (tags_provider[tag] for tag in changed_tags)
 				if tag_item.tree_node is not None
 			]
+
 			self._dirs_tree.update_node_tags(tags_provider)
 
-	
+
 	def __update_menus_toolbars(self):
 		""" wndmain.__update_menus_toolbars() -- włączanie/wyłączanie pozycji menu/toolbar """
 		catalog_loaded = len(self._catalogs) > 0
-		
-		self.__menu_bar.EnableTop(1, catalog_loaded)
-		
+
+		self.__menu_bar.EnableTop(2, catalog_loaded)
+
 		mm_items = self._main_menu_file.GetMenuItems()
 		mm_items[2].Enable(catalog_loaded)
 		mm_items[4].Enable(catalog_loaded)
 		mm_items[6].Enable(catalog_loaded)
-		
+
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
-		
+
 		if catalog_loaded:
 			selected_tree_item = self._dirs_tree.selected_item
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
@@ -842,14 +935,116 @@ class WndMain(wx.Frame):
 
 
 	def __update_settings(self):
+		""" wndmain.__update_settings() -- aktualizacja wszystkiego na podstawie ustawien """
 		appconfig = AppConfig()
 		self._photo_list.set_thumb_size(
 				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
 		)
-		self._photo_list.show_captions	= appconfig.get('settings', 'view_show_captions', True)
+
+		show_captions = appconfig.get('settings', 'view_show_captions', True)
+		self._photo_list.show_captions	= show_captions
+		self._menu_view_show_captions.Check(show_captions)
+
 		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
 		self._photo_list.set_captions_font(dict(appconfig.get_items('settings') or []))
 		self._photo_list.Refresh()
+
+		show_info = appconfig.get('settings', 'view_show_info', True)
+		self._menu_view_show_info.Check(show_info)
+		self._toggle_info_panel(show_info)
+
+
+	def _toggle_info_panel(self, show=None):
+		""" wndmain._toggle_info_panel([show]) -- przełączenie widoczności paneli informacyjnego
+
+			@param show	- None=toggle, True-wymuszenie pokazania, False=wymuszenie ukrycia
+		"""
+
+		if self._layout_splitter_h.IsSplit():
+			if show is None or show is False:
+				# panel jest pokazany - usuniecie go
+				self._info_panel_size = self._layout_splitter_h.GetSashPosition()
+				self._layout_splitter_h.Unsplit()
+				self._info_panel.Destroy()
+				self._info_panel = None
+
+		else:
+			if show is None or show is True:
+				# stworzenie panelu
+				self._info_panel = self._create_layout_info(self._layout_splitter_h)
+				wind1 = self._layout_splitter_h.GetWindow1()
+				self._layout_splitter_h.SplitHorizontally(wind1, self._info_panel, self._info_panel_size)
+
+				# odswierzenie danych w panelu
+				self._on_thumb_sel_changed(None)
+				item = self._dirs_tree.selected_item
+				if item is not None and isinstance(item, Directory):
+					self._info_panel.show_folder(item)
+
+
+	def _show_info_panel_page(self, page):
+		""" wndmain._show_info_panel_page(page) -- pokazanie wybranej karty w info panelu
+
+			@param page	- strona do pokazania
+		"""
+		if self._info_panel is not None:
+			self._info_panel.show_page(page)
+
+
+	def _show_dir(self, images):
+		''' wndmain._show_dir(images) -- wyświetlenie zawartości katalogu lub listy
+
+			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania
+		'''
+
+		images_as_list = isinstance(images, list) or isinstance(images, tuple)
+		if not images_as_list:
+			images = images.files
+
+		if len(images) > 0:
+			# jak sortujemy
+			sort_by_name	= self._menu_view_sort_name.IsChecked()
+			group_by_date	= self._menu_view_group_date.IsChecked()
+			desc			= self._menu_view_sort_desc.IsChecked()
+			cmp_func 		= None
+
+			if sort_by_name:
+				if desc:
+					# sort by name desc
+					cmp_func = lambda x, y: -cmp(x.name, y.name)
+
+				elif images_as_list:
+					# sort by name asc (tylko gdy dane z listy)
+					cmp_func = lambda x, y: cmp(x.name, y.name)
+
+			else:
+				if desc:
+					# sort by date desc
+					cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+
+				else:
+					#sort by date asc
+					cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+
+			self._photo_list.group_by_date = group_by_date
+
+			if cmp_func is not None:
+				images = sorted(images, cmp_func)
+
+		self._photo_list.show_dir(images)
+
+
+	def __update_tags_timeline(self, catalog):
+		''' wndmain.__update_tags_timeline(catalog) -- odświerzenie dir tree: tags, timeline '''
+		self._dirs_tree.update_node_tags(catalog.tags_provider, True)
+		self._dirs_tree.update_timeline_node(catalog.timeline)
+		
+		
+	def __info_panel_clear(self):
+		''' wndmain.__info_panel_clear() -- wyczyszczenie info-panelu '''
+		if self._info_panel is not None:
+			self._info_panel.clear()
+			self._info_panel.clear_folder()
 
 
 # vim: encoding=utf8:

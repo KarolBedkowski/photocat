@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-15 18:34+0200\n"
+"POT-Creation-Date: 2008-07-01 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,37 +24,41 @@ msgstr ""
 "%(msg)s\n"
 "Znaleziono: %(found)d"
 
-#: gui/wndmain.py:189
+#: gui/wndmain.py:211
 msgid "&About..."
 msgstr "&O programie..."
 
-#: gui/wndmain.py:171
+#: gui/wndmain.py:175
 msgid "&Add disk..."
 msgstr "&Dodaj dysk"
 
-#: gui/wndmain.py:140
+#: gui/wndmain.py:144
 msgid "&Catalog"
 msgstr "&Katalog"
 
-#: gui/wndmain.py:173 gui/wndmain.py:766
+#: gui/wndmain.py:177 gui/wndmain.py:825
 msgid "&Delete disk..."
 msgstr "&Usuń dysk"
 
-#: gui/wndmain.py:786
+#: gui/wndmain.py:845
 msgid "&Delete file..."
 msgstr "&Usuń plik..."
 
-#: gui/wndmain.py:178
+#: gui/wndmain.py:182
 msgid "&Edit selected files..."
 msgstr "&Edytuj wybrane pliki..."
 
-#: gui/wndmain.py:139
+#: gui/wndmain.py:142
 msgid "&File"
 msgstr "&Plik"
 
-#: gui/wndmain.py:172 gui/wndmain.py:765
+#: gui/wndmain.py:176 gui/wndmain.py:824
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
+
+#: gui/wndmain.py:143
+msgid "&View"
+msgstr "&Widok"
 
 #: gui/_dlgsearch.py:244 engine/search.py:52 engine/search.py:53
 msgid "<all>"
@@ -74,7 +78,7 @@ msgstr "<aktualny folder>"
 msgid "<current disk>"
 msgstr "<aktualny dysk>"
 
-#: gui/wndmain.py:181
+#: gui/wndmain.py:185
 msgid "About selected calalog..."
 msgstr "O wybranym katalogu..."
 
@@ -86,11 +90,11 @@ msgstr "Dodaj"
 msgid "Add disk"
 msgstr "Dodaj dysk"
 
-#: gui/wndmain.py:171 gui/wndmain.py:224
+#: gui/wndmain.py:175 gui/wndmain.py:246
 msgid "Add disk to catalog"
 msgstr "Dodaj dysk do katalogu"
 
-#: gui/wndmain.py:224
+#: gui/wndmain.py:246
 msgid "Add disk..."
 msgstr "Dodaj dysk"
 
@@ -115,20 +119,15 @@ msgstr ""
 msgid "Camera"
 msgstr "Aparat"
 
-#: gui/_dlgsettings.py:129 gui/_dlgsettings.py:181
-#, python-format
-msgid ""
-"Caption font\n"
-"%s"
-msgstr ""
-"Czcionka podpisów: \n"
-"%s"
+#: gui/_dlgsettings.py:133
+msgid "Caption font:"
+msgstr "Czcionka podpisów:"
 
 #: model/_catalog_file.py:75
 msgid "Catalog"
 msgstr "Katalog"
 
-#: gui/wndmain.py:330
+#: gui/wndmain.py:351
 #, python-format
 msgid ""
 "Catalog %s has unsaved changes!\n"
@@ -137,7 +136,7 @@ msgstr ""
 "Katalog %s zawiera niezapisane zmiany!\n"
 "Zapisać przed wyjściem?"
 
-#: gui/wndmain.py:256
+#: gui/wndmain.py:277
 #, python-format
 msgid ""
 "Catalog %s isn't saved\n"
@@ -146,7 +145,7 @@ msgstr ""
 "Katalog %s nie jest zapisany!\n"
 "Zapisać?"
 
-#: gui/wndmain.py:708
+#: gui/wndmain.py:767
 #, python-format
 msgid ""
 "Catalog file contain %d%% unused entries.\n"
@@ -155,32 +154,32 @@ msgstr ""
 "Plik katalog zawiera %d%% zbędnych wpisów.\n"
 "Przebudować katalog?"
 
-#: gui/wndmain.py:284
+#: gui/wndmain.py:305
 msgid "Catalog file name"
 msgstr "Nazwa pliku katalogu"
 
-#: gui/wndmain.py:158
+#: gui/wndmain.py:162
 msgid "Close application"
 msgstr "Zamknij program"
 
-#: gui/wndmain.py:152 gui/wndmain.py:771
+#: gui/wndmain.py:156 gui/wndmain.py:830
 msgid "Close catalog"
 msgstr "Zamknij katalog"
 
-#: gui/wndmain.py:336
+#: gui/wndmain.py:357
 #, python-format
 msgid "Close catalog %s?"
 msgstr "Zamknąć katalog %s?"
 
-#: gui/wndmain.py:152
+#: gui/wndmain.py:156
 msgid "Close current catalog"
 msgstr "Zamknij aktualny katalog"
 
-#: gui/wndmain.py:262
+#: gui/wndmain.py:283
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
-#: gui/_dlgsettings.py:103
+#: gui/_dlgsettings.py:104
 msgid "Compression:"
 msgstr "Kompresja:"
 
@@ -188,11 +187,11 @@ msgstr "Kompresja:"
 msgid "Counting files..."
 msgstr "Liczenie plików..."
 
-#: gui/wndmain.py:149 gui/wndmain.py:214
+#: gui/wndmain.py:153 gui/wndmain.py:236
 msgid "Create new catalog"
 msgstr "Utwórz nowy katalog"
 
-#: gui/wndmain.py:283
+#: gui/wndmain.py:304
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
@@ -208,38 +207,38 @@ msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 msgid "Del"
 msgstr "Usuń"
 
-#: gui/wndmain.py:475
+#: gui/wndmain.py:514
 #, python-format
 msgid "Delete %d images?"
 msgstr "Usunąć %d plików?"
 
-#: gui/wndmain.py:452
+#: gui/wndmain.py:491
 msgid "Delete directory"
 msgstr "Usuń katalog"
 
-#: gui/wndmain.py:455
+#: gui/wndmain.py:494
 #, python-format
 msgid "Delete directory %s?"
 msgstr "Usunąć katalog %s?"
 
-#: gui/wndmain.py:433
+#: gui/wndmain.py:472
 msgid "Delete disk"
 msgstr "Usuń dysk"
 
-#: gui/wndmain.py:436
+#: gui/wndmain.py:475
 #, python-format
 msgid "Delete disk %s?"
 msgstr "Usunąć dysk %s?"
 
-#: gui/wndmain.py:175 gui/wndmain.py:768
+#: gui/wndmain.py:179 gui/wndmain.py:827
 msgid "Delete selected &dir..."
 msgstr "Usuń wybrany &katalog..."
 
-#: gui/wndmain.py:176
+#: gui/wndmain.py:180
 msgid "Delete selected &image..."
 msgstr "Usuń wybrane &pliki..."
 
-#: gui/wndmain.py:173
+#: gui/wndmain.py:177
 msgid "Delete selected disk from catalog"
 msgstr "Usuń wybrany dysk z katalogu"
 
@@ -252,7 +251,7 @@ msgstr "Opis"
 msgid "Dimensions"
 msgstr "Wymiary"
 
-#: gui/wndmain.py:571
+#: gui/wndmain.py:618
 #, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr "Katalogów %(dirs)d;  plików: %(files)d"
@@ -277,7 +276,7 @@ msgstr "Nazwa dysku:"
 msgid "Disk updated"
 msgstr "Dysk zaktualizowano"
 
-#: gui/wndmain.py:506
+#: gui/wndmain.py:546
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
@@ -294,12 +293,12 @@ msgstr ""
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/wndmain.py:700
+#: gui/wndmain.py:759
 #, python-format
 msgid "Error opening file %s"
 msgstr "Błąd otwierania pliku %s"
 
-#: gui/wndmain.py:687
+#: gui/wndmain.py:746
 #, python-format
 msgid ""
 "Error opening file %s!\n"
@@ -308,7 +307,7 @@ msgstr ""
 "Błąd otwierania pliku %s!\n"
 "Plik nie istnieje."
 
-#: gui/wndmain.py:743
+#: gui/wndmain.py:802
 #, python-format
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
@@ -339,7 +338,7 @@ msgstr "Data pliku"
 msgid "File size"
 msgstr "Rozmiar pliku"
 
-#: gui/wndmain.py:551 gui/wndmain.py:574
+#: gui/wndmain.py:594 gui/wndmain.py:622
 #, python-format
 msgid "Files: %d"
 msgstr "Plików: %d"
@@ -393,7 +392,7 @@ msgstr "Dołącz puste katalogi"
 msgid "Incorrect value"
 msgstr "Niewłaściwa wartość"
 
-#: gui/wndmain.py:181
+#: gui/wndmain.py:185
 msgid "Info"
 msgstr ""
 
@@ -401,7 +400,7 @@ msgstr ""
 msgid "Integer value required"
 msgstr "Wymagana wartość całkowita"
 
-#: gui/wndmain.py:150 gui/wndmain.py:215
+#: gui/wndmain.py:154 gui/wndmain.py:237
 msgid "Load catalog"
 msgstr "Wczytaj katalog"
 
@@ -434,11 +433,11 @@ msgstr "Nazwa:"
 msgid "No Exif"
 msgstr "Brak Exif"
 
-#: gui/wndmain.py:452
+#: gui/wndmain.py:491
 msgid "No directory selected"
 msgstr "Nie wybrano katalogu"
 
-#: gui/wndmain.py:433
+#: gui/wndmain.py:472
 msgid "No disk selected"
 msgstr "Nie wybrano dysku"
 
@@ -450,7 +449,7 @@ msgstr "Nic znaleziono plików!"
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
-#: gui/_dlgsearch.py:488 gui/wndmain.py:549
+#: gui/_dlgsearch.py:488 gui/wndmain.py:592
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -459,16 +458,16 @@ msgstr ""
 "Liczba plików przekracza 1000!\n"
 "Pokazać %d plików?"
 
-#: gui/wndmain.py:730
+#: gui/wndmain.py:789
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:302 gui/wndmain.py:687 gui/wndmain.py:700
+#: gui/wndmain.py:323 gui/wndmain.py:746 gui/wndmain.py:759
 msgid "Open file"
 msgstr "Otwórz plik"
 
-#: gui/wndmain.py:690
+#: gui/wndmain.py:749
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr "Otwieranie %s.... Proszę czekać..."
@@ -481,20 +480,20 @@ msgstr "Opcje"
 msgid "Other"
 msgstr "Inne"
 
-#: gui/_dlgsettings.py:58 gui/wndmain.py:156
+#: gui/_dlgsettings.py:58 gui/wndmain.py:160
 msgid "Program settings"
 msgstr "Ustawienia programu"
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:152 gui/wndmain.py:762
-#: gui/wndmain.py:784
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:152 gui/wndmain.py:821
+#: gui/wndmain.py:843
 msgid "Properties"
 msgstr "Własności"
 
-#: gui/wndmain.py:154 engine/ecatalog.py:166
+#: gui/wndmain.py:158 engine/ecatalog.py:166
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
-#: gui/wndmain.py:350
+#: gui/wndmain.py:371
 #, python-format
 msgid "Rebuild catalog %s?"
 msgstr "Przebudować katalog  %s?"
@@ -529,7 +528,7 @@ msgstr ""
 "Przebudowywanie...\n"
 "Proszę czekać..."
 
-#: gui/wndmain.py:163
+#: gui/wndmain.py:167
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
@@ -537,11 +536,11 @@ msgstr "Ostatnie pliki"
 msgid "Regex"
 msgstr "Wyr.Reg."
 
-#: gui/wndmain.py:216 gui/wndmain.py:743
+#: gui/wndmain.py:238 gui/wndmain.py:802
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 
-#: gui/wndmain.py:151
+#: gui/wndmain.py:155
 msgid "Save current catalog"
 msgstr "Zapisz aktualny katalog"
 
@@ -561,7 +560,7 @@ msgstr "Szukaj"
 msgid "Search in"
 msgstr "Szukaj w"
 
-#: gui/wndmain.py:180 gui/wndmain.py:220
+#: gui/wndmain.py:184 gui/wndmain.py:242
 msgid "Search in calalogs"
 msgstr "Szukaj w katalogach"
 
@@ -597,7 +596,7 @@ msgstr "Ustawienia"
 msgid "Shot date:"
 msgstr "Data wykonania:"
 
-#: gui/_dlgsettings.py:124
+#: gui/_dlgsettings.py:125
 msgid "Show captions"
 msgstr "Pokaż podpisy"
 
@@ -618,15 +617,15 @@ msgstr "Tagi"
 msgid "Text"
 msgstr "Tekst"
 
-#: gui/_dlgsettings.py:98
+#: gui/_dlgsettings.py:99
 msgid "Thumb height:"
 msgstr "Wysokość miniaturki:"
 
-#: gui/_dlgsettings.py:119
+#: gui/_dlgsettings.py:120
 msgid "Thumb preload"
 msgstr "Ładuj miniaturki w tle"
 
-#: gui/_dlgsettings.py:93
+#: gui/_dlgsettings.py:94
 msgid "Thumb width:"
 msgstr "Szerokość miniaturki:"
 
@@ -642,6 +641,10 @@ msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
 msgid "Timeline"
 msgstr "Linia czasu"
 
+#: gui/_dlgsettings.py:139
+msgid "Timeline font:"
+msgstr "Czcionka lini czasu"
+
 #: ../kpylibs/validators/validators.py:43
 msgid "Too few characters in fields"
 msgstr "Za mało znaków w polu"
@@ -654,7 +657,7 @@ msgstr "Za dużo znaków w polu"
 msgid "Update disk"
 msgstr "Aktualizuj dysk"
 
-#: gui/wndmain.py:172
+#: gui/wndmain.py:176
 msgid "Update selected disk"
 msgstr "Aktualizuj wybrany dysk"
 
@@ -687,6 +690,30 @@ msgstr "Widok"
 msgid "Wrong date range!"
 msgstr "Zły zakres dat!"
 
+#: gui/wndmain.py:203
+msgid "[o]&Group by date "
+msgstr "[o]&Grupuj wg daty"
+
+#: gui/wndmain.py:202
+msgid "[o]Sort by &date "
+msgstr "[o]Sortuj wg &daty"
+
+#: gui/wndmain.py:201
+msgid "[o]Sort by &name "
+msgstr "[o]Sortuj wg &nazwy"
+
+#: gui/wndmain.py:197
+msgid "[x]Show &captions"
+msgstr "[x]Pokaż &podpisy"
+
+#: gui/wndmain.py:195
+msgid "[x]Show &info"
+msgstr "[x]Pokaż &info"
+
+#: gui/wndmain.py:204
+msgid "[x]Sort descend"
+msgstr "[x]Sortuj malejąco"
+
 #: gui/_dlgsearch.py:273
 msgid "begin:"
 msgstr "początek:"
@@ -696,7 +723,7 @@ msgstr "początek:"
 msgid "catalog: %s"
 msgstr "katalog: %s"
 
-#: gui/_dlgsettings.py:129
+#: gui/_dlgsettings.py:135 gui/_dlgsettings.py:141
 msgid "default"
 msgstr "domyślna"
 
@@ -757,6 +784,9 @@ msgstr "tagach"
 
 #~ msgid "Path"
 #~ msgstr "Ścieżka"
+
+#~ msgid "Show/hide &captions"
+#~ msgstr "Pokaż/ukryj &podpisy"
 
 #~ msgid "compression"
 #~ msgstr "kompresja"

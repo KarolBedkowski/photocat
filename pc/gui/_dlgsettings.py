@@ -28,18 +28,14 @@ __revision__	= '$Id$'
 __all__			= ['DlgSettings']
 
 
-import sys
-import os
-import time
 
 import wx
 from wx.lib import masked
+import  wx.lib.colourselect as  csel
 
-from kpylibs.guitools	import create_button
 from kpylibs.appconfig	import AppConfig
 from kpylibs.validators	import MyValidator, validators
 
-from pc.model			import Catalog, Directory, Disk, FileImage
 from pc.lib				import fonttools
 
 _ = wx.GetTranslation
@@ -52,7 +48,8 @@ _SETTINGS_KEYS = (
 
 
 class DlgSettings(wx.Dialog):
-	''' Dialog ustawień programu '''
+	''' Dialog ustawień programu
+	'''
 
 	def __init__(self, parent):
 		wx.Dialog.__init__(self, parent, -1, _('Program settings'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
@@ -84,6 +81,7 @@ class DlgSettings(wx.Dialog):
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		sizer = wx.FlexGridSizer(2, 2, 5, 5)
+		sizer.AddGrowableCol(1)
 
 		def add(label, control):
 			sizer.Add(wx.StaticText(panel, -1, label), 0, wx.LEFT|wx.TOP, 2)
@@ -126,14 +124,39 @@ class DlgSettings(wx.Dialog):
 		)
 		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
 		
-		self._btn_thumb_font = wx.Button(panel, -1, _("Caption font\n%s") % self._data.get('thumb_font', _('default')))
-		grid.Add(self._btn_thumb_font, 5, wx.EXPAND|wx.ALL, 5)
+		grid.Add(self._create_layout_page_view_selfonts(panel), 0, wx.EXPAND|wx.ALL, 5)
 		
-		self.Bind(wx.EVT_BUTTON, self._on_btn_font_font, self._btn_thumb_font)
-
 		panel.SetSizerAndFit(grid)
 		
 		return panel
+	
+
+	def _create_layout_page_view_selfonts(self, panel):
+		fgrid = wx.FlexGridSizer(2, 3, 5, 5)
+		fgrid.AddGrowableCol(1)
+		
+		def add(caption, prefix, function, funcion_sel_color):
+			fgrid.Add(wx.StaticText(panel, -1, caption), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+			
+			btn = wx.Button(panel, -1, self._data.get('%s_font' % prefix, _('default')), size=(150, -1))
+			self.Bind(wx.EVT_BUTTON, function, btn)
+			fgrid.Add(btn, 1, wx.EXPAND)
+			
+			color = fonttools.str2color(self._data.get('%s_font_color' % prefix), wx.Colour(127, 127, 127))
+			btn_color = csel.ColourSelect(panel, -1, colour=color)
+			self.Bind(csel.EVT_COLOURSELECT, funcion_sel_color, btn_color)
+			fgrid.Add(btn_color, 0, wx.EXPAND)
+			
+			return btn, btn_color
+		
+		self._btn_thumb_font, self._btn_thumb_color	= add(
+				_("Caption font:"),		'thumb',		self._on_btn_caption_font,	self._on_btn_caption_color)
+		
+		self._btn_timeline_font, self._btn_timeline_color = add(
+				_("Timeline font:"),	'timeline',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
+		
+		return fgrid
+
 
 	#########################################################################
 
@@ -161,26 +184,27 @@ class DlgSettings(wx.Dialog):
 	def _on_close(self, evt=None):
 		if evt is not None:
 			evt.Skip()
-			
-			
-	def _on_btn_font_font(self, evt):
-		data = wx.FontData()
-		data.EnableEffects(True)
-		if self._data.get('thumb_font_face') is not None:
-			font = fonttools.data2font(self._data, 'thumb')
-			data.SetInitialFont(font)
 
-		dlg = wx.FontDialog(self, data)
-		if dlg.ShowModal() == wx.ID_OK:
-			data = dlg.GetFontData()
-			font = data.GetChosenFont()
-			
-			fontdata = fonttools.font2data(font, 'thumb')
-			self._data.update(fontdata)
 
-			self._btn_thumb_font.SetLabel(_("Caption font\n%s") % font.GetNativeFontInfo().ToString())
-			
-		dlg.Destroy()
+	def _on_btn_caption_font(self, evt):
+		font_name = self._select_font('thumb')
+		if font_name is not None:
+			self._btn_thumb_font.SetLabel(font_name)
+
+
+	def _on_btn_caption_color(self, evt):
+		self._data['thumb_font_color'] = fonttools.color2str(evt.GetValue())
+
+
+	def _on_btn_timeline_font(self, evt):
+		font_name = self._select_font('timeline')
+		if font_name is not None:
+			self._btn_timeline_font.SetLabel(font_name)
+
+
+	def _on_btn_timeline_color(self, evt):
+		self._data['timeline_font_color'] = fonttools.color2str(evt.GetValue())
+
 
 	#########################################################################
 
@@ -198,6 +222,27 @@ class DlgSettings(wx.Dialog):
 		data = self._data
 		for key, default in data.iteritems():
 			appconfig.set('settings', key, data[key])
+
+
+	def _select_font(self, prefix):
+		data = wx.FontData()
+		data.EnableEffects(False)
+		if self._data.get('%s_font_face' % prefix) is not None:
+			font = fonttools.data2font(self._data, prefix)
+			data.SetInitialFont(font)
+
+		result = None
+		dlg = wx.FontDialog(self, data)
+		if dlg.ShowModal() == wx.ID_OK:
+			data = dlg.GetFontData()
+			
+			fontdata = fonttools.font2data(data.GetChosenFont(), prefix)
+			self._data.update(fontdata)
+
+			result = fontdata['%s_font' % prefix]
+			
+		dlg.Destroy()
+		return result
 
 
 # vim: encoding=utf8:
