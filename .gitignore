@@ -1,1 +1,8 @@
+build
+dist
+doc.dev
 kpylibs
+*.data
+*.index
+*.cfg
+
