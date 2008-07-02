@@ -67,7 +67,8 @@ class DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent, catalogs, selected_item=None):
-		wx.Dialog.__init__(self, parent, -1, _('Find'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		wx.Dialog.__init__(self, parent, -1, _('Find'),
+				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE|wx.MAXIMIZE_BOX|wx.MINIMIZE_BOX )
 		#|wx.FULL_REPAINT_ON_RESIZE
 
 		self._catalogs	= catalogs
@@ -92,7 +93,8 @@ class DlgSearch(wx.Dialog):
 		self.SetSizerAndFit(main_grid)
 
 		appconfig = AppConfig()
-		size = appconfig.get('search_wnd', 'size', (400, 400))
+		size = appconfig.get('search_wnd', 'size', (640, 480))
+		self.SetMinSize((640, 480))
 		self.SetSize(size)
 		
 		position = appconfig.get('search_wnd', 'position')
@@ -361,6 +363,9 @@ class DlgSearch(wx.Dialog):
 		listctrl = self._result_list
 		listctrl.Freeze()
 		listctrl.clear()
+		
+		self._btn_icons.SetValue(False)
+		self._show_icons(False)
 
 		icon_folder_idx	= self._icon_provider.get_image_index(wx.ART_FOLDER)
 		icon_image_idx	= self._icon_provider.get_image_index('image')
@@ -483,46 +488,7 @@ class DlgSearch(wx.Dialog):
 
 
 	def _on_btn_icons(self, evt):
-		icons = evt.GetIsDown()
-		
-		if icons and len(self._result) > 1000:
-			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
-			if not dialogs.message_box_warning_yesno(self,
-					_('Number of files exceed 1000!\nShow %d files?') % len(self._result), 'PC'):
-				self._btn_icons.SetToggle(False)
-				return
-		
-		self._thumbctrl.Show(icons)
-		self._result_list.Show(not icons)
-		
-		if icons:
-			size = (1, 1)
-		else:
-			appconfig = AppConfig()
-			size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))
-
-		self._bmp_preview.SetMinSize(size)
-		
-		self.Layout()
-
-		self._image_info.DeleteAllItems()
-
-		if icons:
-			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
-			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		else:
-			self._thumbctrl.clear()
-			
-		self._btn_goto.Enable(False)
-		self._btn_properties.Enable(False)
-		
-		# odznaczenie
-		index = -1
-		while True:
-			index	= self._result_list.GetNextItem(index, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
-			if index == -1:
-				break
-			self._result_list.SetItemState(index, 0, wx.LIST_STATE_SELECTED)
+		self._show_icons(evt.GetIsDown())
 
 
 	def _on_thumb_sel_changed(self, evt):
@@ -565,6 +531,48 @@ class DlgSearch(wx.Dialog):
 			
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+
+
+	def _show_icons(self, icons):
+		if icons and len(self._result) > 1000:
+			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
+			if not dialogs.message_box_warning_yesno(self,
+					_('Number of files exceed 1000!\nShow %d files?') % len(self._result), 'PC'):
+				self._btn_icons.SetToggle(False)
+				return
+		
+		self._thumbctrl.Show(icons)
+		self._result_list.Show(not icons)
+		
+		if icons:
+			size = (1, 1)
+		else:
+			appconfig = AppConfig()
+			size = (appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200))
+
+		self._bmp_preview.SetMinSize(size)
+		self._bmp_preview.Show(not icons)
+		
+		self.Layout()
+
+		self._image_info.DeleteAllItems()
+
+		if icons:
+			self._thumbctrl.show_dir([item for item in self._result if isinstance(item, FileImage)])
+			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
+		else:
+			self._thumbctrl.clear()
+			
+		self._btn_goto.Enable(False)
+		self._btn_properties.Enable(False)
+		
+		# odznaczenie
+		index = -1
+		while True:
+			index	= self._result_list.GetNextItem(index, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
+			if index == -1:
+				break
+			self._result_list.SetItemState(index, 0, wx.LIST_STATE_SELECTED)
 
 
 
