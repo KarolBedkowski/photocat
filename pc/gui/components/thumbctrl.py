@@ -99,10 +99,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Refresh()
 
 
-	def show_dir(self, images):
+	def show_dir(self, images, sort_function=None):
 		''' thumbctrl.show_dir(images) -- wyświetlenie listy miniaturek
 
 			@param images - lista obiektów do wyświetlenia
+			@param sort_function - funkcja sortująca [opcja]
 		'''
 		self._items			= [ Thumb(image) for image in images ]
 		self._items_pos		= []
@@ -110,9 +111,27 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._timeline_bars = []
 		self._selected		= -1
 		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
+		
+		if sort_function is not None:
+			self._items.sort(lambda x, y: sort_function(x.image, y.image))
 
 		self.Scroll(0, 0)
-
+		self._update()
+		self.Refresh()
+		
+		
+	def sort_current_dir(self, sort_function):
+		''' thumbctrl.sort_current_dir(sort_function) -- posortowanie i odświeżenie widoku
+		
+			@param sort_function - funkcja sortująca
+		'''
+		self._items.sort(lambda x, y: sort_function(x.image, y.image))
+		self._items_pos		= []
+		self._selected_list = []
+		self._timeline_bars = []
+		self._selected		= -1
+		
+		self.Scroll(0, 0)
 		self._update()
 		self.Refresh()
 
