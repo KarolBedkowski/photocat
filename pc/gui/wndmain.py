@@ -410,7 +410,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_view_sort(self, evt):
-		self._on_dirtree_item_select(None)
+		self._show_dir(None)
 
 
 	def _on_help_about(self, evt):
@@ -994,14 +994,14 @@ class WndMain(wx.Frame):
 	def _show_dir(self, images):
 		''' wndmain._show_dir(images) -- wyświetlenie zawartości katalogu lub listy
 
-			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania
+			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania; None oznacza odswieżenie aktualnego katalogu
 		'''
+		if images is not None:
+			images_as_list = isinstance(images, list) or isinstance(images, tuple)
+			if not images_as_list:
+				images = images.files
 
-		images_as_list = isinstance(images, list) or isinstance(images, tuple)
-		if not images_as_list:
-			images = images.files
-
-		if len(images) > 0:
+		if images is None or len(images) > 0:
 			# jak sortujemy
 			sort_by_name	= self._menu_view_sort_name.IsChecked()
 			group_by_date	= self._menu_view_group_date.IsChecked()
@@ -1013,7 +1013,7 @@ class WndMain(wx.Frame):
 					# sort by name desc
 					cmp_func = lambda x, y: -cmp(x.name, y.name)
 
-				elif images_as_list:
+				elif images is None or images_as_list:
 					# sort by name asc (tylko gdy dane z listy)
 					cmp_func = lambda x, y: cmp(x.name, y.name)
 
@@ -1028,10 +1028,13 @@ class WndMain(wx.Frame):
 
 			self._photo_list.group_by_date = group_by_date
 
-			if cmp_func is not None:
-				images = sorted(images, cmp_func)
-
-		self._photo_list.show_dir(images)
+			if images is None:
+				# odświeżenie widoku
+				self._photo_list.sort_current_dir(cmp_func)
+			else:
+				self._photo_list.show_dir(images, cmp_func)
+		else:
+			self._photo_list.show_dir(images)
 
 
 	def __update_tags_timeline(self, catalog):

@@ -99,10 +99,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Refresh()
 
 
-	def show_dir(self, images):
+	def show_dir(self, images, sort_function=None):
 		''' thumbctrl.show_dir(images) -- wyświetlenie listy miniaturek
 
 			@param images - lista obiektów do wyświetlenia
+			@param sort_function - funkcja sortująca [opcja]
 		'''
 		self._items			= [ Thumb(image) for image in images ]
 		self._items_pos		= []
@@ -110,9 +111,27 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._timeline_bars = []
 		self._selected		= -1
 		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
+		
+		if sort_function is not None:
+			self._items.sort(lambda x, y: sort_function(x.image, y.image))
 
 		self.Scroll(0, 0)
-
+		self._update()
+		self.Refresh()
+		
+		
+	def sort_current_dir(self, sort_function):
+		''' thumbctrl.sort_current_dir(sort_function) -- posortowanie i odświeżenie widoku
+		
+			@param sort_function - funkcja sortująca
+		'''
+		self._items.sort(lambda x, y: sort_function(x.image, y.image))
+		self._items_pos		= []
+		self._selected_list = []
+		self._timeline_bars = []
+		self._selected		= -1
+		
+		self.Scroll(0, 0)
 		self._update()
 		self.Refresh()
 
@@ -133,6 +152,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
 		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
 		self._pen_timeline	= wx.Pen(self._timeline_color, 1, wx.SOLID)
+		
+		self._update()
 
 
 	def is_selected(self, idx):
@@ -165,6 +186,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		self._padding = padding
 		self._cols = cols
+
+
+		# obliczenie wysokości etykiet
+		self._caption_height, self._timeline_height = self._compute_captions_height(
+				(self._caption_font, self._timeline_font)
+		)
 
 		# wyznaczenie pozycji miniaturek
 		if len(self._items) == 0:
@@ -227,7 +254,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		twc		= self._thumb_width - 10
 
 		show_captions	= self.show_captions
-		selected_bottom	= (25 if show_captions else 6)
+		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
 		has_selected	= len(self._selected_list) > 0
 
 		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
@@ -252,7 +279,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if show_captions:
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
-				dc.DrawText(caption, txc, ty + th)
+				dc.DrawText(caption, txc, ty + th + 2)
 
 		# timeline_bars
 		if self.group_by_date:
@@ -365,7 +392,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		tw		= self._thumb_width 
 		th		= self._thumb_height
 		twm		= tw + self._padding
-		thm		= th + (30 if self.show_captions else 10)
+		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
 		padding = self._padding
 		cols	= self._cols
 
@@ -398,14 +425,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 		row			= -1
 		col			= -1
 		last_date	= -1
-
+		
 		tw		= self._thumb_width 
 		th		= self._thumb_height
 		twm		= tw + self._padding
-		thm		= th + (30 if self.show_captions else 10)
-		selected_bottom = (25 if self.show_captions else 6)
+		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
 		padding	= self._padding
 		cols	= self._cols
+		timeline_height = self._timeline_height
 
 		items_pos		= self._items_pos		= []
 		timeline_bars	= self._timeline_bars	= []
@@ -418,9 +445,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 				pos		= int((row + 1) * thm + 20)
 				label	= time.strftime('%x', time.localtime(item.image.date_to_check))
 				col		= 0
-				row		+= 1.2
+				row		+= 1 + (timeline_height + 25)/float(thm)
 				last_date = item_date
-				timeline_bars.append((label, pos, pos+20))
+				timeline_bars.append((label, pos, pos+timeline_height+2))
 
 			elif col >= cols:
 				col = 0
@@ -434,6 +461,27 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		return row, ty+thm
 
+
+	def _compute_captions_height(self, fonts):
+		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie wysokości napisów dla podanych fontów
+		
+			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
+			@return lista wysokości w px podanych fontów
+		'''
+		dc = wx.PaintDC(self)
+		self.PrepareDC(dc)
+		dc.BeginDrawing()
+		
+		def compute(font):
+			dc.SetFont(font)
+			sw, sh = dc.GetTextExtent('QWERTYUIOPASDFGHJKLZZXCVBNMqwertyuiopasdfghjklzxcvbnm,.<>":}{+_)(*&^%$#@!~`')
+			return sh
+		
+		result = [ compute(font) for font in fonts ]
+
+		dc.EndDrawing()
+		
+		return result
 
 
 # vim: encoding=utf8: ff=unix:
