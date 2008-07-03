@@ -468,9 +468,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
 			@return lista wysokości w px podanych fontów
 		'''
-		dc = wx.PaintDC(self)
-		self.PrepareDC(dc)
-		dc.BeginDrawing()
+		dc = wx.ClientDC(self)
+		#self.PrepareDC(dc)
+		#dc.BeginDrawing()
 		
 		def compute(font):
 			dc.SetFont(font)
@@ -479,7 +479,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		
 		result = [ compute(font) for font in fonts ]
 
-		dc.EndDrawing()
+		#dc.EndDrawing()
 		
 		return result
 
