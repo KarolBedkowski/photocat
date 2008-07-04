@@ -294,7 +294,6 @@ class WndMain(wx.Frame):
 		appconfig.set('main_wnd', 'splitter_v', self._layout_splitter_v.GetSashPosition())
 
 		self._app.ExitMainLoop()
-		evt.Skip()
 
 
 	def _on_size(self, evt):
@@ -321,8 +320,6 @@ class WndMain(wx.Frame):
 					self.__update_last_open_files(filename)
 					self.__update_menus_toolbars()
 
-		evt.Skip()
-
 
 	def _on_file_open(self, evt):
 		filename = dialogs.dialog_file_load(self, _('Open file'), '*.index')
@@ -332,8 +329,6 @@ class WndMain(wx.Frame):
 
 			self._open_file(filename)
 			self.__update_menus_toolbars()
-
-		evt.Skip()
 
 
 	def _on_file_save(self, evt):
@@ -346,8 +341,6 @@ class WndMain(wx.Frame):
 		else:
 			self.__save_catalog(tree_selected.catalog)
 			self._dirs_tree.update_catalog_node(tree_selected.catalog)
-
-		evt.Skip()
 
 
 	def _on_file_close(self, evt):
@@ -415,7 +408,6 @@ class WndMain(wx.Frame):
 
 	def _on_help_about(self, evt):
 		show_about_box(self)
-		evt.Skip()
 
 
 	def _on_debug_shell(self, evt):
