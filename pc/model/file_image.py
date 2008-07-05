@@ -36,8 +36,8 @@ _LOG = logging.getLogger(__name__)
 import wx
 
 import Image as PILImage
-import PngImagePlugin, JpegImagePlugin, GifImagePlugin
-PILImage._initialized = 3
+#import PngImagePlugin, JpegImagePlugin, GifImagePlugin
+#PILImage._initialized = 3
 
 from kpylibs.formaters		import format_human_size
 
@@ -56,7 +56,7 @@ RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 class FileImage(CatalogFile):
 
-	IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif', '.jpeg')
+	IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif', '.jpeg', '.nef')
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
@@ -163,10 +163,11 @@ class FileImage(CatalogFile):
 			self._load_thumb(path, options)
 			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 				self._load_exif(path)
-				shot_date = self.__get_exif_shot_date_value(self._exif_data)
 				self.shot_date = None
-				if shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+				if self._exif_data is not None:
+					shot_date = self.__get_exif_shot_date_value(self._exif_data)
+					if shot_date is not None:
+						self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
@@ -179,10 +180,11 @@ class FileImage(CatalogFile):
 				self._load_thumb(path, options)
 				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
 					self._load_exif(path)
-					shot_date = self.__get_exif_shot_date_value(self._exif_data)
 					self.shot_date = None
-					if shot_date is not None:
-						self.shot_date = time.mktime(shot_date)
+					if self._exif_data is not None:
+						shot_date = self.__get_exif_shot_date_value(self._exif_data)					
+						if shot_date is not None:
+							self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
