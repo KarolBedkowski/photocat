@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-01 10:02+0200\n"
+"POT-Creation-Date: 2008-07-06 13:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/_dlgsearch.py:389
-#, possible-python-format
+#: gui/_dlgsearch.py:395
+#, python-format
 msgid ""
 "%(msg)s\n"
 "Found: %(found)d"
@@ -35,11 +35,11 @@ msgstr ""
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:177 gui/wndmain.py:825
+#: gui/wndmain.py:177 gui/wndmain.py:845
 msgid "&Delete disk..."
 msgstr ""
 
-#: gui/wndmain.py:845
+#: gui/wndmain.py:867
 msgid "&Delete file..."
 msgstr ""
 
@@ -51,7 +51,7 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:176 gui/wndmain.py:824
+#: gui/wndmain.py:176 gui/wndmain.py:844
 msgid "&Update disk..."
 msgstr ""
 
@@ -59,20 +59,20 @@ msgstr ""
 msgid "&View"
 msgstr ""
 
-#: gui/_dlgsearch.py:244 engine/search.py:52 engine/search.py:53
+#: gui/_dlgsearch.py:246 engine/search.py:52 engine/search.py:53
 msgid "<all>"
 msgstr ""
 
-#: gui/_dlgsearch.py:248 gui/_dlgsearch.py:250 gui/_dlgsearch.py:252
+#: gui/_dlgsearch.py:250 gui/_dlgsearch.py:252 gui/_dlgsearch.py:254
 #: engine/search.py:55
 msgid "<current catalog>"
 msgstr ""
 
-#: gui/_dlgsearch.py:250 engine/search.py:59
+#: gui/_dlgsearch.py:252 engine/search.py:59
 msgid "<current dir>"
 msgstr ""
 
-#: gui/_dlgsearch.py:248 gui/_dlgsearch.py:250 gui/_dlgsearch.py:252
+#: gui/_dlgsearch.py:250 gui/_dlgsearch.py:252 gui/_dlgsearch.py:254
 #: engine/search.py:57
 msgid "<current disk>"
 msgstr ""
@@ -97,26 +97,26 @@ msgstr ""
 msgid "Add disk..."
 msgstr ""
 
-#: engine/ecatalog.py:140
+#: engine/ecatalog.py:144
 msgid "Adding disk"
 msgstr ""
 
-#: gui/_dlgsearch.py:190
+#: gui/_dlgsearch.py:192
 msgid "Advanced"
 msgstr ""
 
-#: gui/_dlgsearch.py:357
-#, possible-python-format
+#: gui/_dlgsearch.py:360
+#, python-format
 msgid ""
 "Bad options:\n"
 "%s"
 msgstr ""
 
-#: model/file_image.py:121
+#: model/file_image.py:142
 msgid "Camera"
 msgstr ""
 
-#: gui/_dlgsettings.py:133
+#: gui/_dlgsettings.py:153
 msgid "Caption font:"
 msgstr ""
 
@@ -124,28 +124,28 @@ msgstr ""
 msgid "Catalog"
 msgstr ""
 
-#: gui/wndmain.py:351
-#, possible-python-format
+#: gui/wndmain.py:353
+#, python-format
 msgid ""
 "Catalog %s has unsaved changes!\n"
 "Save before close??"
 msgstr ""
 
 #: gui/wndmain.py:277
-#, possible-python-format
+#, python-format
 msgid ""
 "Catalog %s isn't saved\n"
 "Save it?"
 msgstr ""
 
-#: gui/wndmain.py:767
-#, possible-python-format
+#: gui/wndmain.py:782
+#, python-format
 msgid ""
 "Catalog file contain %d%% unused entries.\n"
 "Rebuild catalog?"
 msgstr ""
 
-#: gui/wndmain.py:305
+#: gui/wndmain.py:306
 msgid "Catalog file name"
 msgstr ""
 
@@ -153,12 +153,12 @@ msgstr ""
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:156 gui/wndmain.py:830
+#: gui/wndmain.py:156 gui/wndmain.py:852
 msgid "Close catalog"
 msgstr ""
 
-#: gui/wndmain.py:357
-#, possible-python-format
+#: gui/wndmain.py:362
+#, python-format
 msgid "Close catalog %s?"
 msgstr ""
 
@@ -166,11 +166,11 @@ msgstr ""
 msgid "Close current catalog"
 msgstr ""
 
-#: gui/wndmain.py:283
+#: gui/wndmain.py:285
 msgid "Close program?"
 msgstr ""
 
-#: gui/_dlgsettings.py:104
+#: gui/_dlgsettings.py:101
 msgid "Compression:"
 msgstr ""
 
@@ -182,11 +182,11 @@ msgstr ""
 msgid "Create new catalog"
 msgstr ""
 
-#: gui/wndmain.py:304
+#: gui/wndmain.py:305
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgsearch.py:267 model/file_image.py:111 model/file_image.py:118
+#: gui/_dlgsearch.py:269 model/file_image.py:132 model/file_image.py:139
 msgid "Date"
 msgstr ""
 
@@ -198,30 +198,30 @@ msgstr ""
 msgid "Del"
 msgstr ""
 
-#: gui/wndmain.py:514
-#, possible-python-format
+#: gui/wndmain.py:520
+#, python-format
 msgid "Delete %d images?"
 msgstr ""
 
-#: gui/wndmain.py:491
+#: gui/wndmain.py:498
 msgid "Delete directory"
 msgstr ""
 
-#: gui/wndmain.py:494
-#, possible-python-format
+#: gui/wndmain.py:501
+#, python-format
 msgid "Delete directory %s?"
 msgstr ""
 
-#: gui/wndmain.py:472
+#: gui/wndmain.py:480
 msgid "Delete disk"
 msgstr ""
 
-#: gui/wndmain.py:475
-#, possible-python-format
+#: gui/wndmain.py:483
+#, python-format
 msgid "Delete disk %s?"
 msgstr ""
 
-#: gui/wndmain.py:179 gui/wndmain.py:827
+#: gui/wndmain.py:179 gui/wndmain.py:848
 msgid "Delete selected &dir..."
 msgstr ""
 
@@ -238,12 +238,12 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: model/file_image.py:102
+#: model/file_image.py:123
 msgid "Dimensions"
 msgstr ""
 
-#: gui/wndmain.py:618
-#, possible-python-format
+#: gui/wndmain.py:619
+#, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr ""
 
@@ -267,8 +267,8 @@ msgstr ""
 msgid "Disk updated"
 msgstr ""
 
-#: gui/wndmain.py:546
-#, possible-python-format
+#: gui/wndmain.py:551
+#, python-format
 msgid ""
 "Disks: %(disks)d\n"
 "Dirs: %(dirs)d\n"
@@ -276,29 +276,29 @@ msgid ""
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 
-#: engine/ecatalog.py:115
+#: engine/ecatalog.py:119
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:759
-#, possible-python-format
+#: gui/wndmain.py:773
+#, python-format
 msgid "Error opening file %s"
 msgstr ""
 
-#: gui/wndmain.py:746
-#, possible-python-format
+#: gui/wndmain.py:758
+#, python-format
 msgid ""
 "Error opening file %s!\n"
 "File don't exists."
 msgstr ""
 
-#: gui/wndmain.py:802
-#, possible-python-format
+#: gui/wndmain.py:822
+#, python-format
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: engine/ecatalog.py:119
-#, possible-python-format
+#: engine/ecatalog.py:123
+#, python-format
 msgid ""
 "Error:\n"
 "%s"
@@ -317,16 +317,16 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
-#: model/file_image.py:129
+#: model/file_image.py:150
 msgid "File size"
 msgstr ""
 
-#: gui/wndmain.py:594 gui/wndmain.py:622
-#, possible-python-format
+#: gui/wndmain.py:595 gui/wndmain.py:623
+#, python-format
 msgid "Files: %d"
 msgstr ""
 
-#: gui/_dlgsearch.py:70 gui/_dlgsearch.py:124
+#: gui/_dlgsearch.py:70 gui/_dlgsearch.py:126
 msgid "Find"
 msgstr ""
 
@@ -346,22 +346,22 @@ msgstr ""
 msgid "Force load files"
 msgstr ""
 
-#: gui/_dlgsearch.py:417
-#, possible-python-format
+#: gui/_dlgsearch.py:423
+#, python-format
 msgid "Found %(folders)d folders and %(files)d files"
 msgstr ""
 
-#: gui/_dlgsearch.py:392
+#: gui/_dlgsearch.py:398
 msgid ""
 "Found more than 1000 items.\n"
 "Continue?"
 msgstr ""
 
-#: gui/_dlgsearch.py:155
+#: gui/_dlgsearch.py:157
 msgid "Go to..."
 msgstr ""
 
-#: gui/_dlgsearch.py:158
+#: gui/_dlgsearch.py:160
 msgid "Icons"
 msgstr ""
 
@@ -389,12 +389,19 @@ msgstr ""
 msgid "Load info from captions.txt"
 msgstr ""
 
+#: engine/ecatalog.py:107
+#, python-format
+msgid ""
+"Loading file:\n"
+"%s"
+msgstr ""
+
 #: gui/dlgadddisk.py:78 gui/_dlgproperties.py:92
 #: gui/components/infopanel.py:55
 msgid "Main"
 msgstr ""
 
-#: gui/_dlgsearch.py:295
+#: gui/_dlgsearch.py:297
 msgid "Match case"
 msgstr ""
 
@@ -414,11 +421,11 @@ msgstr ""
 msgid "No Exif"
 msgstr ""
 
-#: gui/wndmain.py:491
+#: gui/wndmain.py:498
 msgid "No directory selected"
 msgstr ""
 
-#: gui/wndmain.py:472
+#: gui/wndmain.py:480
 msgid "No disk selected"
 msgstr ""
 
@@ -426,32 +433,32 @@ msgstr ""
 msgid "No files found!"
 msgstr ""
 
-#: gui/_dlgsearch.py:407
+#: gui/_dlgsearch.py:413
 msgid "Not found"
 msgstr ""
 
-#: gui/_dlgsearch.py:488 gui/wndmain.py:592
-#, possible-python-format
+#: gui/_dlgsearch.py:540 gui/wndmain.py:593
+#, python-format
 msgid ""
 "Number of files exceed 1000!\n"
 "Show %d files?"
 msgstr ""
 
-#: gui/wndmain.py:789
-#, possible-python-format
+#: gui/wndmain.py:806
+#, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:323 gui/wndmain.py:746 gui/wndmain.py:759
+#: gui/wndmain.py:325 gui/wndmain.py:758 gui/wndmain.py:773
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:749
-#, possible-python-format
+#: gui/wndmain.py:762
+#, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
 
-#: gui/dlgadddisk.py:79 gui/_dlgsearch.py:289
+#: gui/dlgadddisk.py:79 gui/_dlgsearch.py:291
 msgid "Options"
 msgstr ""
 
@@ -459,43 +466,43 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: gui/_dlgsettings.py:58 gui/wndmain.py:160
+#: gui/_dlgsettings.py:55 gui/wndmain.py:160
 msgid "Program settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:152 gui/wndmain.py:821
-#: gui/wndmain.py:843
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:154 gui/wndmain.py:841
+#: gui/wndmain.py:865
 msgid "Properties"
 msgstr ""
 
-#: gui/wndmain.py:158 engine/ecatalog.py:166
+#: gui/wndmain.py:158 engine/ecatalog.py:170
 msgid "Rebuild catalog"
 msgstr ""
 
-#: gui/wndmain.py:371
-#, possible-python-format
+#: gui/wndmain.py:376
+#, python-format
 msgid "Rebuild catalog %s?"
 msgstr ""
 
-#: engine/ecatalog.py:178
+#: engine/ecatalog.py:182
 msgid "Rebuild catalog aborted"
 msgstr ""
 
-#: engine/ecatalog.py:188
-#, possible-python-format
+#: engine/ecatalog.py:192
+#, python-format
 msgid ""
 "Rebuild catalog error!\n"
 "%(msg)s"
 msgstr ""
 
-#: engine/ecatalog.py:181
-#, possible-python-format
+#: engine/ecatalog.py:185
+#, python-format
 msgid ""
 "Rebuild catalog finished\n"
 "Saved space: %sB"
 msgstr ""
 
-#: engine/ecatalog.py:166
+#: engine/ecatalog.py:170
 msgid ""
 "Rebuilding...\n"
 "Please wait."
@@ -505,11 +512,11 @@ msgstr ""
 msgid "Recent files"
 msgstr ""
 
-#: gui/_dlgsearch.py:292
+#: gui/_dlgsearch.py:294
 msgid "Regex"
 msgstr ""
 
-#: gui/wndmain.py:238 gui/wndmain.py:802
+#: gui/wndmain.py:238 gui/wndmain.py:822
 msgid "Save catalog"
 msgstr ""
 
@@ -517,19 +524,19 @@ msgstr ""
 msgid "Save current catalog"
 msgstr ""
 
-#: engine/ecatalog.py:175
+#: engine/ecatalog.py:179
 msgid "Saving..."
 msgstr ""
 
-#: gui/_dlgsearch.py:270
+#: gui/_dlgsearch.py:272
 msgid "Search by date"
 msgstr ""
 
-#: gui/_dlgsearch.py:230
+#: gui/_dlgsearch.py:232
 msgid "Search for"
 msgstr ""
 
-#: gui/_dlgsearch.py:214
+#: gui/_dlgsearch.py:216
 msgid "Search in"
 msgstr ""
 
@@ -537,11 +544,11 @@ msgstr ""
 msgid "Search in calalogs"
 msgstr ""
 
-#: gui/_dlgsearch.py:242
+#: gui/_dlgsearch.py:244
 msgid "Search in:"
 msgstr ""
 
-#: gui/_dlgsearch.py:382
+#: gui/_dlgsearch.py:388
 msgid "Searching..."
 msgstr ""
 
@@ -561,7 +568,7 @@ msgstr ""
 msgid "Set tags"
 msgstr ""
 
-#: model/file_image.py:126
+#: model/file_image.py:147
 msgid "Settings"
 msgstr ""
 
@@ -569,7 +576,7 @@ msgstr ""
 msgid "Shot date:"
 msgstr ""
 
-#: gui/_dlgsettings.py:125
+#: gui/_dlgsettings.py:122
 msgid "Show captions"
 msgstr ""
 
@@ -586,23 +593,23 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: gui/_dlgsearch.py:118
+#: gui/_dlgsearch.py:120
 msgid "Text"
 msgstr ""
 
-#: gui/_dlgsettings.py:99
+#: gui/_dlgsettings.py:96
 msgid "Thumb height:"
 msgstr ""
 
-#: gui/_dlgsettings.py:120
+#: gui/_dlgsettings.py:117
 msgid "Thumb preload"
 msgstr ""
 
-#: gui/_dlgsettings.py:94
+#: gui/_dlgsettings.py:91
 msgid "Thumb width:"
 msgstr ""
 
-#: gui/_dlgsettings.py:76
+#: gui/_dlgsettings.py:73
 msgid "Thumbs"
 msgstr ""
 
@@ -614,7 +621,7 @@ msgstr ""
 msgid "Timeline"
 msgstr ""
 
-#: gui/_dlgsettings.py:139
+#: gui/_dlgsettings.py:156
 msgid "Timeline font:"
 msgstr ""
 
@@ -634,7 +641,7 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: engine/ecatalog.py:153
+#: engine/ecatalog.py:157
 msgid "Updating disk"
 msgstr ""
 
@@ -643,7 +650,7 @@ msgid "Validate error"
 msgstr ""
 
 #: ../kpylibs/validators/my_validator.py:53
-#, possible-python-format
+#, python-format
 msgid ""
 "Validate field \"%(field)s\" failed:\n"
 "%(msg)s"
@@ -653,11 +660,11 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: gui/_dlgsettings.py:77
+#: gui/_dlgsettings.py:74
 msgid "View"
 msgstr ""
 
-#: gui/_dlgsearch.py:334
+#: gui/_dlgsearch.py:336
 msgid "Wrong date range!"
 msgstr ""
 
@@ -685,48 +692,48 @@ msgstr ""
 msgid "[x]Sort descend"
 msgstr ""
 
-#: gui/_dlgsearch.py:273
+#: gui/_dlgsearch.py:275
 msgid "begin:"
 msgstr ""
 
-#: gui/_dlgsearch.py:254
-#, possible-python-format
+#: gui/_dlgsearch.py:256
+#, python-format
 msgid "catalog: %s"
 msgstr ""
 
-#: gui/_dlgsettings.py:135 gui/_dlgsettings.py:141
+#: gui/_dlgsettings.py:141
 msgid "default"
 msgstr ""
 
-#: gui/_dlgsearch.py:220
+#: gui/_dlgsearch.py:222
 msgid "descriptions"
 msgstr ""
 
-#: gui/_dlgsearch.py:236
+#: gui/_dlgsearch.py:238
 msgid "dirs"
 msgstr ""
 
-#: gui/_dlgsearch.py:281
+#: gui/_dlgsearch.py:283
 msgid "end:"
 msgstr ""
 
-#: model/file_image.py:279
+#: model/file_image.py:300
 msgid "f"
 msgstr ""
 
-#: gui/_dlgsearch.py:232
+#: gui/_dlgsearch.py:234
 msgid "files"
 msgstr ""
 
-#: model/file_image.py:292
+#: model/file_image.py:313
 msgid "flash"
 msgstr ""
 
-#: model/file_image.py:298
+#: model/file_image.py:319
 msgid "focal len."
 msgstr ""
 
-#: model/file_image.py:284 model/file_image.py:288
+#: model/file_image.py:305 model/file_image.py:309
 msgid "iso"
 msgstr ""
 
@@ -734,7 +741,7 @@ msgstr ""
 msgid "name"
 msgstr ""
 
-#: gui/_dlgsearch.py:216
+#: gui/_dlgsearch.py:218
 msgid "names"
 msgstr ""
 
@@ -742,10 +749,10 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: model/file_image.py:273
+#: model/file_image.py:294
 msgid "t"
 msgstr ""
 
-#: gui/_dlgsearch.py:224
+#: gui/_dlgsearch.py:226
 msgid "tags"
 msgstr ""
