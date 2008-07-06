@@ -47,6 +47,10 @@ except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
 
+# biblioteki
+sys.path.append('libs/kpylibs')
+
+
 ##########################################################################
 # logowanie
 import logging
