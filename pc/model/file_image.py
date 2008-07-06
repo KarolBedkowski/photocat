@@ -78,6 +78,10 @@ class FileImage(CatalogFile):
 		'.3fr',						# hasselblad raw
 		'.erf'						# epson raw
 	)
+	
+	IMAGE_FILES_EXTENSION_RAW = ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
+		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
+
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
@@ -95,6 +99,8 @@ class FileImage(CatalogFile):
 			self.exif = self.exif[0]
 		
 		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
+
+		self.is_raw = self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW
 
 
 	@property

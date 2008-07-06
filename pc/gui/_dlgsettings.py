@@ -42,7 +42,8 @@ _ = wx.GetTranslation
 
 _SETTINGS_KEYS = (
 		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),
-		('view_preload', True), ('view_show_captions', True)
+		('view_preload', True), ('view_show_captions', True),
+		('thumb_raw_custom_color', True),
 )
 
 
@@ -132,7 +133,7 @@ class DlgSettings(wx.Dialog):
 	
 
 	def _create_layout_page_view_selfonts(self, panel):
-		fgrid = wx.FlexGridSizer(2, 3, 5, 5)
+		fgrid = wx.FlexGridSizer(3, 3, 5, 5)
 		fgrid.AddGrowableCol(1)
 		
 		def add(caption, prefix, function, funcion_sel_color):
@@ -154,6 +155,17 @@ class DlgSettings(wx.Dialog):
 		
 		self._btn_timeline_font, self._btn_timeline_color = add(
 				_("Timeline font:"),	'timeline',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
+		
+		fgrid.Add(wx.StaticText(panel, -1, "RAW"), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+		self._tc_raw_custom_color = wx.CheckBox(panel, -1, _('Use custom color'), 
+				validator=MyValidator(data_key=(self._data, 'thumb_raw_custom_color'))
+		)
+		fgrid.Add(self._tc_raw_custom_color, 1, wx.EXPAND)
+		color = fonttools.str2color(self._data.get('thumb_raw_color'), wx.Colour(70, 70, 255))
+		btn_color = csel.ColourSelect(panel, -1, colour=color)
+		self.Bind(csel.EVT_COLOURSELECT, self._on_btn_raw_color, btn_color)
+		fgrid.Add(btn_color, 0, wx.EXPAND)
+		
 		
 		return fgrid
 
@@ -204,6 +216,10 @@ class DlgSettings(wx.Dialog):
 
 	def _on_btn_timeline_color(self, evt):
 		self._data['timeline_font_color'] = fonttools.color2str(evt.GetValue())
+		
+		
+	def _on_btn_raw_color(self, evt):
+		self._data['thumb_raw_color'] = fonttools.color2str(evt.GetValue())
 
 
 	#########################################################################
