@@ -25,13 +25,13 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-import os
 import string
 import time
 import re
 import types
 import logging
 _LOG = logging.getLogger(__name__)
+import cStringIO
 
 import wx
 
@@ -51,12 +51,13 @@ _ = wx.GetTranslation
 
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
-RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
+_RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 
 
 class FileImage(CatalogFile):
 
+	# lista rozszerzeń plików, które są ładowane (obsługiwane)
 	IMAGE_FILES_EXTENSION = (
 		'.jpg', '.jpe', '.jpeg',
 		'.png', '.gif', '.bmp', '.ico', '.pcx', '.psd',
@@ -78,6 +79,11 @@ class FileImage(CatalogFile):
 		'.3fr',						# hasselblad raw
 		'.erf'						# epson raw
 	)
+	
+	# list rozszerzeń plików, które są raw-ami
+	IMAGE_FILES_EXTENSION_RAW = ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
+		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
+
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
@@ -95,6 +101,9 @@ class FileImage(CatalogFile):
 			self.exif = self.exif[0]
 		
 		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
+
+		# czy plik jest raw-em
+		self.is_raw = self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW
 
 
 	@property
@@ -236,7 +245,7 @@ class FileImage(CatalogFile):
 						continue
 
 					val = str(val).replace('\0', '').strip()
-					self._exif_data[key] = RE_REPLACE_EXPRESSION.sub(' ', val)
+					self._exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
 
 				if len(self._exif_data) > 0:
 					str_exif = repr(self._exif_data)
@@ -251,8 +260,12 @@ class FileImage(CatalogFile):
 
 
 	def _load_thumb(self, path, options):
+		''' file_image._load_thumb(path, options) -- ładowanie miniaturki z pliku i zapisanie katalogu
+		
+			@param path		- ścieżka do pliku
+			@param options	- opcje
+		'''
 		_LOG.debug('FileImage._load_thumb(%s)' % path)
-		tmpfilename = os.tmpnam() + "_.jpg"
 		try:
 			try:
 				image = PILImage.open(path)
@@ -268,20 +281,16 @@ class FileImage(CatalogFile):
 			thumb_compression = options.get('thumb_compression', 50)
 
 			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-			image.save(tmpfilename, "JPEG", quality=thumb_compression)
-
-			thumbsize = os.path.getsize(tmpfilename)
-
-			image = open(tmpfilename, 'rb')
-			self.thumb = self.disk.catalog.data_provider.append(image.read(thumbsize))
-			image.close()
+			
+			# zapisanie miniaturki przez StringIO
+			output = cStringIO.StringIO()
+			image.save(output, "JPEG", quality=thumb_compression)
+			self.thumb = self.disk.catalog.data_provider.append(output.getvalue())
+			output.close()
 
 		except StandardError:
 			_LOG.exception('PILImage error file=%s' % path)
 			self.thumb = None
-
-		if os.path.exists(tmpfilename):
-			os.unlink(tmpfilename)
 
 
 	def __get_exif_shotinfo(self, exif):

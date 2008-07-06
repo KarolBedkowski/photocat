@@ -74,6 +74,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
 		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
 		self._caption_color = wx.Colour(127, 127, 127)
+		self._caption_raw_color	= wx.Colour(70, 70, 255)
 		self._timeline_color = wx.Colour(127, 127, 127)
 
 		self.clear()
@@ -152,6 +153,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
 		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
 		self._pen_timeline	= wx.Pen(self._timeline_color, 1, wx.SOLID)
+		
+		color = fonttools.str2color(fontdata.get('thumb_raw_color'), wx.Colour(70, 70, 255))
+		if fontdata.get('thumb_raw_custom_color', True):
+			self._caption_raw_color = color
+		else:
+			self._caption_raw_color = self._caption_color
 		
 		self._update()
 
@@ -248,6 +255,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		dc.SetBrush(self._brush)
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground(self._caption_color)
+		
+		caption_color		= self._caption_color
+		caption_raw_color	= self._caption_raw_color
 
 		tw		= self._thumb_width 
 		th		= self._thumb_height
@@ -277,6 +287,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 			# caption
 			if show_captions:
+				dc.SetTextForeground(caption_raw_color if item.is_raw else caption_color)
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
 				dc.DrawText(caption, txc, ty + th + 2)

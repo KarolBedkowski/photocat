@@ -43,22 +43,34 @@ from pc.model				import FileImage
 
 def load_image_from_item(item):
 	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka z katalogu.
+	
+		@return wxImage()
 	'''
 	img = None
 	if isinstance(item, FileImage):
+		stream = None
 		try:
 			stream = cStringIO.StringIO(item.image)
 			img		= wx.ImageFromStream(stream)
+			
 		except Exception, err:
 			_LOG.exception('load_image_from_item %s error' % item.name)
 			img = wx.EmptyImage(1, 1)
+			
+		finally:
+			if stream is not None:
+				stream.close()
+	
 	else:
 		img = wx.EmptyImage(1, 1)
+		
 	return img
 
 
 def load_bitmap_from_item(item):
 	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka z katalogu.
+	
+		@return wxImage()
 	'''
 	img = load_image_from_item(item)
 	return img.ConvertToBitmap() if img is not None else None

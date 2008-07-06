@@ -1,7 +1,7 @@
-../kpylibs/validators/__init__.py
-../kpylibs/validators/my_validator.py
-../kpylibs/validators/my_validator_dv.py
-../kpylibs/validators/validators.py
+../libs/kpylibs/kpylibs/validators/__init__.py
+../libs/kpylibs/kpylibs/validators/my_validator.py
+../libs/kpylibs/kpylibs/validators/my_validator_dv.py
+../libs/kpylibs/kpylibs/validators/validators.py
 ./__init__.py
 ./gui/__init__.py
 ./gui/_dlgabout.py

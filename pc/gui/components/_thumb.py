@@ -39,6 +39,7 @@ class Thumb:
 	def __init__(self, image):
 		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
 		self.image = image
+		self.is_raw = image.is_raw
 		self.reset()
 
 

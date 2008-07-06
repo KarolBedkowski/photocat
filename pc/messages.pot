@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-06 13:22+0200\n"
+"POT-Creation-Date: 2008-07-06 15:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,11 +112,11 @@ msgid ""
 "%s"
 msgstr ""
 
-#: model/file_image.py:142
+#: model/file_image.py:148
 msgid "Camera"
 msgstr ""
 
-#: gui/_dlgsettings.py:153
+#: gui/_dlgsettings.py:154
 msgid "Caption font:"
 msgstr ""
 
@@ -170,7 +170,7 @@ msgstr ""
 msgid "Close program?"
 msgstr ""
 
-#: gui/_dlgsettings.py:101
+#: gui/_dlgsettings.py:102
 msgid "Compression:"
 msgstr ""
 
@@ -186,11 +186,11 @@ msgstr ""
 msgid "Create new catalog?"
 msgstr ""
 
-#: gui/_dlgsearch.py:269 model/file_image.py:132 model/file_image.py:139
+#: gui/_dlgsearch.py:269 model/file_image.py:138 model/file_image.py:145
 msgid "Date"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:143
+#: ../libs/kpylibs/kpylibs/validators/validators.py:143
 msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: model/file_image.py:123
+#: model/file_image.py:129
 msgid "Dimensions"
 msgstr ""
 
@@ -309,7 +309,7 @@ msgstr ""
 msgid "Exif"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:31
+#: ../libs/kpylibs/kpylibs/validators/validators.py:31
 msgid "Field must by not empty"
 msgstr ""
 
@@ -317,7 +317,7 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
-#: model/file_image.py:150
+#: model/file_image.py:156
 msgid "File size"
 msgstr ""
 
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Find"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:102
+#: ../libs/kpylibs/kpylibs/validators/validators.py:102
 msgid "Float value required"
 msgstr ""
 
@@ -369,7 +369,7 @@ msgstr ""
 msgid "Include empty directories"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:69
+#: ../libs/kpylibs/kpylibs/validators/validators.py:69
 msgid "Incorrect value"
 msgstr ""
 
@@ -377,7 +377,7 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:82
+#: ../libs/kpylibs/kpylibs/validators/validators.py:82
 msgid "Integer value required"
 msgstr ""
 
@@ -466,7 +466,7 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: gui/_dlgsettings.py:55 gui/wndmain.py:160
+#: gui/_dlgsettings.py:56 gui/wndmain.py:160
 msgid "Program settings"
 msgstr ""
 
@@ -568,7 +568,7 @@ msgstr ""
 msgid "Set tags"
 msgstr ""
 
-#: model/file_image.py:147
+#: model/file_image.py:153
 msgid "Settings"
 msgstr ""
 
@@ -576,7 +576,7 @@ msgstr ""
 msgid "Shot date:"
 msgstr ""
 
-#: gui/_dlgsettings.py:122
+#: gui/_dlgsettings.py:123
 msgid "Show captions"
 msgstr ""
 
@@ -597,23 +597,23 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: gui/_dlgsettings.py:96
+#: gui/_dlgsettings.py:97
 msgid "Thumb height:"
 msgstr ""
 
-#: gui/_dlgsettings.py:117
+#: gui/_dlgsettings.py:118
 msgid "Thumb preload"
 msgstr ""
 
-#: gui/_dlgsettings.py:91
+#: gui/_dlgsettings.py:92
 msgid "Thumb width:"
 msgstr ""
 
-#: gui/_dlgsettings.py:73
+#: gui/_dlgsettings.py:74
 msgid "Thumbs"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:122
+#: ../libs/kpylibs/kpylibs/validators/validators.py:122
 msgid "Time isn't in correct format - HH:MM format required"
 msgstr ""
 
@@ -621,15 +621,15 @@ msgstr ""
 msgid "Timeline"
 msgstr ""
 
-#: gui/_dlgsettings.py:156
+#: gui/_dlgsettings.py:157
 msgid "Timeline font:"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:43
+#: ../libs/kpylibs/kpylibs/validators/validators.py:43
 msgid "Too few characters in fields"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:56
+#: ../libs/kpylibs/kpylibs/validators/validators.py:56
 msgid "Too many characters in fields"
 msgstr ""
 
@@ -645,11 +645,15 @@ msgstr ""
 msgid "Updating disk"
 msgstr ""
 
-#: ../kpylibs/validators/my_validator.py:55
+#: gui/_dlgsettings.py:160
+msgid "Use custom color"
+msgstr ""
+
+#: ../libs/kpylibs/kpylibs/validators/my_validator.py:55
 msgid "Validate error"
 msgstr ""
 
-#: ../kpylibs/validators/my_validator.py:53
+#: ../libs/kpylibs/kpylibs/validators/my_validator.py:53
 #, python-format
 msgid ""
 "Validate field \"%(field)s\" failed:\n"
@@ -660,7 +664,7 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: gui/_dlgsettings.py:74
+#: gui/_dlgsettings.py:75
 msgid "View"
 msgstr ""
 
@@ -701,7 +705,7 @@ msgstr ""
 msgid "catalog: %s"
 msgstr ""
 
-#: gui/_dlgsettings.py:141
+#: gui/_dlgsettings.py:142
 msgid "default"
 msgstr ""
 
@@ -717,7 +721,7 @@ msgstr ""
 msgid "end:"
 msgstr ""
 
-#: model/file_image.py:300
+#: model/file_image.py:303
 msgid "f"
 msgstr ""
 
@@ -725,15 +729,15 @@ msgstr ""
 msgid "files"
 msgstr ""
 
-#: model/file_image.py:313
+#: model/file_image.py:316
 msgid "flash"
 msgstr ""
 
-#: model/file_image.py:319
+#: model/file_image.py:322
 msgid "focal len."
 msgstr ""
 
-#: model/file_image.py:305 model/file_image.py:309
+#: model/file_image.py:308 model/file_image.py:312
 msgid "iso"
 msgstr ""
 
@@ -749,7 +753,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: model/file_image.py:294
+#: model/file_image.py:297
 msgid "t"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-06 13:22+0200\n"
+"POT-Creation-Date: 2008-07-06 15:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,11 +115,11 @@ msgstr ""
 "Złe parametry: \n"
 "%s"
 
-#: model/file_image.py:142
+#: model/file_image.py:148
 msgid "Camera"
 msgstr "Aparat"
 
-#: gui/_dlgsettings.py:153
+#: gui/_dlgsettings.py:154
 msgid "Caption font:"
 msgstr "Czcionka podpisów:"
 
@@ -179,7 +179,7 @@ msgstr "Zamknij aktualny katalog"
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
-#: gui/_dlgsettings.py:101
+#: gui/_dlgsettings.py:102
 msgid "Compression:"
 msgstr "Kompresja:"
 
@@ -195,11 +195,11 @@ msgstr "Utwórz nowy katalog"
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
-#: gui/_dlgsearch.py:269 model/file_image.py:132 model/file_image.py:139
+#: gui/_dlgsearch.py:269 model/file_image.py:138 model/file_image.py:145
 msgid "Date"
 msgstr "Data"
 
-#: ../kpylibs/validators/validators.py:143
+#: ../libs/kpylibs/kpylibs/validators/validators.py:143
 msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 
@@ -247,7 +247,7 @@ msgstr "Usuń wybrany dysk z katalogu"
 msgid "Description"
 msgstr "Opis"
 
-#: model/file_image.py:123
+#: model/file_image.py:129
 msgid "Dimensions"
 msgstr "Wymiary"
 
@@ -326,7 +326,7 @@ msgstr ""
 msgid "Exif"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:31
+#: ../libs/kpylibs/kpylibs/validators/validators.py:31
 msgid "Field must by not empty"
 msgstr "Pole nie może być puste"
 
@@ -334,7 +334,7 @@ msgstr "Pole nie może być puste"
 msgid "File date"
 msgstr "Data pliku"
 
-#: model/file_image.py:150
+#: model/file_image.py:156
 msgid "File size"
 msgstr "Rozmiar pliku"
 
@@ -347,7 +347,7 @@ msgstr "Plików: %d"
 msgid "Find"
 msgstr "Znajdź"
 
-#: ../kpylibs/validators/validators.py:102
+#: ../libs/kpylibs/kpylibs/validators/validators.py:102
 msgid "Float value required"
 msgstr "Wymagana wartość rzeczywista"
 
@@ -388,7 +388,7 @@ msgstr "Ikonki"
 msgid "Include empty directories"
 msgstr "Dołącz puste katalogi"
 
-#: ../kpylibs/validators/validators.py:69
+#: ../libs/kpylibs/kpylibs/validators/validators.py:69
 msgid "Incorrect value"
 msgstr "Niewłaściwa wartość"
 
@@ -396,7 +396,7 @@ msgstr "Niewłaściwa wartość"
 msgid "Info"
 msgstr ""
 
-#: ../kpylibs/validators/validators.py:82
+#: ../libs/kpylibs/kpylibs/validators/validators.py:82
 msgid "Integer value required"
 msgstr "Wymagana wartość całkowita"
 
@@ -489,7 +489,7 @@ msgstr "Opcje"
 msgid "Other"
 msgstr "Inne"
 
-#: gui/_dlgsettings.py:55 gui/wndmain.py:160
+#: gui/_dlgsettings.py:56 gui/wndmain.py:160
 msgid "Program settings"
 msgstr "Ustawienia programu"
 
@@ -597,7 +597,7 @@ msgstr "Ustaw opis"
 msgid "Set tags"
 msgstr "Ustaw tagi"
 
-#: model/file_image.py:147
+#: model/file_image.py:153
 msgid "Settings"
 msgstr "Ustawienia"
 
@@ -605,7 +605,7 @@ msgstr "Ustawienia"
 msgid "Shot date:"
 msgstr "Data wykonania:"
 
-#: gui/_dlgsettings.py:122
+#: gui/_dlgsettings.py:123
 msgid "Show captions"
 msgstr "Pokaż podpisy"
 
@@ -626,23 +626,23 @@ msgstr "Tagi"
 msgid "Text"
 msgstr "Tekst"
 
-#: gui/_dlgsettings.py:96
+#: gui/_dlgsettings.py:97
 msgid "Thumb height:"
 msgstr "Wysokość miniaturki:"
 
-#: gui/_dlgsettings.py:117
+#: gui/_dlgsettings.py:118
 msgid "Thumb preload"
 msgstr "Ładuj miniaturki w tle"
 
-#: gui/_dlgsettings.py:91
+#: gui/_dlgsettings.py:92
 msgid "Thumb width:"
 msgstr "Szerokość miniaturki:"
 
-#: gui/_dlgsettings.py:73
+#: gui/_dlgsettings.py:74
 msgid "Thumbs"
 msgstr "Miniaturki"
 
-#: ../kpylibs/validators/validators.py:122
+#: ../libs/kpylibs/kpylibs/validators/validators.py:122
 msgid "Time isn't in correct format - HH:MM format required"
 msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
 
@@ -650,15 +650,15 @@ msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
 msgid "Timeline"
 msgstr "Linia czasu"
 
-#: gui/_dlgsettings.py:156
+#: gui/_dlgsettings.py:157
 msgid "Timeline font:"
 msgstr "Czcionka lini czasu"
 
-#: ../kpylibs/validators/validators.py:43
+#: ../libs/kpylibs/kpylibs/validators/validators.py:43
 msgid "Too few characters in fields"
 msgstr "Za mało znaków w polu"
 
-#: ../kpylibs/validators/validators.py:56
+#: ../libs/kpylibs/kpylibs/validators/validators.py:56
 msgid "Too many characters in fields"
 msgstr "Za dużo znaków w polu"
 
@@ -674,11 +674,15 @@ msgstr "Aktualizuj wybrany dysk"
 msgid "Updating disk"
 msgstr "Aktualizacja dysku"
 
-#: ../kpylibs/validators/my_validator.py:55
+#: gui/_dlgsettings.py:160
+msgid "Use custom color"
+msgstr "Użyj innego koloru"
+
+#: ../libs/kpylibs/kpylibs/validators/my_validator.py:55
 msgid "Validate error"
 msgstr "Błąd walidacji"
 
-#: ../kpylibs/validators/my_validator.py:53
+#: ../libs/kpylibs/kpylibs/validators/my_validator.py:53
 #, python-format
 msgid ""
 "Validate field \"%(field)s\" failed:\n"
@@ -691,7 +695,7 @@ msgstr ""
 msgid "Value"
 msgstr "Wartość"
 
-#: gui/_dlgsettings.py:74
+#: gui/_dlgsettings.py:75
 msgid "View"
 msgstr "Widok"
 
@@ -732,7 +736,7 @@ msgstr "początek:"
 msgid "catalog: %s"
 msgstr "katalog: %s"
 
-#: gui/_dlgsettings.py:141
+#: gui/_dlgsettings.py:142
 msgid "default"
 msgstr "domyślna"
 
@@ -748,7 +752,7 @@ msgstr "katalogi"
 msgid "end:"
 msgstr "koniec:"
 
-#: model/file_image.py:300
+#: model/file_image.py:303
 msgid "f"
 msgstr ""
 
@@ -756,15 +760,15 @@ msgstr ""
 msgid "files"
 msgstr "pliki"
 
-#: model/file_image.py:313
+#: model/file_image.py:316
 msgid "flash"
 msgstr "flesz"
 
-#: model/file_image.py:319
+#: model/file_image.py:322
 msgid "focal len."
 msgstr "ogniskowa"
 
-#: model/file_image.py:305 model/file_image.py:309
+#: model/file_image.py:308 model/file_image.py:312
 msgid "iso"
 msgstr ""
 
@@ -780,7 +784,7 @@ msgstr "nazwach"
 msgid "path"
 msgstr "ścieżka"
 
-#: model/file_image.py:294
+#: model/file_image.py:297
 msgid "t"
 msgstr ""
 
