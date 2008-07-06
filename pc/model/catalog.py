@@ -33,6 +33,7 @@ from disk		import Disk
 from storage	import DataProvider
 from tag		import Tags
 from timeline	import Timeline
+from file_image	import FileImage
 
 
 
@@ -147,7 +148,7 @@ class Catalog(TreeItem):
 	def fast_count_files_dirs(path):
 		""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
 
-		_IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif')
+		_IMAGE_FILES_EXTENSION = FileImage.IMAGE_FILES_EXTENSION
 
 		def count_folder(path):
 			content = [ os.path.join(path, name)

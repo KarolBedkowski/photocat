@@ -239,7 +239,7 @@ class DlgProperties(wx.Dialog):
 			if exif is not None:
 				for key, val in sorted(exif.iteritems()):
 					idx = listctrl.InsertStringItem(sys.maxint, str(key))
-					listctrl.SetStringItem(idx, 1, str(val))
+					listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
 
 				listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 				listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)

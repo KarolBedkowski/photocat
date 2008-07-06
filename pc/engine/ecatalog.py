@@ -90,17 +90,21 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	
 	disk = data['disk']
 	if result == wx.ID_OK:
-		allfiles = _count_files(data['path'], parent_wnd, title)
-		
+		allfiles = _count_files(data['path'], parent_wnd, title)/10240
+
 		if allfiles > 0:
-			dlg_progress = wx.ProgressDialog(title, ("  " * 30), parent=parent_wnd, maximum=allfiles+100,
+			dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, maximum=allfiles+100,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+			dlg_progress.SetSize((600, -1))
+			dlg_progress.Center()
+			
+			path_len = len(data['path'])+1
 
 			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + os.path.getsize(msg)
+				cntr[0] = cntr[0] + os.path.getsize(msg)/10240
 				if cntr[0] > allfiles: # zabezpieczenie na dziwne sytuacje
-					cntr[0] = max(0, cntr[0]-1000)
-				return dlg_progress.Update(cntr[0], msg)[0]
+					cntr[0] = max(0, cntr[0]-10)
+				return dlg_progress.Update(cntr[0], _("Loading file:\n%s") % msg[path_len:])[0]
 
 			try:
 				parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
