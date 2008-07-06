@@ -142,7 +142,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		if exif_data is not None and len(exif_data) > 0:
 			for key, val in sorted(exif_data.iteritems()):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key))
-				listctrl.SetStringItem(idx, 1, str(val))
+				listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
 			self._notebook.SetPageText(1, _('Exif'))
 		else:
 			self._notebook.SetPageText(1, _('No Exif'))
