@@ -28,6 +28,11 @@ __revision__	= '$Id$'
 __all__			= []
 
 
+import sys
+
+# ustawienie ścieżek do bibliotek
+sys.path.append('libs/kpylibs/')
+
 
 from pc	import run
 
