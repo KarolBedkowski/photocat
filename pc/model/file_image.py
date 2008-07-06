@@ -25,13 +25,13 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-import os
 import string
 import time
 import re
 import types
 import logging
 _LOG = logging.getLogger(__name__)
+import cStringIO
 
 import wx
 
@@ -252,7 +252,6 @@ class FileImage(CatalogFile):
 
 	def _load_thumb(self, path, options):
 		_LOG.debug('FileImage._load_thumb(%s)' % path)
-		tmpfilename = os.tmpnam() + "_.jpg"
 		try:
 			try:
 				image = PILImage.open(path)
@@ -268,20 +267,18 @@ class FileImage(CatalogFile):
 			thumb_compression = options.get('thumb_compression', 50)
 
 			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-			image.save(tmpfilename, "JPEG", quality=thumb_compression)
-
-			thumbsize = os.path.getsize(tmpfilename)
-
-			image = open(tmpfilename, 'rb')
-			self.thumb = self.disk.catalog.data_provider.append(image.read(thumbsize))
-			image.close()
+			
+			# zapisanie miniaturki przez StringIO
+			output = cStringIO.StringIO()
+			image.save(output, "JPEG", quality=thumb_compression)
+			thumb = output.getvalue()
+			thumbsize = len(thumb)
+			self.thumb = self.disk.catalog.data_provider.append(thumb)
+			output.close()
 
 		except StandardError:
 			_LOG.exception('PILImage error file=%s' % path)
 			self.thumb = None
-
-		if os.path.exists(tmpfilename):
-			os.unlink(tmpfilename)
 
 
 	def __get_exif_shotinfo(self, exif):
