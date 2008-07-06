@@ -57,8 +57,27 @@ RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 class FileImage(CatalogFile):
 
-	IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif', '.jpeg', '.nef', '.bmp', '.ico', '.pcx', '.ppm', '.psd', '.tga',
-		'.tiff', '.tif')
+	IMAGE_FILES_EXTENSION = (
+		'.jpg', '.jpe', '.jpeg',
+		'.png', '.gif', '.bmp', '.ico', '.pcx', '.psd',
+		'.ppm', '.pbm', '.pgm', '.pnm',
+		'.tga', '.targa',
+		'.tif', '.tiff',
+		'.nef',						# nikon raw
+		'.arw', '.srf', '.sr2',		# sony raw
+		'.crw', '.cr2', 			# canon raw
+		'.kdc', '.dcr',				# kodak raw
+		'.raf',						# fuji raw
+		'.mef', '.mos',				# mamiya raw
+		'.mrw',						# minolta raw
+		'.orf',						# olympus raw
+		'.pef', '.ptx',				# pentax, samsung raw
+		'.x3f',						# sigma raw
+		'.raw',						# panasonic raw
+		'.r3d',						# red raw
+		'.3fr',						# hasselblad raw
+		'.erf'						# epson raw
+	)
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
