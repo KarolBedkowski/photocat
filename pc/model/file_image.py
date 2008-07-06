@@ -36,7 +36,8 @@ _LOG = logging.getLogger(__name__)
 import wx
 
 import Image as PILImage
-#import PngImagePlugin, JpegImagePlugin, GifImagePlugin
+import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
+import TiffImagePlugin, PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
 from kpylibs.formaters		import format_human_size
