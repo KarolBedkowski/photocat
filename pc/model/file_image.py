@@ -56,7 +56,8 @@ RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 class FileImage(CatalogFile):
 
-	IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif', '.jpeg', '.nef')
+	IMAGE_FILES_EXTENSION = ('.jpg', '.png', '.gif', '.jpeg', '.nef', '.bmp', '.ico', '.pcx', '.ppm', '.psd', '.tga',
+		'.tiff', '.tif')
 
 	def __init__(self, id, name, parent, disk, *args, **kwargs):
 
@@ -161,13 +162,12 @@ class FileImage(CatalogFile):
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
 			self._load_thumb(path, options)
-			if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
-				self._load_exif(path)
-				self.shot_date = None
-				if self._exif_data is not None:
-					shot_date = self.__get_exif_shot_date_value(self._exif_data)
-					if shot_date is not None:
-						self.shot_date = time.mktime(shot_date)
+			self._load_exif(path)
+			self.shot_date = None
+			if self._exif_data is not None:
+				shot_date = self.__get_exif_shot_date_value(self._exif_data)
+				if shot_date is not None:
+					self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
@@ -178,13 +178,12 @@ class FileImage(CatalogFile):
 		if process:
 			if changes or options.get('force', False):
 				self._load_thumb(path, options)
-				if os.path.splitext(path)[1].lower() in ('.jpg', '.jpeg'):
-					self._load_exif(path)
-					self.shot_date = None
-					if self._exif_data is not None:
-						shot_date = self.__get_exif_shot_date_value(self._exif_data)					
-						if shot_date is not None:
-							self.shot_date = time.mktime(shot_date)
+				self._load_exif(path)
+				self.shot_date = None
+				if self._exif_data is not None:
+					shot_date = self.__get_exif_shot_date_value(self._exif_data)					
+					if shot_date is not None:
+						self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
