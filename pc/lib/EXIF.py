@@ -87,6 +87,7 @@
 # 30-NOV-03 CEC Fixed problem with canon_decode_tag() not creating an
 #               IFD_Tag() object.
 # 15-FEB-04 CEC Finally fixed bit shift warning by converting Y to 0L.
+# 06-JUN-08 KB  Fix missing fake_exif for other files than jpeg
 #
 
 # field type descriptions as (length, abbreviation, full name) tuples
@@ -1065,6 +1066,7 @@ class EXIF_header:
 def process_file(file, debug=0):
     # determine whether it's a JPEG or TIFF
     data=file.read(12)
+    fake_exif=0
     if data[0:4] in ['II*\x00', 'MM\x00*']:
         # it's a TIFF file
         file.seek(0)
