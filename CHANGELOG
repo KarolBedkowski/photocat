@@ -1,9 +1,11 @@
-2008-07-06 (v 1.3b0)
+2008-07-06 (v 1.3b1)
 
 Karol Będkowski:
       model: obsługa plików raw i innych plików (tiff, p?m, tga, pds, pcx, bmp)
       gui: fix problem z wyświetlaniem śmieci z exifów
       win32: fix problem z kończeniem dialogu progresu przu a/u dysku
+      model: zapisywanie miniaturek bez plików tymczasowych
+      oznaczanie plików raw innym kolorem podpisów
 
 
 2008-07-04 (v 1.2.1)
@@ -46,4 +48,4 @@ Karol Będkowski:
 
 
 
-# vim: encoding=utf8: ff=unix: fileencoding=utf8: 
+# vim: encoding=utf8: ff=unix: fileencoding=utf8:
