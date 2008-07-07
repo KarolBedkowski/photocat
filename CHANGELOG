@@ -1,4 +1,4 @@
-2008-07-06 (v 1.3b1)
+2008-07-07 (v 1.3b2)
 
 Karol Będkowski:
       model: obsługa plików raw i innych plików (tiff, p?m, tga, pds, pcx, bmp)
@@ -6,6 +6,7 @@ Karol Będkowski:
       win32: fix problem z kończeniem dialogu progresu przu a/u dysku
       model: zapisywanie miniaturek bez plików tymczasowych
       oznaczanie plików raw innym kolorem podpisów
+      gui: wndmain: rozwijanie gałęzi po kliknięciu na timeline
 
 
 2008-07-04 (v 1.2.1)
