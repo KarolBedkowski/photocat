@@ -275,15 +275,15 @@ class WndMain(wx.Frame):
 			for catalog in dirty_catalogs:
 				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
-				
+
 				if res == wx.ID_CANCEL:
 					return
-				
+
 				elif res == wx.ID_YES:
 					self.__save_catalog(catalog)
 
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
-			return 
+			return
 
 		[ catalog.close() for catalog in self._catalogs ]
 
@@ -307,14 +307,14 @@ class WndMain(wx.Frame):
 			if filename is not None:
 				if not filename.endswith('.index'):
 					filename = filename + '.index'
-					
+
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					catalog = Catalog(filename)
 					catalog.data_provider.open(True)
 					self._catalogs.append(catalog)
 					self._dirs_tree.add_catalog(catalog)
-					
+
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
 					self.__update_last_open_files(filename)
@@ -355,10 +355,10 @@ class WndMain(wx.Frame):
 
 			if res == wx.ID_YES:
 				self.__save_catalog(catalog)
-				
+
 			elif res == wx.ID_CANCEL:
 				return
-			
+
 		elif not dialogs.message_box_question_yesno(self, _('Close catalog %s?') % catalog.caption, 'PC'):
 			return
 
@@ -433,10 +433,10 @@ class WndMain(wx.Frame):
 			disk = None
 			try:
 				disk = ecatalog.add_disk_to_catalog(catalog, self)
-				
+
 			except Exception, err:
 				_LOG.exception('WndMain._on_catalog_add()')
-				
+
 			else:
 				if disk is not None:
 					self.__save_catalog(catalog, True)
@@ -586,13 +586,15 @@ class WndMain(wx.Frame):
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
 				self._show_dir([])
+				self._dirs_tree.Expand(self._dirs_tree.selected_node)
 				return
 
 			elif len(item.files) > 1000:
-				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania 
+				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
 				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
 					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
+					self._dirs_tree.Expand(self._dirs_tree.selected_node)
 					return
 
 			item = item.files
@@ -645,7 +647,7 @@ class WndMain(wx.Frame):
 		dlg = DlgProperties(self, item)
 		if dlg.ShowModal() == wx.ID_OK:
 			item.catalog.dirty = True
-			
+
 			if self._info_panel is not None:
 				self._info_panel.show_folder(item)
 
@@ -1033,8 +1035,8 @@ class WndMain(wx.Frame):
 		''' wndmain.__update_tags_timeline(catalog) -- odświerzenie dir tree: tags, timeline '''
 		self._dirs_tree.update_node_tags(catalog.tags_provider, True)
 		self._dirs_tree.update_timeline_node(catalog.timeline)
-		
-		
+
+
 	def __info_panel_clear(self):
 		''' wndmain.__info_panel_clear() -- wyczyszczenie info-panelu '''
 		if self._info_panel is not None:
