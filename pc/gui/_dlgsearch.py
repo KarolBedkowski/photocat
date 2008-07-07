@@ -45,6 +45,7 @@ from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.appconfig		import AppConfig
 from kpylibs				import dialogs
+from kpylibs.singleton		import Singleton
 
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
@@ -63,7 +64,7 @@ class _OptionsError(StandardError):
 
 
 
-class DlgSearch(wx.Dialog):
+class _DlgSearch(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent, catalogs, selected_item=None):
@@ -573,6 +574,32 @@ class DlgSearch(wx.Dialog):
 			if index == -1:
 				break
 			self._result_list.SetItemState(index, 0, wx.LIST_STATE_SELECTED)
+
+
+
+
+
+class DlgSearchProvider(Singleton):
+	def init(self):
+		self._dialogs = []
+
+	
+	def create(self, parent, catalogs, selected_item=None):
+		dlg = _DlgSearch(parent, catalogs, selected_item)
+		dlg.Bind(wx.EVT_CLOSE, self._on_dialog_close)
+		self._dialogs.append(dlg)
+		return dlg
+
+
+	def close_all(self):
+		[ dlg.Close(True) for dlg in self._dialogs ]
+		self._dialogs = []
+
+	
+	def _on_dialog_close(self, evt):
+		self._dialogs.remove(evt.GetEventObject())
+		evt.Skip()
+	
 
 
 

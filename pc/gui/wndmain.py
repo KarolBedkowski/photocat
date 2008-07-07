@@ -56,7 +56,7 @@ from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTI
 
 from _dlgabout				import show_about_box
 from _dlgproperties			import DlgProperties
-from _dlgsearch				import DlgSearch
+from _dlgsearch				import DlgSearchProvider
 from _dlgsettings			import DlgSettings
 
 _ = wx.GetTranslation
@@ -366,6 +366,7 @@ class WndMain(wx.Frame):
 		catalog.close()
 		self._catalogs.remove(catalog)
 		self.__update_menus_toolbars()
+		DlgSearchProvider().close_all()
 
 
 	def _on_file_rebuild(self, evt):
@@ -530,7 +531,7 @@ class WndMain(wx.Frame):
 		if len(self._catalogs) == 0:
 			return
 
-		DlgSearch(self, self._catalogs, self._dirs_tree.selected_item).Show()
+		DlgSearchProvider().create(self, self._catalogs, self._dirs_tree.selected_item).Show()
 
 
 	def _on_catalog_info(self, evt):
