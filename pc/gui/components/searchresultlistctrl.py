@@ -46,13 +46,15 @@ _ = wx.GetTranslation
 
 
 class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
+	''' Kontrolka listy wyników wyszukiwania z możliwością sortowania '''
+
 	def __init__(self, *argv, **kwargv):
 		wx.ListCtrl.__init__(self, *argv, **kwargv)
 		listmix.ColumnSorterMixin.__init__(self, 6)
-		
+
 		self._icons = (-1, -1)
 		self.clear()
-		
+
 		self.InsertColumn(0, _('Name'))
 		self.InsertColumn(1, _('Catalog'))
 		self.InsertColumn(2, _('Disk'))
@@ -65,7 +67,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.itemDataMap = []
 		self.DeleteAllItems()
 
-	
+
 	###########################################################################################
 
 
@@ -74,18 +76,21 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 
 	def _set_result(self, result):
 		self.itemDataMap = result
-		
+
 	result = property(_get_result, _set_result)
 
-	
+
 	###########################################################################################
 
-	
+
 	def set_sort_icons(self, up, down):
+		''' srlc.set_sort_icons(up, down) -- ustawienie ikon dla pokazania sortowania '''
 		self._icons = (down, up)
 
 
 	def insert(self, item, index, show_size, ico):
+		''' srlc.index(item, index, show_size, ico) -- wstawienie elementu '''
+
 		idx = self.InsertImageStringItem(sys.maxint, str(item.name), ico)
 		self.SetStringItem(idx, 1, str(item.catalog.name))
 		self.SetStringItem(idx, 2, str(item.disk.name))
@@ -93,10 +98,12 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
 		if show_size:
 			self.SetStringItem(idx, 5, format_human_size(item.size))
+
 		self.SetItemData(idx, index)
-		
-		
+
+
 	def autosize_cols(self):
+		''' srlc.autosize_cols() -- autosize kolumn '''
 		self.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		self.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		self.SetColumnWidth(2, wx.LIST_AUTOSIZE)
@@ -105,38 +112,30 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 
 	###########################################################################################
 
-	def GetListCtrl(self):	
+	def GetListCtrl(self):
 		return self
 
-	
+
 	def GetColumnSorter(self):
 		col = self._col
 		ascending = 1 if self._colSortFlag[col] else -1
 
-		if col == 0:
-			sortfnc = lambda x,y: cmp(
-					self.itemDataMap[x].name.lower(), self.itemDataMap[y].name.lower()) * ascending
-		elif col == 1:
-			sortfnc = lambda x,y: cmp(
-					self.itemDataMap[x].catalog.name.lower(), self.itemDataMap[y].catalog.name.lower()) * ascending
-		elif col == 2:
-			sortfnc = lambda x,y: cmp(
-					self.itemDataMap[x].disk.name.lower(), self.itemDataMap[y].disk.name.lower()) * ascending
-		elif col == 3:
-			sortfnc = lambda x,y: cmp(
-					self.itemDataMap[x].path.lower(), self.itemDataMap[y].path.lower()) * ascending
-		elif col == 4:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].date, self.itemDataMap[y].date) * ascending
-		elif col == 5:
-			sortfnc = lambda x,y: cmp(self.itemDataMap[x].size, self.itemDataMap[y].size) * ascending
-			
+		sortfnc = {
+			0: lambda x,y: cmp(self.itemDataMap[x].name.lower(), self.itemDataMap[y].name.lower()) * ascending,
+			1: lambda x,y: cmp(self.itemDataMap[x].catalog.name.lower(), self.itemDataMap[y].catalog.name.lower()) * ascending,
+			2: lambda x,y: cmp(self.itemDataMap[x].disk.name.lower(), self.itemDataMap[y].disk.name.lower()) * ascending,
+			3: lambda x,y: cmp(self.itemDataMap[x].path.lower(), self.itemDataMap[y].path.lower()) * ascending,
+			4: lambda x,y: cmp(self.itemDataMap[x].date, self.itemDataMap[y].date) * ascending,
+			5: lambda x,y: cmp(self.itemDataMap[x].size, self.itemDataMap[y].size) * ascending
+		}.get(col)
+
 		return sortfnc
-	
+
 
 	def GetSortImages(self):
 		return self._icons
-		
-	
+
+
 
 
 
