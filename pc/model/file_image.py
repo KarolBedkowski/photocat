@@ -79,7 +79,7 @@ class FileImage(CatalogFile):
 		'.3fr',						# hasselblad raw
 		'.erf'						# epson raw
 	)
-	
+
 	# list rozszerzeń plików, które są raw-ami
 	IMAGE_FILES_EXTENSION_RAW = ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
 		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
@@ -93,17 +93,17 @@ class FileImage(CatalogFile):
 		self.shot_date	= kwargs.get('shot_date')
 
 		self._exif_data = None
-		
+
 		# format pliku wer 1
 		if self.thumb is not None and type(self.thumb) == types.TupleType:
 			self.thumb = self.thumb[0]
 		if self.exif is not None and type(self.exif) == types.TupleType:
 			self.exif = self.exif[0]
-		
+
 		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
-		self.is_raw = self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW
+		self.is_raw = (self.name is not None) and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
 
 
 	@property
@@ -134,7 +134,7 @@ class FileImage(CatalogFile):
 		date = None
 		if self.shot_date:
 			try:
-				date = time.strftime('%c', time.localtime(self.shot_date))	
+				date = time.strftime('%c', time.localtime(self.shot_date))
 			except:
 				_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
 			else:
@@ -154,15 +154,15 @@ class FileImage(CatalogFile):
 			shot_info = self.__get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
-				
+
 		if self.size is not None:
 			result.append((201, _('File size'), format_human_size(self.size)))
 
 		return result
 
 	info = property(_get_info)
-	
-	
+
+
 	@property
 	def date_to_check(self):
 		""" pobranie daty do wyszukania.
@@ -171,15 +171,15 @@ class FileImage(CatalogFile):
 		"""
 		if self.shot_date is not None:
 			return self.shot_date
-		
+
 		if self.exif is not None:
 				shot_date = self.__get_exif_shot_date_value(self.exif_data)
 				if shot_date is not None:
 					self.shot_date = time.mktime(shot_date)
 
-		return self.shot_date or self.date	
+		return self.shot_date or self.date
 
-	
+
 	@property
 	def data_objects_count(self):
 		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
@@ -210,14 +210,14 @@ class FileImage(CatalogFile):
 				self._load_exif(path)
 				self.shot_date = None
 				if self._exif_data is not None:
-					shot_date = self.__get_exif_shot_date_value(self._exif_data)					
+					shot_date = self.__get_exif_shot_date_value(self._exif_data)
 					if shot_date is not None:
 						self.shot_date = time.mktime(shot_date)
 
 			return True
 		return False
 
-	
+
 	def fill_shot_date(self):
 		if self.shot_date is None and self.exif is not None:
 			exif = self.exif_data
@@ -225,7 +225,7 @@ class FileImage(CatalogFile):
 				shot_date = self.__get_exif_shot_date_value(exif)
 				if shot_date is not None:
 					self.shot_date = time.mktime(shot_date)
-	
+
 
 	##########################################################################
 
@@ -261,7 +261,7 @@ class FileImage(CatalogFile):
 
 	def _load_thumb(self, path, options):
 		''' file_image._load_thumb(path, options) -- ładowanie miniaturki z pliku i zapisanie katalogu
-		
+
 			@param path		- ścieżka do pliku
 			@param options	- opcje
 		'''
@@ -281,7 +281,7 @@ class FileImage(CatalogFile):
 			thumb_compression = options.get('thumb_compression', 50)
 
 			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-			
+
 			# zapisanie miniaturki przez StringIO
 			output = cStringIO.StringIO()
 			image.save(output, "JPEG", quality=thumb_compression)
@@ -348,7 +348,7 @@ class FileImage(CatalogFile):
 		if ddate is None:
 			return None
 		return time.strftime('%c', ddate)
-	
+
 
 	##########################################################################
 
