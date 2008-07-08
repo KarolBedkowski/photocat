@@ -39,8 +39,10 @@ class _IdProvider(Singleton):
 	def set(self, id):
 		if id < 0:
 			return self.get()
+
 		if id > self.last_id:
 			self.last_id = id
+
 		return id
 
 
@@ -72,26 +74,27 @@ class StorageObject(object):
 	def _get_id(self):
 		if self._id is None:
 			self._id = _id_provider.get()
+
 		return self._id
 
 	def _set_id(self, id):
 		self._id = _id_provider.set(id)
 
 	id = property(_get_id, _set_id)
-	
+
 
 	@property
 	def childs_to_store(self):
 		return []
-	
+
 
 	@property
 	def is_valid(self):
 		return not self._invalid
-	
+
 
 	##########################################################################
-	
+
 
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
