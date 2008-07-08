@@ -145,11 +145,12 @@ class WndMain(wx.Frame):
 		menu_bar.Append(self._create_main_menu_help(),		wx.GetStockLabel(wx.ID_HELP, True))
 		if self._debug:
 			menu_bar.Append(self._create_main_menu_debug(),	'&Debug')
+
 		return menu_bar
 
 
 	def _create_main_menu_file(self):
-		menu = create_menu(self, (
+		self._main_menu_file = create_menu(self, (
 			(None,	'Ctrl-N',	_('Create new catalog'),	self._on_file_new,		wx.ID_NEW,		wx.ART_NEW),
 			(None,	'Ctrl+O',	_('Load catalog'),			self._on_file_open,		wx.ID_OPEN,		wx.ART_FILE_OPEN),
 			(None,	'Ctrl+S',	_('Save current catalog'),	self._on_file_save,		wx.ID_SAVE,		wx.ART_FILE_SAVE),
@@ -161,13 +162,12 @@ class WndMain(wx.Frame):
 			('-'),
 			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
 		))
-		self._main_menu_file = menu
 
 		self._main_menu_file_recent = wx.Menu()
 		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(3, -1, _('Recent files'),
 				self._main_menu_file_recent)
 
-		return menu
+		return self._main_menu_file
 
 
 	def _create_main_menu_catalog(self):
@@ -878,10 +878,7 @@ class WndMain(wx.Frame):
 
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
-			if len(self._catalogs) > 1:
-				return None
-
-			catalog = self._catalogs[0]
+			catalog = self._catalogs[0] if len(self._catalogs) > 1 else None
 
 		else:
 			catalog = tree_selected.catalog
