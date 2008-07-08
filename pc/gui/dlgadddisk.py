@@ -69,7 +69,7 @@ class DlgAddDisk(wx.Dialog):
 		self.SetSize((500, -1))
 
 		self.Centre(wx.BOTH)
-		
+
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 
 
@@ -88,32 +88,23 @@ class DlgAddDisk(wx.Dialog):
 
 		main_grid.Add(wx.StaticText(panel, -1, _('Disk name:')), 0, wx.ALL, 5)
 		self._disk_name = wx.TextCtrl(panel, -1,
-				validator=MyValidator(
-						data_key=(data, 'name'), 
-						validators=validators.NotEmptyValidator(), 
-						field=_('name')
-				)
+				validator=MyValidator(data_key=(data, 'name'), validators=validators.NotEmptyValidator(),
+						field=_('name'))
 		)
 		main_grid.Add(self._disk_name, 0, wx.EXPAND|wx.ALL, 5)
 
 		main_grid.Add(wx.StaticText(panel, -1, _('Disk description:')), 0, wx.ALL, 5)
-		self._disk_descr = wx.TextCtrl(panel, -1, 
-				validator=MyValidator(data_key=(data, 'descr')),
-				style=wx.TE_MULTILINE
-		)
+		self._disk_descr = wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'descr')), style=wx.TE_MULTILINE)
 		main_grid.Add(self._disk_descr, 1, wx.EXPAND|wx.ALL, 5)
 
 		last_dirs, last_dir = self.__get_last_dirs()
 
 		main_grid.Add(wx.StaticText(panel, -1, _('Folder:')), 0, wx.ALL, 5)
-		self._path = wx.ComboBox(panel, -1, last_dir, 
-				validator=MyValidator(
-						data_key=(data, 'path'), 
-						validators=validators.NotEmptyValidator(), 
-						field=_('path')
-				),
+		self._path = wx.ComboBox(panel, -1, last_dir,
+				validator=MyValidator(data_key=(data, 'path'), validators=validators.NotEmptyValidator(),
+						field=_('path')),
 				choices=last_dirs)
-		
+
 		size = self._path.GetSizeTuple()[1]
 		btn_sel_dir = wx.Button(panel, -1, '...', size=(size, size))
 
@@ -132,36 +123,45 @@ class DlgAddDisk(wx.Dialog):
 
 	def _create_page_options(self, parent):
 		data = self._data
-		if not data.has_key('load_captions_txt'):			data['load_captions_txt'] = True
+		if not data.has_key('load_captions_txt'):
+			data['load_captions_txt'] = True
 
 		panel = wx.Panel(parent, -1)
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
-		main_grid.Add(wx.CheckBox(panel, -1, _('Include empty directories'), validator=MyValidator(data_key=(data, 'include_empty'))),
+		main_grid.Add(
+				wx.CheckBox(panel, -1, _('Include empty directories'),
+						validator=MyValidator(data_key=(data, 'include_empty'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
-		main_grid.Add(wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))),
+		main_grid.Add(
+				wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
-		main_grid.Add(wx.CheckBox(panel, -1, _('Load info from captions.txt'), validator=MyValidator(data_key=(data, 'load_captions_txt'))),
+		main_grid.Add(
+				wx.CheckBox(panel, -1, _('Load info from captions.txt'),
+						validator=MyValidator(data_key=(data, 'load_captions_txt'))),
 				0, wx.EXPAND|wx.ALL, 5)
 
 		main_grid.Add(wx.StaticText(panel, -1, _('Skip dirs (";" - separated):')))
-		main_grid.Add(wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))), 0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(
+				wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))),
+				0, wx.EXPAND|wx.ALL, 5)
 
 		panel.SetSizerAndFit(main_grid)
 		return panel
 
 
 	#########################################################################
-	
+
 
 	def _on_btn_sel_dir(self, evt):
 		curr_dir = self._path.GetValue()
 		if curr_dir is None or len(curr_dir) == 0 or not os.path.exists(curr_dir) or not os.path.isdir(curr_dir):
 			curr_dir = os.path.abspath(os.curdir)
 
-		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir, style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
+		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir,
+				style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
 
 		if dialog.ShowModal() == wx.ID_OK:
 			directory = dialog.GetPath()
@@ -197,9 +197,7 @@ class DlgAddDisk(wx.Dialog):
 		if __name__ != '__main__':
 			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
 
-
 		self._data['skip_dirs_list'] = [ dir.strip() for dir in self._data['skip_subdirs'].split(';') ]
-
 		self.EndModal(wx.ID_OK)
 
 
@@ -210,11 +208,13 @@ class DlgAddDisk(wx.Dialog):
 		last_dir = ''
 		if __name__ == '__main__':
 			last_dirs = []
+
 		else:
 			last_dirs = AppConfig().get_items('add_disk-last_dir') or []
 			if len(last_dirs) > 0:
 				last_dirs = [ val for key, val in sorted(last_dirs) ]
 				last_dir = last_dirs[0]
+
 		return (last_dirs, last_dir)
 
 
@@ -224,6 +224,7 @@ class DlgAddDisk(wx.Dialog):
 			if update:
 				name = self._data['name']
 				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks if disk.name != name) )
+
 			else:
 				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks ) )
 
