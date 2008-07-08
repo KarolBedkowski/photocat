@@ -47,8 +47,8 @@ class Tag(object):
 	@property
 	def dirs_count(self):
 		return len(self.dirs)
-	
-	
+
+
 	@property
 	def count(self):
 		return len(self.dirs) + len(self.files)
@@ -65,6 +65,7 @@ class Tag(object):
 		if isinstance(item, FileImage):
 			if item in self.files:
 				self.files.remove(item)
+				
 		elif item in self.dirs:
 			self.dirs.remove(item)
 
@@ -72,6 +73,7 @@ class Tag(object):
 	def add_item(self, item):
 		if isinstance(item, FileImage):
 			self.files.append(item)
+
 		else:
 			self.dirs.append(item)
 
@@ -139,4 +141,3 @@ class Tags(object):
 
 
 # vim: encoding=utf8: ff=unix:
-

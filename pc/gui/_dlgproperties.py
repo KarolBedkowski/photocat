@@ -56,7 +56,7 @@ class DlgProperties(wx.Dialog):
 		self._item_is_disk		= isinstance(item, Disk)		and not is_fake
 		self._item_is_catalog	= isinstance(item, Catalog) 	and not is_fake
 		self._item_is_image		= isinstance(item, FileImage)	and not is_fake
-		
+
 		# lista zmienionych podczas edycji nazw tagów
 		self.changed_tags		= None
 
@@ -73,6 +73,7 @@ class DlgProperties(wx.Dialog):
 		position = appconfig.get('properties_wnd', 'position')
 		if position is None:
 			self.Centre(wx.BOTH)
+
 		else:
 			self.Move(position)
 
@@ -87,20 +88,20 @@ class DlgProperties(wx.Dialog):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
-		
+
 		if not self._item_is_fake:
 			notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
-			
+
 		notebook.AddPage(self._create_layout_page_desc(notebook),		_('Description'))
-		
+
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
-			
+
 		notebook.AddPage(self._create_layout_page_tage(notebook),		_('Tags'))
-		
+
 		if self._item_is_image or self._item_is_fake:
 			notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
-		
+
 		return notebook
 
 
@@ -163,7 +164,7 @@ class DlgProperties(wx.Dialog):
 		panel = wx.Panel(parent, -1)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
-		
+
 		if self._item_is_fake:
 			self._cb_set_tags = wx.CheckBox(panel, -1, _('Set tags'))
 			sizer.Add(self._cb_set_tags, 0, wx.EXPAND|wx.ALL, 5)
@@ -172,13 +173,13 @@ class DlgProperties(wx.Dialog):
 		sizer.Add(listbox, 1, wx.EXPAND|wx.ALL, 5)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
-		
+
 		combobox = self._combobox_tags = wx.ComboBox(panel, -1, style=wx.CB_SORT)
 		subsizer.Add(combobox, 1, wx.EXPAND|wx.ALL, 2)
-		
-		button1	= create_button(panel, _('Add'), self._on_add_tag)		
+
+		button1	= create_button(panel, _('Add'), self._on_add_tag)
 		subsizer.Add(button1, 0, wx.EXPAND|wx.ALL, 2)
-		
+
 		button2	= create_button(panel, _('Del'), self._on_del_tag)
 		subsizer.Add(button2, 0, wx.EXPAND|wx.ALL, 2)
 
@@ -187,28 +188,28 @@ class DlgProperties(wx.Dialog):
 		panel.SetSizerAndFit(sizer)
 
 		return panel
-	
+
 
 	def _create_layout_page_other(self, parent):
-		panel = wx.Panel(parent, -1)		
+		panel = wx.Panel(parent, -1)
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
 		self._cb_shot_date = wx.CheckBox(panel, 1, _("Shot date:"))
 		subsizer.Add(self._cb_shot_date, 0, wx.EXPAND|wx.ALL, 5)
-		
+
 		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1),
-				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)		
+				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		subsizer.Add(self._dp_shot_date, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
-		
+
 		self._tc_shot_time = masked.TimeCtrl(panel , -1, fmt24hr=True)
 		subsizer.Add(self._tc_shot_time, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
-		
+
 		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
 
 		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
-		
+
 		return panel
 
 
@@ -258,69 +259,72 @@ class DlgProperties(wx.Dialog):
 				date.SetTimeT(item.shot_date)
 				self._dp_shot_date.SetValue(date)
 				self._tc_shot_time.SetValue(date)
+
 		elif self._item_is_fake:
 			self._cb_shot_date.SetValue(False)
 			self._dp_shot_date.Enable(False)
 			self._tc_shot_time.Enable(False)
-			
+
 
 	#########################################################################
 
 
 	def _on_ok(self, evt):
-		item = self._item
-
-		changed = False
+		item		= self._item
+		changed		= False
 
 		if self._item_is_disk:
-			new_name = self._tc_name.GetValue().strip() or item.name
-			changed = item.name != new_name
-			item.name  =  new_name
+			new_name	= self._tc_name.GetValue().strip() or item.name
+			changed		= item.name != new_name
+			item.name 	=  new_name
 
 		if not self._item_is_fake or self._cb_set_descr.IsChecked():
-			new_desc = self._textctrl_desc.GetValue().strip()
-			if item.desc is None:
-				changed_desc = new_desc != ''
-			else:
-				changed_desc = new_desc != item.desc
+			new_desc		= self._textctrl_desc.GetValue().strip()
+			changed_desc	= (new_desc != '') if (item.desc is None) else (new_desc != item.desc)
+
 			if changed_desc:
-				item.desc = new_desc
-				changed = True
+				item.desc	= new_desc
+				changed		= True
+
 		else:
 			item.desc = None
 
 		if not self._item_is_fake or self._cb_set_tags.IsChecked():
-			listbox = self._listbox_tags
-			tag_iter = ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
-			tags = tuple(sorted([ tag for tag in tag_iter if len(tag) > 0 ]))
-			if item.tags is None:
-				changed_tags = len(tags) > 0
-			else:
-				changed_tags = tags != item.tags
+			listbox		= self._listbox_tags
+			tag_iter	= ( listbox.GetString(idx).strip() for idx in xrange(listbox.GetCount()) )
+			tags		= tuple(sorted([ tag for tag in tag_iter if len(tag) > 0 ]))
+			changed_tags = (len(tags) > 0) if (item.tags is None) else (tags != item.tags)
+
 			if changed_tags:
-				self.changed_tags = item.set_tags(tags)
-				changed = True
+				self.changed_tags	= item.set_tags(tags)
+				changed				= True
+
 		else:
 			item.tags = None
-			
+
 		if self._item_is_image or self._item_is_fake:
 			if self._cb_shot_date.IsChecked():
 				sdate = self._dp_shot_date.GetValue()
 				stime = self._tc_shot_time.GetValue(as_wxDateTime=True)
+
 				sdate.SetHour(stime.GetHour())
 				sdate.SetMinute(stime.GetMinute())
 				sdate.SetSecond(stime.GetSecond())
+
 				sdate_val = sdate.GetTicks()
 				if item.shot_date is None or item.shot_date != sdate_val:
-					item.shot_date = sdate_val
-					changed = True
+					item.shot_date	= sdate_val
+					changed			= True
+
 			elif item.shot_date is not None:
-				item.shot_date = None
-				changed = True
+				item.shot_date 	= None
+				changed			= True
 
 		self._on_close()
+
 		if changed:
 			self.EndModal(wx.ID_OK)
+
 		else:
 			self.EndModal(wx.ID_CANCEL)
 
@@ -328,9 +332,10 @@ class DlgProperties(wx.Dialog):
 	def _on_add_tag(self, evt):
 		tag = self._combobox_tags.GetValue().strip()
 		if len(tag) > 0:
-			tag = tag.lower()
+			tag		= tag.lower()
 			listbox = self._listbox_tags
-			tags = [ listbox.GetString(idx) for idx in xrange(listbox.GetCount()) ]
+			tags	= [ listbox.GetString(idx) for idx in xrange(listbox.GetCount()) ]
+			
 			if tags.count(tag) == 0:
 				listbox.Append(tag)
 				self._combobox_tags.Append(tag)
@@ -350,7 +355,7 @@ class DlgProperties(wx.Dialog):
 		if evt is not None:
 			evt.Skip()
 
-	
+
 	def _on_checkbox_short_date(self, evt):
 		value = evt.IsChecked()
 		self._dp_shot_date.Enable(value)

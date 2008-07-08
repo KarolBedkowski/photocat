@@ -36,6 +36,8 @@ from pc.engine.image		import load_image_from_item
 
 
 class Thumb:
+	''' Klasa obiektu miniaturki wyświtlanej w thumbctrl '''
+	
 	def __init__(self, image):
 		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
 		self.image = image
@@ -44,44 +46,70 @@ class Thumb:
 
 
 	def reset(self):
+		''' thumb.reset() -- reset wartości '''
 		self._bitmap = None
 		self.imgwidth = None
 		self.imgheight = None
 		self._last_caption_width = -1
 		self._caption_width = -1
-	
-	
+
+
 	def _load_image(self):
+		''' thumb._load_image() -> wxImage -- załadowanie obrazka '''
 		img = load_image_from_item(self.image)
-		self.imgwidth = img.GetWidth()
-		self.imgheight = img.GetHeight()
+
+		self.imgwidth	= img.GetWidth()
+		self.imgheight	= img.GetHeight()
+
 		return img
 
 
+	#########################################################################
+
+
 	def get_bitmap(self, width, height):
+		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy obrazka
+
+			@param width	- max szerokość
+			@param height	- max wysokość
+			@return wxBitmap - zmienjszony ewentualnie obrazek
+
+			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się nie zmienił)
+		'''
 		img = None
 		if self.imgwidth is None:
+			# nie załadowano obrazka
 			img = self._load_image()
 
 		if width < self.imgwidth or height < self.imgheight:
+			# wymagany jest mniejszy obrazek niż załadowano
 			if img is None:
+				# załadowanie obrazka (jeżeli jeszcze nie załadowan)
 				img = self._load_image()
-				
+
+			# przeskalowanie obrazka
 			scale = min(float(width) / self.imgwidth, float(height) / self.imgheight)
-			self.imgwidth = int(self.imgwidth * scale)
-			self.imgheight = int(self.imgheight * scale)
+			self.imgwidth	= int(self.imgwidth * scale)
+			self.imgheight	= int(self.imgheight * scale)
 
 			img = img.Scale(self.imgwidth, self.imgheight)
 
 			self._bitmap = img.ConvertToBitmap()
 
 		elif self._bitmap is None:
+			# jest obrazek ale nie ma bitmapy
 			self._bitmap = img.ConvertToBitmap()
 
 		return self._bitmap
-	
-	
+
+
 	def get_caption(self, width, dc):
+		''' thumb.get_caption(width, dc) -> (caption, caption_width) -- wyznaczenie rozmiaru podpisu
+
+			@param width		- maksymalna szerokość napisu
+			@param dc			- context
+			@return (podpis, szerokość podpisu)
+		'''
 		if width == self._last_caption_width:
 			return self._caption_prepared, self._caption_width
 
@@ -95,17 +123,17 @@ class Thumb:
 			if sw <= width:
 				self._caption_width = sw
 				break
-			
+
 			end -= 1
-			
+
 		# doklejanie ... na koncu odcietego napisu
 		if len(caption) < len(self._caption):
 			if len(caption) > 4:
 				caption = caption[:-4] + '...'
-			
+
 		self._caption_prepared = caption
 		self._last_caption_width = width
-		
+
 		return caption, self._caption_width
 
 

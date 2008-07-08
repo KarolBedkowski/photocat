@@ -46,6 +46,8 @@ from _thumb import Thumb
 
 
 class ThumbCtrl(wx.ScrolledWindow):
+	''' Kontrolka wyświetlająca miniaturki obrazków '''
+
 	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, thumbs_preload=True, show_captions=True):
 		''' ThumbCtrl(parent, [wxid], [status_wnd], [thumbs_preload]) -> new object -- konstruktor
 
@@ -88,6 +90,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def clear(self):
+		''' thumbctrl.clear() -- wyczyszczenie kontrolki '''
 		self._items			= []
 		self._selected		= -1
 		self._selected_list = []
@@ -112,18 +115,18 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._timeline_bars = []
 		self._selected		= -1
 		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
-		
+
 		if sort_function is not None:
 			self._items.sort(lambda x, y: sort_function(x.image, y.image))
 
 		self.Scroll(0, 0)
 		self._update()
 		self.Refresh()
-		
-		
+
+
 	def sort_current_dir(self, sort_function):
 		''' thumbctrl.sort_current_dir(sort_function) -- posortowanie i odświeżenie widoku
-		
+
 			@param sort_function - funkcja sortująca
 		'''
 		self._items.sort(lambda x, y: sort_function(x.image, y.image))
@@ -131,20 +134,31 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._selected_list = []
 		self._timeline_bars = []
 		self._selected		= -1
-		
+
 		self.Scroll(0, 0)
 		self._update()
 		self.Refresh()
 
 
 	def set_thumb_size(self, thumb_width, thumb_height):
+		''' thumbctrl.set_thumb_size(thumb_width, thumb_height) -- ustawienie nowego rozmiaru miniaturek i odświerzenie
+
+			@param thumb_width		- nowa szerokość
+			@param thumb_height		- nowa wysokość
+		'''
 		self._thumb_width = thumb_width
 		self._thumb_height = thumb_height
+
 		[ item.reset() for item in self._items ]
+
 		self._update()
 
 
 	def set_captions_font(self, fontdata):
+		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek i odświerzenie
+
+			@param fontdata - słownik z informacją o fontach
+		'''
 		self._caption_font = fonttools.data2font(fontdata, 'thumb',
 				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
 		self._caption_color = fonttools.str2color(fontdata.get('thumb_font_color', '127;127;127'))
@@ -153,26 +167,26 @@ class ThumbCtrl(wx.ScrolledWindow):
 				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
 		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
 		self._pen_timeline	= wx.Pen(self._timeline_color, 1, wx.SOLID)
-		
+
 		color = fonttools.str2color(fontdata.get('thumb_raw_color'), wx.Colour(70, 70, 255))
 		if fontdata.get('thumb_raw_custom_color', True):
 			self._caption_raw_color = color
+
 		else:
 			self._caption_raw_color = self._caption_color
-		
+
 		self._update()
-
-
-	def is_selected(self, idx):
-		return idx in self._selected_list
 
 
 	@property
 	def selected_items(self):
+		''' thumbctrl.selected_items -> [] -- zwraca listę zaznaczonych obiektów '''
 		return self._selected_list
+
 
 	@property
 	def selected_item(self):
+		''' thumbctrl.selected_item -> item -- zwraca ostatni zaznaczony element lub None '''
 		return self._items[self._selected].image if self._selected > -1 else None
 
 
@@ -180,6 +194,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def _update(self):
+		''' thumbctrl._update() -- aktualizacja rozmiarów i pozycji miniaturek '''
+
 		width = self.GetClientSize().GetWidth()
 		cols = max((width - 30) / self._thumb_width, 1)
 
@@ -206,10 +222,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		elif self.group_by_date:
 			rows, height = self.__compute_thumbs_pos_timeline()
-		
+
 		else:
 			rows, height = self.__compute_thumbs_pos_normal()
-	
+
 		self._rows = rows
 
 		self.SetVirtualSize((self._cols * (self._thumb_width + padding), height))
@@ -235,7 +251,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_paint(self, event):
-		""" Handles The wx.EVT_PAINT Event For ThumbCtrl. """
+		''' thumbctrl.__on_paint(event) -- callback na EVT_PAINT - przerysowanie kontrolki'''
 
 		size = self.GetClientSize()
 		paintRect = wx.Rect(0, 0, size.GetWidth(), size.GetHeight())
@@ -255,11 +271,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		dc.SetBrush(self._brush)
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground(self._caption_color)
-		
+
 		caption_color		= self._caption_color
 		caption_raw_color	= self._caption_raw_color
 
-		tw		= self._thumb_width 
+		tw		= self._thumb_width
 		th		= self._thumb_height
 		twc		= self._thumb_width - 10
 
@@ -307,18 +323,23 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_resize(self, event):
+		''' thumbctrl.__on_resize(event) -- callback na EVT_SIZE '''
+
 		self._update()
 		self.Refresh()
 
 
 	def __on_mouse_down(self, event):
+		''' thumbctrl.__on_mouse_down(event) -- callback na EVT_LEFT_DOWN.
+			Zaznacza/odznacza miniaturki.
+		'''
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
 
 		lastselected = self._selected
 		self._selected = self._get_item_idx_on_xy(x, y)
 
 		if event.ControlDown():
-			if self.is_selected(self._selected):
+			if self._selected in self._selected_list:
 				self._selected_list.remove(self._selected)
 			else:
 				self._selected_list.append(self._selected)
@@ -356,6 +377,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_mouse_right_down(self, evt):
+		''' thumbctrl.__on_mouse_right_down(evt) -- callback na EVT_RIGHT_DOWN '''
+
 		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
 
 		lastselected = self._selected
@@ -365,6 +388,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_mouse_dbclick(self, event):
+		''' thumbctrl.__on_mouse_dbclick(evt) -- callback na EVT_LEFT_DCLICK '''
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
 		self._selected = self._get_item_idx_on_xy(x, y)
 		if self._selected > -1:
@@ -372,7 +396,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_idle(self, evt):
-		# ładowanie w tle miniaturek
+		''' thumbctrl.__on_idle(evt) -- callback na EVT_IDLE - ładowanie w tle miniaturek '''
 		if self.IsShownOnScreen():
 			len_items = len(self._items)
 
@@ -400,7 +424,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
 		row		= -1
-		tw		= self._thumb_width 
+		tw		= self._thumb_width
 		th		= self._thumb_height
 		twm		= tw + self._padding
 		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
@@ -436,8 +460,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		row			= -1
 		col			= -1
 		last_date	= -1
-		
-		tw		= self._thumb_width 
+
+		tw		= self._thumb_width
 		th		= self._thumb_height
 		twm		= tw + self._padding
 		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
@@ -475,24 +499,18 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	def _compute_captions_height(self, fonts):
 		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie wysokości napisów dla podanych fontów
-		
+
 			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
 			@return lista wysokości w px podanych fontów
 		'''
 		dc = wx.ClientDC(self)
-		#self.PrepareDC(dc)
-		#dc.BeginDrawing()
-		
+
 		def compute(font):
 			dc.SetFont(font)
 			sw, sh = dc.GetTextExtent('QWERTYUIOPASDFGHJKLZZXCVBNMqwertyuiopasdfghjklzxcvbnm,.<>":}{+_)(*&^%$#@!~`')
 			return sh
-		
-		result = [ compute(font) for font in fonts ]
 
-		#dc.EndDrawing()
-		
-		return result
+		return [ compute(font) for font in fonts ]
 
 
 # vim: encoding=utf8: ff=unix:

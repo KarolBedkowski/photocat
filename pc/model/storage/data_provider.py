@@ -38,6 +38,7 @@ class AbortRebuild(StandardError):
 	pass
 
 
+
 class DataProvider:
 	_DATA_FILE_HEADER_SIZE	= 52
 	_DATA_FILE_HEADER_ID	= 'PhotoCatalog_DataFile'
@@ -72,7 +73,7 @@ class DataProvider:
 			return None
 
 		src_file.seek(offset)
-	
+
 		# naglowek
 		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(self._DATA_BLOCK_HEADER_SIZE))
 		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
@@ -103,7 +104,7 @@ class DataProvider:
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
-		_LOG.debug('DataProvider.open(%s)' % self.filename)		
+		_LOG.debug('DataProvider.open(%s)' % self.filename)
 
 		self.close()
 
@@ -146,7 +147,7 @@ class DataProvider:
 		new_file		= None
 		tmp_filename	= self.filename + '.tmp'
 		old_filename	= self.filename + '.old'
-		
+
 		old_objects_count = self.objects_count
 		self.objects_count = 0
 
@@ -271,9 +272,9 @@ class DataProvider:
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
 		_LOG.debug('DataProvider._check_file: next_offset=%d' % self.next_offset)
-		
+
 		# liczba plikow
-		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]	
+		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
 		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
 
 		return next_offset
@@ -305,7 +306,7 @@ class DataProvider:
 
 
 	def _write_next_offset(self, dest_file, next_offset):
-		''' DataProvider._write_next_offset(dest_file, next_offset) -- zapisanie w nagłówku pliku danych o końcu danych 
+		''' DataProvider._write_next_offset(dest_file, next_offset) -- zapisanie w nagłówku pliku danych o końcu danych
 			@param dest_file	plik do którego są zapisywane
 			@param next_offset	koniec danych
 		'''
@@ -316,7 +317,7 @@ class DataProvider:
 	def _write_block(self, dest_file, offset, size, data):
 		'''DataProvider._write_block(dest_file, offset, size, data) -> int -- zapisanie bloku danych
 			@param dest_file	plik do którego są zapisywane
-			@param offset		offset początku 
+			@param offset		offset początku
 			@param size			rozmiar bloku danych (bez nagłówka)
 			@param data			dane do zapisania
 			@return następny offset (koneic danych)
@@ -329,9 +330,9 @@ class DataProvider:
 		dest_file.write(data)
 		# kolejny offset
 		next_offset = self._next_offset(dest_file.tell())
-		
+
 		self.objects_count += 1
-		
+
 		self._write_next_offset(dest_file, next_offset)
 		return next_offset
 

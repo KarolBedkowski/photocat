@@ -42,6 +42,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
 		EventGenerator.__init__(self)
+		
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(self._create_layout(), 1, wx.EXPAND)
 		self.SetSizerAndFit(sizer)
@@ -62,15 +63,15 @@ class InfoPanel(wx.Panel, EventGenerator):
 		panel = wx.Panel(parent, -1)
 		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
 		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		
+
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
-	
+
 		subsizer = wx.BoxSizer(wx.VERTICAL)
 		subsizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND)
 		subsizer.Add(textctrl, 1, wx.EXPAND)
 		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
-		
+
 		panel.SetSizerAndFit(sizer)
 
 		listctrl.InsertColumn(0, '')
@@ -143,10 +144,11 @@ class InfoPanel(wx.Panel, EventGenerator):
 			for key, val in sorted(exif_data.iteritems()):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key))
 				listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
+
 			self._notebook.SetPageText(1, _('Exif'))
+
 		else:
 			self._notebook.SetPageText(1, _('No Exif'))
-
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
@@ -165,7 +167,6 @@ class InfoPanel(wx.Panel, EventGenerator):
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 		self._textctrl_folder_descr.SetValue(str(folder.desc or ""))
-
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)

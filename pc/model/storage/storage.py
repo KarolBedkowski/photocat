@@ -38,10 +38,10 @@ from storage_errors	import LoadFileError, InvalidFileError
 
 class Storage:
 	''' Klasa statyczna do zapisywania i wczytywania katalogów '''
-	
+
 	SUPPORTED_FILE_VERSION_MAX = 2
 	SUPPORTED_FILE_VERSION_MIN = 1
-	
+
 	def __init__(self):
 		raise Exception('Static class')
 
@@ -120,7 +120,7 @@ class Storage:
 
 			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
-			
+
 			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d' % (filename, catalog.object_in_files))
 
 		except InvalidFileError, err:
@@ -185,6 +185,7 @@ class Storage:
 
 		except:
 			_LOG.exception('Storage.__check_header line = "%s"' % line)
+
 		return False, None
 
 

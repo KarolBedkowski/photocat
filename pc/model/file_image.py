@@ -97,6 +97,7 @@ class FileImage(CatalogFile):
 		# format pliku wer 1
 		if self.thumb is not None and type(self.thumb) == types.TupleType:
 			self.thumb = self.thumb[0]
+
 		if self.exif is not None and type(self.exif) == types.TupleType:
 			self.exif = self.exif[0]
 
@@ -111,6 +112,7 @@ class FileImage(CatalogFile):
 		if self._exif_data is None and self.exif is not None:
 			try:
 				self._exif_data = dict(eval(self.disk.catalog.data_provider.get_data(self.exif)))
+
 			except:
 				_LOG.exception('FileImage.exif_data file=%s' % self.name)
 				self._exif_data = None
@@ -135,8 +137,10 @@ class FileImage(CatalogFile):
 		if self.shot_date:
 			try:
 				date = time.strftime('%c', time.localtime(self.shot_date))
+
 			except:
 				_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
+
 			else:
 				result.append((51, _('Date'), date))
 
@@ -199,6 +203,7 @@ class FileImage(CatalogFile):
 					self.shot_date = time.mktime(shot_date)
 
 			return True
+
 		return False
 
 
@@ -215,6 +220,7 @@ class FileImage(CatalogFile):
 						self.shot_date = time.mktime(shot_date)
 
 			return True
+
 		return False
 
 
@@ -269,6 +275,7 @@ class FileImage(CatalogFile):
 		try:
 			try:
 				image = PILImage.open(path)
+
 			except:
 				image =  PILImage.new('RGB', (1,1))
 
@@ -307,15 +314,18 @@ class FileImage(CatalogFile):
 				fnumber = eval(exif['EXIF FNumber'] + '.')
 				if int(fnumber) == fnumber: 	fnumber = int(fnumber)
 				shot_info.append((_('f'), fnumber))
+
 			except:
 				_LOG.exception('_get_info exif fnumber "%s"' % exif.get('EXIF FNumber'))
 
 		if exif.has_key('EXIF ISOSpeedRatings'):
 			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
+
 		elif exif.has_key('MakerNote ISOSetting'):
 			try:
 				iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
 				shot_info.append((_('iso'), iso))
+
 			except:
 				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
 
@@ -326,6 +336,7 @@ class FileImage(CatalogFile):
 				flen = eval(exif['EXIF FocalLength'] + '.')
 				if int(flen) == flen: 	flen = int(flen)
 				shot_info.append((_('focal len.'), flen))
+
 			except:
 				_LOG.exception('_get_info exif flen "%s"' % exif.get('EXIF FocalLength'))
 
@@ -338,16 +349,16 @@ class FileImage(CatalogFile):
 				try:
 					value = exif[exif_key]
 					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
+
 				except:
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
+
 		return None
 
 
 	def __get_exif_shot_date(self, exif):
 		ddate = self.__get_exif_shot_date_value(exif)
-		if ddate is None:
-			return None
-		return time.strftime('%c', ddate)
+		return None if ddate is None else time.strftime('%c', ddate)
 
 
 	##########################################################################
