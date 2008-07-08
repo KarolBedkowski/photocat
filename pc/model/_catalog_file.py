@@ -56,7 +56,7 @@ class CatalogFile(StorageObject):
 		self.parent		= parent
 		self.disk		= disk
 		self.catalog	= disk.catalog
-		
+
 		self._cached_path = None
 
 
@@ -71,39 +71,36 @@ class CatalogFile(StorageObject):
 		result.append((0, _('Name'), str(self.name)))
 		if self.tags is not None and len(self.tags) > 0:
 			result.append((1, _('Tags'), ', '.join(self.tags)))
+
 		result.append((99, '', ''))
 		result.append((100, _('Catalog'), self.disk.catalog.name))
 		if self.disk is not None:
 			result.append((101, _('Disk'), self.disk.name))
+
 		result.append((199, '', ''))
 		if self.date is not None:
 			result.append((200, _('File date'), time.strftime('%c', time.localtime(self.date))))
+
 		return result
-	
+
 	info = property(_get_info)
 
 
 	@property
 	def parent_id(self):
-		if self.parent is None:
-			return None
-		return self.parent.id
+		return None if self.parent is None else self.parent.id
 
 
 	@property
 	def disk_id(self):
-		if self.disk is None:
-			return None
-		return self.disk.id
+		return None if self.disk is None else self.disk.id
 
 
 	@property
 	def path(self):
 		if self._cached_path is None:
-			if self.parent is None:
-				self._cached_path = self.name
-			else:
-				self._cached_path = os.path.join(self.parent.path, self.name)
+			self._cached_path = self.name if self.parent is None else os.path.join(self.parent.path, self.name)
+
 		return self._cached_path
 
 
@@ -147,26 +144,27 @@ class CatalogFile(StorageObject):
 		# zapamiętanie zmienionych tagów
 		if self.tags is None:
 			updated_tags = tags
+
 		elif tags is None:
 			updated_tags = self.tags
+
 		else:
 			updated_tags = [ tag for tag in tags if tag not in self.tags] + [ tag for tag in self.tags if tag not in tags ]
-			
-		self.tags = None
-		if len(tags) > 0:
-			self.tags = tuple(tags)
+
+		self.tags = tuple(tags) if len(tags) > 0 else None
 		self.disk.catalog.tags_provider.update_item(self)
 		return updated_tags
 
 
 	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
 		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
-		
+
 		if options is None or options.get('search_in_names', True):
 			if self.name is not None and cmpfunc(self.name):
 				if self._check_on_find_date(options):
 					add_callback(self)
 					return
+
 		if options is None or options.get('search_in_tags', True):
 			if self.tags is not None and self._check_on_find_date(options):
 				for tag in self.tags:
@@ -205,7 +203,7 @@ class CatalogFile(StorageObject):
 	def _attrlist(cls):
 		attribs = StorageObject._attrlist()
 		attribs.extend((
-				('name', str), ('size', int), ('date', int), ('tags', tuple), 
+				('name', str), ('size', int), ('date', int), ('tags', tuple),
 				('desc', str), ('parent_id', int), ('disk_id', int)
 		))
 		return attribs
@@ -214,4 +212,4 @@ class CatalogFile(StorageObject):
 
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

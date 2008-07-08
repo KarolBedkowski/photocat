@@ -53,7 +53,7 @@ class Catalog(TreeItem):
 		self.data_provider		= DataProvider(filename)
 		self.tags_provider		= Tags(self)
 		self.timeline			= Timeline(None, self)
-		
+
 		self.current_disks		= []
 
 
@@ -70,21 +70,23 @@ class Catalog(TreeItem):
 	@property
 	def childs_to_store(self):
 		return self.disks
-	
-	
+
+
 	@property
 	def object_in_files(self):
 		def count_objects_in_dir(directory):
 			return sum((image.data_objects_count for image in directory.files)) + \
 					sum(( count_objects_in_dir(subdir) for subdir in directory.subdirs ))
+
 		return sum(( count_objects_in_dir(disk) for disk in self.disks ))
-	
+
 
 	@property
 	def dirty_objects_count(self):
 		objects_count = self.data_provider.objects_count
 		if objects_count == 0:
 			return 0, 0
+
 		object_in_files = self.object_in_files
 		dirty = objects_count - object_in_files
 		dirtyp = 100*dirty/objects_count
@@ -118,6 +120,7 @@ class Catalog(TreeItem):
 			self.disks.remove(disk)
 			self.dirty = True
 			return True
+
 		return False
 
 
@@ -139,7 +142,7 @@ class Catalog(TreeItem):
 
 	def fill_shot_date(self):
 		[ disk.fill_shot_date() for disk in self.disks ]
-		
+
 
 	##########################################################################
 
@@ -168,6 +171,7 @@ class Catalog(TreeItem):
 
 			content_size += sum( ( count_folder(item) for item in content if os.path.isdir(item) ) )
 			return content_size
+
 		return count_folder(path)
 
 
@@ -189,7 +193,7 @@ class Catalog(TreeItem):
 			if tags is not None:
 				ff_changed_tags = image.set_tags(tags)
 				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
-				
+
 			if shot_date is not None:
 				image.shot_date = shot_date
 
