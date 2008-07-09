@@ -193,6 +193,73 @@ class ThumbCtrl(wx.ScrolledWindow):
 	#######################################################################################
 
 
+	def draw(self, dc, paint_rect):
+		''' thumbctrl.draw(dc, paint_rect) -- narysowanie miniaturek na wskazanym dc i we wskazanym obszarze.
+
+			@param dc		- dc po którym będzie rysowanie
+			@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
+		'''
+		self.PrepareDC(dc)
+		dc.BeginDrawing()
+
+		dc.SetPen(self._pen)
+		dc.SetBrush(self._brush)
+		dc.SetFont(self._caption_font)
+		dc.SetTextForeground(self._caption_color)
+
+		caption_color		= self._caption_color
+		caption_raw_color	= self._caption_raw_color
+
+		tw		= self._thumb_width
+		th		= self._thumb_height
+		twc		= self._thumb_width - 10
+
+		show_captions	= self.show_captions
+		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
+		has_selected	= len(self._selected_list) > 0
+
+		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
+			# czy rysowac
+			if paint_rect is not None and not paint_rect.Intersects(rect):
+				continue
+
+			# zaznaczenie
+			if has_selected and ii in self._selected_list:
+				dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
+
+			img = item.get_bitmap(tw, th)
+
+			# centrowanie
+			txi = tx + (tw - item.imgwidth) / 2
+			tyi = ty + (th - item.imgheight) / 2
+
+			# rysowanie
+			dc.DrawBitmap(img, txi, tyi, True)
+
+			# caption
+			if show_captions:
+				dc.SetTextForeground(caption_raw_color if item.is_raw else caption_color)
+				caption, caption_width = item.get_caption(twc, dc)
+				txc = tx + (tw - caption_width) / 2
+				dc.DrawText(caption, txc, ty + th + 2)
+
+		# timeline_bars
+		if self.group_by_date:
+			dc.SetFont(self._timeline_font)
+			dc.SetPen(self._pen_timeline)
+			dc.SetTextForeground(self._timeline_color)
+
+			for date, y1, y2 in self._timeline_bars:
+				if painty1 <= y2 and y1 <= painty2:
+					dc.DrawLine(10, y2, size.GetWidth()-20, y2)
+					dc.DrawText(str(date), 10, y1)
+
+		dc.EndDrawing()
+
+
+	#######################################################################################
+
+
 	def _update(self):
 		''' thumbctrl._update() -- aktualizacja rozmiarów i pozycji miniaturek '''
 
@@ -260,66 +327,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		paintRect.x = paintRect.x * xu
 		paintRect.y = paintRect.y * yu
 
-		painty1 = paintRect.y
-		painty2 = size.GetHeight() + painty1
-
 		dc = wx.PaintDC(self)
-		self.PrepareDC(dc)
-		dc.BeginDrawing()
-
-		dc.SetPen(self._pen)
-		dc.SetBrush(self._brush)
-		dc.SetFont(self._caption_font)
-		dc.SetTextForeground(self._caption_color)
-
-		caption_color		= self._caption_color
-		caption_raw_color	= self._caption_raw_color
-
-		tw		= self._thumb_width
-		th		= self._thumb_height
-		twc		= self._thumb_width - 10
-
-		show_captions	= self.show_captions
-		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
-		has_selected	= len(self._selected_list) > 0
-
-		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
-			# czy rysowac
-			if not paintRect.Intersects(rect):
-				continue
-
-			# zaznaczenie
-			if has_selected and ii in self._selected_list:
-				dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
-
-			img = item.get_bitmap(tw, th)
-
-			# centrowanie
-			txi = tx + (tw - item.imgwidth) / 2
-			tyi = ty + (th - item.imgheight) / 2
-
-			# rysowanie
-			dc.DrawBitmap(img, txi, tyi, True)
-
-			# caption
-			if show_captions:
-				dc.SetTextForeground(caption_raw_color if item.is_raw else caption_color)
-				caption, caption_width = item.get_caption(twc, dc)
-				txc = tx + (tw - caption_width) / 2
-				dc.DrawText(caption, txc, ty + th + 2)
-
-		# timeline_bars
-		if self.group_by_date:
-			dc.SetFont(self._timeline_font)
-			dc.SetPen(self._pen_timeline)
-			dc.SetTextForeground(self._timeline_color)
-
-			for date, y1, y2 in self._timeline_bars:
-				if painty1 <= y2 and y1 <= painty2:
-					dc.DrawLine(10, y2, size.GetWidth()-20, y2)
-					dc.DrawText(str(date), 10, y1)
-
-		dc.EndDrawing()
+		self.draw(dc, paintRect)
 
 
 	def __on_resize(self, event):
@@ -511,6 +520,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			return sh
 
 		return [ compute(font) for font in fonts ]
+
 
 
 # vim: encoding=utf8: ff=unix:
