@@ -36,6 +36,7 @@ import wx
 import wx.lib.newevent
 
 from pc.lib	import fonttools
+from pc.engine.thumb_drawer import ThumbDrawer
 
 from _thumb import Thumb
 
@@ -61,46 +62,21 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
 
-		self._cols			= 0
-		self._thumb_width	= 200
-		self._thumb_height	= 200
+		self._thumb_drawer = ThumbDrawer(self)
 		self.thumbs_preload = thumbs_preload
-		self.show_captions	= show_captions
-		self.group_by_date	= False
-
 		self._status_wnd	= status_wnd
 
-		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
-		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
-		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
-		self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
-		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
-		self._caption_color = wx.Colour(127, 127, 127)
-		self._caption_raw_color	= wx.Colour(70, 70, 255)
-		self._timeline_color = wx.Colour(127, 127, 127)
+		self._items				= []
+		self._selected_list		= []
+		self._selected			= -1
+		self._last_preloaded	= -1
 
-		self.clear()
-
-		self.Bind(wx.EVT_SIZE, self.__on_resize)
-		self.Bind(wx.EVT_PAINT, self.__on_paint)
-		self.Bind(wx.EVT_LEFT_DOWN, self.__on_mouse_down)
-		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
-		self.Bind(wx.EVT_RIGHT_DOWN, self.__on_mouse_right_down)
-		self.Bind(wx.EVT_IDLE, self.__on_idle)
-
-
-	def clear(self):
-		''' thumbctrl.clear() -- wyczyszczenie kontrolki '''
-		self._items			= []
-		self._selected		= -1
-		self._selected_list = []
-		self._padding		= 0
-		self._last_preloaded = -1
-		self._items_pos		= []
-		self._timeline_bars = []
-
-		self._update()
-		self.Refresh()
+		self.Bind(wx.EVT_SIZE,			self.__on_resize)
+		self.Bind(wx.EVT_PAINT,			self.__on_paint)
+		self.Bind(wx.EVT_LEFT_DOWN,		self.__on_mouse_down)
+		self.Bind(wx.EVT_LEFT_DCLICK,	self.__on_mouse_dbclick)
+		self.Bind(wx.EVT_RIGHT_DOWN,	self.__on_mouse_right_down)
+		self.Bind(wx.EVT_IDLE,			self.__on_idle)
 
 
 	def show_dir(self, images, sort_function=None):
@@ -109,19 +85,17 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
+		print images
 		self._items			= [ Thumb(image) for image in images ]
-		self._items_pos		= []
-		self._selected_list = []
-		self._timeline_bars = []
-		self._selected		= -1
-		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
-
 		if sort_function is not None:
 			self._items.sort(lambda x, y: sort_function(x.image, y.image))
 
+		self._last_preloaded	= -1 if self.thumbs_preload else len(self._items)
+		self._selected			= -1
+		self._selected_list		= []
+
 		self.Scroll(0, 0)
 		self._update()
-		self.Refresh()
 
 
 	def sort_current_dir(self, sort_function):
@@ -130,14 +104,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param sort_function - funkcja sortująca
 		'''
 		self._items.sort(lambda x, y: sort_function(x.image, y.image))
-		self._items_pos		= []
 		self._selected_list = []
-		self._timeline_bars = []
 		self._selected		= -1
 
 		self.Scroll(0, 0)
 		self._update()
-		self.Refresh()
 
 
 	def set_thumb_size(self, thumb_width, thumb_height):
@@ -146,8 +117,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param thumb_width		- nowa szerokość
 			@param thumb_height		- nowa wysokość
 		'''
-		self._thumb_width = thumb_width
-		self._thumb_height = thumb_height
+		self._thumb_width	= thumb_width
+		self._thumb_height	= thumb_height
+
+		self._thumb_drawer.thumb_width	= thumb_width
+		self._thumb_drawer.thumb_height = thumb_height
 
 		[ item.reset() for item in self._items ]
 
@@ -159,22 +133,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 			@param fontdata - słownik z informacją o fontach
 		'''
-		self._caption_font = fonttools.data2font(fontdata, 'thumb',
-				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
-		self._caption_color = fonttools.str2color(fontdata.get('thumb_font_color', '127;127;127'))
-
-		self._timeline_font = fonttools.data2font(fontdata, 'timeline',
-				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
-		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
-		self._pen_timeline	= wx.Pen(self._timeline_color, 1, wx.SOLID)
-
-		color = fonttools.str2color(fontdata.get('thumb_raw_color'), wx.Colour(70, 70, 255))
-		if fontdata.get('thumb_raw_custom_color', True):
-			self._caption_raw_color = color
-
-		else:
-			self._caption_raw_color = self._caption_color
-
+		self._thumb_drawer.set_captions_font(fontdata)
 		self._update()
 
 
@@ -190,71 +149,22 @@ class ThumbCtrl(wx.ScrolledWindow):
 		return self._items[self._selected].image if self._selected > -1 else None
 
 
-	#######################################################################################
+	def _set_show_captions(self, show_captions):
+		self._thumb_drawer.show_captions = show_captions
+
+	def _get_show_captions(self):
+		return self._thumb_drawer.show_captions
+
+	show_captions = property(_get_show_captions, _set_show_captions)
 
 
-	def draw(self, dc, paint_rect):
-		''' thumbctrl.draw(dc, paint_rect) -- narysowanie miniaturek na wskazanym dc i we wskazanym obszarze.
+	def _set_group_by_date(self, group_by_date):
+		self._thumb_drawer.group_by_date = group_by_date
 
-			@param dc		- dc po którym będzie rysowanie
-			@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
-		'''
-		self.PrepareDC(dc)
-		dc.BeginDrawing()
+	def _get_group_by_dates(self):
+		return self._thumb_drawer.group_by_date
 
-		dc.SetPen(self._pen)
-		dc.SetBrush(self._brush)
-		dc.SetFont(self._caption_font)
-		dc.SetTextForeground(self._caption_color)
-
-		caption_color		= self._caption_color
-		caption_raw_color	= self._caption_raw_color
-
-		tw		= self._thumb_width
-		th		= self._thumb_height
-		twc		= self._thumb_width - 10
-
-		show_captions	= self.show_captions
-		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
-		has_selected	= len(self._selected_list) > 0
-
-		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
-			# czy rysowac
-			if paint_rect is not None and not paint_rect.Intersects(rect):
-				continue
-
-			# zaznaczenie
-			if has_selected and ii in self._selected_list:
-				dc.DrawRectangle(tx-3, ty-3, tw+6, th+selected_bottom)
-
-			img = item.get_bitmap(tw, th)
-
-			# centrowanie
-			txi = tx + (tw - item.imgwidth) / 2
-			tyi = ty + (th - item.imgheight) / 2
-
-			# rysowanie
-			dc.DrawBitmap(img, txi, tyi, True)
-
-			# caption
-			if show_captions:
-				dc.SetTextForeground(caption_raw_color if item.is_raw else caption_color)
-				caption, caption_width = item.get_caption(twc, dc)
-				txc = tx + (tw - caption_width) / 2
-				dc.DrawText(caption, txc, ty + th + 2)
-
-		# timeline_bars
-		if self.group_by_date:
-			dc.SetFont(self._timeline_font)
-			dc.SetPen(self._pen_timeline)
-			dc.SetTextForeground(self._timeline_color)
-
-			for date, y1, y2 in self._timeline_bars:
-				if painty1 <= y2 and y1 <= painty2:
-					dc.DrawLine(10, y2, size.GetWidth()-20, y2)
-					dc.DrawText(str(date), 10, y1)
-
-		dc.EndDrawing()
+	group_by_date = property(_get_group_by_dates, _set_group_by_date)
 
 
 	#######################################################################################
@@ -263,55 +173,16 @@ class ThumbCtrl(wx.ScrolledWindow):
 	def _update(self):
 		''' thumbctrl._update() -- aktualizacja rozmiarów i pozycji miniaturek '''
 
-		width = self.GetClientSize().GetWidth()
-		cols = max((width - 30) / self._thumb_width, 1)
+		width	= self.GetClientSize().GetWidth()
+		res		= self._thumb_drawer.update(self._items, width)
 
-		# przesuniecie x aby ikonki byly na środku
-		padding = (width - cols * self._thumb_width) / (cols + 1)
+		cols, rows, virtual_size, size_hints, scroll_rate = res
 
-		# muszą być jakieś odstępy między miniaturkami
-		if padding < 6 and cols > 1:
-			cols -= 1
-			padding = (width -  cols * self._thumb_width) / (cols + 1)
+		self.SetVirtualSize(virtual_size)
+		self.SetSizeHints(size_hints[0], size_hints[1])
+		self.SetScrollRate(scroll_rate[0], scroll_rate[1])
 
-		self._padding = padding
-		self._cols = cols
-
-
-		# obliczenie wysokości etykiet
-		self._caption_height, self._timeline_height = self._compute_captions_height(
-				(self._caption_font, self._timeline_font)
-		)
-
-		# wyznaczenie pozycji miniaturek
-		if len(self._items) == 0:
-			rows, height = 0, 0
-
-		elif self.group_by_date:
-			rows, height = self.__compute_thumbs_pos_timeline()
-
-		else:
-			rows, height = self.__compute_thumbs_pos_normal()
-
-		self._rows = rows
-
-		self.SetVirtualSize((self._cols * (self._thumb_width + padding), height))
-		self.SetSizeHints(self._thumb_width + padding, self._thumb_height + 30)
-		self.SetScrollRate((self._thumb_width + padding) / 4, (self._thumb_height + 30)/4)
-
-
-	def _get_item_idx_on_xy(self, x, y):
-		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu elementu o danej współrzędnych
-
-			@param x	- pozycja x
-			@param y	- pozycja y
-			@return index elementu lub -1 jezeli brak
-		'''
-		for index, item, x1, y1, x2, y2, dummy in self._items_pos:
-			if x >= x1 and x <= x2 and y >= y1 and y <= y2:
-				return index
-
-		return -1
+		self.Refresh()
 
 
 	##################################################################################
@@ -328,14 +199,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		paintRect.y = paintRect.y * yu
 
 		dc = wx.PaintDC(self)
-		self.draw(dc, paintRect)
+		self.PrepareDC(dc)
+		self._thumb_drawer.draw(dc, paintRect, self._selected_list)
 
 
 	def __on_resize(self, event):
 		''' thumbctrl.__on_resize(event) -- callback na EVT_SIZE '''
-
 		self._update()
-		self.Refresh()
 
 
 	def __on_mouse_down(self, event):
@@ -345,11 +215,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
 
 		lastselected = self._selected
-		self._selected = self._get_item_idx_on_xy(x, y)
+		self._selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 
 		if event.ControlDown():
 			if self._selected in self._selected_list:
 				self._selected_list.remove(self._selected)
+
 			else:
 				self._selected_list.append(self._selected)
 
@@ -391,7 +262,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
 
 		lastselected = self._selected
-		selected = self._get_item_idx_on_xy(x, y)
+		selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 		if self._selected != selected:
 			self.__on_mouse_down(evt)
 
@@ -399,7 +270,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 	def __on_mouse_dbclick(self, event):
 		''' thumbctrl.__on_mouse_dbclick(evt) -- callback na EVT_LEFT_DCLICK '''
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-		self._selected = self._get_item_idx_on_xy(x, y)
+		self._selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 		if self._selected > -1:
 			wx.PostEvent(self, ThumbDblClickEvent(idx=self._selected))
 
@@ -424,102 +295,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		evt.Skip()
 
 
-	def __compute_thumbs_pos_normal(self):
-		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji poszczególnych miniaturek - normalne
-
-			Pozycje miniaturek zapisywane są w self._item_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
-
-			@return (row, height) - liczba wierszy i długość panelu
-		'''
-		row		= -1
-		tw		= self._thumb_width
-		th		= self._thumb_height
-		twm		= tw + self._padding
-		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
-		padding = self._padding
-		cols	= self._cols
-
-		items_pos = self._items_pos = []
-
-		for ii, item  in enumerate(self._items):
-			col = ii % cols
-
-			if col == 0:
-				row += 1
-
-			# pozycja
-			tx = col * twm + padding
-			ty = row * thm + 5
-
-			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
-
-		return row, ty+thm
-
-
-	def __compute_thumbs_pos_timeline(self, level=86400):
-		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
-
-			Pozycje miniaturek zapisywane są w self._item_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
-
-			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
-			@return (row, height) - liczba wierszy i długość panelu
-		'''
-		row			= -1
-		col			= -1
-		last_date	= -1
-
-		tw		= self._thumb_width
-		th		= self._thumb_height
-		twm		= tw + self._padding
-		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
-		padding	= self._padding
-		cols	= self._cols
-		timeline_height = self._timeline_height
-
-		items_pos		= self._items_pos		= []
-		timeline_bars	= self._timeline_bars	= []
-
-		for index, item  in enumerate(self._items):
-			col += 1
-			item_date = int(item.image.date_to_check / level)
-
-			if last_date != item_date:
-				pos		= int((row + 1) * thm + 20)
-				label	= time.strftime('%x', time.localtime(item.image.date_to_check))
-				col		= 0
-				row		+= 1 + (timeline_height + 25)/float(thm)
-				last_date = item_date
-				timeline_bars.append((label, pos, pos+timeline_height+2))
-
-			elif col >= cols:
-				col = 0
-				row += 1
-
-			# pozycja
-			tx = col * twm + padding
-			ty = int(row * thm + 5)
-
-			items_pos.append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
-
-		return row, ty+thm
-
-
-	def _compute_captions_height(self, fonts):
-		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie wysokości napisów dla podanych fontów
-
-			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
-			@return lista wysokości w px podanych fontów
-		'''
-		dc = wx.ClientDC(self)
-
-		def compute(font):
-			dc.SetFont(font)
-			sw, sh = dc.GetTextExtent('QWERTYUIOPASDFGHJKLZZXCVBNMqwertyuiopasdfghjklzxcvbnm,.<>":}{+_)(*&^%$#@!~`')
-			return sh
-
-		return [ compute(font) for font in fonts ]
 
 
 
