@@ -66,7 +66,10 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.thumbs_preload = thumbs_preload
 		self._status_wnd	= status_wnd
 
-		self.clear()
+		self._items				= []
+		self._selected_list		= []
+		self._selected			= -1
+		self._last_preloaded	= -1
 
 		self.Bind(wx.EVT_SIZE,			self.__on_resize)
 		self.Bind(wx.EVT_PAINT,			self.__on_paint)
@@ -76,20 +79,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_IDLE,			self.__on_idle)
 
 
-	def clear(self):
-		''' thumbctrl.clear() -- wyczyszczenie kontrolki '''
-		self._items				= []
-		self._selected_list		= []
-		self._selected			= -1
-		self._last_preloaded	= -1
-
-
 	def show_dir(self, images, sort_function=None):
 		''' thumbctrl.show_dir(images) -- wyświetlenie listy miniaturek
 
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
+		print images
 		self._items			= [ Thumb(image) for image in images ]
 		if sort_function is not None:
 			self._items.sort(lambda x, y: sort_function(x.image, y.image))
@@ -100,7 +96,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		self.Scroll(0, 0)
 		self._update()
-		self.Refresh()
 
 
 	def sort_current_dir(self, sort_function):
@@ -114,7 +109,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		self.Scroll(0, 0)
 		self._update()
-		self.Refresh()
 
 
 	def set_thumb_size(self, thumb_width, thumb_height):
@@ -126,7 +120,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_width	= thumb_width
 		self._thumb_height	= thumb_height
 
-		self._thumb_drawer.set_thumb_size(thumb_width, thumb_height)
+		self._thumb_drawer.thumb_width	= thumb_width
+		self._thumb_drawer.thumb_height = thumb_height
 
 		[ item.reset() for item in self._items ]
 
@@ -187,15 +182,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.SetSizeHints(size_hints[0], size_hints[1])
 		self.SetScrollRate(scroll_rate[0], scroll_rate[1])
 
-
-	def _get_item_idx_on_xy(self, x, y):
-		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu elementu o danej współrzędnych
-
-			@param x	- pozycja x
-			@param y	- pozycja y
-			@return index elementu lub -1 jezeli brak
-		'''
-		return self._thumb_drawer.get_item_idx_on_xy(x, y)
+		self.Refresh()
 
 
 	##################################################################################
@@ -219,7 +206,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 	def __on_resize(self, event):
 		''' thumbctrl.__on_resize(event) -- callback na EVT_SIZE '''
 		self._update()
-		self.Refresh()
 
 
 	def __on_mouse_down(self, event):
@@ -229,11 +215,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
 
 		lastselected = self._selected
-		self._selected = self._get_item_idx_on_xy(x, y)
+		self._selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 
 		if event.ControlDown():
 			if self._selected in self._selected_list:
 				self._selected_list.remove(self._selected)
+
 			else:
 				self._selected_list.append(self._selected)
 
@@ -275,7 +262,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
 
 		lastselected = self._selected
-		selected = self._get_item_idx_on_xy(x, y)
+		selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 		if self._selected != selected:
 			self.__on_mouse_down(evt)
 
@@ -283,7 +270,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 	def __on_mouse_dbclick(self, event):
 		''' thumbctrl.__on_mouse_dbclick(evt) -- callback na EVT_LEFT_DCLICK '''
 		x, y = self.CalcUnscrolledPosition(event.GetX(), event.GetY())
-		self._selected = self._get_item_idx_on_xy(x, y)
+		self._selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 		if self._selected > -1:
 			wx.PostEvent(self, ThumbDblClickEvent(idx=self._selected))
 

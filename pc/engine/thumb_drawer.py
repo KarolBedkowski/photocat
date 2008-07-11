@@ -45,42 +45,27 @@ from pc.lib	import fonttools
 class ThumbDrawer(object):
 	def __init__(self, parent):
 
+		self._parent		= parent
 		self._cols			= 0
-		self._thumb_width	= 200
-		self._thumb_height	= 200
+		self._width			= 0
+		self.thumb_width	= 200
+		self.thumb_height	= 200
 		self.show_captions	= True
 		self.group_by_date	= False
-		self._parent		= parent
-		self._width			= 0
 
-		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
-		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
-		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
-		#self._brush			= wx.Brush(self.GetBackgroundColour(), wx.SOLID)
-		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
-		self._caption_color = wx.Colour(127, 127, 127)
-		self._caption_raw_color	= wx.Colour(70, 70, 255)
-		self._timeline_color = wx.Colour(127, 127, 127)
-
-		self.clear()
-
-
-	def clear(self):
-		''' thumbctrl.clear() -- wyczyszczenie kontrolki '''
 		self._padding		= 0
 		self._items_pos		= []
 		self._timeline_bars = []
 		self._items			= []
 
-
-	def set_thumb_size(self, thumb_width, thumb_height):
-		''' thumbctrl.set_thumb_size(thumb_width, thumb_height) -- ustawienie nowego rozmiaru miniaturek i odświerzenie
-
-			@param thumb_width		- nowa szerokość
-			@param thumb_height		- nowa wysokość
-		'''
-		self._thumb_width = thumb_width
-		self._thumb_height = thumb_height
+		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
+		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
+		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
+		self._brush			= wx.Brush(parent.GetBackgroundColour(), wx.SOLID)
+		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
+		self._caption_color = wx.Colour(127, 127, 127)
+		self._caption_raw_color	= wx.Colour(70, 70, 255)
+		self._timeline_color = wx.Colour(127, 127, 127)
 
 
 	def set_captions_font(self, fontdata):
@@ -123,27 +108,29 @@ class ThumbDrawer(object):
 
 
 	def draw(self, dc, paint_rect, selected=None):
-		''' thumbctrl.draw(dc, paint_rect) -- narysowanie miniaturek na wskazanym dc i we wskazanym obszarze.
+		''' thumbctrl.draw(dc, paint_rect, selected) -- narysowanie miniaturek na wskazanym dc i we wskazanym obszarze.
 
 			@param dc		- dc po którym będzie rysowanie
 			@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
+			@param selected	- lista zaznaczonych elementów (indeksów)
 		'''
 		dc.BeginDrawing()
 		dc.SetPen(self._pen)
-		#dc.SetBrush(self._brush)
+		dc.SetBrush(self._brush)
 		dc.SetFont(self._caption_font)
 		dc.SetTextForeground(self._caption_color)
 
 		caption_color		= self._caption_color
 		caption_raw_color	= self._caption_raw_color
 
-		tw		= self._thumb_width
-		th		= self._thumb_height
-		twc		= self._thumb_width - 10
+		tw		= self.thumb_width
+		th		= self.thumb_height
+		twc		= self.thumb_width - 10
 
 		if paint_rect is None:
 			y1 = 0
 			y2 = sys.maxint
+
 		else:
 			painty1 = paint_rect.y
 			painty2 = paint_rect.height + painty1
@@ -194,19 +181,25 @@ class ThumbDrawer(object):
 
 
 	def update(self, items, width):
-		''' thumbctrl._update() -- aktualizacja rozmiarów i pozycji miniaturek '''
+		''' thumbctrl.update(items, width) -> tuple() -- aktualizacja rozmiarów i pozycji miniaturek
+
+			@param items	- elementy do wyświetlenia
+			@param width	- szerokość
+			@return (cols, rows, virtual_size, size_hints, scroll_rate)
+		'''
 
 		self._items			= items
+		self._items_pos		= []
 
-		cols = max((width - 30) / self._thumb_width, 1)
+		cols = max((width - 30) / self.thumb_width, 1)
 
 		# przesuniecie x aby ikonki byly na środku
-		padding = (width - cols * self._thumb_width) / (cols + 1)
+		padding = (width - cols * self.thumb_width) / (cols + 1)
 
 		# muszą być jakieś odstępy między miniaturkami
 		if padding < 6 and cols > 1:
 			cols -= 1
-			padding = (width -  cols * self._thumb_width) / (cols + 1)
+			padding = (width -  cols * self.thumb_width) / (cols + 1)
 
 		self._padding	= padding
 		self._cols		= cols
@@ -230,9 +223,9 @@ class ThumbDrawer(object):
 		self._width = width
 
 		return (cols, rows,
-				(self._cols * (self._thumb_width + padding), height),
-				(self._thumb_width + padding, self._thumb_height + 30),
-				((self._thumb_width + padding) / 4, (self._thumb_height + 30) / 4)
+				(self._cols * (self.thumb_width + padding), height),
+				(self.thumb_width + padding, self.thumb_height + 30),
+				((self.thumb_width + padding) / 4, (self.thumb_height + 30) / 4)
 		)
 
 
@@ -248,14 +241,14 @@ class ThumbDrawer(object):
 			@return (row, height) - liczba wierszy i długość panelu
 		'''
 		row		= -1
-		tw		= self._thumb_width
-		th		= self._thumb_height
+		tw		= self.thumb_width
+		th		= self.thumb_height
 		twm		= tw + self._padding
 		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
 		padding = self._padding
 		cols	= self._cols
 
-		items_pos = self._items_pos = []
+		items_pos = self._items_pos
 
 		for ii, item  in enumerate(self._items):
 			col = ii % cols
@@ -285,15 +278,15 @@ class ThumbDrawer(object):
 		col			= -1
 		last_date	= -1
 
-		tw		= self._thumb_width
-		th		= self._thumb_height
+		tw		= self.thumb_width
+		th		= self.thumb_height
 		twm		= tw + self._padding
 		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
 		padding	= self._padding
 		cols	= self._cols
 		timeline_height = self._timeline_height
 
-		items_pos		= self._items_pos		= []
+		items_pos		= self._items_pos
 		timeline_bars	= self._timeline_bars	= []
 
 		for index, item  in enumerate(self._items):
