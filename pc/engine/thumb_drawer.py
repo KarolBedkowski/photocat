@@ -180,16 +180,18 @@ class ThumbDrawer(object):
 		dc.EndDrawing()
 
 
-	def update(self, items, width):
-		''' thumbctrl.update(items, width) -> tuple() -- aktualizacja rozmiarów i pozycji miniaturek
+	def update(self, items, width, height=sys.maxint):
+		''' thumbctrl.update(items, width, [height]) -> tuple() -- aktualizacja rozmiarów i pozycji miniaturek
 
 			@param items	- elementy do wyświetlenia
 			@param width	- szerokość
+			@param height	- wysokosc (max) default=inf.
 			@return (cols, rows, virtual_size, size_hints, scroll_rate)
 		'''
 
 		self._items			= items
 		self._items_pos		= []
+		self._timeline_bars = []
 
 		cols = max((width - 30) / self.thumb_width, 1)
 
@@ -211,13 +213,13 @@ class ThumbDrawer(object):
 
 		# wyznaczenie pozycji miniaturek
 		if len(self._items) == 0:
-			rows, height = 0, 0
+			rows, height, last_index = 0, 0, 0
 
 		elif self.group_by_date:
-			rows, height = self.__compute_thumbs_pos_timeline()
+			rows, height, last_index = self.__compute_thumbs_pos_timeline(height)
 
 		else:
-			rows, height = self.__compute_thumbs_pos_normal()
+			rows, height, last_index = self.__compute_thumbs_pos_normal(height)
 
 		self._rows	= rows
 		self._width = width
@@ -225,20 +227,22 @@ class ThumbDrawer(object):
 		return (cols, rows,
 				(self._cols * (self.thumb_width + padding), height),
 				(self.thumb_width + padding, self.thumb_height + 30),
-				((self.thumb_width + padding) / 4, (self.thumb_height + 30) / 4)
+				((self.thumb_width + padding) / 4, (self.thumb_height + 30) / 4),
+				last_index
 		)
 
 
 	###################################################################################################################
 
 
-	def __compute_thumbs_pos_normal(self):
+	def __compute_thumbs_pos_normal(self, height):
 		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji poszczególnych miniaturek - normalne
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
 
-			@return (row, height) - liczba wierszy i długość panelu
+			@param height	- max wysokość
+			@return (row, height, last_index) - liczba wierszy i długość panelu
 		'''
 		row		= -1
 		tw		= self.thumb_width
@@ -248,12 +252,17 @@ class ThumbDrawer(object):
 		padding = self._padding
 		cols	= self._cols
 
+		max_rows = max((height - 10) / thm, 1)
+
 		items_pos = self._items_pos
 
 		for ii, item  in enumerate(self._items):
 			col = ii % cols
 
 			if col == 0:
+				if row == max_rows:
+					break
+
 				row += 1
 
 			# pozycja
@@ -262,17 +271,18 @@ class ThumbDrawer(object):
 
 			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
-		return row, ty+thm
+		return row, ty+thm, ii
 
 
-	def __compute_thumbs_pos_timeline(self, level=86400):
+	def __compute_thumbs_pos_timeline(self, height, level=86400):
 		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
 
+			@param height	- max wysokość
 			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
-			@return (row, height) - liczba wierszy i długość panelu
+			@return (row, height, last_index) - liczba wierszy i długość panelu
 		'''
 		row			= -1
 		col			= -1
@@ -309,9 +319,14 @@ class ThumbDrawer(object):
 			tx = col * twm + padding
 			ty = int(row * thm + 5)
 
+			if ty > height:
+				row -= 1
+				ty = int(row * thm + 5)
+				break
+
 			items_pos.append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
-		return row, ty+thm
+		return row, ty+thm, index
 
 
 	def _compute_captions_height(self, fonts):

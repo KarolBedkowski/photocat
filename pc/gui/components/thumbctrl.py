@@ -85,7 +85,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
-		print images
 		self._items			= [ Thumb(image) for image in images ]
 		if sort_function is not None:
 			self._items.sort(lambda x, y: sort_function(x.image, y.image))
@@ -176,7 +175,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		width	= self.GetClientSize().GetWidth()
 		res		= self._thumb_drawer.update(self._items, width)
 
-		cols, rows, virtual_size, size_hints, scroll_rate = res
+		cols, rows, virtual_size, size_hints, scroll_rate, last_index = res
 
 		self.SetVirtualSize(virtual_size)
 		self.SetSizeHints(size_hints[0], size_hints[1])
