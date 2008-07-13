@@ -397,6 +397,9 @@ class WndMain(wx.Frame):
 
 	def _on_file_print_prv(self, evt):
 		if len(self._current_show_images) > 0:
+
+			images = sorted(self._current_show_images, self.__get_sort_function(None, True))
+
 			appconfig = AppConfig()
 			options = {
 				'fontdata':		dict(appconfig.get_items('settings') or []),
@@ -405,7 +408,7 @@ class WndMain(wx.Frame):
 				'show_captions': self._photo_list.show_captions,
 				'group_by_date': self._photo_list.group_by_date
 			}
-			eprint.print_preview(self, self._print_data, self._current_show_images, options)
+			eprint.print_preview(self, self._print_data, images, options)
 
 
 	def _on_view_show_hide_info(self, evt):
@@ -1010,6 +1013,7 @@ class WndMain(wx.Frame):
 
 			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania; None oznacza odswieżenie aktualnego katalogu
 		'''
+		images_as_list = False
 		if images is not None:
 			images_as_list = isinstance(images, list) or isinstance(images, tuple)
 			if not images_as_list:
@@ -1017,28 +1021,8 @@ class WndMain(wx.Frame):
 
 		if images is None or len(images) > 0:
 			# jak sortujemy
-			sort_by_name	= self._menu_view_sort_name.IsChecked()
 			group_by_date	= self._menu_view_group_date.IsChecked()
-			desc			= self._menu_view_sort_desc.IsChecked()
-			cmp_func 		= None
-
-			if sort_by_name:
-				if desc:
-					# sort by name desc
-					cmp_func = lambda x, y: -cmp(x.name, y.name)
-
-				elif images is None or images_as_list:
-					# sort by name asc (tylko gdy dane z listy)
-					cmp_func = lambda x, y: cmp(x.name, y.name)
-
-			else:
-				if desc:
-					# sort by date desc
-					cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
-
-				else:
-					#sort by date asc
-					cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+			cmp_func 		= self.__get_sort_function(images, images_as_list)
 
 			self._photo_list.group_by_date = group_by_date
 
@@ -1066,6 +1050,33 @@ class WndMain(wx.Frame):
 		if self._info_panel is not None:
 			self._info_panel.clear()
 			self._info_panel.clear_folder()
+
+
+	def __get_sort_function(self, images, images_as_list):
+		''' wndmain>__get_sort_function(images, images_as_list) -> func -- fukncja sortowania miniaturek '''
+		sort_by_name	= self._menu_view_sort_name.IsChecked()
+		desc			= self._menu_view_sort_desc.IsChecked()
+		cmp_func 		= None
+
+		if sort_by_name:
+			if desc:
+				# sort by name desc
+				cmp_func = lambda x, y: -cmp(x.name, y.name)
+
+			elif images is None or images_as_list:
+				# sort by name asc (tylko gdy dane z listy)
+				cmp_func = lambda x, y: cmp(x.name, y.name)
+
+		else:
+			if desc:
+				# sort by date desc
+				cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+
+			else:
+				#sort by date asc
+				cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+
+		return cmp_func
 
 
 # vim: encoding=utf8:
