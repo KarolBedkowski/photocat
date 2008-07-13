@@ -130,6 +130,8 @@ class ThumbDrawer(object):
 		if paint_rect is None:
 			y1 = 0
 			y2 = sys.maxint
+			painty1 = -1
+			painty2 = sys.maxint
 
 		else:
 			painty1 = paint_rect.y
@@ -180,7 +182,7 @@ class ThumbDrawer(object):
 		dc.EndDrawing()
 
 
-	def update(self, items, width, height=sys.maxint):
+	def update(self, items, width, height=sys.maxint, dc=None):
 		''' thumbctrl.update(items, width, [height]) -> tuple() -- aktualizacja rozmiarów i pozycji miniaturek
 
 			@param items	- elementy do wyświetlenia
@@ -208,7 +210,8 @@ class ThumbDrawer(object):
 
 		# obliczenie wysokości etykiet
 		self._caption_height, self._timeline_height = self._compute_captions_height(
-				(self._caption_font, self._timeline_font)
+				(self._caption_font, self._timeline_font),
+				dc
 		)
 
 		# wyznaczenie pozycji miniaturek
@@ -252,7 +255,7 @@ class ThumbDrawer(object):
 		padding = self._padding
 		cols	= self._cols
 
-		max_rows = max((height - 10) / thm, 1)
+		max_rows = max(int((height - 10) / thm), 1) - 1
 
 		items_pos = self._items_pos
 
@@ -271,7 +274,7 @@ class ThumbDrawer(object):
 
 			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
-		return row, ty+thm, ii
+		return row, ty+thm, len(items_pos)
 
 
 	def __compute_thumbs_pos_timeline(self, height, level=86400):
@@ -326,16 +329,16 @@ class ThumbDrawer(object):
 
 			items_pos.append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
-		return row, ty+thm, index
+		return row, ty+thm, len(items_pos)
 
 
-	def _compute_captions_height(self, fonts):
+	def _compute_captions_height(self, fonts, dest_dc):
 		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie wysokości napisów dla podanych fontów
 
 			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
 			@return lista wysokości w px podanych fontów
 		'''
-		dc = wx.ClientDC(self._parent)
+		dc = wx.ClientDC(self._parent) if dest_dc is None else dest_dc
 
 		def compute(font):
 			dc.SetFont(font)
