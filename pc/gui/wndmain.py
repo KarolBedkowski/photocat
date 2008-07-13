@@ -48,7 +48,7 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog
+from pc.engine				import ecatalog, eprint
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -96,6 +96,9 @@ class WndMain(wx.Frame):
 		self._create_layout(appconfig)
 		self.CreateStatusBar(2, wx.ST_SIZEGRIP)
 		self.SetStatusWidths([-1, 50])
+
+		self._print_data			= wx.PrintData()
+		self._current_show_images	= []
 
 		position = appconfig.get('main_wnd', 'position')
 		if position is None:
@@ -158,6 +161,8 @@ class WndMain(wx.Frame):
 			('-'),
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
+			(_('Print'),			None,		'',							self._on_file_print_prv),
+			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
 			('-'),
 			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
@@ -183,6 +188,7 @@ class WndMain(wx.Frame):
 			('-'),
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
+			('-'),
 		))
 		self._main_menu_catalog = menu
 		return menu
@@ -389,6 +395,19 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
+	def _on_file_print_prv(self, evt):
+		if len(self._current_show_images) > 0:
+			appconfig = AppConfig()
+			options = {
+				'fontdata':		dict(appconfig.get_items('settings') or []),
+				'thumb_width':	self._photo_list.thumb_width,
+				'thumb_height': self._photo_list.thumb_height,
+				'show_captions': self._photo_list.show_captions,
+				'group_by_date': self._photo_list.group_by_date
+			}
+			eprint.print_preview(self, self._print_data, self._current_show_images, options)
+
+
 	def _on_view_show_hide_info(self, evt):
 		""" wybór z menu widok->pokaż/ukryj info """
 		AppConfig().set('settings', 'view_show_info', self._menu_view_show_info.IsChecked())
@@ -400,6 +419,7 @@ class WndMain(wx.Frame):
 		show_captions = self._menu_view_show_captions.IsChecked()
 		AppConfig().set('settings', 'view_show_captions', show_captions)
 		self._photo_list.show_captions	= show_captions
+		self._photo_list.update()
 		self._photo_list.Refresh()
 
 
@@ -908,6 +928,7 @@ class WndMain(wx.Frame):
 		mm_items[2].Enable(catalog_loaded)
 		mm_items[4].Enable(catalog_loaded)
 		mm_items[6].Enable(catalog_loaded)
+		mm_items[8].Enable(len(self._current_show_images) > 0)
 
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
@@ -939,6 +960,7 @@ class WndMain(wx.Frame):
 
 		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
 		self._photo_list.set_captions_font(dict(appconfig.get_items('settings') or []))
+		self._photo_list.update()
 		self._photo_list.Refresh()
 
 		show_info = appconfig.get('settings', 'view_show_info', True)
@@ -1025,8 +1047,10 @@ class WndMain(wx.Frame):
 				self._photo_list.sort_current_dir(cmp_func)
 			else:
 				self._photo_list.show_dir(images, cmp_func)
+				self._current_show_images = images
 		else:
 			self._photo_list.show_dir(images)
+			self._current_show_images = images
 
 
 	def __update_tags_timeline(self, catalog):

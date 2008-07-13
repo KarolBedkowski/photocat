@@ -35,66 +35,118 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
+from pc.gui.components._thumb import Thumb
+
+from thumb_drawer import ThumbDrawer
+
 _ = wx.GetTranslation
 
 
 
 class _Printout(wx.Printout):
-	def __init__(self, canvas):
+	def __init__(self, items, options):
 		wx.Printout.__init__(self)
-		self.canvas = canvas
+		self.items			= items
+		self.drawer			= ThumbDrawer(self)
+		self._num_pages		= 0
+		self._items_per_page = []
+		self._options		= options
+
+		self.drawer.set_captions_font(options['fontdata'])
+		self.drawer.thumb_width		= options['thumb_width']
+		self.drawer.thumb_height	= options['thumb_height']
+		self.drawer.show_captions	= options['show_captions']
+		self.drawer.group_by_date	= options['group_by_date']
+
+
+	def _calc_scale(self, dc):
+		ppiPrinterX, ppiPrinterY	= self.GetPPIPrinter()
+		ppiScreenX, ppiScreenY		= self.GetPPIScreen()
+		log_scale					= float(ppiPrinterX) / float(ppiScreenX)
+
+		pw, ph	= self.GetPageSizePixels()
+		dw, dh	= dc.GetSize()
+		scale	= log_scale * float(dw) / float(pw)
+
+		dc.SetUserScale(scale, scale)
+		self._log_units_mm = float(ppiPrinterX) / (log_scale * 25.4)
+
+
+	def _calc_layout(self, dc):
+		x1, x2, y1, y2 = 5, 5, 5, 10
+
+		dw, dh = dc.GetSize()
+		px1 = x1 * self._log_units_mm
+		py1 = y1 * self._log_units_mm
+		px2 = dc.DeviceToLogicalXRel(dw) - x2 * self._log_units_mm
+		py2 = dc.DeviceToLogicalYRel(dh) - y2 * self._log_units_mm
+
+		page_height = int(py2 - py1)
+		page_width	= int(px2 - px1)
+
+		dc.SetDeviceOrigin(x1, y1)
+
+		# rysowanie marginesów
+		#dc.DrawRectangleRect(wx.RectPP((x1, y1), (page_width-x2, page_height-y2)))
+
+		return page_width, page_height
+
+
+	def HasPage(self, page):
+		return page <= self._num_pages
+
+	def GetPageInfo(self):
+		return (1, self._num_pages, 1, self._num_pages)
 
 
 	def OnPrintPage(self, page):
 		dc = self.GetDC()
 
-		#-------------------------------------------
-		# One possible method of setting scaling factors...
+		self._calc_scale(dc)
+		width, height = self._calc_layout(dc)
 
-		maxX, maxY = self.canvas.GetClientSizeTuple()
+		res		= self.drawer.update(self._items_per_page[page-1], width, height, dc=dc)
+		cols, rows, virtual_size, size_hints, scroll_rate, last_index = res
 
-		# Let's have at least 50 device units margin
-		marginX = 50
-		marginY = 50
-
-		# Add the margin to the graphic size
-		maxX = maxX + (2 * marginX)
-		maxY = maxY + (2 * marginY)
-
-		# Get the size of the DC in pixels
-		(w, h) = dc.GetSizeTuple()
-
-		# Calculate a suitable scaling factor
-		scaleX = float(w) / maxX
-		scaleY = float(h) / maxY
-
-		# Use x or y scaling factor, whichever fits on the DC
-		actualScale = min(scaleX, scaleY)
-
-		width, height = self.canvas.GetClientSizeTuple()
-
-		# Calculate the position on the DC for centering the graphic
-		posX = (w - (width * actualScale)) / 2.0
-		posY = (h - (height * actualScale)) / 2.0
-
-		# Set the scale and origin
-		dc.SetUserScale(actualScale, actualScale)
-		dc.SetDeviceOrigin(int(posX), int(posY))
-
-		#-------------------------------------------
-
-		self.canvas.draw(dc, None)
-		dc.DrawText("Page: %d" % page, marginX/2, maxY-marginY)
+		self.drawer.draw(dc, None)
 
 		return True
 
 
+	def OnPreparePrinting(self):
+		dc = self.GetDC()
+		self._calc_scale(dc)
+		width, height = self._calc_layout(dc)
+
+		begin = 0
+		last_index = -1
+		self._num_pages = 0
+		self._items_per_page = []
+		while True:
+			res		= self.drawer.update(self.items[begin:], width, height, dc=dc)
+			last_index = res[5]
+
+			if last_index == 0:
+				break
+
+			self._items_per_page.append(self.items[begin:begin+last_index])
+			begin += last_index
+			self._num_pages += 1
 
 
-def print_preview(parent, print_data, canvas):
+	def GetBackgroundColour(self):
+		return wx.WHITE
+
+
+
+
+def print_preview(parent, print_data, images, options):
 	data = wx.PrintDialogData(print_data)
-	printout = _Printout(canvas)
-	printout2 = _Printout(canvas)
+
+	images = [ Thumb(image) for image in images ]
+
+	printout = _Printout(images, options)
+	printout2 = _Printout(images, options)
 	preview = wx.PrintPreview(printout, printout2, data)
 
 	if not preview.Ok():

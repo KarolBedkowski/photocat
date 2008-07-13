@@ -127,6 +127,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._update()
 
 
+	def update(self):
+		self._update()
+
+
+	@property
+	def thumb_width(self):
+		return self._thumb_width
+
+	@property
+	def thumb_height(self):
+		return self._thumb_height
+
+
 	def set_captions_font(self, fontdata):
 		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek i odświerzenie
 
