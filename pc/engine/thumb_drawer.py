@@ -310,22 +310,28 @@ class ThumbDrawer(object):
 				pos		= int((row + 1) * thm + 20)
 				label	= time.strftime('%x', time.localtime(item.image.date_to_check))
 				col		= 0
-				row		+= 1 + (timeline_height + 25)/float(thm)
-				last_date = item_date
+
+				next_row = row + 1 + (timeline_height + 25)/float(thm)
+
+				if (next_row + 1) * thm + 5 > height:
+					break
+
+				row			= next_row
+				last_date	= item_date
 				timeline_bars.append((label, pos, pos+timeline_height+2))
 
 			elif col >= cols:
 				col = 0
+
+				if (row + 2) * thm + 5 > height:
+					print row
+					break
+
 				row += 1
 
 			# pozycja
 			tx = col * twm + padding
 			ty = int(row * thm + 5)
-
-			if ty > height:
-				row -= 1
-				ty = int(row * thm + 5)
-				break
 
 			items_pos.append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
