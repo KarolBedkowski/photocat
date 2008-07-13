@@ -73,7 +73,7 @@ class _Printout(wx.Printout):
 
 
 	def _calc_layout(self, dc):
-		x1, x2, y1, y2 = 5, 5, 5, 10
+		x1, x2, y1, y2 = 5, 5, 5, 5
 
 		dw, dh = dc.GetSize()
 		px1 = x1 * self._log_units_mm
