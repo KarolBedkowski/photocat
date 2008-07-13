@@ -208,6 +208,7 @@ class WndMain(wx.Frame):
 		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
 		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
 		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
+		self._menu_view_show_recur = create_menu_item(self, menu, _('[x]With subdirs'),		self._on_view_sort)[1]
 
 		return menu
 
@@ -427,7 +428,10 @@ class WndMain(wx.Frame):
 
 
 	def _on_view_sort(self, evt):
-		self._show_dir(None)
+		if self._menu_view_show_recur.IsChecked():
+			self._on_dirtree_item_select(evt)
+		else:
+			self._show_dir(None)
 
 
 	def _on_help_about(self, evt):
@@ -1017,7 +1021,11 @@ class WndMain(wx.Frame):
 		if images is not None:
 			images_as_list = isinstance(images, list) or isinstance(images, tuple)
 			if not images_as_list:
-				images = images.files
+				if self._menu_view_show_recur.IsChecked():
+					images = images.images_recursive
+
+				else:
+					images = images.files
 
 		if images is None or len(images) > 0:
 			# jak sortujemy

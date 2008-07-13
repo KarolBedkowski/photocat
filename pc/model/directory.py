@@ -76,6 +76,14 @@ class Directory(CatalogFile, TreeItem):
 	def subdirs_count(self):
 		return sum((subdir.subdirs_count for subdir in self.subdirs)) + len(self.subdirs)
 
+
+	@property
+	def images_recursive(self):
+		res = []
+		[ res.extend(subdir.images_recursive) for subdir in self.subdirs ]
+		res.extend(self.files)
+		return res
+
 	##########################################################################
 
 
@@ -279,7 +287,7 @@ class Directory(CatalogFile, TreeItem):
 				for fname, fpath in files_path
 				if  os.path.isdir(fpath)
 		))
-		
+
 		return subdirs
 
 
