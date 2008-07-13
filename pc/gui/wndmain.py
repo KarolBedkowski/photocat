@@ -1052,6 +1052,8 @@ class WndMain(wx.Frame):
 			self._photo_list.show_dir(images)
 			self._current_show_images = images
 
+		self.__update_menus_toolbars()
+
 
 	def __update_tags_timeline(self, catalog):
 		''' wndmain.__update_tags_timeline(catalog) -- odświerzenie dir tree: tags, timeline '''
