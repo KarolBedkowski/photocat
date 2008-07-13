@@ -27,12 +27,12 @@ __revision__	= '$Id$'
 __all__			= ['run']
 
 
-__version__		= '1.2.0'
-__release__		= '2008-07-03'
+__version__		= '1.x-dev'
+__release__		= '2008-*'
 
 
 
 from pc.main import run
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

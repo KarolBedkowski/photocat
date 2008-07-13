@@ -1,35 +1,7 @@
-2008-07-03 (v 1.2.0)
-
-Karol Będkowski:
-      setup: fix: błąd tworzenia pliku instalatora
-      gui: dodanie menu widok, sortowanie, grupowanie
-      all: optymalizacje
-      gui: zmiana karty panelu informacji na katalog/zdjęcie po wybraniu katalogu/zdjęcia
-      gui: możliwość  wyboru czcionki na liście miniaturek
-      gui: poprawka w przeliczaniu pozycji miniaturek (uwzględnianie fontów)
-      gui: sortowanie miniaturek bez odświerzania
-
-
-2008-06-27 (v 1.1.1)
-
-Karol Będkowski:
-     conf: fix: brak domyslnej wartości dla thumb_width, thumb_height
-
-
-2008-06-16 (v 1.1.0)
-
-Karol Będkowski:
-      sterowanie wyświetlaniem miniaturek: preload i podpisy
-      infopanel: fix zły nagłówek w głównych informacjach
-      gsearch: + wyświetlanie informacji o zaznaczonym zdjęciu
-      search: + przycisk goto; ukrywanie podglądu przy miniaturach
-      search: + możliwość przerwania wyszukiwania po znalezieniu 1000+ elementów
-      search: + sortowanie listy wynikow
-      fix: wygląd
-      settings: wybór czcionki dla podpisów miniaturek
+2008-* (v 1.x-dev)
 
 
 
 
 
-# vim: encoding=utf8: ff=unix: fileencoding=utf8: 
+# vim: encoding=utf8: ff=unix: fileencoding=utf8:
