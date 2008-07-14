@@ -207,6 +207,7 @@ class WndMain(wx.Frame):
 		self._menu_view_sort_name = create_menu_item(self, menu, _('[o]Sort by &name '),	self._on_view_sort)[1]
 		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
 		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
+		self._menu_view_group_path = create_menu_item(self, menu, _('[o]&Group by path '),	self._on_view_sort)[1]
 		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
 		self._menu_view_show_recur = create_menu_item(self, menu, _('[x]With subdirs'),		self._on_view_sort)[1]
 
@@ -1030,9 +1031,19 @@ class WndMain(wx.Frame):
 		if images is None or len(images) > 0:
 			# jak sortujemy
 			group_by_date	= self._menu_view_group_date.IsChecked()
+			group_by_path	= self._menu_view_group_path.IsChecked()
 			cmp_func 		= self.__get_sort_function(images, images_as_list)
 
-			self._photo_list.group_by_date = group_by_date
+			if group_by_path:
+				group_by = 2
+
+			elif group_by_date:
+				group_by = 1
+
+			else:
+				group_by = 0
+
+			self._photo_list.group_by = group_by
 
 			if images is None:
 				# odświeżenie widoku
@@ -1064,6 +1075,7 @@ class WndMain(wx.Frame):
 		''' wndmain>__get_sort_function(images, images_as_list) -> func -- fukncja sortowania miniaturek '''
 		sort_by_name	= self._menu_view_sort_name.IsChecked()
 		desc			= self._menu_view_sort_desc.IsChecked()
+		gr_path			= self._menu_view_group_path.IsChecked()
 		cmp_func 		= None
 
 		if sort_by_name:
@@ -1074,6 +1086,14 @@ class WndMain(wx.Frame):
 			elif images is None or images_as_list:
 				# sort by name asc (tylko gdy dane z listy)
 				cmp_func = lambda x, y: cmp(x.name, y.name)
+
+		elif gr_path:
+			if desc:
+				# groupowanie by ścieżka
+				cmp_func = lambda x, y: -cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
+
+			else:
+				cmp_func = lambda x, y: cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
 
 		else:
 			if desc:

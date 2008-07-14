@@ -43,6 +43,11 @@ from pc.lib	import fonttools
 
 
 class ThumbDrawer(object):
+
+	GROUP_BY_NONE	= 0
+	GROUP_BY_DATE	= 1
+	GROUP_BY_PATH	= 2
+
 	def __init__(self, parent):
 
 		self._parent		= parent
@@ -51,7 +56,7 @@ class ThumbDrawer(object):
 		self.thumb_width	= 200
 		self.thumb_height	= 200
 		self.show_captions	= True
-		self.group_by_date	= False
+		self.group_by		= ThumbDrawer.GROUP_BY_NONE
 
 		self._padding		= 0
 		self._items_pos		= []
@@ -167,7 +172,7 @@ class ThumbDrawer(object):
 				dc.DrawText(caption, txc, ty + th + 2)
 
 		# timeline_bars
-		if self.group_by_date:
+		if self.group_by > ThumbDrawer.GROUP_BY_NONE:
 			dc.SetFont(self._timeline_font)
 			dc.SetPen(self._pen_timeline)
 			dc.SetTextForeground(self._timeline_color)
@@ -218,8 +223,12 @@ class ThumbDrawer(object):
 		if len(self._items) == 0:
 			rows, height, last_index = 0, 0, 0
 
-		elif self.group_by_date:
+		elif self.group_by == ThumbDrawer.GROUP_BY_DATE:
 			rows, height, last_index = self.__compute_thumbs_pos_timeline(height)
+
+		elif self.group_by == ThumbDrawer.GROUP_BY_PATH:
+			rows, height, last_index = self.__compute_thumbs_pos_path(height)
+			pass
 
 		else:
 			rows, height, last_index = self.__compute_thumbs_pos_normal(height)
@@ -293,6 +302,26 @@ class ThumbDrawer(object):
 
 		def group_label_func(item):
 			return time.strftime('%x', time.localtime(item.image.date_to_check))
+
+		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
+
+
+	def __compute_thumbs_pos_path(self, height, level=86400):
+		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+
+			Pozycje miniaturek zapisywane są w self._item_pos jako
+			(index, item, x1, y1, x2, y2, wxRect())
+
+			@param height	- max wysokość
+			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
+			@return (row, height, last_index) - liczba wierszy i długość panelu
+		'''
+
+		def item_value_func(item):
+			return item.image.parent.path
+
+		def group_label_func(item):
+			return item.image.disk.name + ": " + item.image.parent.path
 
 		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
 

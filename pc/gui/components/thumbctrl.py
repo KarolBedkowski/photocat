@@ -179,6 +179,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 	group_by_date = property(_get_group_by_dates, _set_group_by_date)
 
 
+	def _set_group_by(self, group_by):
+		self._thumb_drawer.group_by = group_by
+
+	def _get_group_by(self):
+		return self._thumb_drawer.group_by
+
+	group_by = property(_get_group_by, _set_group_by)
+
 	#######################################################################################
 
 
