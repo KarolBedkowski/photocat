@@ -348,7 +348,7 @@ class ThumbDrawer(object):
 
 		def compute(font):
 			dc.SetFont(font)
-			sw, sh = dc.GetTextExtent('QWERTYUIOPASDFGHJKLZZXCVBNMqwertyuiopasdfghjklzxcvbnm,.<>":}{+_)(*&^%$#@!~`')
+			sh = dc.GetCharHeight()
 			return sh
 
 		return [ compute(font) for font in fonts ]
