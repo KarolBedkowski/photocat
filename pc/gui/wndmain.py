@@ -48,7 +48,7 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog
+from pc.engine				import ecatalog, eprint
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -96,6 +96,9 @@ class WndMain(wx.Frame):
 		self._create_layout(appconfig)
 		self.CreateStatusBar(2, wx.ST_SIZEGRIP)
 		self.SetStatusWidths([-1, 50])
+
+		self._print_data			= wx.PrintData()
+		self._current_show_images	= []
 
 		position = appconfig.get('main_wnd', 'position')
 		if position is None:
@@ -158,6 +161,8 @@ class WndMain(wx.Frame):
 			('-'),
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
+			(_('Print'),			None,		'',							self._on_file_print_prv),
+			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
 			('-'),
 			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
@@ -183,6 +188,7 @@ class WndMain(wx.Frame):
 			('-'),
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
+			('-'),
 		))
 		self._main_menu_catalog = menu
 		return menu
@@ -201,7 +207,9 @@ class WndMain(wx.Frame):
 		self._menu_view_sort_name = create_menu_item(self, menu, _('[o]Sort by &name '),	self._on_view_sort)[1]
 		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
 		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
+		self._menu_view_group_path = create_menu_item(self, menu, _('[o]&Group by path '),	self._on_view_sort)[1]
 		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
+		self._menu_view_show_recur = create_menu_item(self, menu, _('[x]With subdirs'),		self._on_view_sort)[1]
 
 		return menu
 
@@ -389,6 +397,22 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
+	def _on_file_print_prv(self, evt):
+		if len(self._current_show_images) > 0:
+
+			images = sorted(self._current_show_images, self.__get_sort_function(None, True))
+
+			appconfig = AppConfig()
+			options = {
+				'fontdata':		dict(appconfig.get_items('settings') or []),
+				'thumb_width':	self._photo_list.thumb_width,
+				'thumb_height': self._photo_list.thumb_height,
+				'show_captions': self._photo_list.show_captions,
+				'group_by': 	self._photo_list.group_by
+			}
+			eprint.print_preview(self, self._print_data, images, options)
+
+
 	def _on_view_show_hide_info(self, evt):
 		""" wybór z menu widok->pokaż/ukryj info """
 		AppConfig().set('settings', 'view_show_info', self._menu_view_show_info.IsChecked())
@@ -400,11 +424,15 @@ class WndMain(wx.Frame):
 		show_captions = self._menu_view_show_captions.IsChecked()
 		AppConfig().set('settings', 'view_show_captions', show_captions)
 		self._photo_list.show_captions	= show_captions
+		self._photo_list.update()
 		self._photo_list.Refresh()
 
 
 	def _on_view_sort(self, evt):
-		self._show_dir(None)
+		if self._menu_view_show_recur.IsChecked():
+			self._on_dirtree_item_select(evt)
+		else:
+			self._show_dir(None)
 
 
 	def _on_help_about(self, evt):
@@ -908,6 +936,7 @@ class WndMain(wx.Frame):
 		mm_items[2].Enable(catalog_loaded)
 		mm_items[4].Enable(catalog_loaded)
 		mm_items[6].Enable(catalog_loaded)
+		mm_items[8].Enable(len(self._current_show_images) > 0)
 
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
@@ -939,6 +968,7 @@ class WndMain(wx.Frame):
 
 		self._photo_list.thumbs_preload	= appconfig.get('settings', 'view_preload', True)
 		self._photo_list.set_captions_font(dict(appconfig.get_items('settings') or []))
+		self._photo_list.update()
 		self._photo_list.Refresh()
 
 		show_info = appconfig.get('settings', 'view_show_info', True)
@@ -988,45 +1018,44 @@ class WndMain(wx.Frame):
 
 			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania; None oznacza odswieżenie aktualnego katalogu
 		'''
+		images_as_list = False
 		if images is not None:
 			images_as_list = isinstance(images, list) or isinstance(images, tuple)
 			if not images_as_list:
-				images = images.files
+				if self._menu_view_show_recur.IsChecked():
+					images = images.images_recursive
+
+				else:
+					images = images.files
 
 		if images is None or len(images) > 0:
 			# jak sortujemy
-			sort_by_name	= self._menu_view_sort_name.IsChecked()
 			group_by_date	= self._menu_view_group_date.IsChecked()
-			desc			= self._menu_view_sort_desc.IsChecked()
-			cmp_func 		= None
+			group_by_path	= self._menu_view_group_path.IsChecked()
+			cmp_func 		= self.__get_sort_function(images, images_as_list)
 
-			if sort_by_name:
-				if desc:
-					# sort by name desc
-					cmp_func = lambda x, y: -cmp(x.name, y.name)
+			if group_by_path:
+				group_by = 2
 
-				elif images is None or images_as_list:
-					# sort by name asc (tylko gdy dane z listy)
-					cmp_func = lambda x, y: cmp(x.name, y.name)
+			elif group_by_date:
+				group_by = 1
 
 			else:
-				if desc:
-					# sort by date desc
-					cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+				group_by = 0
 
-				else:
-					#sort by date asc
-					cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
-
-			self._photo_list.group_by_date = group_by_date
+			self._photo_list.group_by = group_by
 
 			if images is None:
 				# odświeżenie widoku
 				self._photo_list.sort_current_dir(cmp_func)
 			else:
 				self._photo_list.show_dir(images, cmp_func)
+				self._current_show_images = images
 		else:
 			self._photo_list.show_dir(images)
+			self._current_show_images = images
+
+		self.__update_menus_toolbars()
 
 
 	def __update_tags_timeline(self, catalog):
@@ -1040,6 +1069,42 @@ class WndMain(wx.Frame):
 		if self._info_panel is not None:
 			self._info_panel.clear()
 			self._info_panel.clear_folder()
+
+
+	def __get_sort_function(self, images, images_as_list):
+		''' wndmain>__get_sort_function(images, images_as_list) -> func -- fukncja sortowania miniaturek '''
+		sort_by_name	= self._menu_view_sort_name.IsChecked()
+		desc			= self._menu_view_sort_desc.IsChecked()
+		gr_path			= self._menu_view_group_path.IsChecked()
+		cmp_func 		= None
+
+		if sort_by_name:
+			if desc:
+				# sort by name desc
+				cmp_func = lambda x, y: -cmp(x.name, y.name)
+
+			elif images is None or images_as_list:
+				# sort by name asc (tylko gdy dane z listy)
+				cmp_func = lambda x, y: cmp(x.name, y.name)
+
+		elif gr_path:
+			if desc:
+				# groupowanie by ścieżka
+				cmp_func = lambda x, y: -cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
+
+			else:
+				cmp_func = lambda x, y: cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
+
+		else:
+			if desc:
+				# sort by date desc
+				cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+
+			else:
+				#sort by date asc
+				cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+
+		return cmp_func
 
 
 # vim: encoding=utf8:

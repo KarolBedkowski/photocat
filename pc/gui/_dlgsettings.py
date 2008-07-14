@@ -57,7 +57,7 @@ class DlgSettings(wx.Dialog):
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
 		self._data = self._load_settings()
-		
+
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
 		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
@@ -103,16 +103,16 @@ class DlgSettings(wx.Dialog):
 				integerWidth=3, allowNegative=False, min=20, max=100,
 				validator=MyValidator(data_key=(self._data, 'thumb_compression'))
 		))
-		
+
 		grid.Add(sizer, 1, wx.EXPAND|wx.ALL, 5)
 
 		panel.SetSizerAndFit(grid)
 		return panel
-	
+
 
 	def _create_layout_page_view(self, parent):
 		panel = wx.Panel(parent, -1)
-		
+
 		grid = wx.BoxSizer(wx.VERTICAL)
 
 		self._tc_thumb_preload = wx.CheckBox(panel, -1, _('Thumb preload'),
@@ -120,44 +120,44 @@ class DlgSettings(wx.Dialog):
 		)
 		grid.Add(self._tc_thumb_preload, 0, wx.EXPAND|wx.ALL, 5)
 
-		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'), 
+		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'),
 				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
 		)
 		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
-		
+
 		grid.Add(self._create_layout_page_view_selfonts(panel), 0, wx.EXPAND|wx.ALL, 5)
-		
+
 		panel.SetSizerAndFit(grid)
-		
+
 		return panel
-	
+
 
 	def _create_layout_page_view_selfonts(self, panel):
 		fgrid = wx.FlexGridSizer(3, 3, 5, 5)
 		fgrid.AddGrowableCol(1)
-		
+
 		def add(caption, prefix, function, funcion_sel_color):
 			fgrid.Add(wx.StaticText(panel, -1, caption), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-			
+
 			btn = wx.Button(panel, -1, self._data.get('%s_font' % prefix, _('default')), size=(150, -1))
 			self.Bind(wx.EVT_BUTTON, function, btn)
 			fgrid.Add(btn, 1, wx.EXPAND)
-			
+
 			color = fonttools.str2color(self._data.get('%s_font_color' % prefix), wx.Colour(127, 127, 127))
 			btn_color = csel.ColourSelect(panel, -1, colour=color)
 			self.Bind(csel.EVT_COLOURSELECT, funcion_sel_color, btn_color)
 			fgrid.Add(btn_color, 0, wx.EXPAND)
-			
+
 			return btn, btn_color
-		
+
 		self._btn_thumb_font, self._btn_thumb_color	= add(
 				_("Caption font:"),		'thumb',		self._on_btn_caption_font,	self._on_btn_caption_color)
-		
+
 		self._btn_timeline_font, self._btn_timeline_color = add(
-				_("Timeline font:"),	'timeline',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
-		
+				_("Header font:"),		'header',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
+
 		fgrid.Add(wx.StaticText(panel, -1, "RAW"), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
-		self._tc_raw_custom_color = wx.CheckBox(panel, -1, _('Use custom color'), 
+		self._tc_raw_custom_color = wx.CheckBox(panel, -1, _('Use custom color'),
 				validator=MyValidator(data_key=(self._data, 'thumb_raw_custom_color'))
 		)
 		fgrid.Add(self._tc_raw_custom_color, 1, wx.EXPAND)
@@ -165,8 +165,8 @@ class DlgSettings(wx.Dialog):
 		btn_color = csel.ColourSelect(panel, -1, colour=color)
 		self.Bind(csel.EVT_COLOURSELECT, self._on_btn_raw_color, btn_color)
 		fgrid.Add(btn_color, 0, wx.EXPAND)
-		
-		
+
+
 		return fgrid
 
 
@@ -180,7 +180,7 @@ class DlgSettings(wx.Dialog):
 		if not self.TransferDataFromWindow():
 			return
 
-		if self._data['thumb_height'] < 25 or self._data['thumb_height'] > 500:			
+		if self._data['thumb_height'] < 25 or self._data['thumb_height'] > 500:
 			self._data['thumb_height'] = 200
 
 		if self._data['thumb_width'] < 25 or self._data['thumb_width'] > 500:
@@ -209,15 +209,15 @@ class DlgSettings(wx.Dialog):
 
 
 	def _on_btn_timeline_font(self, evt):
-		font_name = self._select_font('timeline')
+		font_name = self._select_font('header')
 		if font_name is not None:
 			self._btn_timeline_font.SetLabel(font_name)
 
 
 	def _on_btn_timeline_color(self, evt):
-		self._data['timeline_font_color'] = fonttools.color2str(evt.GetValue())
-		
-		
+		self._data['header_font_color'] = fonttools.color2str(evt.GetValue())
+
+
 	def _on_btn_raw_color(self, evt):
 		self._data['thumb_raw_color'] = fonttools.color2str(evt.GetValue())
 
@@ -251,12 +251,12 @@ class DlgSettings(wx.Dialog):
 		dlg = wx.FontDialog(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			data = dlg.GetFontData()
-			
+
 			fontdata = fonttools.font2data(data.GetChosenFont(), prefix)
 			self._data.update(fontdata)
 
 			result = fontdata['%s_font' % prefix]
-			
+
 		dlg.Destroy()
 		return result
 
