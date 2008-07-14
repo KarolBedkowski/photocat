@@ -56,7 +56,7 @@ class _Printout(wx.Printout):
 		self.drawer.thumb_width		= options['thumb_width']
 		self.drawer.thumb_height	= options['thumb_height']
 		self.drawer.show_captions	= options['show_captions']
-		self.drawer.group_by_date	= options['group_by_date']
+		self.drawer.group_by		= options['group_by']
 
 
 	def _calc_scale(self, dc):

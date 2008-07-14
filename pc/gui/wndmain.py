@@ -408,7 +408,7 @@ class WndMain(wx.Frame):
 				'thumb_width':	self._photo_list.thumb_width,
 				'thumb_height': self._photo_list.thumb_height,
 				'show_captions': self._photo_list.show_captions,
-				'group_by_date': self._photo_list.group_by_date
+				'group_by': 	self._photo_list.group_by
 			}
 			eprint.print_preview(self, self._print_data, images, options)
 
