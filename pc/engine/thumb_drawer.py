@@ -60,17 +60,17 @@ class ThumbDrawer(object):
 
 		self._padding		= 0
 		self._items_pos		= []
-		self._timeline_bars = []
+		self._group_bars 	= []
 		self._items			= []
 
 		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
-		self._pen_timeline	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
+		self._pen_header	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
 		self._brush			= wx.Brush(parent.GetBackgroundColour(), wx.SOLID)
-		self._timeline_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
+		self._header_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
 		self._caption_color = wx.Colour(127, 127, 127)
 		self._caption_raw_color	= wx.Colour(70, 70, 255)
-		self._timeline_color = wx.Colour(127, 127, 127)
+		self._header_color = wx.Colour(127, 127, 127)
 
 
 	def set_captions_font(self, fontdata):
@@ -82,10 +82,10 @@ class ThumbDrawer(object):
 				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
 		self._caption_color = fonttools.str2color(fontdata.get('thumb_font_color', '127;127;127'))
 
-		self._timeline_font = fonttools.data2font(fontdata, 'timeline',
+		self._header_font = fonttools.data2font(fontdata, 'header',
 				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
-		self._timeline_color = fonttools.str2color(fontdata.get('timeline_font_color', '127;127;127'))
-		self._pen_timeline	= wx.Pen(self._timeline_color, 1, wx.SOLID)
+		self._header_color = fonttools.str2color(fontdata.get('header_font_color', '127;127;127'))
+		self._pen_header	= wx.Pen(self._header_color, 1, wx.SOLID)
 
 		color = fonttools.str2color(fontdata.get('thumb_raw_color'), wx.Colour(70, 70, 255))
 		if fontdata.get('thumb_raw_custom_color', True):
@@ -171,15 +171,15 @@ class ThumbDrawer(object):
 				txc = tx + (tw - caption_width) / 2
 				dc.DrawText(caption, txc, ty + th + 2)
 
-		# timeline_bars
+		# group_bars
 		if self.group_by > ThumbDrawer.GROUP_BY_NONE:
-			dc.SetFont(self._timeline_font)
-			dc.SetPen(self._pen_timeline)
-			dc.SetTextForeground(self._timeline_color)
+			dc.SetFont(self._header_font)
+			dc.SetPen(self._pen_header)
+			dc.SetTextForeground(self._header_color)
 
 			width = self._width - 20
 
-			for date, y1, y2 in self._timeline_bars:
+			for date, y1, y2 in self._group_bars:
 				if painty1 <= y2 and y1 <= painty2:
 					dc.DrawLine(10, y2, width, y2)
 					dc.DrawText(str(date), 10, y1)
@@ -198,7 +198,7 @@ class ThumbDrawer(object):
 
 		self._items			= items
 		self._items_pos		= []
-		self._timeline_bars = []
+		self._group_bars	= []
 
 		cols = max((width - 30) / self.thumb_width, 1)
 
@@ -214,8 +214,8 @@ class ThumbDrawer(object):
 		self._cols		= cols
 
 		# obliczenie wysokości etykiet
-		self._caption_height, self._timeline_height = self._compute_captions_height(
-				(self._caption_font, self._timeline_font),
+		self._caption_height, self._header_height = self._compute_captions_height(
+				(self._caption_font, self._header_font),
 				dc
 		)
 
@@ -307,7 +307,7 @@ class ThumbDrawer(object):
 
 
 	def __compute_thumbs_pos_path(self, height, level=86400):
-		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		''' thumbctrl.__compute_thumbs_pos_path() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -327,7 +327,7 @@ class ThumbDrawer(object):
 
 
 	def __compute_thumbs_pos_group_by(self, height, item_value_func, group_label_func):
-		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		''' thumbctrl.__compute_thumbs_pos_group_by() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -346,10 +346,10 @@ class ThumbDrawer(object):
 		thm		= th + ((self._caption_height + 20) if self.show_captions else 10)
 		padding	= self._padding
 		cols	= self._cols
-		timeline_height = self._timeline_height
+		header_height = self._header_height
 
 		items_pos		= self._items_pos
-		timeline_bars	= self._timeline_bars	= []
+		group_bars		= self._group_bars	= []
 
 		for index, item  in enumerate(self._items):
 			col += 1
@@ -360,20 +360,19 @@ class ThumbDrawer(object):
 				label	= group_label_func(item)
 				col		= 0
 
-				next_row = row + 1 + (timeline_height + 25)/float(thm)
+				next_row = row + 1 + (header_height + 25)/float(thm)
 
 				if (next_row + 1) * thm + 5 > height:
 					break
 
 				row			= next_row
 				last_date	= item_date
-				timeline_bars.append((label, pos, pos+timeline_height+2))
+				group_bars.append((label, pos, pos+header_height+2))
 
 			elif col >= cols:
 				col = 0
 
 				if (row + 2) * thm + 5 > height:
-					print row
 					break
 
 				row += 1

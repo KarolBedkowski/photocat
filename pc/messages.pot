@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-14 21:09+0200\n"
+"POT-Creation-Date: 2008-07-14 21:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -361,6 +361,10 @@ msgstr ""
 msgid "Go to..."
 msgstr ""
 
+#: gui/_dlgsettings.py:157
+msgid "Header font:"
+msgstr ""
+
 #: gui/_dlgsearch.py:176
 msgid "Icons"
 msgstr ""
@@ -623,10 +627,6 @@ msgstr ""
 
 #: gui/components/dirstree.py:304
 msgid "Timeline"
-msgstr ""
-
-#: gui/_dlgsettings.py:157
-msgid "Timeline font:"
 msgstr ""
 
 #: ../libs/kpylibs/kpylibs/validators/validators.py:43
