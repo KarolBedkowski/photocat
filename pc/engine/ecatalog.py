@@ -3,7 +3,7 @@
 """
 pc.engine.catalog
  -- obsługa katalogów
- 
+
  Photo Catalog v 1.0  (pc)
  Copyright (c) Karol Będkowski, 2004-2007
 
@@ -51,7 +51,7 @@ _ = wx.GetTranslation
 
 def _count_files(path, parent_wnd, title):
 	''' _count_files(path, parent_wnd, title) -> int -- polieczenie plików w podanej ścieżce
-	
+
 		@param path			-- ścieżka
 		@param parent_wnd	-- okno nadrzędne
 		@param title		-- tytuł okien
@@ -63,18 +63,18 @@ def _count_files(path, parent_wnd, title):
 	allfiles = Catalog.fast_count_files_dirs(path) + 1
 
 	dlg_progress.Destroy()
-	
+
 	if allfiles == 1:
 		dialogs.message_box_error(parent_wnd, _('No files found!'), title)
 		return
-	
+
 	return allfiles
 
 
 
 def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	''' _add_or_update_catalog(catalog, title, data, parent_wnd) -> Disk -- dodanie lub aktualizacja dysku
-	
+
 		@param catalog		-- katalog do którego jest dodawany dysk
 		@param title		-- tytuł okien
 		@param data			-- dane przebudowy/aktualizacji
@@ -83,11 +83,11 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	'''
 	appconfig = AppConfig()
 	data.update(dict(appconfig.get_items('settings') or []))
-	
+
 	dlg = DlgAddDisk(parent_wnd, data, update=data['update'], catalog=catalog)
 	result = dlg.ShowModal()
 	dlg.Destroy()
-	
+
 	disk = data['disk']
 	if result == wx.ID_OK:
 		allfiles = _count_files(data['path'], parent_wnd, title)/10240
@@ -96,8 +96,9 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 			dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, maximum=allfiles+100,
 					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
 			dlg_progress.SetSize((600, -1))
+			dlg_progress.SetMinSize((600, -1))
 			dlg_progress.Center()
-			
+
 			path_len = len(data['path'])+1
 
 			def update_progress(msg, cntr=[0]):
@@ -109,7 +110,7 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 			try:
 				parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
 				if data['update']:
-					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data, 
+					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data,
 							on_update=update_progress, name=data['name'])
 
 				else:
@@ -117,37 +118,37 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 							on_update=update_progress)
 
 				dlg_progress.Update(allfiles+100, _('Done!'))
-				
+
 			except Exception, err:
 				_LOG.exception('_add_or_update_catalog(%r)' % data)
 				dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
 				raise errors.UpdateDiskError(err)
-			
+
 			finally:
 				parent_wnd.SetCursor(wx.STANDARD_CURSOR)
 				dlg_progress.Destroy()
 	else:
 		disk = None
-	
+
 	return disk
 
 
 
 def add_disk_to_catalog(catalog, parent_wnd):
 	''' add_disk_to_catalog(catalog, parent_wnd) -> Disk -- dodanie dysku
-	
+
 		@param catalog		-- katalog do którego jest dodawany dysk
 		@param parent_wnd	-- okno nadrzędne
-		@return dodany dysk 
+		@return dodany dysk
 	'''
 	data = dict(disk=None, update=False)
 	return _add_or_update_catalog(catalog, _("Adding disk"), data, parent_wnd)
-	
+
 
 
 def update_disk_in_catalog(catalog, disk, parent_wnd):
 	''' update_disk_in_catalog(catalog, disk, parent_wnd) -> Disk -- aktualizacja dysku
-	
+
 		@param catalog		-- katalog w którym jest aktualizowany dysk
 		@param disk			-- dysk do aktualizacji
 		@param parent_wnd	-- okno nadrzędne
@@ -159,25 +160,25 @@ def update_disk_in_catalog(catalog, disk, parent_wnd):
 
 def rebuild(catalog, parent_wnd):
 	''' rebuild(catalog, parent_wnd) -> bool -- przebudowa katalogu
-	
+
 		@param catalog		-- katalog do przebudowania
 		@param parent_wnd	-- okno nadrzędne
 		@return True=sukces
 	'''
 	objects_count = catalog.object_in_files
 	result = False
-	
+
 	dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=parent_wnd,
 			maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-	
+
 	def update_progress(count):
 		return dlg_progress.Update(count)[0]
-	
+
 	try:
 		parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
 		saved_space = catalog.data_provider.rebuild(catalog, update_progress)
 		dlg_progress.Update(objects_count+1, _("Saving..."))
-		
+
 		if saved_space < 0:
 			dlg_progress.Update(objects_count + 2,	_('Rebuild catalog aborted'))
 		else:
@@ -195,7 +196,7 @@ def rebuild(catalog, parent_wnd):
 	finally:
 		dlg_progress.Destroy()
 		parent_wnd.SetCursor(wx.STANDARD_CURSOR)
-		
+
 	return result
 
 # vim: encoding=utf8: ff=unix:
