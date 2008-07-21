@@ -287,7 +287,8 @@ class FileImage(CatalogFile):
 			thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
 			thumb_compression = options.get('thumb_compression', 50)
 
-			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
+			if self.dimensions[0] > thumbsize[0] or self.dimensions[1] > thumbsize[1]:
+				image.thumbnail(thumbsize, PILImage.ANTIALIAS)
 
 			# zapisanie miniaturki przez StringIO
 			output = cStringIO.StringIO()
