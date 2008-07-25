@@ -12,22 +12,14 @@ from wx.tools import img2py
 os.chdir('pc/icons')
 os.unlink('icons.py')
 
-f = file('icons.py', 'w')
-f.write(
-"""
-from wx import ImageFromStream, BitmapFromImage
-#from wx import EmptyIcon
-import cStringIO
-
-""")
-f.close()
-
-command_lines = [ '-u -a -n _%s_ %s icons.py' % (name[:-4], name) 
+command_lines = [ '-u -n _%s_ %s icons.py' % (name[:-4], name) 
 		for name in os.listdir('.')
 		if name.endswith('.png')
 ]
 
-for line in command_lines:
+for lp, line in enumerate(command_lines):
 	args = line.split()
+	if lp > 0:
+		args.insert(0, '-a')
 	img2py.main(args)
 
