@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-14 21:34+0200\n"
+"POT-Creation-Date: 2008-07-27 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,7 +98,7 @@ msgstr "Dodaj dysk do katalogu"
 msgid "Add disk..."
 msgstr "Dodaj dysk"
 
-#: engine/ecatalog.py:144
+#: engine/ecatalog.py:145
 msgid "Adding disk"
 msgstr "Dodawanie dysku"
 
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Camera"
 msgstr "Aparat"
 
-#: gui/_dlgsettings.py:154
+#: gui/_dlgsettings.py:163
 msgid "Caption font:"
 msgstr "Czcionka podpisów:"
 
@@ -179,7 +179,7 @@ msgstr "Zamknij aktualny katalog"
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
-#: gui/_dlgsettings.py:102
+#: gui/_dlgsettings.py:108
 msgid "Compression:"
 msgstr "Kompresja:"
 
@@ -198,10 +198,6 @@ msgstr "Utworzyć nowy katalog?"
 #: gui/_dlgsearch.py:289 model/file_image.py:145 model/file_image.py:152
 msgid "Date"
 msgstr "Data"
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:143
-msgid "Date isn't in correct format - YYYY-MM-DD format required"
-msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 
 #: gui/_dlgproperties.py:183
 msgid "Del"
@@ -289,7 +285,7 @@ msgstr ""
 "Pliki: %(files)d\n"
 "Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
 
-#: engine/ecatalog.py:119
+#: engine/ecatalog.py:120
 msgid "Done!"
 msgstr "Zrobione!"
 
@@ -312,7 +308,7 @@ msgstr ""
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
 
-#: engine/ecatalog.py:123
+#: engine/ecatalog.py:124
 #, python-format
 msgid ""
 "Error:\n"
@@ -325,10 +321,6 @@ msgstr ""
 #: gui/components/infopanel.py:148
 msgid "Exif"
 msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:31
-msgid "Field must by not empty"
-msgstr "Pole nie może być puste"
 
 #: model/_catalog_file.py:82
 msgid "File date"
@@ -346,10 +338,6 @@ msgstr "Plików: %d"
 #: gui/_dlgsearch.py:76 gui/_dlgsearch.py:141
 msgid "Find"
 msgstr "Znajdź"
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:102
-msgid "Float value required"
-msgstr "Wymagana wartość rzeczywista"
 
 #: gui/components/infopanel.py:58
 msgid "Folder"
@@ -380,7 +368,7 @@ msgstr ""
 msgid "Go to..."
 msgstr "Idź do..."
 
-#: gui/_dlgsettings.py:157
+#: gui/_dlgsettings.py:166
 msgid "Header font:"
 msgstr "Czcionka nagłówka:"
 
@@ -392,17 +380,9 @@ msgstr "Ikonki"
 msgid "Include empty directories"
 msgstr "Dołącz puste katalogi"
 
-#: ../libs/kpylibs/kpylibs/validators/validators.py:69
-msgid "Incorrect value"
-msgstr "Niewłaściwa wartość"
-
 #: gui/wndmain.py:190
 msgid "Info"
 msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:82
-msgid "Integer value required"
-msgstr "Wymagana wartość całkowita"
 
 #: gui/wndmain.py:158 gui/wndmain.py:245
 msgid "Load catalog"
@@ -412,7 +392,7 @@ msgstr "Wczytaj katalog"
 msgid "Load info from captions.txt"
 msgstr "Ładuj informacje z captions.txt"
 
-#: engine/ecatalog.py:107
+#: engine/ecatalog.py:108
 #, python-format
 msgid ""
 "Loading file:\n"
@@ -506,7 +486,7 @@ msgstr "Ustawienia programu"
 msgid "Properties"
 msgstr "Własności"
 
-#: gui/wndmain.py:162 engine/ecatalog.py:170
+#: gui/wndmain.py:162 engine/ecatalog.py:171
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
@@ -515,11 +495,11 @@ msgstr "Przebuduj katalog"
 msgid "Rebuild catalog %s?"
 msgstr "Przebudować katalog  %s?"
 
-#: engine/ecatalog.py:182
+#: engine/ecatalog.py:183
 msgid "Rebuild catalog aborted"
 msgstr "Przebudowa katalogu przerwana"
 
-#: engine/ecatalog.py:192
+#: engine/ecatalog.py:193
 #, python-format
 msgid ""
 "Rebuild catalog error!\n"
@@ -528,7 +508,7 @@ msgstr ""
 "Wystąpił błąd podczas przebudowywania katalogu!\n"
 "%(msg)s"
 
-#: engine/ecatalog.py:185
+#: engine/ecatalog.py:186
 #, python-format
 msgid ""
 "Rebuild catalog finished\n"
@@ -537,7 +517,7 @@ msgstr ""
 "Zakończono przebudowę katalogu\n"
 "Zaoszczędzono: %sB"
 
-#: engine/ecatalog.py:170
+#: engine/ecatalog.py:171
 msgid ""
 "Rebuilding...\n"
 "Please wait."
@@ -561,7 +541,7 @@ msgstr "Zapisz katalog"
 msgid "Save current catalog"
 msgstr "Zapisz aktualny katalog"
 
-#: engine/ecatalog.py:179
+#: engine/ecatalog.py:180
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
@@ -613,7 +593,7 @@ msgstr "Ustawienia"
 msgid "Shot date:"
 msgstr "Data wykonania:"
 
-#: gui/_dlgsettings.py:123
+#: gui/_dlgsettings.py:132
 msgid "Show captions"
 msgstr "Pokaż podpisy"
 
@@ -634,11 +614,11 @@ msgstr "Tagi"
 msgid "Text"
 msgstr "Tekst"
 
-#: gui/_dlgsettings.py:97
+#: gui/_dlgsettings.py:100
 msgid "Thumb height:"
 msgstr "Wysokość miniaturki:"
 
-#: gui/_dlgsettings.py:118
+#: gui/_dlgsettings.py:127
 msgid "Thumb preload"
 msgstr "Ładuj miniaturki w tle"
 
@@ -650,21 +630,9 @@ msgstr "Szerokość miniaturki:"
 msgid "Thumbs"
 msgstr "Miniaturki"
 
-#: ../libs/kpylibs/kpylibs/validators/validators.py:122
-msgid "Time isn't in correct format - HH:MM format required"
-msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
-
 #: gui/components/dirstree.py:304
 msgid "Timeline"
 msgstr "Linia czasu"
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:43
-msgid "Too few characters in fields"
-msgstr "Za mało znaków w polu"
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:56
-msgid "Too many characters in fields"
-msgstr "Za dużo znaków w polu"
 
 #: gui/dlgadddisk.py:57
 msgid "Update disk"
@@ -674,26 +642,13 @@ msgstr "Aktualizuj dysk"
 msgid "Update selected disk"
 msgstr "Aktualizuj wybrany dysk"
 
-#: engine/ecatalog.py:157
+#: engine/ecatalog.py:158
 msgid "Updating disk"
 msgstr "Aktualizacja dysku"
 
-#: gui/_dlgsettings.py:160
+#: gui/_dlgsettings.py:169
 msgid "Use custom color"
 msgstr "Użyj innego koloru"
-
-#: ../libs/kpylibs/kpylibs/validators/my_validator.py:55
-msgid "Validate error"
-msgstr "Błąd walidacji"
-
-#: ../libs/kpylibs/kpylibs/validators/my_validator.py:53
-#, python-format
-msgid ""
-"Validate field \"%(field)s\" failed:\n"
-"%(msg)s"
-msgstr ""
-"Błąd walidacji pola \"%(field)s\":\n"
-"%(msg)s"
 
 #: gui/_dlgproperties.py:158 gui/components/infopanel.py:93
 msgid "Value"
@@ -748,7 +703,7 @@ msgstr "początek:"
 msgid "catalog: %s"
 msgstr "katalog: %s"
 
-#: gui/_dlgsettings.py:142
+#: gui/_dlgsettings.py:151
 msgid "default"
 msgstr "domyślna"
 
@@ -760,7 +715,7 @@ msgstr "opisach"
 msgid "end:"
 msgstr "koniec:"
 
-#: model/file_image.py:316
+#: model/file_image.py:317
 msgid "f"
 msgstr ""
 
@@ -768,15 +723,15 @@ msgstr ""
 msgid "files"
 msgstr "pliki"
 
-#: model/file_image.py:332
+#: model/file_image.py:333
 msgid "flash"
 msgstr "flesz"
 
-#: model/file_image.py:338
+#: model/file_image.py:339
 msgid "focal len."
 msgstr "ogniskowa"
 
-#: model/file_image.py:322 model/file_image.py:327
+#: model/file_image.py:323 model/file_image.py:328
 msgid "iso"
 msgstr ""
 
@@ -792,7 +747,7 @@ msgstr "nazwach"
 msgid "path"
 msgstr "ścieżka"
 
-#: model/file_image.py:310
+#: model/file_image.py:311
 msgid "t"
 msgstr ""
 
@@ -803,11 +758,45 @@ msgstr "tagach"
 #~ msgid "About"
 #~ msgstr "O programie"
 
+#~ msgid "Date isn't in correct format - YYYY-MM-DD format required"
+#~ msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
+
+#~ msgid "Field must by not empty"
+#~ msgstr "Pole nie może być puste"
+
+#~ msgid "Float value required"
+#~ msgstr "Wymagana wartość rzeczywista"
+
+#~ msgid "Incorrect value"
+#~ msgstr "Niewłaściwa wartość"
+
+#~ msgid "Integer value required"
+#~ msgstr "Wymagana wartość całkowita"
+
 #~ msgid "Path"
 #~ msgstr "Ścieżka"
 
 #~ msgid "Show/hide &captions"
 #~ msgstr "Pokaż/ukryj &podpisy"
+
+#~ msgid "Time isn't in correct format - HH:MM format required"
+#~ msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
+
+#~ msgid "Too few characters in fields"
+#~ msgstr "Za mało znaków w polu"
+
+#~ msgid "Too many characters in fields"
+#~ msgstr "Za dużo znaków w polu"
+
+#~ msgid "Validate error"
+#~ msgstr "Błąd walidacji"
+
+#~ msgid ""
+#~ "Validate field \"%(field)s\" failed:\n"
+#~ "%(msg)s"
+#~ msgstr ""
+#~ "Błąd walidacji pola \"%(field)s\":\n"
+#~ "%(msg)s"
 
 #~ msgid "compression"
 #~ msgstr "kompresja"

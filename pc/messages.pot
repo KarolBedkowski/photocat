@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-14 21:34+0200\n"
+"POT-Creation-Date: 2008-07-27 17:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Add disk..."
 msgstr ""
 
-#: engine/ecatalog.py:144
+#: engine/ecatalog.py:145
 msgid "Adding disk"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: gui/_dlgsettings.py:154
+#: gui/_dlgsettings.py:163
 msgid "Caption font:"
 msgstr ""
 
@@ -170,7 +170,7 @@ msgstr ""
 msgid "Close program?"
 msgstr ""
 
-#: gui/_dlgsettings.py:102
+#: gui/_dlgsettings.py:108
 msgid "Compression:"
 msgstr ""
 
@@ -188,10 +188,6 @@ msgstr ""
 
 #: gui/_dlgsearch.py:289 model/file_image.py:145 model/file_image.py:152
 msgid "Date"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:143
-msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr ""
 
 #: gui/_dlgproperties.py:183
@@ -276,7 +272,7 @@ msgid ""
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 
-#: engine/ecatalog.py:119
+#: engine/ecatalog.py:120
 msgid "Done!"
 msgstr ""
 
@@ -297,7 +293,7 @@ msgstr ""
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: engine/ecatalog.py:123
+#: engine/ecatalog.py:124
 #, python-format
 msgid ""
 "Error:\n"
@@ -307,10 +303,6 @@ msgstr ""
 #: gui/_dlgproperties.py:98 gui/components/infopanel.py:57
 #: gui/components/infopanel.py:148
 msgid "Exif"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:31
-msgid "Field must by not empty"
 msgstr ""
 
 #: model/_catalog_file.py:82
@@ -328,10 +320,6 @@ msgstr ""
 
 #: gui/_dlgsearch.py:76 gui/_dlgsearch.py:141
 msgid "Find"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:102
-msgid "Float value required"
 msgstr ""
 
 #: gui/components/infopanel.py:58
@@ -361,7 +349,7 @@ msgstr ""
 msgid "Go to..."
 msgstr ""
 
-#: gui/_dlgsettings.py:157
+#: gui/_dlgsettings.py:166
 msgid "Header font:"
 msgstr ""
 
@@ -373,16 +361,8 @@ msgstr ""
 msgid "Include empty directories"
 msgstr ""
 
-#: ../libs/kpylibs/kpylibs/validators/validators.py:69
-msgid "Incorrect value"
-msgstr ""
-
 #: gui/wndmain.py:190
 msgid "Info"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:82
-msgid "Integer value required"
 msgstr ""
 
 #: gui/wndmain.py:158 gui/wndmain.py:245
@@ -393,7 +373,7 @@ msgstr ""
 msgid "Load info from captions.txt"
 msgstr ""
 
-#: engine/ecatalog.py:107
+#: engine/ecatalog.py:108
 #, python-format
 msgid ""
 "Loading file:\n"
@@ -483,7 +463,7 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
-#: gui/wndmain.py:162 engine/ecatalog.py:170
+#: gui/wndmain.py:162 engine/ecatalog.py:171
 msgid "Rebuild catalog"
 msgstr ""
 
@@ -492,25 +472,25 @@ msgstr ""
 msgid "Rebuild catalog %s?"
 msgstr ""
 
-#: engine/ecatalog.py:182
+#: engine/ecatalog.py:183
 msgid "Rebuild catalog aborted"
 msgstr ""
 
-#: engine/ecatalog.py:192
+#: engine/ecatalog.py:193
 #, python-format
 msgid ""
 "Rebuild catalog error!\n"
 "%(msg)s"
 msgstr ""
 
-#: engine/ecatalog.py:185
+#: engine/ecatalog.py:186
 #, python-format
 msgid ""
 "Rebuild catalog finished\n"
 "Saved space: %sB"
 msgstr ""
 
-#: engine/ecatalog.py:170
+#: engine/ecatalog.py:171
 msgid ""
 "Rebuilding...\n"
 "Please wait."
@@ -532,7 +512,7 @@ msgstr ""
 msgid "Save current catalog"
 msgstr ""
 
-#: engine/ecatalog.py:179
+#: engine/ecatalog.py:180
 msgid "Saving..."
 msgstr ""
 
@@ -584,7 +564,7 @@ msgstr ""
 msgid "Shot date:"
 msgstr ""
 
-#: gui/_dlgsettings.py:123
+#: gui/_dlgsettings.py:132
 msgid "Show captions"
 msgstr ""
 
@@ -605,11 +585,11 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: gui/_dlgsettings.py:97
+#: gui/_dlgsettings.py:100
 msgid "Thumb height:"
 msgstr ""
 
-#: gui/_dlgsettings.py:118
+#: gui/_dlgsettings.py:127
 msgid "Thumb preload"
 msgstr ""
 
@@ -621,20 +601,8 @@ msgstr ""
 msgid "Thumbs"
 msgstr ""
 
-#: ../libs/kpylibs/kpylibs/validators/validators.py:122
-msgid "Time isn't in correct format - HH:MM format required"
-msgstr ""
-
 #: gui/components/dirstree.py:304
 msgid "Timeline"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:43
-msgid "Too few characters in fields"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/validators.py:56
-msgid "Too many characters in fields"
 msgstr ""
 
 #: gui/dlgadddisk.py:57
@@ -645,23 +613,12 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: engine/ecatalog.py:157
+#: engine/ecatalog.py:158
 msgid "Updating disk"
 msgstr ""
 
-#: gui/_dlgsettings.py:160
+#: gui/_dlgsettings.py:169
 msgid "Use custom color"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/my_validator.py:55
-msgid "Validate error"
-msgstr ""
-
-#: ../libs/kpylibs/kpylibs/validators/my_validator.py:53
-#, python-format
-msgid ""
-"Validate field \"%(field)s\" failed:\n"
-"%(msg)s"
 msgstr ""
 
 #: gui/_dlgproperties.py:158 gui/components/infopanel.py:93
@@ -717,7 +674,7 @@ msgstr ""
 msgid "catalog: %s"
 msgstr ""
 
-#: gui/_dlgsettings.py:142
+#: gui/_dlgsettings.py:151
 msgid "default"
 msgstr ""
 
@@ -729,7 +686,7 @@ msgstr ""
 msgid "end:"
 msgstr ""
 
-#: model/file_image.py:316
+#: model/file_image.py:317
 msgid "f"
 msgstr ""
 
@@ -737,15 +694,15 @@ msgstr ""
 msgid "files"
 msgstr ""
 
-#: model/file_image.py:332
+#: model/file_image.py:333
 msgid "flash"
 msgstr ""
 
-#: model/file_image.py:338
+#: model/file_image.py:339
 msgid "focal len."
 msgstr ""
 
-#: model/file_image.py:322 model/file_image.py:327
+#: model/file_image.py:323 model/file_image.py:328
 msgid "iso"
 msgstr ""
 
@@ -761,7 +718,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: model/file_image.py:310
+#: model/file_image.py:311
 msgid "t"
 msgstr ""
 
