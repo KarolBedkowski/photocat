@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-27 17:14+0200\n"
+"POT-Creation-Date: 2008-07-27 17:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -703,6 +703,10 @@ msgstr "początek:"
 msgid "catalog: %s"
 msgstr "katalog: %s"
 
+#: gui/_dlgsettings.py:110
+msgid "compression"
+msgstr "kompresja"
+
 #: gui/_dlgsettings.py:151
 msgid "default"
 msgstr "domyślna"
@@ -755,6 +759,14 @@ msgstr ""
 msgid "tags"
 msgstr "tagach"
 
+#: gui/_dlgsettings.py:102
+msgid "thumb height"
+msgstr "wysokość miniaturki"
+
+#: gui/_dlgsettings.py:94
+msgid "thumb width"
+msgstr "szerokość miniaturki"
+
 #~ msgid "About"
 #~ msgstr "O programie"
 
@@ -798,14 +810,5 @@ msgstr "tagach"
 #~ "Błąd walidacji pola \"%(field)s\":\n"
 #~ "%(msg)s"
 
-#~ msgid "compression"
-#~ msgstr "kompresja"
-
 #~ msgid "dirs"
 #~ msgstr "katalogi"
-
-#~ msgid "thumb height"
-#~ msgstr "wysokość miniaturki"
-
-#~ msgid "thumb width"
-#~ msgstr "szerokość miniaturki"

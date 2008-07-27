@@ -91,7 +91,7 @@ class DlgSettings(wx.Dialog):
 
 		self._tc_thumb_width = add(_('Thumb width:'), masked.NumCtrl(panel, -1,
 				integerWidth=3, allowNegative=False, min=50, max=500,
-				validator=MyValidator(data_key=(self._data, 'thumb_width'),
+				validator=MyValidator(data_key=(self._data, 'thumb_width'), field=_('thumb width'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
 						])
@@ -99,7 +99,7 @@ class DlgSettings(wx.Dialog):
 
 		self._tc_thumb_height = add(_('Thumb height:'), masked.NumCtrl(panel, -1,
 				integerWidth=3, allowNegative=False, min=50, max=500,
-				validator=MyValidator(data_key=(self._data, 'thumb_height'),
+				validator=MyValidator(data_key=(self._data, 'thumb_height'), field=_('thumb height'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
 						])
@@ -107,7 +107,7 @@ class DlgSettings(wx.Dialog):
 
 		self._tc_thumb_compression = add(_('Compression:'), masked.NumCtrl(panel, -1,
 				integerWidth=3, allowNegative=False, min=20, max=100,
-				validator=MyValidator(data_key=(self._data, 'thumb_compression'),
+				validator=MyValidator(data_key=(self._data, 'thumb_compression'), field=_('compression'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(20),
 								validators.MaxValueValidator(100)
 						])

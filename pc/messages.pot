@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-27 17:14+0200\n"
+"POT-Creation-Date: 2008-07-27 17:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -674,6 +674,10 @@ msgstr ""
 msgid "catalog: %s"
 msgstr ""
 
+#: gui/_dlgsettings.py:110
+msgid "compression"
+msgstr ""
+
 #: gui/_dlgsettings.py:151
 msgid "default"
 msgstr ""
@@ -724,4 +728,12 @@ msgstr ""
 
 #: gui/_dlgsearch.py:244
 msgid "tags"
+msgstr ""
+
+#: gui/_dlgsettings.py:102
+msgid "thumb height"
+msgstr ""
+
+#: gui/_dlgsettings.py:94
+msgid "thumb width"
 msgstr ""
