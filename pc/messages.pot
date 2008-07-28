@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-28 22:25+0200\n"
+"POT-Creation-Date: 2008-07-28 22:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -272,7 +272,7 @@ msgid ""
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 
-#: engine/ecatalog.py:120 engine/epdf.py:91
+#: engine/ecatalog.py:120 engine/epdf.py:92
 msgid "Done!"
 msgstr ""
 
@@ -293,7 +293,7 @@ msgstr ""
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: engine/ecatalog.py:124
+#: engine/ecatalog.py:124 engine/epdf.py:90
 #, python-format
 msgid ""
 "Error:\n"
@@ -305,7 +305,7 @@ msgstr ""
 msgid "Exif"
 msgstr ""
 
-#: engine/epdf.py:41 engine/epdf.py:91
+#: engine/epdf.py:41 engine/epdf.py:90 engine/epdf.py:92
 msgid "Export to PDF"
 msgstr ""
 

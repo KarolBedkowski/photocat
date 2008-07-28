@@ -87,6 +87,8 @@ def create_pdf(parent, items):
 
 	except Exception, err:
 		_LOG.exception('create_pdf error. file=%s' % filename)
+		dialogs.message_box_error(parent, _('Error:\n%s') % str(err),  _('Export to PDF'))
+
 	else:
 		dialogs.message_box_info(parent, _('Done!'), _('Export to PDF'))
 
