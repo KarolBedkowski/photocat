@@ -13,7 +13,6 @@
 ./gui/wndmain.py
 ./lib/__init__.py
 ./main.py
-./mki18n.py
 ./model/__init__.py
 ./model/_catalog_file.py
 ./model/catalog.py
@@ -30,6 +29,7 @@
 ./model/timeline.py
 ./engine/__init__.py
 ./engine/ecatalog.py
+./engine/epdf.py
 ./engine/errors.py
 ./engine/image.py
 ./engine/search.py

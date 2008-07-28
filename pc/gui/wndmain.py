@@ -162,7 +162,7 @@ class WndMain(wx.Frame):
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
 			(_('Print'),			None,		'',							self._on_file_print_prv),
-			(_('Export to pdf...'),	None,		'',							self._on_file_export_pdf),
+			(_('Export to PDF...'),	None,		'',							self._on_file_export_pdf),
 			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
 			('-'),
