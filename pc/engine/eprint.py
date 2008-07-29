@@ -66,7 +66,7 @@ class _Printout(wx.Printout):
 
 		pw, ph	= self.GetPageSizePixels()
 		dw, dh	= dc.GetSize()
-		scale	= log_scale * float(dw) / float(pw)
+		scale	= log_scale * float(dw) / float(pw) / 2
 
 		dc.SetUserScale(scale, scale)
 		self._log_units_mm = float(ppiPrinterX) / (log_scale * 25.4)
@@ -152,8 +152,9 @@ def print_preview(parent, print_data, images, options):
 	if not preview.Ok():
 		return
 
-	pfrm = wx.PreviewFrame(preview, parent, _('Print preview'))
+	pfrm = wx.PreviewFrame(preview, parent, _('Print preview'), size=(800, 600))
 	pfrm.Initialize()
+	pfrm.Center()
 	pfrm.Show(True)
 
 
