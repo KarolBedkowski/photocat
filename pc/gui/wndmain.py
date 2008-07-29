@@ -399,7 +399,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_export_pdf(self, evt):
-		if len(self._current_show_images) > 0:
+		if len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE:
 			epdf.create_pdf(self, self._current_show_images)
 
 
@@ -943,7 +943,7 @@ class WndMain(wx.Frame):
 		mm_items[4].Enable(catalog_loaded)
 		mm_items[6].Enable(catalog_loaded)
 		mm_items[8].Enable(len(self._current_show_images) > 0)
-		mm_items[9].Enable(len(self._current_show_images) > 0)
+		mm_items[9].Enable(len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE)
 
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
