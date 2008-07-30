@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-27 17:18+0200\n"
+"POT-Creation-Date: 2008-07-28 22:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,11 @@ msgstr ""
 "%(msg)s\n"
 "Znaleziono: %(found)d"
 
-#: gui/wndmain.py:219
+#: gui/wndmain.py:220
 msgid "&About..."
 msgstr "&O programie..."
 
-#: gui/wndmain.py:180
+#: gui/wndmain.py:181
 msgid "&Add disk..."
 msgstr "&Dodaj dysk"
 
@@ -36,15 +36,15 @@ msgstr "&Dodaj dysk"
 msgid "&Catalog"
 msgstr "&Katalog"
 
-#: gui/wndmain.py:182 gui/wndmain.py:876
+#: gui/wndmain.py:183 gui/wndmain.py:882
 msgid "&Delete disk..."
 msgstr "&Usuń dysk"
 
-#: gui/wndmain.py:898
+#: gui/wndmain.py:904
 msgid "&Delete file..."
 msgstr "&Usuń plik..."
 
-#: gui/wndmain.py:187
+#: gui/wndmain.py:188
 msgid "&Edit selected files..."
 msgstr "&Edytuj wybrane pliki..."
 
@@ -52,7 +52,7 @@ msgstr "&Edytuj wybrane pliki..."
 msgid "&File"
 msgstr "&Plik"
 
-#: gui/wndmain.py:181 gui/wndmain.py:875
+#: gui/wndmain.py:182 gui/wndmain.py:881
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
 
@@ -78,7 +78,7 @@ msgstr "<aktualny folder>"
 msgid "<current disk>"
 msgstr "<aktualny dysk>"
 
-#: gui/wndmain.py:190
+#: gui/wndmain.py:191
 msgid "About selected calalog..."
 msgstr "O wybranym katalogu..."
 
@@ -90,11 +90,11 @@ msgstr "Dodaj"
 msgid "Add disk"
 msgstr "Dodaj dysk"
 
-#: gui/wndmain.py:180 gui/wndmain.py:254
+#: gui/wndmain.py:181 gui/wndmain.py:255
 msgid "Add disk to catalog"
 msgstr "Dodaj dysk do katalogu"
 
-#: gui/wndmain.py:254
+#: gui/wndmain.py:255
 msgid "Add disk..."
 msgstr "Dodaj dysk"
 
@@ -127,7 +127,7 @@ msgstr "Czcionka podpisów:"
 msgid "Catalog"
 msgstr "Katalog"
 
-#: gui/wndmain.py:361
+#: gui/wndmain.py:362
 #, python-format
 msgid ""
 "Catalog %s has unsaved changes!\n"
@@ -136,7 +136,7 @@ msgstr ""
 "Katalog %s zawiera niezapisane zmiany!\n"
 "Zapisać przed wyjściem?"
 
-#: gui/wndmain.py:285
+#: gui/wndmain.py:286
 #, python-format
 msgid ""
 "Catalog %s isn't saved\n"
@@ -145,7 +145,7 @@ msgstr ""
 "Katalog %s nie jest zapisany!\n"
 "Zapisać?"
 
-#: gui/wndmain.py:813
+#: gui/wndmain.py:819
 #, python-format
 msgid ""
 "Catalog file contain %d%% unused entries.\n"
@@ -154,19 +154,19 @@ msgstr ""
 "Plik katalog zawiera %d%% zbędnych wpisów.\n"
 "Przebudować katalog?"
 
-#: gui/wndmain.py:314
+#: gui/wndmain.py:315
 msgid "Catalog file name"
 msgstr "Nazwa pliku katalogu"
 
-#: gui/wndmain.py:168
+#: gui/wndmain.py:169
 msgid "Close application"
 msgstr "Zamknij program"
 
-#: gui/wndmain.py:160 gui/wndmain.py:883
+#: gui/wndmain.py:160 gui/wndmain.py:889
 msgid "Close catalog"
 msgstr "Zamknij katalog"
 
-#: gui/wndmain.py:370
+#: gui/wndmain.py:371
 #, python-format
 msgid "Close catalog %s?"
 msgstr "Zamknąć katalog %s?"
@@ -175,7 +175,7 @@ msgstr "Zamknąć katalog %s?"
 msgid "Close current catalog"
 msgstr "Zamknij aktualny katalog"
 
-#: gui/wndmain.py:293
+#: gui/wndmain.py:294
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
@@ -187,11 +187,11 @@ msgstr "Kompresja:"
 msgid "Counting files..."
 msgstr "Liczenie plików..."
 
-#: gui/wndmain.py:157 gui/wndmain.py:244
+#: gui/wndmain.py:157 gui/wndmain.py:245
 msgid "Create new catalog"
 msgstr "Utwórz nowy katalog"
 
-#: gui/wndmain.py:313
+#: gui/wndmain.py:314
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
@@ -203,38 +203,38 @@ msgstr "Data"
 msgid "Del"
 msgstr "Usuń"
 
-#: gui/wndmain.py:549
+#: gui/wndmain.py:555
 #, python-format
 msgid "Delete %d images?"
 msgstr "Usunąć %d plików?"
 
-#: gui/wndmain.py:527
+#: gui/wndmain.py:533
 msgid "Delete directory"
 msgstr "Usuń katalog"
 
-#: gui/wndmain.py:530
+#: gui/wndmain.py:536
 #, python-format
 msgid "Delete directory %s?"
 msgstr "Usunąć katalog %s?"
 
-#: gui/wndmain.py:509
+#: gui/wndmain.py:515
 msgid "Delete disk"
 msgstr "Usuń dysk"
 
-#: gui/wndmain.py:512
+#: gui/wndmain.py:518
 #, python-format
 msgid "Delete disk %s?"
 msgstr "Usunąć dysk %s?"
 
-#: gui/wndmain.py:184 gui/wndmain.py:879
+#: gui/wndmain.py:185 gui/wndmain.py:885
 msgid "Delete selected &dir..."
 msgstr "Usuń wybrany &katalog..."
 
-#: gui/wndmain.py:185
+#: gui/wndmain.py:186
 msgid "Delete selected &image..."
 msgstr "Usuń wybrane &pliki..."
 
-#: gui/wndmain.py:182
+#: gui/wndmain.py:183
 msgid "Delete selected disk from catalog"
 msgstr "Usuń wybrany dysk z katalogu"
 
@@ -247,7 +247,7 @@ msgstr "Opis"
 msgid "Dimensions"
 msgstr "Wymiary"
 
-#: gui/wndmain.py:650
+#: gui/wndmain.py:656
 #, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr "Katalogów %(dirs)d;  plików: %(files)d"
@@ -272,7 +272,7 @@ msgstr "Nazwa dysku:"
 msgid "Disk updated"
 msgstr "Dysk zaktualizowano"
 
-#: gui/wndmain.py:580
+#: gui/wndmain.py:586
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
@@ -285,16 +285,16 @@ msgstr ""
 "Pliki: %(files)d\n"
 "Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
 
-#: engine/ecatalog.py:120
+#: engine/ecatalog.py:120 engine/epdf.py:92
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/wndmain.py:804
+#: gui/wndmain.py:810
 #, python-format
 msgid "Error opening file %s"
 msgstr "Błąd otwierania pliku %s"
 
-#: gui/wndmain.py:789
+#: gui/wndmain.py:795
 #, python-format
 msgid ""
 "Error opening file %s!\n"
@@ -303,12 +303,12 @@ msgstr ""
 "Błąd otwierania pliku %s!\n"
 "Plik nie istnieje."
 
-#: gui/wndmain.py:853
+#: gui/wndmain.py:859
 #, python-format
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
 
-#: engine/ecatalog.py:124
+#: engine/ecatalog.py:124 engine/epdf.py:90
 #, python-format
 msgid ""
 "Error:\n"
@@ -322,6 +322,14 @@ msgstr ""
 msgid "Exif"
 msgstr ""
 
+#: engine/epdf.py:41 engine/epdf.py:90 engine/epdf.py:92
+msgid "Export to PDF"
+msgstr "Eksportuj do PDF"
+
+#: gui/wndmain.py:165
+msgid "Export to PDF..."
+msgstr "Eksportuj do PDF..."
+
 #: model/_catalog_file.py:82
 msgid "File date"
 msgstr "Data pliku"
@@ -330,7 +338,7 @@ msgstr "Data pliku"
 msgid "File size"
 msgstr "Rozmiar pliku"
 
-#: gui/wndmain.py:625 gui/wndmain.py:654
+#: gui/wndmain.py:631 gui/wndmain.py:660
 #, python-format
 msgid "Files: %d"
 msgstr "Plików: %d"
@@ -380,11 +388,11 @@ msgstr "Ikonki"
 msgid "Include empty directories"
 msgstr "Dołącz puste katalogi"
 
-#: gui/wndmain.py:190
+#: gui/wndmain.py:191
 msgid "Info"
 msgstr ""
 
-#: gui/wndmain.py:158 gui/wndmain.py:245
+#: gui/wndmain.py:158 gui/wndmain.py:246
 msgid "Load catalog"
 msgstr "Wczytaj katalog"
 
@@ -426,11 +434,11 @@ msgstr "Nazwa:"
 msgid "No Exif"
 msgstr "Brak Exif"
 
-#: gui/wndmain.py:527
+#: gui/wndmain.py:533
 msgid "No directory selected"
 msgstr "Nie wybrano katalogu"
 
-#: gui/wndmain.py:509
+#: gui/wndmain.py:515
 msgid "No disk selected"
 msgstr "Nie wybrano dysku"
 
@@ -442,7 +450,7 @@ msgstr "Nic znaleziono plików!"
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
-#: gui/_dlgsearch.py:562 gui/wndmain.py:623
+#: gui/_dlgsearch.py:562 gui/wndmain.py:629
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -451,16 +459,16 @@ msgstr ""
 "Liczba plików przekracza 1000!\n"
 "Pokazać %d plików?"
 
-#: gui/wndmain.py:837
+#: gui/wndmain.py:843
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:333 gui/wndmain.py:789 gui/wndmain.py:804
+#: gui/wndmain.py:334 gui/wndmain.py:795 gui/wndmain.py:810
 msgid "Open file"
 msgstr "Otwórz plik"
 
-#: gui/wndmain.py:793
+#: gui/wndmain.py:799
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr "Otwieranie %s.... Proszę czekać..."
@@ -475,14 +483,14 @@ msgstr "Inne"
 
 #: gui/wndmain.py:164
 msgid "Print"
-msgstr ""
+msgstr "Drukuj"
 
-#: gui/_dlgsettings.py:56 gui/wndmain.py:166
+#: gui/_dlgsettings.py:56 gui/wndmain.py:167
 msgid "Program settings"
 msgstr "Ustawienia programu"
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:872
-#: gui/wndmain.py:896
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:878
+#: gui/wndmain.py:902
 msgid "Properties"
 msgstr "Własności"
 
@@ -490,7 +498,7 @@ msgstr "Własności"
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
-#: gui/wndmain.py:385
+#: gui/wndmain.py:386
 #, python-format
 msgid "Rebuild catalog %s?"
 msgstr "Przebudować katalog  %s?"
@@ -525,7 +533,7 @@ msgstr ""
 "Przebudowywanie...\n"
 "Proszę czekać..."
 
-#: gui/wndmain.py:172
+#: gui/wndmain.py:173
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
@@ -533,7 +541,7 @@ msgstr "Ostatnie pliki"
 msgid "Regex"
 msgstr "Wyr.Reg."
 
-#: gui/wndmain.py:246 gui/wndmain.py:853
+#: gui/wndmain.py:247 gui/wndmain.py:859
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 
@@ -557,7 +565,7 @@ msgstr "Szukaj"
 msgid "Search in"
 msgstr "Szukaj w"
 
-#: gui/wndmain.py:189 gui/wndmain.py:250
+#: gui/wndmain.py:190 gui/wndmain.py:251
 msgid "Search in calalogs"
 msgstr "Szukaj w katalogach"
 
@@ -638,7 +646,7 @@ msgstr "Linia czasu"
 msgid "Update disk"
 msgstr "Aktualizuj dysk"
 
-#: gui/wndmain.py:181
+#: gui/wndmain.py:182
 msgid "Update selected disk"
 msgstr "Aktualizuj wybrany dysk"
 
@@ -662,35 +670,35 @@ msgstr "Widok"
 msgid "Wrong date range!"
 msgstr "Zły zakres dat!"
 
-#: gui/wndmain.py:209
+#: gui/wndmain.py:210
 msgid "[o]&Group by date "
 msgstr "[o]&Grupuj wg daty"
 
-#: gui/wndmain.py:210
+#: gui/wndmain.py:211
 msgid "[o]&Group by path "
 msgstr "[o]&Grupuj wg ścieżki"
 
-#: gui/wndmain.py:208
+#: gui/wndmain.py:209
 msgid "[o]Sort by &date "
 msgstr "[o]Sortuj wg &daty"
 
-#: gui/wndmain.py:207
+#: gui/wndmain.py:208
 msgid "[o]Sort by &name "
 msgstr "[o]Sortuj wg &nazwy"
 
-#: gui/wndmain.py:203
+#: gui/wndmain.py:204
 msgid "[x]Show &captions"
 msgstr "[x]Pokaż &podpisy"
 
-#: gui/wndmain.py:201
+#: gui/wndmain.py:202
 msgid "[x]Show &info"
 msgstr "[x]Pokaż &info"
 
-#: gui/wndmain.py:211
+#: gui/wndmain.py:212
 msgid "[x]Sort descend"
 msgstr "[x]Sortuj malejąco"
 
-#: gui/wndmain.py:212
+#: gui/wndmain.py:213
 msgid "[x]With subdirs"
 msgstr "[x]Z podkatalogami"
 
@@ -772,6 +780,9 @@ msgstr "szerokość miniaturki"
 
 #~ msgid "Date isn't in correct format - YYYY-MM-DD format required"
 #~ msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
+
+#~ msgid "Export to pdf..."
+#~ msgstr "Eksportuj do pdf.."
 
 #~ msgid "Field must by not empty"
 #~ msgstr "Pole nie może być puste"

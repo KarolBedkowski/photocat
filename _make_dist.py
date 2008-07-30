@@ -79,7 +79,7 @@ def np_files_for(dirname):
 
 data_files = [ (a[3:], b) for a, b in np_files_for('pc') ]
 data_files.append(('',
-	['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt", "LICENCE_python.txt", "LICENCE_wxPython.txt", 
+	['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt", "LICENCE_python.txt", "LICENCE_wxPython.txt",
 		'CHANGELOG']
 ))
 
@@ -99,9 +99,9 @@ setup(
 						"optimize":		2,
 						"ascii":		0,
 						"bundle_files":	1,
-						"packages":		"PngImagePlugin, JpegImagePlugin", 
+						"packages":		"PngImagePlugin, JpegImagePlugin, _rl_accel",
 				}},
-	
+
 
 	# targets to build
 	zipfile = r"modules.dat",
@@ -117,4 +117,4 @@ setup(
 )
 
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:

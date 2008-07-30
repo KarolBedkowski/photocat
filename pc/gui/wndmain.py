@@ -48,7 +48,7 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog, eprint
+from pc.engine				import ecatalog, eprint, epdf
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -162,6 +162,7 @@ class WndMain(wx.Frame):
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
 			(_('Print'),			None,		'',							self._on_file_print_prv),
+			(_('Export to PDF...'),	None,		'',							self._on_file_export_pdf),
 			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
 			('-'),
@@ -395,6 +396,11 @@ class WndMain(wx.Frame):
 			self.__update_settings()
 
 		dlg.Destroy()
+
+
+	def _on_file_export_pdf(self, evt):
+		if len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE:
+			epdf.create_pdf(self, self._current_show_images)
 
 
 	def _on_file_print_prv(self, evt):
@@ -937,6 +943,7 @@ class WndMain(wx.Frame):
 		mm_items[4].Enable(catalog_loaded)
 		mm_items[6].Enable(catalog_loaded)
 		mm_items[8].Enable(len(self._current_show_images) > 0)
+		mm_items[9].Enable(len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE)
 
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
