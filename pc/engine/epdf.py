@@ -19,6 +19,7 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2008'
 
 import logging
 from cStringIO import StringIO
+import time
 
 import wx
 
@@ -43,12 +44,16 @@ else:
 	_LOG.info('reportlab loaded')
 	EPDF_AVAILABLE = True
 
+###########################################################################
 
+GROUP_BY_NONE	= 0
+GROUP_BY_DATE	= 1
+GROUP_BY_PATH	= 2
 
 ###########################################################################
 
 
-def _create_pdf(parent, items):
+def _create_pdf(parent, items, grouping=None):
 
 	filename = dialogs.dialog_file_save(parent, _('Export to PDF'), '*.pdf')
 	if filename is None:
@@ -82,32 +87,29 @@ def _create_pdf(parent, items):
 		style.alignment = TA_CENTER
 		style.fontSize = 6
 
+		style_header = stylesheet['Heading1']
+		style_header.fontSize = 10
+		style_header.fontName = 'Times-Bold'
+
+
 		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT, rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
 				bottomMargin=MARGIN_BOTTOM, pageCompression=9)
 		page = []
-		data = []
-		row	= []
+		if grouping == GROUP_BY_DATE:
+			item_value_func = lambda i: int(i.date_to_check / 86400)
+			group_label_func = lambda i: time.strftime('%x', time.localtime(i.date_to_check))
+			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
+					item_value_func, group_label_func)
 
-		for idx, item in enumerate(items):
-			par = Paragraph(item.name, style)
-			par.wrap(img_width, img_height)
+		elif grouping == GROUP_BY_PATH:
+			item_value_func = lambda i: i.parent.path
+			group_label_func = lambda i: i.disk.name + ": " + i.parent.path
+			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
+					item_value_func, group_label_func)
 
-			img = StringIO(item.image)
-			image = Image(img, 33, 33, kind='%', lazy=2)
-			row.append([ image, par ])
+		else:
+			_create_doc_group_none(page, items, style, img_width, img_height, cols)
 
-			if idx % cols == cols -1:
-				data.append(row)
-				row = []
-
-		if len(row) > 0:
-			while len(row) < cols:
-				row.append(Spacer(1, 1))
-
-			data.append(row)
-
-		table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
-		page.append(table)
 		doc.build(page, onLaterPages=__my_page, onFirstPage=__my_page)
 
 	except Exception, err:
@@ -118,6 +120,85 @@ def _create_pdf(parent, items):
 		dialogs.message_box_info(parent, _('Done!'), _('Export to PDF'))
 
 	parent.SetCursor(wx.STANDARD_CURSOR)
+
+
+###########################################################################
+
+
+def _create_doc_group_none(page, items, style, img_width, img_height, cols):
+	data = []
+	row	= []
+
+	for idx, item in enumerate(items):
+		par = Paragraph(item.name, style)
+		par.wrap(img_width, img_height)
+
+		img = StringIO(item.image)
+		image = Image(img, 33, 33, kind='%', lazy=2)
+		row.append([ image, par ])
+
+		if idx % cols == cols -1:
+			data.append(row)
+			row = []
+
+	if len(row) > 0:
+		while len(row) < cols:
+			row.append(Spacer(1, 1))
+
+		data.append(row)
+
+	table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+	page.append(table)
+
+
+def _create_doc_group_by(page, items, style, style_header, img_width, img_height, cols, item_value_func, group_label_func):
+	data = []
+	row	= []
+
+	last_item_value = None
+
+	for idx, item in enumerate(items):
+		item_value = item_value_func(item)
+
+		if last_item_value != item_value:
+			if len(row) > 0:
+				while len(row) < cols:
+					row.append(Spacer(1, 1))
+
+				data.append(row)
+
+			if len(data) > 0:
+				table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+				page.append(table)
+
+			data = []
+			row = []
+			last_item_value = item_value
+
+			page.append(Spacer(defaultPageSize[0]/2, 0.5*cm))
+			page.append(Paragraph(group_label_func(item), style_header))
+
+		par = Paragraph(item.name, style)
+		par.wrap(img_width, img_height)
+
+		img = StringIO(item.image)
+		image = Image(img, 33, 33, kind='%', lazy=2)
+		row.append([ image, par ])
+
+		if len(row) == cols:
+			data.append(row)
+			row = []
+
+
+	if len(row) > 0:
+		while len(row) < cols:
+			row.append(Spacer(1, 1))
+
+		data.append(row)
+
+	if len(data) > 0:
+		table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+		page.append(table)
 
 
 ###########################################################################
