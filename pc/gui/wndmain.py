@@ -399,7 +399,8 @@ class WndMain(wx.Frame):
 
 	def _on_file_export_pdf(self, evt):
 		if len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE:
-			epdf.create_pdf(self, self._current_show_images)
+			images = sorted(self._current_show_images, self.__get_sort_function(None, True))
+			epdf.create_pdf(self, images, self._photo_list.group_by)
 
 
 	def _on_file_print_prv(self, evt):
