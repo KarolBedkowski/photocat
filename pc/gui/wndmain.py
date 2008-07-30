@@ -161,7 +161,7 @@ class WndMain(wx.Frame):
 			('-'),
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
-			(_('Print'),			None,		'',							self._on_file_print_prv),
+			(None,	'Ctrl+P',	'',							self._on_file_print_prv, wx.ID_PRINT, 	wx.ART_PRINT),
 			(_('Export to PDF...'),	None,		'',							self._on_file_export_pdf),
 			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
@@ -189,7 +189,6 @@ class WndMain(wx.Frame):
 			('-'),
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
-			('-'),
 		))
 		self._main_menu_catalog = menu
 		return menu
@@ -912,7 +911,7 @@ class WndMain(wx.Frame):
 
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
-			catalog = self._catalogs[0] if len(self._catalogs) > 1 else None
+			catalog = self._catalogs[0] if len(self._catalogs) > 0 else None
 
 		else:
 			catalog = tree_selected.catalog
