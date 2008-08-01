@@ -53,7 +53,7 @@ GROUP_BY_PATH	= 2
 ###########################################################################
 
 
-def _create_pdf(parent, items, grouping=None):
+def _create_pdf(parent, items, options={}):
 
 	filename = dialogs.dialog_file_save(parent, _('Export to PDF'), '*.pdf')
 	if filename is None:
@@ -95,20 +95,22 @@ def _create_pdf(parent, items, grouping=None):
 		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT, rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
 				bottomMargin=MARGIN_BOTTOM, pageCompression=9)
 		page = []
+
+		grouping = options.get('group_by')
 		if grouping == GROUP_BY_DATE:
 			item_value_func = lambda i: int(i.date_to_check / 86400)
 			group_label_func = lambda i: time.strftime('%x', time.localtime(i.date_to_check))
 			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
-					item_value_func, group_label_func)
+					item_value_func, group_label_func, options)
 
 		elif grouping == GROUP_BY_PATH:
 			item_value_func = lambda i: i.parent.path
 			group_label_func = lambda i: i.disk.name + ": " + i.parent.path
 			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
-					item_value_func, group_label_func)
+					item_value_func, group_label_func, options)
 
 		else:
-			_create_doc_group_none(page, items, style, img_width, img_height, cols)
+			_create_doc_group_none(page, items, style, img_width, img_height, cols, options)
 
 		doc.build(page, onLaterPages=__my_page, onFirstPage=__my_page)
 
@@ -125,17 +127,26 @@ def _create_pdf(parent, items, grouping=None):
 ###########################################################################
 
 
-def _create_doc_group_none(page, items, style, img_width, img_height, cols):
+def _create_doc_group_none(page, items, style, img_width, img_height, cols, options):
 	data = []
 	row	= []
 
-	for idx, item in enumerate(items):
-		par = Paragraph(item.name, style)
-		par.wrap(img_width, img_height)
+	show_captions	= options.get('show_captions', True)
+	col_width		= img_width + 0.5*cm
+	table_style		= [('ALIGN',(0,0),(-1, -1),'CENTER')] #, ('GRID',(0,0),(-1,-1),1,'BLACK')]
 
+	for idx, item in enumerate(items):
 		img = StringIO(item.image)
 		image = Image(img, 33, 33, kind='%', lazy=2)
-		row.append([ image, par ])
+
+		if show_captions:
+			par = Paragraph(item.name, style)
+			par.wrap(img_width, img_height)
+
+			row.append([ image, par ])
+
+		else:
+			row.append(image)
 
 		if idx % cols == cols -1:
 			data.append(row)
@@ -143,17 +154,22 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols):
 
 	if len(row) > 0:
 		while len(row) < cols:
-			row.append(Spacer(1, 1))
+			row.append(Spacer(img_width, img_height))
 
 		data.append(row)
 
-	table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+	table = Table(data, col_width, style=table_style)
 	page.append(table)
 
 
-def _create_doc_group_by(page, items, style, style_header, img_width, img_height, cols, item_value_func, group_label_func):
+def _create_doc_group_by(page, items, style, style_header, img_width, img_height, cols, item_value_func,
+			group_label_func, options):
 	data = []
 	row	= []
+
+	show_captions	= options.get('show_captions', True)
+	col_width		= img_width + 0.5*cm
+	table_style		= [('ALIGN',(0,0),(-1, -1),'CENTER')] #, ('GRID',(0,0),(-1,-1),1,'BLACK')]
 
 	last_item_value = None
 
@@ -163,27 +179,33 @@ def _create_doc_group_by(page, items, style, style_header, img_width, img_height
 		if last_item_value != item_value:
 			if len(row) > 0:
 				while len(row) < cols:
-					row.append(Spacer(1, 1))
+					row.append(Spacer(img_width, img_height))
 
 				data.append(row)
 
 			if len(data) > 0:
-				table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+				table = Table(data, col_width, style=table_style)
+				#table.hAlign = 'LEFT'
 				page.append(table)
 
 			data = []
 			row = []
 			last_item_value = item_value
 
-			page.append(Spacer(defaultPageSize[0]/2, 0.5*cm))
+			page.append(Spacer(defaultPageSize[0]/2, 1*cm))
 			page.append(Paragraph(group_label_func(item), style_header))
-
-		par = Paragraph(item.name, style)
-		par.wrap(img_width, img_height)
 
 		img = StringIO(item.image)
 		image = Image(img, 33, 33, kind='%', lazy=2)
-		row.append([ image, par ])
+
+		if show_captions:
+			par = Paragraph(item.name, style)
+			par.wrap(img_width, img_height)
+
+			row.append([ image, par ])
+
+		else:
+			row.append(image)
 
 		if len(row) == cols:
 			data.append(row)
@@ -192,12 +214,13 @@ def _create_doc_group_by(page, items, style, style_header, img_width, img_height
 
 	if len(row) > 0:
 		while len(row) < cols:
-			row.append(Spacer(1, 1))
+			row.append(Spacer(img_width, img_height))
 
 		data.append(row)
 
 	if len(data) > 0:
-		table = Table(data, style=[('ALIGN',(0,0),(cols-1,len(data)-1),'CENTER')])
+		table = Table(data, col_width, style=table_style)
+		#table.hAlign = 'LEFT'
 		page.append(table)
 
 
