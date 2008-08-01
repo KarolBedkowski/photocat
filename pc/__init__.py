@@ -27,8 +27,8 @@ __revision__	= '$Id$'
 __all__			= ['run']
 
 
-__version__		= '1.4b5'
-__release__		= '2008-07-30'
+__version__		= '1.4b6'
+__release__		= '2008-08-01'
 
 
 
