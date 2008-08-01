@@ -208,6 +208,9 @@ class WndMain(wx.Frame):
 		self._menu_view_sort_date = create_menu_item(self, menu, _('[o]Sort by &date '),	self._on_view_sort)[1]
 		self._menu_view_group_date = create_menu_item(self, menu, _('[o]&Group by date '),	self._on_view_sort)[1]
 		self._menu_view_group_path = create_menu_item(self, menu, _('[o]&Group by path '),	self._on_view_sort)[1]
+
+		menu.AppendSeparator()
+
 		self._menu_view_sort_desc = create_menu_item(self, menu, _('[x]Sort descend'),		self._on_view_sort)[1]
 		self._menu_view_show_recur = create_menu_item(self, menu, _('[x]With subdirs'),		self._on_view_sort)[1]
 
