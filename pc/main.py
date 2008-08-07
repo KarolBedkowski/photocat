@@ -73,6 +73,7 @@ _LOG = logging.getLogger(__name__)
 import wx
 
 from kpylibs.appconfig		import AppConfig
+from kpylibs				import kpylibs_setup
 
 from pc.icons				import icons
 
@@ -91,14 +92,16 @@ class App(wx.App):
 		locales_dir = app_config.locales_dir
 		_LOG.info('run: locale dir: %s' % locales_dir)
 		self.locale = locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-		locale.AddCatalogLookupPathPrefix(locales_dir)		
+		locale.AddCatalogLookupPathPrefix(locales_dir)
 		locale.AddCatalog('wxstd')
-		locale.AddCatalog('kpylibs')
 		locale.AddCatalog('pc')
+
+		kpylibs_setup.setup_locale(locale)
+		
 		_LOG.info('locale: %s' % locale.GetName())
 
 		from kpylibs.iconprovider	import IconProvider
-	
+
 		_LOG.info('App.OnInit: preparing iconprovider...')
 		icon_provider = IconProvider(icons)
 
