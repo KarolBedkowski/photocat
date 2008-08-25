@@ -1147,7 +1147,10 @@ def process_file(file, debug=0):
         
     # deal with MakerNote contained in EXIF IFD
     if hdr.tags.has_key('EXIF MakerNote'):
-        hdr.decode_maker_note()
+        try:
+            hdr.decode_maker_note()
+        except:
+            pass
 
     # Sometimes in a TIFF file, a JPEG thumbnail is hidden in the MakerNote
     # since it's not allowed in a uncompressed TIFF IFD
