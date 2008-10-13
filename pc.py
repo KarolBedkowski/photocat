@@ -28,6 +28,9 @@ __revision__	= '$Id$'
 __all__			= []
 
 
+import os
+os.chdir(os.path.dirname(__file__))
+
 from pc	import run
 
 run()
