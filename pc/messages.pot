@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-28 22:27+0200\n"
+"POT-Creation-Date: 2008-11-08 22:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgid ""
 "Found: %(found)d"
 msgstr ""
 
-#: gui/wndmain.py:220
+#: gui/wndmain.py:222
 msgid "&About..."
 msgstr ""
 
@@ -35,11 +35,11 @@ msgstr ""
 msgid "&Catalog"
 msgstr ""
 
-#: gui/wndmain.py:183 gui/wndmain.py:882
+#: gui/wndmain.py:183 gui/wndmain.py:893
 msgid "&Delete disk..."
 msgstr ""
 
-#: gui/wndmain.py:904
+#: gui/wndmain.py:918
 msgid "&Delete file..."
 msgstr ""
 
@@ -51,7 +51,7 @@ msgstr ""
 msgid "&File"
 msgstr ""
 
-#: gui/wndmain.py:182 gui/wndmain.py:881
+#: gui/wndmain.py:182 gui/wndmain.py:892
 msgid "&Update disk..."
 msgstr ""
 
@@ -81,7 +81,7 @@ msgstr ""
 msgid "About selected calalog..."
 msgstr ""
 
-#: gui/_dlgproperties.py:180
+#: gui/_dlgproperties.py:190
 msgid "Add"
 msgstr ""
 
@@ -89,15 +89,15 @@ msgstr ""
 msgid "Add disk"
 msgstr ""
 
-#: gui/wndmain.py:181 gui/wndmain.py:255
+#: gui/wndmain.py:181 gui/wndmain.py:257
 msgid "Add disk to catalog"
 msgstr ""
 
-#: gui/wndmain.py:255
+#: gui/wndmain.py:257
 msgid "Add disk..."
 msgstr ""
 
-#: engine/ecatalog.py:145
+#: engine/ecatalog.py:150
 msgid "Adding disk"
 msgstr ""
 
@@ -124,40 +124,44 @@ msgstr ""
 msgid "Catalog"
 msgstr ""
 
-#: gui/wndmain.py:362
+#: gui/wndmain.py:364
 #, python-format
 msgid ""
 "Catalog %s has unsaved changes!\n"
 "Save before close??"
 msgstr ""
 
-#: gui/wndmain.py:286
+#: gui/wndmain.py:288
 #, python-format
 msgid ""
 "Catalog %s isn't saved\n"
 "Save it?"
 msgstr ""
 
-#: gui/wndmain.py:819
+#: gui/wndmain.py:828
 #, python-format
 msgid ""
 "Catalog file contain %d%% unused entries.\n"
 "Rebuild catalog?"
 msgstr ""
 
-#: gui/wndmain.py:315
+#: gui/wndmain.py:317
 msgid "Catalog file name"
+msgstr ""
+
+#: engine/ecatalog.py:87 engine/ecatalog.py:174
+msgid "Catalog is read-only."
 msgstr ""
 
 #: gui/wndmain.py:169
 msgid "Close application"
 msgstr ""
 
-#: gui/wndmain.py:160 gui/wndmain.py:889
+#: gui/wndmain.py:160 gui/wndmain.py:900
 msgid "Close catalog"
 msgstr ""
 
-#: gui/wndmain.py:371
+#: gui/wndmain.py:373
 #, python-format
 msgid "Close catalog %s?"
 msgstr ""
@@ -166,7 +170,7 @@ msgstr ""
 msgid "Close current catalog"
 msgstr ""
 
-#: gui/wndmain.py:294
+#: gui/wndmain.py:296
 msgid "Close program?"
 msgstr ""
 
@@ -174,15 +178,15 @@ msgstr ""
 msgid "Compression:"
 msgstr ""
 
-#: engine/ecatalog.py:60
+#: engine/ecatalog.py:61
 msgid "Counting files..."
 msgstr ""
 
-#: gui/wndmain.py:157 gui/wndmain.py:245
+#: gui/wndmain.py:157 gui/wndmain.py:247
 msgid "Create new catalog"
 msgstr ""
 
-#: gui/wndmain.py:314
+#: gui/wndmain.py:316
 msgid "Create new catalog?"
 msgstr ""
 
@@ -190,34 +194,34 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: gui/_dlgproperties.py:183
+#: gui/_dlgproperties.py:193
 msgid "Del"
 msgstr ""
 
-#: gui/wndmain.py:555
+#: gui/wndmain.py:562
 #, python-format
 msgid "Delete %d images?"
 msgstr ""
 
-#: gui/wndmain.py:533
+#: gui/wndmain.py:540
 msgid "Delete directory"
 msgstr ""
 
-#: gui/wndmain.py:536
+#: gui/wndmain.py:543
 #, python-format
 msgid "Delete directory %s?"
 msgstr ""
 
-#: gui/wndmain.py:515
+#: gui/wndmain.py:522
 msgid "Delete disk"
 msgstr ""
 
-#: gui/wndmain.py:518
+#: gui/wndmain.py:525
 #, python-format
 msgid "Delete disk %s?"
 msgstr ""
 
-#: gui/wndmain.py:185 gui/wndmain.py:885
+#: gui/wndmain.py:185 gui/wndmain.py:896
 msgid "Delete selected &dir..."
 msgstr ""
 
@@ -229,7 +233,7 @@ msgstr ""
 msgid "Delete selected disk from catalog"
 msgstr ""
 
-#: gui/_dlgproperties.py:95 gui/components/infopanel.py:71
+#: gui/_dlgproperties.py:102 gui/components/infopanel.py:71
 #: gui/components/infopanel.py:108
 msgid "Description"
 msgstr ""
@@ -238,7 +242,7 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: gui/wndmain.py:656
+#: gui/wndmain.py:663
 #, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr ""
@@ -263,7 +267,7 @@ msgstr ""
 msgid "Disk updated"
 msgstr ""
 
-#: gui/wndmain.py:586
+#: gui/wndmain.py:593
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
@@ -272,40 +276,38 @@ msgid ""
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 
-#: engine/ecatalog.py:120 engine/epdf.py:92
+#: engine/ecatalog.py:125 engine/epdf.py:122
 msgid "Done!"
 msgstr ""
 
-#: gui/wndmain.py:810
+#: gui/wndmain.py:812
 #, python-format
-msgid "Error opening file %s"
+msgid "Error opening file %s:\n"
 msgstr ""
 
-#: gui/wndmain.py:795
-#, python-format
-msgid ""
-"Error opening file %s!\n"
-"File don't exists."
-msgstr ""
-
-#: gui/wndmain.py:859
+#: gui/wndmain.py:868
 #, python-format
 msgid "Error saving catalog %s"
 msgstr ""
 
-#: engine/ecatalog.py:124 engine/epdf.py:90
+#: engine/ecatalog.py:129 engine/epdf.py:119
 #, python-format
 msgid ""
 "Error:\n"
 "%s"
 msgstr ""
 
-#: gui/_dlgproperties.py:98 gui/components/infopanel.py:57
+#: gui/wndmain.py:813
+#, python-format
+msgid "Error: %s"
+msgstr ""
+
+#: gui/_dlgproperties.py:105 gui/components/infopanel.py:57
 #: gui/components/infopanel.py:148
 msgid "Exif"
 msgstr ""
 
-#: engine/epdf.py:41 engine/epdf.py:90 engine/epdf.py:92
+#: engine/epdf.py:58 engine/epdf.py:119 engine/epdf.py:122 engine/epdf.py:231
 msgid "Export to PDF"
 msgstr ""
 
@@ -317,11 +319,19 @@ msgstr ""
 msgid "File date"
 msgstr ""
 
+#: engine/ecatalog.py:224
+msgid "File not exists!"
+msgstr ""
+
+#: engine/ecatalog.py:227
+msgid "File not readable"
+msgstr ""
+
 #: model/file_image.py:163
 msgid "File size"
 msgstr ""
 
-#: gui/wndmain.py:631 gui/wndmain.py:660
+#: gui/wndmain.py:638 gui/wndmain.py:667
 #, python-format
 msgid "Files: %d"
 msgstr ""
@@ -373,7 +383,7 @@ msgstr ""
 msgid "Info"
 msgstr ""
 
-#: gui/wndmain.py:158 gui/wndmain.py:246
+#: gui/wndmain.py:158 gui/wndmain.py:248
 msgid "Load catalog"
 msgstr ""
 
@@ -381,14 +391,14 @@ msgstr ""
 msgid "Load info from captions.txt"
 msgstr ""
 
-#: engine/ecatalog.py:108
+#: engine/ecatalog.py:113
 #, python-format
 msgid ""
 "Loading file:\n"
 "%s"
 msgstr ""
 
-#: gui/dlgadddisk.py:78 gui/_dlgproperties.py:93
+#: gui/dlgadddisk.py:78 gui/_dlgproperties.py:100
 #: gui/components/infopanel.py:56
 msgid "Main"
 msgstr ""
@@ -405,7 +415,7 @@ msgstr ""
 msgid "Name already exists in catalog!"
 msgstr ""
 
-#: gui/_dlgproperties.py:115
+#: gui/_dlgproperties.py:122
 msgid "Name:"
 msgstr ""
 
@@ -413,15 +423,15 @@ msgstr ""
 msgid "No Exif"
 msgstr ""
 
-#: gui/wndmain.py:533
+#: gui/wndmain.py:540
 msgid "No directory selected"
 msgstr ""
 
-#: gui/wndmain.py:515
+#: gui/wndmain.py:522
 msgid "No disk selected"
 msgstr ""
 
-#: engine/ecatalog.py:68
+#: engine/ecatalog.py:69
 msgid "No files found!"
 msgstr ""
 
@@ -429,23 +439,33 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: gui/_dlgsearch.py:562 gui/wndmain.py:629
+#: gui/_dlgsearch.py:562 gui/wndmain.py:636
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
 "Show %d files?"
 msgstr ""
 
-#: gui/wndmain.py:843
+#: gui/wndmain.py:852
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: gui/wndmain.py:334 gui/wndmain.py:795 gui/wndmain.py:810
+#: gui/wndmain.py:336 gui/wndmain.py:812
 msgid "Open file"
 msgstr ""
 
-#: gui/wndmain.py:799
+#: gui/wndmain.py:822
+#, python-format
+msgid "Opened %s"
+msgstr ""
+
+#: gui/wndmain.py:819
+#, python-format
+msgid "Opened %s readonly"
+msgstr ""
+
+#: gui/wndmain.py:802
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
@@ -454,51 +474,47 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: gui/_dlgproperties.py:103
+#: gui/_dlgproperties.py:110
 msgid "Other"
-msgstr ""
-
-#: gui/wndmain.py:164
-msgid "Print"
 msgstr ""
 
 #: gui/_dlgsettings.py:56 gui/wndmain.py:167
 msgid "Program settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:878
-#: gui/wndmain.py:902
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:887
+#: gui/wndmain.py:913
 msgid "Properties"
 msgstr ""
 
-#: gui/wndmain.py:162 engine/ecatalog.py:171
+#: gui/wndmain.py:162 engine/ecatalog.py:179
 msgid "Rebuild catalog"
 msgstr ""
 
-#: gui/wndmain.py:386
+#: gui/wndmain.py:388
 #, python-format
 msgid "Rebuild catalog %s?"
 msgstr ""
 
-#: engine/ecatalog.py:183
+#: engine/ecatalog.py:191
 msgid "Rebuild catalog aborted"
 msgstr ""
 
-#: engine/ecatalog.py:193
+#: engine/ecatalog.py:203
 #, python-format
 msgid ""
 "Rebuild catalog error!\n"
 "%(msg)s"
 msgstr ""
 
-#: engine/ecatalog.py:186
+#: engine/ecatalog.py:195
 #, python-format
 msgid ""
 "Rebuild catalog finished\n"
 "Saved space: %sB"
 msgstr ""
 
-#: engine/ecatalog.py:171
+#: engine/ecatalog.py:179
 msgid ""
 "Rebuilding...\n"
 "Please wait."
@@ -512,7 +528,7 @@ msgstr ""
 msgid "Regex"
 msgstr ""
 
-#: gui/wndmain.py:247 gui/wndmain.py:859
+#: gui/wndmain.py:249 gui/wndmain.py:868
 msgid "Save catalog"
 msgstr ""
 
@@ -520,7 +536,7 @@ msgstr ""
 msgid "Save current catalog"
 msgstr ""
 
-#: engine/ecatalog.py:180
+#: engine/ecatalog.py:188
 msgid "Saving..."
 msgstr ""
 
@@ -536,7 +552,7 @@ msgstr ""
 msgid "Search in"
 msgstr ""
 
-#: gui/wndmain.py:190 gui/wndmain.py:251
+#: gui/wndmain.py:190 gui/wndmain.py:253
 msgid "Search in calalogs"
 msgstr ""
 
@@ -556,11 +572,11 @@ msgstr ""
 msgid "Selected dir don't exists!"
 msgstr ""
 
-#: gui/_dlgproperties.py:139
+#: gui/_dlgproperties.py:148
 msgid "Set description"
 msgstr ""
 
-#: gui/_dlgproperties.py:169
+#: gui/_dlgproperties.py:178
 msgid "Set tags"
 msgstr ""
 
@@ -568,7 +584,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: gui/_dlgproperties.py:198
+#: gui/_dlgproperties.py:210 gui/_dlgproperties.py:214
 msgid "Shot date:"
 msgstr ""
 
@@ -580,11 +596,11 @@ msgstr ""
 msgid "Skip dirs (\";\" - separated):"
 msgstr ""
 
-#: gui/_dlgproperties.py:157 gui/components/infopanel.py:92
+#: gui/_dlgproperties.py:166 gui/components/infopanel.py:92
 msgid "Tag"
 msgstr ""
 
-#: gui/_dlgproperties.py:100 gui/components/dirstree.py:219
+#: gui/_dlgproperties.py:107 gui/components/dirstree.py:219
 #: model/_catalog_file.py:73
 msgid "Tags"
 msgstr ""
@@ -621,7 +637,7 @@ msgstr ""
 msgid "Update selected disk"
 msgstr ""
 
-#: engine/ecatalog.py:158
+#: engine/ecatalog.py:163
 msgid "Updating disk"
 msgstr ""
 
@@ -629,7 +645,7 @@ msgstr ""
 msgid "Use custom color"
 msgstr ""
 
-#: gui/_dlgproperties.py:158 gui/components/infopanel.py:93
+#: gui/_dlgproperties.py:167 gui/components/infopanel.py:93
 msgid "Value"
 msgstr ""
 
@@ -641,35 +657,35 @@ msgstr ""
 msgid "Wrong date range!"
 msgstr ""
 
-#: gui/wndmain.py:210
+#: gui/wndmain.py:209
 msgid "[o]&Group by date "
 msgstr ""
 
-#: gui/wndmain.py:211
+#: gui/wndmain.py:210
 msgid "[o]&Group by path "
 msgstr ""
 
-#: gui/wndmain.py:209
+#: gui/wndmain.py:208
 msgid "[o]Sort by &date "
 msgstr ""
 
-#: gui/wndmain.py:208
+#: gui/wndmain.py:207
 msgid "[o]Sort by &name "
 msgstr ""
 
-#: gui/wndmain.py:204
+#: gui/wndmain.py:203
 msgid "[x]Show &captions"
 msgstr ""
 
-#: gui/wndmain.py:202
+#: gui/wndmain.py:201
 msgid "[x]Show &info"
 msgstr ""
 
-#: gui/wndmain.py:212
+#: gui/wndmain.py:214
 msgid "[x]Sort descend"
 msgstr ""
 
-#: gui/wndmain.py:213
+#: gui/wndmain.py:215
 msgid "[x]With subdirs"
 msgstr ""
 
