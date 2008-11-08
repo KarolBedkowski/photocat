@@ -38,7 +38,7 @@ from file_image	import FileImage
 
 
 class Catalog(TreeItem):
-	def __init__(self, filename):
+	def __init__(self, filename, readonly=False):
 		TreeItem.__init__(self)
 
 		self.catalog_filename	= filename
@@ -46,6 +46,7 @@ class Catalog(TreeItem):
 		self.last_id			= None
 		self.last_offset		= None
 		self.dirty				= True
+		self.readonly 			= readonly
 
 		self.disks				= []
 		self.catalog			= self
@@ -59,7 +60,7 @@ class Catalog(TreeItem):
 
 	@property
 	def caption(self):
-		return self.name + (self.dirty and ' *' or '')
+		return self.name + (self.dirty and ' *' or '') + (self.readonly and ' [ReadOnly]' or '')
 
 
 	@property

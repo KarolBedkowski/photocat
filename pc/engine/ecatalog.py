@@ -229,6 +229,7 @@ def open_catalog(filename):
 
 	try:
 		catalog = Storage.load(filename)
+		catalog.readonly = not writable
 		catalog.data_provider.open()
 
 	except Exception, err:
