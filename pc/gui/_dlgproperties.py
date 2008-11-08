@@ -59,10 +59,16 @@ class DlgProperties(wx.Dialog):
 
 		# lista zmienionych podczas edycji nazw tagów
 		self.changed_tags		= None
+		self.readonly = item.catalog.readonly
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
+
+		if self.readonly:
+			main_grid.Add(self.CreateStdDialogButtonSizer(wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
+
+		else:
+			main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
 
 		self.SetSizerAndFit(main_grid)
 
@@ -79,7 +85,8 @@ class DlgProperties(wx.Dialog):
 
 		self._show(item)
 
-		[ self._combobox_tags.Append(tag) for tag in item.disk.catalog.tags_provider.tags ]
+		if not self.readonly:
+			[ self._combobox_tags.Append(tag) for tag in item.disk.catalog.tags_provider.tags ]
 
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 		self.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CANCEL)
@@ -115,6 +122,7 @@ class DlgProperties(wx.Dialog):
 			name_sizer.Add(wx.StaticText(panel, -1, _('Name:')))
 			name_sizer.Add((5, 5))
 			self._tc_name = wx.TextCtrl(panel, -1)
+			self._tc_name.SetEditable(not self.readonly)
 			name_sizer.Add(self._tc_name, 1, wx.EXPAND)
 			sizer.Add(name_sizer, 0, wx.EXPAND|wx.ALL, 5)
 
@@ -132,6 +140,7 @@ class DlgProperties(wx.Dialog):
 		panel = wx.Panel(parent, -1)
 
 		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		textctrl.SetEditable(not self.readonly)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -172,18 +181,19 @@ class DlgProperties(wx.Dialog):
 		listbox = self._listbox_tags = wx.ListBox(panel, -1, style=wx.LB_SINGLE)
 		sizer.Add(listbox, 1, wx.EXPAND|wx.ALL, 5)
 
-		subsizer = wx.BoxSizer(wx.HORIZONTAL)
+		if not self.readonly:
+			subsizer = wx.BoxSizer(wx.HORIZONTAL)
 
-		combobox = self._combobox_tags = wx.ComboBox(panel, -1, style=wx.CB_SORT)
-		subsizer.Add(combobox, 1, wx.EXPAND|wx.ALL, 2)
+			combobox = self._combobox_tags = wx.ComboBox(panel, -1, style=wx.CB_SORT)
+			subsizer.Add(combobox, 1, wx.EXPAND|wx.ALL, 2)
 
-		button1	= create_button(panel, _('Add'), self._on_add_tag)
-		subsizer.Add(button1, 0, wx.EXPAND|wx.ALL, 2)
+			button1	= create_button(panel, _('Add'), self._on_add_tag)
+			subsizer.Add(button1, 0, wx.EXPAND|wx.ALL, 2)
 
-		button2	= create_button(panel, _('Del'), self._on_del_tag)
-		subsizer.Add(button2, 0, wx.EXPAND|wx.ALL, 2)
+			button2	= create_button(panel, _('Del'), self._on_del_tag)
+			subsizer.Add(button2, 0, wx.EXPAND|wx.ALL, 2)
 
-		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
+			sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		panel.SetSizerAndFit(sizer)
 
@@ -195,20 +205,27 @@ class DlgProperties(wx.Dialog):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
 		subsizer = wx.BoxSizer(wx.HORIZONTAL)
-		self._cb_shot_date = wx.CheckBox(panel, 1, _("Shot date:"))
+
+		if not self.readonly:
+			self._cb_shot_date = wx.CheckBox(panel, 1, _("Shot date:"))
+			self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
+
+		else:
+			self._cb_shot_date = wx.StaticText(panel, 1, _("Shot date:"))
+
 		subsizer.Add(self._cb_shot_date, 0, wx.EXPAND|wx.ALL, 5)
 
 		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1),
 				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
+		self._dp_shot_date.Enable(not self.readonly)
 		subsizer.Add(self._dp_shot_date, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
 
 		self._tc_shot_time = masked.TimeCtrl(panel , -1, fmt24hr=True)
+		self._tc_shot_time.SetEditable(not self.readonly)
 		subsizer.Add(self._tc_shot_time, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
 
 		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 5)
 		panel.SetSizerAndFit(sizer)
-
-		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
 
 		return panel
 
@@ -251,7 +268,10 @@ class DlgProperties(wx.Dialog):
 
 		if self._item_is_image:
 			shot_date_present = item.shot_date is not None and item.shot_date > 0
-			self._cb_shot_date.SetValue(shot_date_present)
+
+			if not item.catalog.readonly:
+				self._cb_shot_date.SetValue(shot_date_present)
+
 			self._dp_shot_date.Enable(shot_date_present)
 			self._tc_shot_time.Enable(shot_date_present)
 			if shot_date_present:
@@ -335,7 +355,7 @@ class DlgProperties(wx.Dialog):
 			tag		= tag.lower()
 			listbox = self._listbox_tags
 			tags	= [ listbox.GetString(idx) for idx in xrange(listbox.GetCount()) ]
-			
+
 			if tags.count(tag) == 0:
 				listbox.Append(tag)
 				self._combobox_tags.Append(tag)
