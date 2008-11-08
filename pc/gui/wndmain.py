@@ -798,10 +798,6 @@ class WndMain(wx.Frame):
 
 	def _open_file(self, filename):
 		if sum(( 1 for cat in self._catalogs if cat.catalog_filename == filename )) == 0:
-			if not os.path.exists(filename):
-				dialogs.message_box_error(self, _("Error opening file %s!\nFile don't exists.") % filename, _('Open file'))
-				return
-
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
@@ -813,11 +809,18 @@ class WndMain(wx.Frame):
 
 			except Exception, err:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
-				dialogs.message_box_error(self, _('Error opening file %s:\n') % filename + err, _('Open file'))
+				dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('Open file'))
+				self.SetStatusText(_('Error: %s') % err.message)
 				catalog = None
 
 			else:
 				if catalog is not None:
+					if catalog.readonly:
+						self.SetStatusText(_('Opened %s readonly') % filename)
+
+					else:
+						self.SetStatusText(_('Opened %s') % filename)
+
 					dirty, dirtyp = catalog.dirty_objects_count
 					_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
 					if dirtyp > 10:
