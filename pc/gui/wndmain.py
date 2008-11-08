@@ -882,13 +882,15 @@ class WndMain(wx.Frame):
 
 		if isinstance(item, Directory):
 			append(_('Properties'), self._on_dirtree_item_activate)
-			popup_menu.AppendSeparator()
-			if isinstance(item, Disk):
-				append(_('&Update disk...'), self._on_catalog_update_disk)
-				append(_('&Delete disk...'), self._on_catalog_del_disk)
 
-			else:
-				append(_('Delete selected &dir...'), self._on_catalog_del_dir)
+			if not item.catalog.readonly:
+				popup_menu.AppendSeparator()
+				if isinstance(item, Disk):
+					append(_('&Update disk...'), self._on_catalog_update_disk)
+					append(_('&Delete disk...'), self._on_catalog_del_disk)
+
+				else:
+					append(_('Delete selected &dir...'), self._on_catalog_del_dir)
 
 			popup_menu.AppendSeparator()
 
@@ -906,8 +908,11 @@ class WndMain(wx.Frame):
 			wx.EVT_MENU(self, mid, func)
 
 		append(_('Properties'), self._on_thumb_dclick)
-		popup_menu.AppendSeparator()
-		append(_('&Delete file...'), self._on_catalog_del_image)
+
+		catalog = self._photo_list.selected_item.catalog
+		if not catalog.readonly:
+			popup_menu.AppendSeparator()
+			append(_('&Delete file...'), self._on_catalog_del_image)
 
 		return popup_menu
 
