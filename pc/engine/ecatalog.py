@@ -82,6 +82,10 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 		@param parent_wnd	-- okno nadrzędne
 		@return zaktualizowany/dodany dysk
 	'''
+
+	if catalog.readonly:
+		raise errors.UpdateDiskError(_("Catalog is read-only."))
+
 	appconfig = AppConfig()
 	data.update(dict(appconfig.get_items('settings') or []))
 
@@ -166,6 +170,9 @@ def rebuild(catalog, parent_wnd):
 		@param parent_wnd	-- okno nadrzędne
 		@return True=sukces
 	'''
+	if catalog.readonly:
+		raise errors.UpdateDiskError(_("Catalog is read-only."))
+
 	objects_count = catalog.object_in_files
 	result = False
 
@@ -182,10 +189,12 @@ def rebuild(catalog, parent_wnd):
 
 		if saved_space < 0:
 			dlg_progress.Update(objects_count + 2,	_('Rebuild catalog aborted'))
+
 		else:
 			dlg_progress.Update(objects_count + 2,
 					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
 			)
+
 		result = True
 
 	except Exception, err:
@@ -221,11 +230,17 @@ def open_catalog(filename):
 	if not file_writable:
 		_LOG.warn("file %s not writable" % filename)
 
+	data_file = os.path.splitext(filename)[0] + '.data'
+	data_writable = os.access(data_file, os.W_OK)
+	if not data_writable:
+		_LOG.warn("file %s not writable" % data_file)
+
+
 	path_writable = os.access(os.path.dirname(filename), os.W_OK)
 	if not path_writable:
 		_LOG.warn("dir with file %s not writable" % filename)
 
-	writable = file_writable & path_writable
+	writable = file_writable and path_writable and data_writable
 
 	try:
 		catalog = Storage.load(filename)

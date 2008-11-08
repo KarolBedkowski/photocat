@@ -106,6 +106,9 @@ class Catalog(TreeItem):
 
 
 	def add_disk(self, path, name, descr, options, on_update):
+		if self.readonly:
+			raise StandardError("read only")
+
 		disk = Disk(id=-1, name=name, parent=None, catalog=self)
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
@@ -116,6 +119,9 @@ class Catalog(TreeItem):
 
 
 	def remove_disk(self, disk):
+		if self.readonly:
+			raise StandardError("read only")
+
 		if disk in self.disks:
 			disk.delete()
 			self.disks.remove(disk)
@@ -126,6 +132,9 @@ class Catalog(TreeItem):
 
 
 	def update_disk(self, disk, path, name, descr, options, on_update):
+		if self.readonly:
+			raise StandardError("read only")
+
 		disk.name = name
 		disk.desc = descr
 		disk.update(path, options, on_update)
