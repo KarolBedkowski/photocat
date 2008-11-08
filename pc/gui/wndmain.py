@@ -942,12 +942,21 @@ class WndMain(wx.Frame):
 		""" wndmain.__update_menus_toolbars() -- włączanie/wyłączanie pozycji menu/toolbar """
 		catalog_loaded = len(self._catalogs) > 0
 
+		catalog_writable = False
+		if catalog_loaded:
+			selected_tree_item = self._dirs_tree.selected_item
+			if selected_tree_item is None:
+				catalog_writable = not self._catalogs[0].readonly if len(self._catalogs) == 1 else False
+
+			else:
+				catalog_writable = not selected_tree_item.catalog.readonly
+
 		self.__menu_bar.EnableTop(2, catalog_loaded)
 
 		mm_items = self._main_menu_file.GetMenuItems()
-		mm_items[2].Enable(catalog_loaded)
+		mm_items[2].Enable(catalog_loaded and catalog_writable)
 		mm_items[4].Enable(catalog_loaded)
-		mm_items[6].Enable(catalog_loaded)
+		mm_items[6].Enable(catalog_loaded and catalog_writable)
 		mm_items[8].Enable(len(self._current_show_images) > 0)
 		mm_items[9].Enable(len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE)
 
@@ -955,17 +964,17 @@ class WndMain(wx.Frame):
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
 
 		if catalog_loaded:
-			selected_tree_item = self._dirs_tree.selected_item
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
 			dir_selected = not disk_selected and (isinstance(selected_tree_item, Directory) if selected_tree_item is not None else False)
 			file_selected = len(self._photo_list.selected_items) > 0
 
 			mm_items = self._main_menu_catalog.GetMenuItems()
-			mm_items[1].Enable(disk_selected)
-			mm_items[2].Enable(disk_selected)
-			mm_items[4].Enable(dir_selected)
-			mm_items[5].Enable(file_selected)
-			mm_items[7].Enable(file_selected)
+			mm_items[0].Enable(catalog_writable)
+			mm_items[1].Enable(disk_selected and catalog_writable)
+			mm_items[2].Enable(disk_selected and catalog_writable)
+			mm_items[4].Enable(dir_selected and catalog_writable)
+			mm_items[5].Enable(file_selected and catalog_writable)
+			mm_items[7].Enable(file_selected and catalog_writable)
 
 
 	def __update_settings(self):
