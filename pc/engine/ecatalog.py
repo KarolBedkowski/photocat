@@ -38,6 +38,7 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs.formaters		import format_human_size
 
 from pc.model				import Catalog
+from pc.model.storage		import Storage
 from pc.gui.dlgadddisk		import DlgAddDisk
 
 import errors
@@ -198,5 +199,42 @@ def rebuild(catalog, parent_wnd):
 		parent_wnd.SetCursor(wx.STANDARD_CURSOR)
 
 	return result
+
+
+
+def open_catalog(filename):
+	''' open_catalog(filename) -> Catalog -- otwarcie katalogu
+
+		@param filename - pełna ścieżka do pliku
+		@retuen obiekt Catalog
+		@exception OpenCatalogError
+	'''
+	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
+
+	if not os.access(filename, os.F_OK) or not os.path.exists(filename) or not os.path.isfile(filename):
+		raise errors.OpenCatalogError(_("File not exists!"))
+
+	if not os.access(filename, os.R_OK):
+		raise errors.OpenCatalogError(_("File not readable"))
+
+	file_writable = os.access(filename, os.W_OK)
+	if not file_writable:
+		_LOG.warn("file %s not writable" % filename)
+
+	path_writable = os.access(os.path.dirname(filename), os.W_OK)
+	if not path_writable:
+		_LOG.warn("dir with file %s not writable" % filename)
+
+	writable = file_writable & path_writable
+
+	try:
+		catalog = Storage.load(filename)
+		catalog.data_provider.open()
+
+	except Exception, err:
+		raise errors.OpenCatalogError(err)
+
+	return catalog
+
 
 # vim: encoding=utf8: ff=unix:

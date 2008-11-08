@@ -48,7 +48,7 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog, eprint, epdf
+from pc.engine				import ecatalog, eprint, epdf, errors
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -805,16 +805,15 @@ class WndMain(wx.Frame):
 			try:
 				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog = Storage.load(filename)
-				catalog.data_provider.open()
+				catalog = ecatalog.open_catalog(filename)
 				self._catalogs.append(catalog)
 				self._dirs_tree.add_catalog(catalog)
 				self.__update_last_open_files(filename)
 				self.SetStatusText(filename)
 
-			except:
+			except Exception, err:
 				_LOG.exception('WndMain._open_file(%s)' % filename)
-				dialogs.message_box_error(self, _('Error opening file %s') % filename, _('Open file'))
+				dialogs.message_box_error(self, _('Error opening file %s:\n') % filename + err, _('Open file'))
 				catalog = None
 
 			else:
