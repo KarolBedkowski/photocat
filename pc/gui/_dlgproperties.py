@@ -281,7 +281,9 @@ class DlgProperties(wx.Dialog):
 				self._tc_shot_time.SetValue(date)
 
 		elif self._item_is_fake:
-			self._cb_shot_date.SetValue(False)
+			if not item.catalog.readonly:
+				self._cb_shot_date.SetValue(False)
+
 			self._dp_shot_date.Enable(False)
 			self._tc_shot_time.Enable(False)
 

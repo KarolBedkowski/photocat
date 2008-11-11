@@ -793,6 +793,14 @@ class WndMain(wx.Frame):
 			self._photo_list.PopupMenu(self.__create_popup_menu_image(), evt.GetPosition())
 
 
+	def _on_photo_popoup_properties(self, evt):
+		selected_count = len(self._photo_list.selected_items)
+		if selected_count > 1:
+			self._on_catalog_edit_multi(evt)
+
+		elif selected_count == 1:
+			self._on_thumb_dclick(evt)
+
 	################################################################################
 
 
@@ -910,7 +918,7 @@ class WndMain(wx.Frame):
 			popup_menu.Append(mid, name)
 			wx.EVT_MENU(self, mid, func)
 
-		append(_('Properties'), self._on_thumb_dclick)
+		append(_('Properties'), self._on_photo_popoup_properties)
 
 		catalog = self._photo_list.selected_item.catalog
 		if not catalog.readonly:
