@@ -50,9 +50,11 @@ class DataProvider:
 
 	def __init__(self, filename):
 		self.next_offset	= 0
-		self.saved_next_offset = 0
 		self.filename		= os.path.splitext(filename)[0] + ".data"
 		self.objects_count	= 0
+
+		self.saved_next_offset		= 0
+		self.saved_objects_count	= 0
 
 		self._file					= None
 		self._last_offset_file_pos	= len(self._DATA_FILE_HEADER_ID) + calcsize("I")
@@ -131,6 +133,7 @@ class DataProvider:
 	def save(self):
 		_LOG.debug("DataProvider.save() next_offset=%d" % self.next_offset)
 		self.saved_next_offset = self.next_offset
+		self.saved_objects_count = self.objects_count
 		self._write_next_offset(self._file, self.next_offset)
 		self._file.flush()
 
@@ -297,6 +300,16 @@ class DataProvider:
 		else:
 			next_offset = self.saved_next_offset
 
+		# liczba plikow
+		self.saved_objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
+		_LOG.debug('DataProvider._check_file: saved_objects_count=%d' % self.saved_objects_count)
+
+		if self.saved_objects_count == 0 or self.saved_objects_count > self.objects_count:
+			self.saved_objects_count = self.objects_count
+
+		else:
+			self.objects_count = self.saved_objects_count
+
 		return next_offset
 
 
@@ -331,7 +344,7 @@ class DataProvider:
 			@param next_offset	koniec danych
 		'''
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("LLL", next_offset, self.objects_count, self.saved_next_offset))
+		dest_file.write(pack("LLLL", next_offset, self.objects_count, self.saved_next_offset, self.saved_objects_count))
 
 
 	def _write_block(self, dest_file, offset, size, data):
