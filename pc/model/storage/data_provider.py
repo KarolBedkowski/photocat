@@ -138,6 +138,7 @@ class DataProvider:
 	def close(self):
 		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
+			self._file.truncate(max(self.saved_next_offset, self._DATA_FILE_HEADER_SIZE))
 			self._file.close()
 			self._file = None
 
