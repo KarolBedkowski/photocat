@@ -157,6 +157,7 @@ class Storage:
 
 			write_item(catalog)
 
+			catalog.data_provider.save()
 			catalog.dirty = False
 
 		except Exception, err:

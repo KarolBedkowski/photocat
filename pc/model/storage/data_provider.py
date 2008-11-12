@@ -50,6 +50,7 @@ class DataProvider:
 
 	def __init__(self, filename):
 		self.next_offset	= 0
+		self.saved_next_offset = 0
 		self.filename		= os.path.splitext(filename)[0] + ".data"
 		self.objects_count	= 0
 
@@ -127,6 +128,13 @@ class DataProvider:
 			self.next_offset = self._write_header(self._file)
 
 
+	def save(self):
+		_LOG.debug("DataProvider.save() next_offset=%d" % self.next_offset)
+		self.saved_next_offset = self.next_offset
+		self._write_next_offset(self._file, self.next_offset)
+		self._file.flush()
+
+
 	def close(self):
 		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
@@ -141,6 +149,7 @@ class DataProvider:
 			@param catalog katalog do przebudowy
 			@return ilość zaoszczędzonego miejsca
 		'''
+		self.saved_next_offset = self.next_offset
 		self._file.flush()
 
 		saved_space		= -1
@@ -271,11 +280,21 @@ class DataProvider:
 
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: next_offset=%d' % self.next_offset)
+		_LOG.debug('DataProvider._check_file: next_offset=%d' % next_offset)
 
 		# liczba plikow
 		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
 		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
+
+		# liczba plikow
+		self.saved_next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
+		_LOG.debug('DataProvider._check_file: saved_next_offset=%d' % self.saved_next_offset)
+
+		if self.saved_next_offset == 0 or self.saved_next_offset > next_offset:
+			self.saved_next_offset = next_offset
+
+		else:
+			next_offset = self.saved_next_offset
 
 		return next_offset
 
@@ -289,7 +308,7 @@ class DataProvider:
 
 		# zapisanie nagłówka
 		dest_file.seek(0)
-		dest_file.write("\x00" * self._DATA_BLOCK_HEADER_SIZE)
+		dest_file.write("\x00" * self._DATA_FILE_HEADER_SIZE)
 		dest_file.seek(0)
 		dest_file.write(self._DATA_FILE_HEADER_ID)
 
@@ -311,7 +330,7 @@ class DataProvider:
 			@param next_offset	koniec danych
 		'''
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("LL", next_offset, self.objects_count))
+		dest_file.write(pack("LLL", next_offset, self.objects_count, self.saved_next_offset))
 
 
 	def _write_block(self, dest_file, offset, size, data):
