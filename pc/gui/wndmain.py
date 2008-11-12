@@ -246,7 +246,7 @@ class WndMain(wx.Frame):
 
 		cbtna(wx.ID_NEW,	self._on_file_new,	wx.ART_NEW,			_('Create new catalog'))
 		cbtna(wx.ID_OPEN,	self._on_file_open,	wx.ART_FILE_OPEN,	_('Load catalog'))
-		cbtna(wx.ID_SAVE,	self._on_file_save,	wx.ART_FILE_SAVE,	_('Save catalog'))
+		self.__tb_save = cbtna(wx.ID_SAVE,	self._on_file_save,	wx.ART_FILE_SAVE,	_('Save catalog'))
 
 		toolbar.AddSeparator()
 
@@ -980,6 +980,7 @@ class WndMain(wx.Frame):
 
 		self.__toolbar.EnableTool(self.__tb_find,	 catalog_loaded)
 		self.__toolbar.EnableTool(self.__tb_add_disk, catalog_loaded)
+		self.__toolbar.EnableTool(self.__tb_save,	catalog_loaded and catalog_writable)
 
 		if catalog_loaded:
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
