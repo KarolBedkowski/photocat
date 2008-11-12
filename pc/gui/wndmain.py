@@ -481,9 +481,10 @@ class WndMain(wx.Frame):
 
 			else:
 				if disk is not None:
-					self.__save_catalog(catalog, True)
+					#self.__save_catalog(catalog, True)
 					self._dirs_tree.update_node_disk(disk)
 					self.__update_tags_timeline(catalog)
+					self._dirs_tree.update_catalog_node(catalog)
 
 			self.__update_menus_toolbars()
 
@@ -506,9 +507,10 @@ class WndMain(wx.Frame):
 		else:
 			if disk is not None:
 				catalog = disk.catalog
-				self.__save_catalog(catalog, True)
+				#self.__save_catalog(catalog, True)
 				self._dirs_tree.update_node_disk(disk)
 				self.__update_tags_timeline(catalog)
+				self._dirs_tree.update_catalog_node(catalog)
 
 			self.__update_menus_toolbars()
 
