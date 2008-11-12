@@ -321,15 +321,21 @@ class WndMain(wx.Frame):
 
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
-					catalog = Catalog(filename)
-					catalog.data_provider.open(True)
+					catalog = ecatalog.new_catalog(filename)
 					self._catalogs.append(catalog)
 					self._dirs_tree.add_catalog(catalog)
 
-				finally:
-					self.SetCursor(wx.STANDARD_CURSOR)
+				except Exception, err:
+					_LOG.exception('WndMain._on_file_new(%s)' % filename)
+					dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('New file'))
+					self.SetStatusText(_('Error: %s') % err.message)
+
+				else:
 					self.__update_last_open_files(filename)
 					self.__update_menus_toolbars()
+
+				finally:
+					self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_file_open(self, evt):

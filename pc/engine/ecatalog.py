@@ -253,4 +253,46 @@ def open_catalog(filename):
 	return catalog
 
 
+def new_catalog(filename):
+	''' new_catalog(filename) -> Catalog -- otwarcie nowego katalogu
+
+		@param filename - pełna ścieżka do pliku
+		@retuen obiekt Catalog
+		@exception OpenCatalogError
+	'''
+	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
+
+
+	path_writable = os.access(os.path.dirname(filename), os.W_OK)
+	if not path_writable:
+		raise errors.OpenCatalogError(_("Path is not writable!"))
+
+	file_writable  = True
+	if os.access(filename, os.F_OK) and os.path.exists(filename):
+		if os.path.isfile(filename):
+			if not os.access(filename, os.R_OK):
+				raise errors.OpenCatalogError(_("File not readable"))
+
+			file_writable = os.access(filename, os.W_OK)
+			if not file_writable:
+				raise errors.OpenCatalogError(_("File is not writable!"))
+
+		else:
+			raise errors.OpenCatalogError(_("Invalid path"))
+
+	data_file = os.path.splitext(filename)[0] + '.data'
+	if os.path.exists(data_file):
+		data_writable = os.access(data_file, os.W_OK)
+		if not data_writable:
+			raise errors.OpenCatalogError(_("File is not writable!"))
+
+	try:
+		catalog = Catalog(filename)
+		catalog.data_provider.open(True)
+
+	except Exception, err:
+		raise errors.OpenCatalogError(err)
+
+	return catalog
+
 # vim: encoding=utf8: ff=unix:
