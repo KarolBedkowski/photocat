@@ -58,6 +58,7 @@ class DataProvider:
 
 		self._file					= None
 		self._last_offset_file_pos	= len(self._DATA_FILE_HEADER_ID) + calcsize("I")
+		self._readonly				= False
 
 
 	def __del__(self):
@@ -103,7 +104,7 @@ class DataProvider:
 		return offset
 
 
-	def open(self, force_new=False):
+	def open(self, force_new=False, readonly=False):
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
@@ -112,12 +113,13 @@ class DataProvider:
 		self.close()
 
 		self._file = None
+		self._readonly = readonly
 		if os.path.exists(self.filename) and force_new:
 			os.unlink(self.filename)
 
 		if not force_new and os.path.exists(self.filename):
 			try:
-				self._file = file(self.filename, 'r+b')
+				self._file = file(self.filename, ('rb' if readonly else 'r+b'))
 				self.next_offset = self._check_file(self._file)
 
 			except Exception, e:
@@ -132,16 +134,18 @@ class DataProvider:
 
 	def save(self):
 		_LOG.debug("DataProvider.save() next_offset=%d" % self.next_offset)
-		self.saved_next_offset = self.next_offset
-		self.saved_objects_count = self.objects_count
-		self._write_next_offset(self._file, self.next_offset)
-		self._file.flush()
+		if not self._readonly:
+			self.saved_next_offset = self.next_offset
+			self.saved_objects_count = self.objects_count
+			self._write_next_offset(self._file, self.next_offset)
+			self._file.flush()
 
 
 	def close(self):
 		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
-			self._file.truncate(max(self.saved_next_offset, self._DATA_FILE_HEADER_SIZE))
+			if not self._readonly:
+				self._file.truncate(max(self.saved_next_offset, self._DATA_FILE_HEADER_SIZE))
 			self._file.close()
 			self._file = None
 

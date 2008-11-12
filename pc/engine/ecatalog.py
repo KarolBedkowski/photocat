@@ -245,7 +245,7 @@ def open_catalog(filename):
 	try:
 		catalog = Storage.load(filename)
 		catalog.readonly = not writable
-		catalog.data_provider.open()
+		catalog.data_provider.open(readonly=not writable)
 
 	except Exception, err:
 		raise errors.OpenCatalogError(err)
