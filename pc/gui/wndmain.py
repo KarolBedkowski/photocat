@@ -319,6 +319,10 @@ class WndMain(wx.Frame):
 				if not filename.endswith('.index'):
 					filename = filename + '.index'
 
+				if ecatalog.check_new_file_exists(filename)[0]:
+					if not dialogs.message_box_question_yesno(self, _('File exists!\nOverwrite?'), 'PC'):
+						return
+
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					catalog = ecatalog.new_catalog(filename)

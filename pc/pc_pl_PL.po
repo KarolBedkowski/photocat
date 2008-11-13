@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-12 23:27+0100\n"
+"POT-Creation-Date: 2008-11-13 18:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,11 +36,11 @@ msgstr "&Dodaj dysk"
 msgid "&Catalog"
 msgstr "&Katalog"
 
-#: gui/wndmain.py:183 gui/wndmain.py:909
+#: gui/wndmain.py:183 gui/wndmain.py:913
 msgid "&Delete disk..."
 msgstr "&Usuń dysk"
 
-#: gui/wndmain.py:934
+#: gui/wndmain.py:938
 msgid "&Delete file..."
 msgstr "&Usuń plik..."
 
@@ -52,7 +52,7 @@ msgstr "&Edytuj wybrane pliki..."
 msgid "&File"
 msgstr "&Plik"
 
-#: gui/wndmain.py:182 gui/wndmain.py:908
+#: gui/wndmain.py:182 gui/wndmain.py:912
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
 
@@ -127,7 +127,7 @@ msgstr "Czcionka podpisów:"
 msgid "Catalog"
 msgstr "Katalog"
 
-#: gui/wndmain.py:370
+#: gui/wndmain.py:374
 #, python-format
 msgid ""
 "Catalog %s has unsaved changes!\n"
@@ -145,7 +145,7 @@ msgstr ""
 "Katalog %s nie jest zapisany!\n"
 "Zapisać?"
 
-#: gui/wndmain.py:844
+#: gui/wndmain.py:848
 #, python-format
 msgid ""
 "Catalog file contain %d%% unused entries.\n"
@@ -166,11 +166,11 @@ msgstr "Katalog jest tylko do odczytu/"
 msgid "Close application"
 msgstr "Zamknij program"
 
-#: gui/wndmain.py:160 gui/wndmain.py:916
+#: gui/wndmain.py:160 gui/wndmain.py:920
 msgid "Close catalog"
 msgstr "Zamknij katalog"
 
-#: gui/wndmain.py:379
+#: gui/wndmain.py:383
 #, python-format
 msgid "Close catalog %s?"
 msgstr "Zamknąć katalog %s?"
@@ -199,6 +199,14 @@ msgstr "Utwórz nowy katalog"
 msgid "Create new catalog?"
 msgstr "Utworzyć nowy katalog?"
 
+#: engine/ecatalog.py:241
+msgid "Data file not exists!"
+msgstr "Plik danych nie istnieje!"
+
+#: engine/ecatalog.py:245
+msgid "Data file not readable"
+msgstr "Nie można odczytać pliku danych"
+
 #: gui/_dlgsearch.py:289 model/file_image.py:145 model/file_image.py:152
 msgid "Date"
 msgstr "Data"
@@ -207,30 +215,30 @@ msgstr "Data"
 msgid "Del"
 msgstr "Usuń"
 
-#: gui/wndmain.py:570
+#: gui/wndmain.py:574
 #, python-format
 msgid "Delete %d images?"
 msgstr "Usunąć %d plików?"
 
-#: gui/wndmain.py:548
+#: gui/wndmain.py:552
 msgid "Delete directory"
 msgstr "Usuń katalog"
 
-#: gui/wndmain.py:551
+#: gui/wndmain.py:555
 #, python-format
 msgid "Delete directory %s?"
 msgstr "Usunąć katalog %s?"
 
-#: gui/wndmain.py:530
+#: gui/wndmain.py:534
 msgid "Delete disk"
 msgstr "Usuń dysk"
 
-#: gui/wndmain.py:533
+#: gui/wndmain.py:537
 #, python-format
 msgid "Delete disk %s?"
 msgstr "Usunąć dysk %s?"
 
-#: gui/wndmain.py:185 gui/wndmain.py:912
+#: gui/wndmain.py:185 gui/wndmain.py:916
 msgid "Delete selected &dir..."
 msgstr "Usuń wybrany &katalog..."
 
@@ -251,7 +259,7 @@ msgstr "Opis"
 msgid "Dimensions"
 msgstr "Wymiary"
 
-#: gui/wndmain.py:671
+#: gui/wndmain.py:675
 #, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr "Katalogów %(dirs)d;  plików: %(files)d"
@@ -276,7 +284,7 @@ msgstr "Nazwa dysku:"
 msgid "Disk updated"
 msgstr "Dysk zaktualizowano"
 
-#: gui/wndmain.py:601
+#: gui/wndmain.py:605
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
@@ -293,12 +301,12 @@ msgstr ""
 msgid "Done!"
 msgstr "Zrobione!"
 
-#: gui/wndmain.py:330 gui/wndmain.py:828
+#: gui/wndmain.py:334 gui/wndmain.py:832
 #, python-format
 msgid "Error opening file %s:\n"
 msgstr "Błąd otwierania pliku %s:\n"
 
-#: gui/wndmain.py:884
+#: gui/wndmain.py:888
 #, python-format
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
@@ -312,7 +320,7 @@ msgstr ""
 "Błąd:\n"
 "%s"
 
-#: gui/wndmain.py:331 gui/wndmain.py:829
+#: gui/wndmain.py:335 gui/wndmain.py:833
 #, python-format
 msgid "Error: %s"
 msgstr "Błąd: %s"
@@ -334,15 +342,24 @@ msgstr "Eksportuj do PDF..."
 msgid "File date"
 msgstr "Data pliku"
 
-#: engine/ecatalog.py:273 engine/ecatalog.py:282
+#: gui/wndmain.py:323
+msgid ""
+"File exists!\n"
+"Overwrite?"
+msgstr ""
+"Plik istnieje!\n"
+"Nadpisać?"
+
+
+#: engine/ecatalog.py:302 engine/ecatalog.py:318
 msgid "File is not writable!"
 msgstr "Plik nie jest zapisywalny!"
 
-#: engine/ecatalog.py:224
+#: engine/ecatalog.py:226
 msgid "File not exists!"
 msgstr "Plik nie istnieje"
 
-#: engine/ecatalog.py:227 engine/ecatalog.py:269
+#: engine/ecatalog.py:230 engine/ecatalog.py:298 engine/ecatalog.py:314
 msgid "File not readable"
 msgstr "Nie można odczytać pliku"
 
@@ -350,7 +367,7 @@ msgstr "Nie można odczytać pliku"
 msgid "File size"
 msgstr "Rozmiar pliku"
 
-#: gui/wndmain.py:646 gui/wndmain.py:675
+#: gui/wndmain.py:650 gui/wndmain.py:679
 #, python-format
 msgid "Files: %d"
 msgstr "Plików: %d"
@@ -404,9 +421,9 @@ msgstr "Dołącz puste katalogi"
 msgid "Info"
 msgstr ""
 
-#: engine/ecatalog.py:276
+#: engine/ecatalog.py:285 engine/ecatalog.py:306
 msgid "Invalid path"
-msgstr ""
+msgstr "Niewłaściwa ścieżka"
 
 #: gui/wndmain.py:158 gui/wndmain.py:248
 msgid "Load catalog"
@@ -446,7 +463,7 @@ msgstr "Nazwa już istnieje w katalogu!"
 msgid "Name:"
 msgstr "Nazwa:"
 
-#: gui/wndmain.py:330
+#: gui/wndmain.py:334
 msgid "New file"
 msgstr "Nowy plik"
 
@@ -454,11 +471,11 @@ msgstr "Nowy plik"
 msgid "No Exif"
 msgstr "Brak Exif"
 
-#: gui/wndmain.py:548
+#: gui/wndmain.py:552
 msgid "No directory selected"
 msgstr "Nie wybrano katalogu"
 
-#: gui/wndmain.py:530
+#: gui/wndmain.py:534
 msgid "No disk selected"
 msgstr "Nie wybrano dysku"
 
@@ -470,7 +487,7 @@ msgstr "Nic znaleziono plików!"
 msgid "Not found"
 msgstr "Nic nie znaleziono"
 
-#: gui/_dlgsearch.py:562 gui/wndmain.py:644
+#: gui/_dlgsearch.py:562 gui/wndmain.py:648
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -479,26 +496,26 @@ msgstr ""
 "Liczba plików przekracza 1000!\n"
 "Pokazać %d plików?"
 
-#: gui/wndmain.py:868
+#: gui/wndmain.py:872
 #, python-format
 msgid "Open %s"
 msgstr "Otwórz %s"
 
-#: gui/wndmain.py:342 gui/wndmain.py:828
+#: gui/wndmain.py:346 gui/wndmain.py:832
 msgid "Open file"
 msgstr "Otwórz plik"
 
-#: gui/wndmain.py:838
+#: gui/wndmain.py:842
 #, python-format
 msgid "Opened %s"
 msgstr "Otwarto %s"
 
-#: gui/wndmain.py:835
+#: gui/wndmain.py:839
 #, python-format
 msgid "Opened %s readonly"
 msgstr "Otwarto %s tylko do odczytu."
 
-#: gui/wndmain.py:818
+#: gui/wndmain.py:822
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr "Otwieranie %s.... Proszę czekać..."
@@ -511,7 +528,7 @@ msgstr "Opcje"
 msgid "Other"
 msgstr "Inne"
 
-#: engine/ecatalog.py:286
+#: engine/ecatalog.py:289
 msgid "Path is not writable!"
 msgstr "Ścieżka nie jest zapisywalna"
 
@@ -519,8 +536,8 @@ msgstr "Ścieżka nie jest zapisywalna"
 msgid "Program settings"
 msgstr "Ustawienia programu"
 
-#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:903
-#: gui/wndmain.py:929
+#: gui/_dlgproperties.py:51 gui/_dlgsearch.py:170 gui/wndmain.py:907
+#: gui/wndmain.py:933
 msgid "Properties"
 msgstr "Własności"
 
@@ -528,7 +545,7 @@ msgstr "Własności"
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
-#: gui/wndmain.py:394
+#: gui/wndmain.py:398
 #, python-format
 msgid "Rebuild catalog %s?"
 msgstr "Przebudować katalog  %s?"
@@ -571,7 +588,7 @@ msgstr "Ostatnie pliki"
 msgid "Regex"
 msgstr "Wyr.Reg."
 
-#: gui/wndmain.py:249 gui/wndmain.py:884
+#: gui/wndmain.py:249 gui/wndmain.py:888
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 

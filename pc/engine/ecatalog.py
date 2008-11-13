@@ -220,27 +220,43 @@ def open_catalog(filename):
 	'''
 	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
 
-	if not os.access(filename, os.F_OK) or not os.path.exists(filename) or not os.path.isfile(filename):
+	# plik indeksu
+	# istnienie
+	if not os.path.exists(filename) or not os.path.isfile(filename):
 		raise errors.OpenCatalogError(_("File not exists!"))
 
+	# odczyt
 	if not os.access(filename, os.R_OK):
 		raise errors.OpenCatalogError(_("File not readable"))
 
+	# zapis
 	file_writable = os.access(filename, os.W_OK)
 	if not file_writable:
-		_LOG.warn("file %s not writable" % filename)
+		_LOG.debug("file %s not writable" % filename)
 
+	# plik danych
 	data_file = os.path.splitext(filename)[0] + '.data'
+	# istnienie
+	if not os.path.exists(data_file) or not os.path.isfile(data_file):
+		raise errors.OpenCatalogError(_("Data file not exists!"))
+
+	# odczyt
+	if not os.access(data_file, os.R_OK):
+		raise errors.OpenCatalogError(_("Data file not readable"))
+
+	# zapisywanie
 	data_writable = os.access(data_file, os.W_OK)
 	if not data_writable:
-		_LOG.warn("file %s not writable" % data_file)
+		_LOG.debug("file %s not writable" % data_file)
 
-
+	# ścieżka
 	path_writable = os.access(os.path.dirname(filename), os.W_OK)
 	if not path_writable:
-		_LOG.warn("dir with file %s not writable" % filename)
+		_LOG.debug("dir with file %s not writable" % filename)
 
 	writable = file_writable and path_writable and data_writable
+	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)" % (filename, writable, file_writable,
+			path_writable, data_writable))
 
 	try:
 		catalog = Storage.load(filename)
@@ -262,28 +278,43 @@ def new_catalog(filename):
 	'''
 	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
 
+	path = os.path.dirname(filename)
 
-	path_writable = os.access(os.path.dirname(filename), os.W_OK)
-	if not path_writable:
+	# ścieżka istnieje
+	if not os.path.exists(path):
+		raise errors.OpenCatalogError(_("Invalid path"))
+
+	# ścieżka jest zapisywalna
+	if not os.access(path, os.W_OK):
 		raise errors.OpenCatalogError(_("Path is not writable!"))
 
-	file_writable  = True
-	if os.access(filename, os.F_OK) and os.path.exists(filename):
+	# plik indexu
+	# czy plik indeksu istnieje
+	if os.path.exists(filename):
+		# czy plik jest plikiem
 		if os.path.isfile(filename):
+			# czy mozna go czytac
 			if not os.access(filename, os.R_OK):
 				raise errors.OpenCatalogError(_("File not readable"))
 
-			file_writable = os.access(filename, os.W_OK)
-			if not file_writable:
+			# czy mozna zapisywac
+			if not os.access(filename, os.W_OK):
 				raise errors.OpenCatalogError(_("File is not writable!"))
 
+		# plik jest katalogiem
 		else:
 			raise errors.OpenCatalogError(_("Invalid path"))
 
+	# plik danych
 	data_file = os.path.splitext(filename)[0] + '.data'
+	# czy plik danych istnieje
 	if os.path.exists(data_file):
-		data_writable = os.access(data_file, os.W_OK)
-		if not data_writable:
+		# można czytać
+		if not os.access(data_file, os.R_OK):
+			raise errors.OpenCatalogError(_("File not readable"))
+
+		# można zapisywać
+		if not os.access(data_file, os.W_OK):
 			raise errors.OpenCatalogError(_("File is not writable!"))
 
 	try:
@@ -294,5 +325,19 @@ def new_catalog(filename):
 		raise errors.OpenCatalogError(err)
 
 	return catalog
+
+
+
+def check_new_file_exists(filename):
+	''' check_new_file_exists(filename) -> (bool, bool, bool) -- sprawdzenie czy plik indeksu i danych istnieją
+
+		@param filename - scieżka do pliku indeksu
+		@return (istnieje plik indeksu lub danych, istnieje plik indeksu, istnieje plik danych)
+	'''
+	data_file = os.path.splitext(filename)[0] + '.data'
+	index_exists = os.path.exists(filename)
+	data_exists = os.path.exists(data_file)
+	return (index_exists or data_file), index_exists, data_exists
+
 
 # vim: encoding=utf8: ff=unix:
