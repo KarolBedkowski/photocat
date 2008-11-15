@@ -29,7 +29,11 @@ __all__			= []
 
 
 import os
-os.chdir(os.path.dirname(__file__))
+try:
+	os.chdir(os.path.dirname(__file__))
+
+except:
+	pass
 
 from pc	import run
 
