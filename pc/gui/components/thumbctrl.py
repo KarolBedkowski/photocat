@@ -66,6 +66,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.thumbs_preload = thumbs_preload
 		self._status_wnd	= status_wnd
 
+		self._thumb_width	= 200
+		self._thumb_height	= 200
+
 		self._items				= []
 		self._selected_list		= []
 		self._selected			= -1
