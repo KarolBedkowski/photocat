@@ -1,0 +1,13 @@
+Source: pc
+Section: graphics
+Priority: extra
+Maintainer: Karol Będkowski <karol.bedkowski@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.7.3
+
+Package: pc
+Architecture: any
+Depends: python (>=2.5), python-wxgtk2.8 
+Suggests: python-reportlab (>=2.0), python-psyco, 
+Description: Photo Catalog
+ Program to catalog pictures on cds.
