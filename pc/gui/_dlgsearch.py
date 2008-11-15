@@ -110,6 +110,9 @@ class _DlgSearch(wx.Dialog):
 		else:
 			self.Move(position)
 
+		self._thumbctrl.set_thumb_size(
+				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+		)
 		self._thumbctrl.thumbs_preload = appconfig.get('settings', 'view_preload', True)
 
 		self.Bind(wx.EVT_CLOSE, self._on_close)
@@ -585,7 +588,7 @@ class _DlgSearch(wx.Dialog):
 			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 
 		else:
-			self._thumbctrl.clear()
+			self._thumbctrl.show_dir([])
 
 		self._btn_goto.Enable(False)
 		self._btn_properties.Enable(False)
