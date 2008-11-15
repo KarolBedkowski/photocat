@@ -75,7 +75,7 @@ setup(
 	version=version,
 	author="Karol Będkowski",
 	author_email='-',
-	description= "pc - Picture Catalog %s buld %s" % (version, build),
+	description= "pc - Photo Catalog %s buld %s" % (version, build),
 	long_description='-',
 	license='GPL v2',
 	url='-',
