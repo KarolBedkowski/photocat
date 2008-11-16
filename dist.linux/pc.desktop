@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF­8
 Icon=/usr/share/pc/src/pc/icons/folder_image.png
-Name=Picture Catalog
-Exec=python -OO /usr/share/pc/src/pc.py
+Name=Photo Catalog
+Exec=/usr/bin/pc
 Terminal=false
 Type=Application
 Categories=GNOME;GTK;Graphics;
