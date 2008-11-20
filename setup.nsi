@@ -131,6 +131,7 @@ Section Uninstall
   Delete "$INSTDIR\LICENCE_python.txt"
   Delete "$INSTDIR\LICENCE_wxPython.txt"
   Delete "$INSTDIR\README"
+  Delete "$INSTDIR\CHANGELOG"
   Delete "$INSTDIR\TODO"
   Delete "$INSTDIR\pc.cfg"
 
