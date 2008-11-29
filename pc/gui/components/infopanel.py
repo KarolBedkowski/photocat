@@ -42,7 +42,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
 		EventGenerator.__init__(self)
-		
+
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(self._create_layout(), 1, wx.EXPAND)
 		self.SetSizerAndFit(sizer)
@@ -62,7 +62,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 	def _create_layout_page_main(self, parent):
 		panel = wx.Panel(parent, -1)
 		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE|wx.TE_READONLY)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(listctrl, 1, wx.EXPAND)
@@ -99,7 +99,7 @@ class InfoPanel(wx.Panel, EventGenerator):
 		panel = wx.Panel(parent, -1)
 
 		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
-		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE|wx.TE_READONLY)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(listctrl, 1, wx.EXPAND|wx.ALL, 5)

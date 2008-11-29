@@ -104,7 +104,7 @@ class DlgProperties(wx.Dialog):
 		if self._item_is_image:
 			notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
 
-		notebook.AddPage(self._create_layout_page_tage(notebook),		_('Tags'))
+		notebook.AddPage(self._create_layout_page_tags(notebook),		_('Tags'))
 
 		if self._item_is_image or self._item_is_fake:
 			notebook.AddPage(self._create_layout_page_other(notebook),		_('Other'))
@@ -169,7 +169,7 @@ class DlgProperties(wx.Dialog):
 		return panel
 
 
-	def _create_layout_page_tage(self, parent):
+	def _create_layout_page_tags(self, parent):
 		panel = wx.Panel(parent, -1)
 
 		sizer = wx.BoxSizer(wx.VERTICAL)
