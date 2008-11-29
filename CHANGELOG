@@ -1,4 +1,4 @@
-2008-11-15 (v 1.4.2b3)
+2008-11-29 (v 1.4.2b4)
 
 Karol Będkowski:
       all: zmienianie katalogu przy uruchamianiu
@@ -9,7 +9,7 @@ Karol Będkowski:
       win: fix: problem ze ścieżkami
 
 
-2008-10-13 (v 1.4.1b)
+2008-10-13 (v 1.4.1)
 
 Karol Będkowski:
       pdf: tuning, dodanie pokazywania/ukrywania podpisów
