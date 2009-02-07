@@ -85,6 +85,7 @@ class WndMain(wx.Frame):
 		self._catalogs		= []
 		self._layout_splitter	= None
 		self._info_panel_size = None
+		self._last_used_dir = os.path.expanduser('~')
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['folder_image'])
@@ -314,7 +315,7 @@ class WndMain(wx.Frame):
 
 	def _on_file_new(self, evt):
 		if dialogs.message_box_question_yesno(self, _('Create new catalog?'), 'PC'):
-			filename = dialogs.dialog_file_save(self, _('Catalog file name'), '*.index')
+			filename = dialogs.dialog_file_save(self, _('Catalog file name'), '*.index', default_dir=self._last_used_dir)
 			if filename is not None:
 				if not filename.endswith('.index'):
 					filename = filename + '.index'
@@ -337,19 +338,21 @@ class WndMain(wx.Frame):
 				else:
 					self.__update_last_open_files(filename)
 					self.__update_menus_toolbars()
+					self._last_used_dir = os.path.dirname(filename)
 
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_file_open(self, evt):
-		filename = dialogs.dialog_file_load(self, _('Open file'), '*.index')
+		filename = dialogs.dialog_file_load(self, _('Open file'), '*.index', default_dir=self._last_used_dir)
 		if filename is not None:
 			if not filename.endswith('.index'):
 				filename = filename + '.index'
 
 			self._open_file(filename)
 			self.__update_menus_toolbars()
+			self._last_used_dir = os.path.dirname(filename)
 
 
 	def _on_file_save(self, evt):
