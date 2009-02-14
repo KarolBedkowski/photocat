@@ -28,15 +28,19 @@ __revision__	= '$Id$'
 __all__			= []
 
 
-import os
-try:
-	os.chdir(os.path.dirname(__file__))
+import sys
 
-except:
-	pass
+#zmiana katalogu tylko w win
+if sys.platform.startswith('win'):
+	import os
+	try:
+		os.chdir(os.path.dirname(__file__))
+
+	except:
+		pass
 
 from pc	import run
 
 run()
 
-# vim: encoding=utf8: ff=unix: 
+# vim: encoding=utf8: ff=unix:
