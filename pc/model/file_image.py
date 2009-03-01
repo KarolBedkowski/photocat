@@ -151,7 +151,7 @@ class FileImage(CatalogFile):
 				if date is not None:
 					result.append((51, _('Date'), date))
 
-			if exif.has_key('Image Model'):
+			if 'Image Model' in exif:
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
 
 			# informacje o zdjeciu
@@ -305,12 +305,12 @@ class FileImage(CatalogFile):
 		shot_info = []
 
 		def append(key, name):
-			if exif.has_key(key):
+			if key in exif:
 				shot_info.append((name, exif[key]))
 
 		append('EXIF ExposureTime', _('t'))
 
-		if exif.has_key('EXIF FNumber'):
+		if 'EXIF FNumber' in exif:
 			try:
 				fnumber = eval(exif['EXIF FNumber'] + '.')
 				if int(fnumber) == fnumber: 	fnumber = int(fnumber)
@@ -319,10 +319,10 @@ class FileImage(CatalogFile):
 			except:
 				_LOG.exception('_get_info exif fnumber "%s"' % exif.get('EXIF FNumber'))
 
-		if exif.has_key('EXIF ISOSpeedRatings'):
+		if 'EXIF ISOSpeedRatings' in exif:
 			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
 
-		elif exif.has_key('MakerNote ISOSetting'):
+		elif 'MakerNote ISOSetting' in exif:
 			try:
 				iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
 				shot_info.append((_('iso'), iso))
@@ -332,7 +332,7 @@ class FileImage(CatalogFile):
 
 		append('EXIF Flash', _('flash'))
 
-		if exif.has_key('EXIF FocalLength'):
+		if 'EXIF FocalLength' in exif:
 			try:
 				flen = eval(exif['EXIF FocalLength'] + '.')
 				if int(flen) == flen: 	flen = int(flen)
@@ -346,7 +346,7 @@ class FileImage(CatalogFile):
 
 	def __get_exif_shot_date_value(self, exif):
 		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
-			if exif.has_key(exif_key):
+			if exif_key in exif:
 				try:
 					value = exif[exif_key]
 					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None

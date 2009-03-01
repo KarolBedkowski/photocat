@@ -123,7 +123,7 @@ class DlgAddDisk(wx.Dialog):
 
 	def _create_page_options(self, parent):
 		data = self._data
-		if not data.has_key('load_captions_txt'):
+		if 'load_captions_txt' not in data:
 			data['load_captions_txt'] = True
 
 		panel = wx.Panel(parent, -1)

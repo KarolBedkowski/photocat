@@ -79,7 +79,7 @@ class Storage:
 					class_name, id, data = line.split("|", 2)
 					id = int(id)
 
-					if not class_names.has_key(class_name):
+					if not class_name in class_names:
 						_LOG.warn('invalid class name: "%s"' % line)
 						continue
 
@@ -90,12 +90,12 @@ class Storage:
 					data['catalog'] = catalog
 
 					# wstawienie obiektow nadrzędnych
-					if data.has_key('parent_id'):
+					if 'parent_id' in data:
 						data['parent']	= objects.get(data['parent_id'])
 
-					if data.has_key('disk_id'):
+					if 'disk_id' in data:
 						disk_id = data['disk_id']
-						if objects.has_key(disk_id):
+						if disk_id in objects:
 							data['disk']	= objects.get(disk_id)
 						elif class_name != 'Disk':
 							_LOG.warn("no disk id=%d line='%s'" % (disk_id, line))

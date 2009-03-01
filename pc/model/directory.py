@@ -353,7 +353,7 @@ class Directory(CatalogFile, TreeItem):
 			desc = ( file_data[key]
 					for key
 					in ('Title', 'Subtitle', 'Date', 'Desc')
-					if file_data.has_key(key)
+					if key in file_data
 			)
 			update_obj.desc = unicode('\n'.join(desc))
 
