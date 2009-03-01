@@ -29,6 +29,7 @@ __revision__	= '$Id$'
 import os.path
 import gzip
 import time
+import operator
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -118,7 +119,7 @@ class Storage:
 					_LOG.exception('Storage.load(%s) line="%s"' % (filename, line))
 					raise InvalidFileError()
 
-			catalog.disks.sort(lambda x,y: cmp(x.name, y.name))
+			catalog.disks.sort(key=operator.attrgetter('name'))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
 
 			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d' % (filename, catalog.object_in_files))
