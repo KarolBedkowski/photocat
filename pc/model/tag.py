@@ -65,7 +65,7 @@ class Tag(object):
 		if isinstance(item, FileImage):
 			if item in self.files:
 				self.files.remove(item)
-				
+
 		elif item in self.dirs:
 			self.dirs.remove(item)
 
@@ -132,7 +132,7 @@ class Tags(object):
 	##########################################################################
 
 	def _get_tag_list(self, tag):
-		if self._tags.has_key(tag):
+		if tag in self._tags:
 			return self._tags[tag]
 
 		tag_obj = Tag(tag, self.catalog)

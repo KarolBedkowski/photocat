@@ -27,6 +27,7 @@ __revision__	= '$Id$'
 
 
 import os
+import operator
 
 from gui		import TreeItem
 from disk		import Disk
@@ -113,7 +114,7 @@ class Catalog(TreeItem):
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
 		self.disks.append(disk)
-		self.disks.sort(lambda x,y: cmp(x.name, y.name))
+		self.disks.sort(key=operator.attrgetter('name'))
 		self.dirty = True
 		return disk
 

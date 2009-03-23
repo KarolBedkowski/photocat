@@ -29,6 +29,7 @@ __all__ = ["Timeline"]
 
 
 import time
+import operator
 
 from file_image	import FileImage
 
@@ -98,7 +99,7 @@ class Timeline(object):
 	@property
 	def subdirs(self):
 		''' timeline.subdirs -> [] -- lista pod-obiektów Timeline sortowana wg daty '''
-		return sorted(self.dirs.values(), lambda x,y: cmp(x.date, y.date))
+		return sorted(self.dirs.values(), key=operator.attrgetter('date'))
 
 
 	@property
@@ -161,7 +162,7 @@ class Timeline(object):
 
 		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie
 		def sort_subdir(subdir):
-			subdir._files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
+			subdir._files.sort(key=operator.attrgetter('shot_date'))
 			[ sort_subdir(subsubdir) for subsubdir in subdir.dirs.itervalues() ]
 
 		[ sort_subdir(subdir) for subdir in self.dirs.itervalues()]
