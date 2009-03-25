@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
- Photo Catalog v 1.x (pc)
+ Photo Catalog v 1.x  (pc)
  Copyright (c) Karol Będkowski, 2004-2009
 
  This file is part of Photo Catalog
@@ -25,7 +25,7 @@ __author__		= 'Karol Będkowski'
 __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
-__all__			= ['DlgProperties']
+__all__			= ['DlgPropertiesDir']
 
 
 import sys
@@ -40,7 +40,6 @@ from kpylibs.guitools	import create_button
 from kpylibs.appconfig	import AppConfig
 
 from pc.model			import Catalog, Directory, Disk, FileImage
-from pc.engine			import image
 from components.tags_list_box import TagsListBox
 
 _ = wx.GetTranslation
@@ -56,7 +55,7 @@ def _creata_label(parent, title):
 
 
 
-class DlgProperties(wx.Dialog):
+class DlgPropertiesDir(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent, item):
@@ -82,10 +81,10 @@ class DlgProperties(wx.Dialog):
 		self.SetSizerAndFit(main_grid)
 
 		appconfig = AppConfig()
-		size = appconfig.get('properties_wnd', 'size', (300, 300))
+		size = appconfig.get('properties_folder_wnd', 'size', (300, 300))
 		self.SetSize(size)
 
-		position = appconfig.get('properties_wnd', 'position')
+		position = appconfig.get('properties_folder_wnd', 'position')
 		if position is None:
 			self.Centre(wx.BOTH)
 
@@ -99,21 +98,15 @@ class DlgProperties(wx.Dialog):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
+		notebook.AddPage(self._create_layout_page_main(notebook),	_('Main'))
 		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Comment'))
-		notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
 		notebook.AddPage(self._create_layout_page_tags(notebook),	_('Tags'))
-		notebook.AddPage(self._create_layout_page_other(notebook),	_('Other'))
 		return notebook
 
 
 	def _create_layout_page_main(self, parent):
 		panel = wx.Panel(parent, -1)
 		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		self._bmp_preview = wx.StaticBitmap(panel, -1)
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(self._item))
-		sizer.Add(self._bmp_preview, 0, wx.ALIGN_CENTER|wx.ALL, 12)
 
 		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
 		bsizer.AddGrowableCol(1)
@@ -152,35 +145,6 @@ class DlgProperties(wx.Dialog):
 		return panel
 
 
-	def _create_layout_page_exif(self, parent):
-		panel = wx.Panel(parent, -1)
-		panel_sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer.Add(_creata_label(panel, _("Exif")))
-
-		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-		sizer.Add(listctrl, 1, wx.EXPAND|wx.LEFT|wx.TOP, 12)
-
-		listctrl.InsertColumn(0, _('Tag'))
-		listctrl.InsertColumn(1, _('Value'))
-
-		panel_sizer.Add(sizer, 1, wx.EXPAND|wx.ALL, 12)
-		panel.SetSizerAndFit(panel_sizer)
-
-		exif = self._item.exif_data
-		if exif is not None:
-			for key, val in sorted(exif.iteritems()):
-				idx = listctrl.InsertStringItem(sys.maxint, str(key))
-				listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
-
-			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-
-		return panel
-
-
 	def _create_layout_page_tags(self, parent):
 		panel = wx.Panel(parent, -1)
 		panel_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -206,59 +170,6 @@ class DlgProperties(wx.Dialog):
 		return panel
 
 
-	def _create_layout_page_other(self, parent):
-		panel = wx.Panel(parent, -1)
-		panel_sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer.Add(_creata_label(panel, _("Shot date")))
-
-		subsizer = wx.BoxSizer(wx.VERTICAL)
-
-		shot_date_present = self._item.shot_date is not None and self._item.shot_date > 0
-
-		if not self.readonly:
-			self._cb_shot_date = wx.CheckBox(panel, 1, _("Set shot date"))
-			self._cb_shot_date.SetValue(shot_date_present)
-			self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
-			subsizer.Add(self._cb_shot_date)
-
-		date_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-		self._lb_shot_date = wx.StaticText(panel, 1, _("Shot date:"))
-		self._lb_shot_date.Enable(not self.readonly and shot_date_present)
-		date_sizer.Add(self._lb_shot_date , 1, wx.EXPAND|wx.ALL, 5)
-
-		date_sizer.Add((5, 5))
-
-		self._dp_shot_date = wx.DatePickerCtrl(panel , size=(120, -1),
-				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
-		self._dp_shot_date.Enable(not self.readonly and shot_date_present)
-		date_sizer.Add(self._dp_shot_date, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
-
-		date_sizer.Add((5, 5))
-
-		self._tc_shot_time = masked.TimeCtrl(panel , -1, fmt24hr=True)
-		self._tc_shot_time.SetEditable(not self.readonly and shot_date_present)
-		self._tc_shot_time.Enable(not self.readonly and shot_date_present)
-		date_sizer.Add(self._tc_shot_time, 0, wx.EXPAND, wx.EXPAND|wx.ALL, 5)
-
-		if shot_date_present:
-			date = wx.DateTime()
-			date.SetTimeT(self._item.shot_date)
-			self._dp_shot_date.SetValue(date)
-			self._tc_shot_time.SetValue(date)
-
-		subsizer.Add(date_sizer)
-		sizer.Add(subsizer, 0, wx.EXPAND|wx.ALL, 12)
-		panel_sizer.Add(sizer, 1, wx.EXPAND|wx.ALL, 12)
-		panel.SetSizerAndFit(panel_sizer)
-
-		return panel
-
-
-
 	#########################################################################
 
 
@@ -281,23 +192,6 @@ class DlgProperties(wx.Dialog):
 			self.changed_tags	= item.set_tags(new_tags)
 			changed				= True
 
-		if self._cb_shot_date.IsChecked():
-			sdate = self._dp_shot_date.GetValue()
-			stime = self._tc_shot_time.GetValue(as_wxDateTime=True)
-
-			sdate.SetHour(stime.GetHour())
-			sdate.SetMinute(stime.GetMinute())
-			sdate.SetSecond(stime.GetSecond())
-
-			sdate_val = sdate.GetTicks()
-			if item.shot_date is None or item.shot_date != sdate_val:
-				item.shot_date	= sdate_val
-				changed			= True
-
-		elif item.shot_date is not None:
-			item.shot_date 	= None
-			changed			= True
-
 		self._on_close()
 
 		if changed:
@@ -309,18 +203,11 @@ class DlgProperties(wx.Dialog):
 
 	def _on_close(self, evt=None):
 		appconfig = AppConfig()
-		appconfig.set('properties_wnd', 'size',		self.GetSizeTuple())
-		appconfig.set('properties_wnd', 'position',	self.GetPositionTuple())
+		appconfig.set('properties_folder_wnd', 'size',		self.GetSizeTuple())
+		appconfig.set('properties_folder_wnd', 'position',	self.GetPositionTuple())
 
 		if evt is not None:
 			evt.Skip()
-
-
-	def _on_checkbox_short_date(self, evt):
-		value = evt.IsChecked()
-		self._dp_shot_date.Enable(value)
-		self._tc_shot_time.Enable(value)
-		self._lb_shot_date.Enable(value)
 
 
 

@@ -56,8 +56,10 @@ from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTI
 
 from _dlgabout				import show_about_box
 from _dlgproperties			import DlgProperties
+from _dlgproperties_dir		import DlgPropertiesDir
 from _dlgsearch				import DlgSearchProvider
 from _dlgsettings			import DlgSettings
+from _dlg_edit_tags			import show_dlg_edit_tags
 
 _ = wx.GetTranslation
 
@@ -190,6 +192,7 @@ class WndMain(wx.Frame):
 			('-'),
 			(None,				'Ctrl+F',	_('Search in calalogs'),				self._on_catalog_search,	wx.ID_FIND,	wx.ART_FIND),
 			(_('Info'),			None,		_('About selected calalog...'),			self._on_catalog_info),
+			(_('Tags'),			None,		_('Manage taglist...'),					self._on_catalog_edit_tags),
 		))
 		self._main_menu_catalog = menu
 		return menu
@@ -627,6 +630,17 @@ class WndMain(wx.Frame):
 		dlg.Destroy()
 
 
+	def _on_catalog_edit_tags(self, evt):
+		if len(self._catalogs) == 0:
+			return
+
+		catalog = self.__get_selected_catalog()
+		if show_dlg_edit_tags(self, catalog.tags_provider):
+			folder.catalog.dirty = True
+			self._dirs_tree.update_catalog_node(catalog)
+			self.__update_tags_timeline(catalog)
+
+
 	def _on_dirtree_item_select(self, evt):
 		item = self._dirs_tree.selected_item
 		show_info = True
@@ -701,7 +715,12 @@ class WndMain(wx.Frame):
 
 			return
 
-		dlg = DlgProperties(self, item)
+		if isinstance(item, Directory):
+			dlg = DlgPropertiesDir(self, item)
+
+		else:
+			return
+
 		if dlg.ShowModal() == wx.ID_OK:
 			item.catalog.dirty = True
 
