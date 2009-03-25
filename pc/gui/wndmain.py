@@ -57,6 +57,7 @@ from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTI
 from _dlgabout				import show_about_box
 from _dlgproperties			import DlgProperties
 from _dlgproperties_dir		import DlgPropertiesDir
+from _dlgproperties_disk	import DlgPropertiesDisk
 from _dlgsearch				import DlgSearchProvider
 from _dlgsettings			import DlgSettings
 from _dlg_edit_tags			import show_dlg_edit_tags
@@ -715,7 +716,10 @@ class WndMain(wx.Frame):
 
 			return
 
-		if isinstance(item, Directory):
+		if isinstance(item, Disk):
+				dlg = DlgPropertiesDisk(self, item)
+
+		elif isinstance(item, Directory):
 			dlg = DlgPropertiesDir(self, item)
 
 		else:
