@@ -58,6 +58,7 @@ from _dlgabout				import show_about_box
 from _dlgproperties			import DlgProperties
 from _dlgproperties_dir		import DlgPropertiesDir
 from _dlgproperties_disk	import DlgPropertiesDisk
+from _dlgproperties_mutli	import DlgPropertiesMulti
 from _dlgsearch				import DlgSearchProvider
 from _dlgsettings			import DlgSettings
 from _dlg_edit_tags			import show_dlg_edit_tags
@@ -620,10 +621,12 @@ class WndMain(wx.Frame):
 
 		image = FileImage(None, None, None, folder.disk, catalog=folder.catalog)
 
-		dlg = DlgProperties(self, image)
+		result = {}
+
+		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
 			selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
-			changed_tags = Catalog.update_images_from_image(selected_items, image)
+			changed_tags = Catalog.update_images_from_dict(selected_items, result)
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
 			self.__update_changed_tags(folder.catalog.tags_provider, changed_tags)

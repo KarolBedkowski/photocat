@@ -28,72 +28,23 @@ __revision__	= '$Id$'
 __all__			= ['DlgPropertiesDir']
 
 
-import sys
-import os
-import time
-import cStringIO
-
 import wx
-from wx.lib import masked
 
-from kpylibs.guitools	import create_button
-from kpylibs.appconfig	import AppConfig
-
-from pc.model			import Catalog, Directory, Disk, FileImage
-from components.tags_list_box import TagsListBox
+from _dlg_properties_base import DlgPropertiesBase
 
 _ = wx.GetTranslation
 
 
-_LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
-_LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 
-def _creata_label(parent, title):
-	ctr = wx.StaticText(parent, -1, title)
-	ctr.SetFont(_LABEL_FONT_STYLE)
-	return ctr
-
-
-
-class DlgPropertiesDir(wx.Dialog):
+class DlgPropertiesDir(DlgPropertiesBase):
 	''' Dialog o programie '''
+	
+	_CONFIG_KEY='properties_dir_wnd'
 
 	def __init__(self, parent, item):
-		wx.Dialog.__init__(self, parent, -1, _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		readonly = item.catalog.readonly
 
-		self._item = item
-
-		self._tc_name = None
-
-		# lista zmienionych podczas edycji nazw tagów
-		self.changed_tags		= None
-		self.readonly = item.catalog.readonly
-
-		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 12)
-
-		if self.readonly:
-			main_grid.Add(self.CreateStdDialogButtonSizer(wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
-
-		else:
-			main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
-
-		self.SetSizerAndFit(main_grid)
-
-		appconfig = AppConfig()
-		size = appconfig.get('properties_folder_wnd', 'size', (300, 300))
-		self.SetSize(size)
-
-		position = appconfig.get('properties_folder_wnd', 'position')
-		if position is None:
-			self.Centre(wx.BOTH)
-
-		else:
-			self.Move(position)
-
-		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
-		self.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CANCEL)
-		self.Bind(wx.EVT_CLOSE, self._on_close)
+		DlgPropertiesBase.__init__(self, parent, item, readonly)
 
 
 	def _create_layout_notebook(self):
@@ -102,72 +53,6 @@ class DlgPropertiesDir(wx.Dialog):
 		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Comment'))
 		notebook.AddPage(self._create_layout_page_tags(notebook),	_('Tags'))
 		return notebook
-
-
-	def _create_layout_page_main(self, parent):
-		panel = wx.Panel(parent, -1)
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
-		bsizer.AddGrowableCol(1)
-
-		for dummy, key, val in sorted(self._item.info):
-			if key == '':
-				bsizer.Add((1,5))
-				bsizer.Add((1,5))
-
-			else:
-				bsizer.Add(_creata_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
-				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
-
-		sizer.Add(bsizer, 1, wx.ALL|wx.ALIGN_CENTER, 12)
-		panel.SetSizerAndFit(sizer)
-		return panel
-
-
-	def _create_layout_page_desc(self, parent):
-		panel = wx.Panel(parent, -1)
-		panel_sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer.Add(_creata_label(panel, _("Comment")))
-
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-		textctrl.SetEditable(not self.readonly)
-		textctrl.SetValue(str(self._item.desc or ''))
-
-		sizer.Add(textctrl, 1, wx.EXPAND|wx.LEFT|wx.TOP, 12)
-
-		panel_sizer.Add(sizer, 1, wx.EXPAND|wx.ALL, 12)
-		panel.SetSizerAndFit(panel_sizer)
-
-		return panel
-
-
-	def _create_layout_page_tags(self, parent):
-		panel = wx.Panel(parent, -1)
-		panel_sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		sizer.Add(_creata_label(panel, _("Tags")))
-
-		self._tags_listbox = TagsListBox(panel, -1)
-		item_tags = self._item.tags
-		if not self.readonly:
-			all_tags = self._item.disk.catalog.tags_provider.tags
-
-		else:
-			all_tags = item_tags
-
-		self._tags_listbox.show(all_tags, item_tags)
-
-		sizer.Add(self._tags_listbox, 1, wx.EXPAND|wx.ALL, 12)
-
-		panel_sizer.Add(sizer, 1, wx.EXPAND|wx.ALL, 12)
-		panel.SetSizerAndFit(panel_sizer)
-		return panel
 
 
 	#########################################################################
@@ -199,15 +84,6 @@ class DlgPropertiesDir(wx.Dialog):
 
 		else:
 			self.EndModal(wx.ID_CANCEL)
-
-
-	def _on_close(self, evt=None):
-		appconfig = AppConfig()
-		appconfig.set('properties_folder_wnd', 'size',		self.GetSizeTuple())
-		appconfig.set('properties_folder_wnd', 'position',	self.GetPositionTuple())
-
-		if evt is not None:
-			evt.Skip()
 
 
 
