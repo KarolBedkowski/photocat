@@ -903,9 +903,10 @@ class WndMain(wx.Frame):
 
 		last_open_files = config.last_open_files
 		if len(last_open_files) > 0:
-			for num in xrange(min(len(last_open_files), 10)):
-				filename = os.path.basename(last_open_files[num])
-				menu.Append(wx.ID_FILE1+num, "&%d. %s" % (num+1, filename), _('Open %s') % last_open_files[num])
+			for num, filepath in enumerate(last_open_files[:10]):
+				filename = os.path.basename(filepath)
+				menu.Append(wx.ID_FILE1+num, "&%d. %s\tCTRL+%d" % (num+1, filename, num+1), 
+						_('Open %s') % filepath)
 
 			self._main_menu_file_recent_item.Enable(True)
 
