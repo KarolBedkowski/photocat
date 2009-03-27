@@ -699,7 +699,11 @@ class WndMain(wx.Frame):
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
 
-		self._show_info_panel_page(2)
+		if isinstance(item, Directory):
+			self._info_panel.show_folder(item)
+
+		else:
+			self._info_panel.clear()
 
 
 	def _on_dirtree_item_activate(self, evt):
@@ -750,14 +754,17 @@ class WndMain(wx.Frame):
 		selected = self._photo_list.selected_item
 		if self._info_panel is not None:
 			if selected is None:
-				self._info_panel.clear()
-				self._show_info_panel_page(2)
+				item = self._dirs_tree.selected_item
+				if isinstance(item, Directory):
+					self._info_panel.show_folder(item)
+
+				else:
+					self._info_panel.clear()
 
 			else:
 				try:
 					self.SetCursor(wx.HOURGLASS_CURSOR)
 					self._info_panel.show(selected)
-					self._show_info_panel_page(0)
 
 				finally:
 					self.SetCursor(wx.STANDARD_CURSOR)
@@ -1084,15 +1091,6 @@ class WndMain(wx.Frame):
 					self._info_panel.show_folder(item)
 
 
-	def _show_info_panel_page(self, page):
-		""" wndmain._show_info_panel_page(page) -- pokazanie wybranej karty w info panelu
-
-			@param page	- strona do pokazania
-		"""
-		if self._info_panel is not None:
-			self._info_panel.show_page(page)
-
-
 	def _show_dir(self, images):
 		''' wndmain._show_dir(images) -- wyświetlenie zawartości katalogu lub listy
 
@@ -1148,7 +1146,6 @@ class WndMain(wx.Frame):
 		''' wndmain.__info_panel_clear() -- wyczyszczenie info-panelu '''
 		if self._info_panel is not None:
 			self._info_panel.clear()
-			self._info_panel.clear_folder()
 
 
 	def __get_sort_function(self, images, images_as_list):
