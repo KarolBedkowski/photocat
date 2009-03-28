@@ -211,6 +211,22 @@ class Catalog(TreeItem):
 		return changed_tags.keys()
 
 
+	@staticmethod
+	def update_images_from_dict(images, data):
+		changed_tags = {}
+		for image in images:
+			for key, val in data.iteritems():
+				if key == 'tags':
+					ff_changed_tags = image.set_tags(val)
+					[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+
+				elif hasattr(image, key):
+					setattr(image, key, val)
+		
+		return changed_tags.keys()
+
+
+	
 
 
 # vim: encoding=utf8: ff=unix:
