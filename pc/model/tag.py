@@ -77,6 +77,13 @@ class Tag(object):
 		else:
 			self.dirs.append(item)
 
+	def update_items_on_delete(self):
+		name = self.name
+		for file in self.files:
+			file.tags.remove(name)
+
+		for directory in self.dirs:
+			directory.tags.remove(name)
 
 
 ####################################################################################################################
@@ -101,9 +108,26 @@ class Tags(object):
 	##########################################################################
 
 
-	@property
-	def tags(self):
+	def _get_tags(self):
 		return self._tags.keys()
+
+	def _set_tags(self, tags):
+		# usuniecie brakujących
+		to_del = []
+		for tag, tagobj in self._tags.iteritems():
+			if tag not in tags:
+				tagobj.update_items_on_delete()
+				to_del.append(tag)
+
+		for tag in to_del:
+			self._tags.pop(tag)
+
+		# dodanie nowych
+		for tag in tags:
+			if tag not in self._tags:
+				self._tags[tag] = Tag(tag, self.catalog)
+
+	tags = property(_get_tags, _set_tags)
 
 
 	@property

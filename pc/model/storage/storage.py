@@ -80,6 +80,11 @@ class Storage:
 					class_name, id, data = line.split("|", 2)
 					id = int(id)
 
+
+					if class_name == 'TAGS':
+						catalog.tags_provider.tags = eval(data)
+						continue
+
 					if not class_name in class_names:
 						_LOG.warn('invalid class name: "%s"' % line)
 						continue
@@ -149,6 +154,7 @@ class Storage:
 		try:
 			output_file = gzip.open(catalog.catalog_filename, 'w')
 			output_file.write(Storage.__get_header() + '\n')
+			output_file.write('TAGS|0|%r' % catalog.tags_provider.tags)
 
 			_LOG.debug('Storage.save file opened, header written')
 
