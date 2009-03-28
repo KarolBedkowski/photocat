@@ -245,7 +245,7 @@ class DlgSettings(wx.Dialog):
 	def _save_settings(self):
 		appconfig = AppConfig()
 		data = self._data
-		for key, default in data.iteritems():
+		for key in data.iterkeys():
 			appconfig.set('settings', key, data[key])
 
 

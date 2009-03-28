@@ -33,13 +33,8 @@ import sys
 import logging
 _LOG = logging.getLogger(__name__)
 
-import time
-import cStringIO
-import re
-
 import wx
 import wx.lib.buttons  as  buttons
-import wx.lib.mixins.listctrl  as  listmix
 
 from kpylibs.guitools		import create_button
 from kpylibs.iconprovider	import IconProvider
@@ -251,15 +246,15 @@ class _DlgSearch(wx.Dialog):
 		box = wx.StaticBox(pane, -1, _("Search for"))
 		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 
-		def add(name):
+		def add2(name):
 			cb = wx.CheckBox(pane, -1, name)
 			cb.SetValue(True)
 			bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 			return cb
 
-		self._cb_search_for_files = add(_("files"))
+		self._cb_search_for_files = add2(_("files"))
 		bsizer.Add((10, 10))
-		self._cb_search_for_dirs = add(("dirs"))
+		self._cb_search_for_dirs = add2(("dirs"))
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
 
 		# szukanie w ...
@@ -269,15 +264,19 @@ class _DlgSearch(wx.Dialog):
 
 		if self._selected_item is not None:
 			if isinstance(self._selected_item, Disk):
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+				for val in (_("<current catalog>"), _("<current disk>")):
+					cb.Append(val) 
 
 			elif isinstance(self._selected_item, Directory):
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>"), _("<current dir>")) ]
+				for val in (_("<current catalog>"), _("<current disk>"), _("<current dir>")):
+					cb.Append(val)
 
 			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
+				for val in (_("<current catalog>"), _("<current disk>")):
+					cb.Append(val)
 
-		[ cb.Append(_("catalog: %s") % cat.name) for cat in self._catalogs ]
+		for cat in self._catalogs:
+			cb.Append(_("catalog: %s") % cat.name)
 
 		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
 		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
@@ -297,14 +296,14 @@ class _DlgSearch(wx.Dialog):
 		bsizer.Add((10, 10))
 		bsizer.Add(wx.StaticText(pane, -1, _("begin:")), 0, wx.ALIGN_CENTER_VERTICAL)
 
-		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1),
+		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120, -1),
 				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_start_date, 0, wx.EXPAND|wx.ALL, 5)
 
 		bsizer.Add((10, 10))
 
 		bsizer.Add(wx.StaticText(pane, -1, _("end:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1),
+		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120, -1),
 				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
 		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
 
@@ -444,7 +443,8 @@ class _DlgSearch(wx.Dialog):
 
 		last_search_text_ctrl = self._tc_text
 		last_search_text_ctrl.Clear()
-		[ last_search_text_ctrl.Append(text) for text in search.update_last_search(what) ]
+		for text in search.update_last_search(what):
+			last_search_text_ctrl.Append(text)
 		last_search_text_ctrl.SetValue(what)
 
 		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
@@ -630,7 +630,9 @@ class DlgSearchProvider(Singleton):
 
 	def close_all(self):
 		''' DlgSearchProvider().close_all() -- zamknięcie wszystkich okien '''
-		[ dlg.Close(True) for dlg in self._dialogs ]
+		for dlg in self._dialogs:
+			dlg.Close(True) 
+
 		self._dialogs = []
 
 

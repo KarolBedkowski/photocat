@@ -68,8 +68,8 @@ class DlgProperties(DlgPropertiesBase):
 
 		for dummy, key, val in sorted(self._item.info):
 			if key == '':
-				bsizer.Add((1,5))
-				bsizer.Add((1,5))
+				bsizer.Add((1, 5))
+				bsizer.Add((1, 5))
 
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)

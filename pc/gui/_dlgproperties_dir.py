@@ -39,7 +39,7 @@ _ = wx.GetTranslation
 class DlgPropertiesDir(DlgPropertiesBase):
 	''' Dialog o programie '''
 	
-	_CONFIG_KEY='properties_dir_wnd'
+	_CONFIG_KEY = 'properties_dir_wnd'
 
 	def __init__(self, parent, item):
 		readonly = item.catalog.readonly

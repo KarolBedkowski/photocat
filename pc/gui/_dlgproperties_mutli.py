@@ -42,7 +42,7 @@ _ = wx.GetTranslation
 class DlgPropertiesMulti(DlgPropertiesBase):
 	''' Dialog o programie '''
 	
-	_CONFIG_KEY='properties_multi_wnd'
+	_CONFIG_KEY = 'properties_multi_wnd'
 
 	def __init__(self, parent, item, result):
 		DlgPropertiesBase.__init__(self, parent, item)

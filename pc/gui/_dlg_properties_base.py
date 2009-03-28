@@ -46,7 +46,7 @@ _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 
 class DlgPropertiesBase(wx.Dialog):
 	''' Dialog o programie '''
-	_CONFIG_KEY='properties_wnd'
+	_CONFIG_KEY = 'properties_wnd'
 
 	def __init__(self, parent, item, readonly=False, title=None):
 		wx.Dialog.__init__(self, parent, -1, title or _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
@@ -116,8 +116,8 @@ class DlgPropertiesBase(wx.Dialog):
 
 		for dummy, key, val in sorted(self._item.info):
 			if key == '':
-				bsizer.Add((1,5))
-				bsizer.Add((1,5))
+				bsizer.Add((1, 5))
+				bsizer.Add((1, 5))
 
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)

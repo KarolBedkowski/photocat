@@ -37,7 +37,6 @@ if __name__ == '__main__':
 		sys.setdefaultencoding("utf-8")
 	sys.path.append('../../')
 
-import sys
 import os
 
 import wx
@@ -197,7 +196,7 @@ class DlgAddDisk(wx.Dialog):
 		if __name__ != '__main__':
 			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
 
-		self._data['skip_dirs_list'] = [ dir.strip() for dir in self._data['skip_subdirs'].split(';') ]
+		self._data['skip_dirs_list'] = [ dirname.strip() for dirname in self._data['skip_subdirs'].split(';') ]
 		self.EndModal(wx.ID_OK)
 
 
@@ -212,7 +211,7 @@ class DlgAddDisk(wx.Dialog):
 		else:
 			last_dirs = AppConfig().get_items('add_disk-last_dir') or []
 			if len(last_dirs) > 0:
-				last_dirs = [ val for key, val in sorted(last_dirs) ]
+				last_dirs = [ val for _key, val in sorted(last_dirs) ]
 				last_dir = last_dirs[0]
 
 		return (last_dirs, last_dir)
@@ -232,19 +231,22 @@ class DlgAddDisk(wx.Dialog):
 
 
 if __name__ == '__main__':
-	app = wx.PySimpleApp()
-	data = {
-			'name' : '__name__',
-			'descr': '__descr__'
-	}
-	wnd = DlgAddDisk(None, data)
-	if wnd.ShowModal() == wx.ID_OK:
-		print 'OK', data
-	else:
-		print 'cancel'
-	wnd.Destroy()
+	def _test():
+		app = wx.PySimpleApp()
+		data = {
+				'name' : '__name__',
+				'descr': '__descr__'
+		}
+		wnd = DlgAddDisk(None, data)
+		if wnd.ShowModal() == wx.ID_OK:
+			print 'OK', data
+		else:
+			print 'cancel'
+		wnd.Destroy()
 
-	del app
+		del app
+	
+	_test()
 
 
 

@@ -41,7 +41,7 @@ _ = wx.GetTranslation
 class DlgPropertiesDisk(DlgPropertiesBase):
 	''' Dialog własności dysku '''
 	
-	_CONFIG_KEY='properties_disk_wnd'
+	_CONFIG_KEY = 'properties_disk_wnd'
 
 	def __init__(self, parent, item):
 		DlgPropertiesBase.__init__(self, parent, item)
@@ -72,8 +72,8 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 				self._tc_name.SetValue(val)
 
 			elif key == '':
-				bsizer.Add((1,5))
-				bsizer.Add((1,5))
+				bsizer.Add((1, 5))
+				bsizer.Add((1, 5))
 
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)

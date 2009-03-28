@@ -37,16 +37,11 @@ if __name__ == '__main__':
 		sys.setdefaultencoding("utf-8")
 	sys.path.append('../../')
 
-
-import sys
-import os
-import time
-
 import wx
 import wx.gizmos   as  gizmos
 
 if __name__ == '__main__':
-	app = wx.PySimpleApp()
+	APP = wx.PySimpleApp()
 
 _ = wx.GetTranslation
 
@@ -104,17 +99,17 @@ class DlgEditTags(wx.Dialog):
 
 
 def show_dlg_edit_tags(parent, tag_provider):
-	wnd = DlgEditTags(parent)
-	wnd.tags = tag_provider.tags
+	dlg = DlgEditTags(parent)
+	dlg.tags = tag_provider.tags
 
 	updated = False
 
-	if wnd.ShowModal() == wx.ID_OK:
-		updated = sorted(tag_provider.tags or []) != sorted(wnd.tags or [])
+	if dlg.ShowModal() == wx.ID_OK:
+		updated = sorted(tag_provider.tags or []) != sorted(dlg.tags or [])
 		if updated:
-			tag_provider.tags = wnd.tags
+			tag_provider.tags = dlg.tags
 
-	wnd.Destroy()
+	dlg.Destroy()
 	return updated
 
 
@@ -122,16 +117,16 @@ def show_dlg_edit_tags(parent, tag_provider):
 
 
 if __name__ == '__main__':
-	wnd = DlgEditTags(None)
-	wnd.tags = ['test', 'ok', 'tu']
-	if wnd.ShowModal() == wx.ID_OK:
-		print 'OK', wnd.tags
-	else:
-		print 'cancel'
-	wnd.Destroy()
+	def _test():
+		wnd = DlgEditTags(None)
+		wnd.tags = ['test', 'ok', 'tu']
+		if wnd.ShowModal() == wx.ID_OK:
+			print 'OK', wnd.tags
+		else:
+			print 'cancel'
+		wnd.Destroy()
 
-	del app
-
+	_test()
 
 
 
