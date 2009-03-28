@@ -83,9 +83,9 @@ class _DlgSearch(wx.Dialog):
 		self._appconfig = appconfig = AppConfig()
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_layout_fields(),		0, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self._create_layout_adv_search(),	0, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self._create_layout_result(),		1, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._create_layout_fields(),		0, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self._create_layout_adv_search(),	0, wx.EXPAND|wx.LEFT|wx.RIGHT, 12)
+		main_grid.Add(self._create_layout_result(),		1, wx.EXPAND|wx.ALL, 12)
 
 		self._statusbar = wx.StatusBar(self, -1)
 		self._statusbar.SetFieldsCount(2)
@@ -163,16 +163,22 @@ class _DlgSearch(wx.Dialog):
 		self._image_info.InsertColumn(1, '')
 		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
 
+		grid.Add((5, 5))
+
 		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
 
 		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
-		grid_btns.Add(self._btn_properties, 1, wx.EXPAND|wx.ALL, 1)
+		grid_btns.Add(self._btn_properties)
+		
+		grid_btns.Add((5, 1))
 
 		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
-		grid_btns.Add(self._btn_goto, 1, wx.EXPAND|wx.ALL, 1)
+		grid_btns.Add(self._btn_goto)
+
+		grid_btns.Add((5, 1))
 
 		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid_btns.Add(self._btn_icons, 1, wx.EXPAND|wx.ALL, 1)
+		grid_btns.Add(self._btn_icons)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
 
 		grid.Add(grid_btns, 0, wx.EXPAND)
@@ -509,6 +515,7 @@ class _DlgSearch(wx.Dialog):
 		''' callback na zwinięcie/rozwinięcie panelu '''
 		# trzeba przebudować layout po zwinięciu/rozwinięciu panelu
 		self.Layout()
+		evt.Skip()
 
 
 	def _on_btn_icons(self, evt):
