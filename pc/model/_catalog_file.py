@@ -42,7 +42,7 @@ _ = wx.GetTranslation
 
 
 class CatalogFile(StorageObject):
-	def __init__(self, id, name, parent, disk, *args, **kwargs):
+	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		self.size = kwargs.get('size')
 		self.date = kwargs.get('date')
 		self.tags = kwargs.get('tags')
@@ -50,7 +50,7 @@ class CatalogFile(StorageObject):
 		if self.desc is not None and type(self.desc) != types.UnicodeType:
 			self.desc = unicode(self.desc)
 
-		StorageObject.__init__(self, id, *args, **kwargs)
+		StorageObject.__init__(self, oid, *args, **kwargs)
 
 		self.name		= name
 		self.parent		= parent
@@ -121,14 +121,14 @@ class CatalogFile(StorageObject):
 			self.disk.catalog.tags_provider.remove_item(self)
 
 
-	def load(self, path, options, on_update):
+	def load(self, path, _options, on_update):
 		""" załadowanie danych o obiekcie """
 		self.size = os.path.getsize(path)
 		self.date = os.path.getmtime(path)
 		return on_update(path)
 
 
-	def update(self, path, options, on_update):
+	def update(self, path, _options, on_update):
 		''' aktualizacja eleentu
 			return: True=obiekt się zmienił
 		'''
@@ -156,7 +156,7 @@ class CatalogFile(StorageObject):
 		return updated_tags
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options=None, _progress_callback=None):
 		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
 
 		if options is None or options.get('search_in_names', True):

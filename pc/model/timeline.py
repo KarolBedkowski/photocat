@@ -31,8 +31,6 @@ __all__ = ["Timeline"]
 import time
 import operator
 
-from file_image	import FileImage
-
 
 
 class Timeline(object):
@@ -154,18 +152,26 @@ class Timeline(object):
 		if self.level != 0:
 			return
 
-		def add_dir(dir):
-			[ self.__add_item(item) for item in dir.files if item.is_valid ]
-			[ add_dir(subdir) for subdir in dir.subdirs if subdir.is_valid ]
+		def add_dir(directory):
+			for item in directory.files:
+				if item.is_valid:
+					self.__add_item(item)
 
-		[ add_dir(item) for item in self.catalog.disks ]
+			for subdir in directory.subdirs:
+				if subdir.is_valid:
+					add_dir(subdir)
+
+		for item in self.catalog.disks:
+			add_dir(item)
 
 		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie
 		def sort_subdir(subdir):
 			subdir._files.sort(key=operator.attrgetter('shot_date'))
-			[ sort_subdir(subsubdir) for subsubdir in subdir.dirs.itervalues() ]
+			for subsubdir in subdir.dirs.itervalues():
+				sort_subdir(subsubdir)
 
-		[ sort_subdir(subdir) for subdir in self.dirs.itervalues()]
+		for subdir in self.dirs.itervalues():
+			sort_subdir(subdir)
 
 
 

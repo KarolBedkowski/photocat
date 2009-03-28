@@ -148,11 +148,13 @@ class Catalog(TreeItem):
 
 
 	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
-		[ disk.check_on_find(cmpfunc, add_callback, options, progress_callback) for disk in self.disks ]
+		for disk in self.disks:
+			disk.check_on_find(cmpfunc, add_callback, options, progress_callback)
 
 
 	def fill_shot_date(self):
-		[ disk.fill_shot_date() for disk in self.disks ]
+		for disk in self.disks:
+			disk.fill_shot_date()
 
 
 	##########################################################################
@@ -162,7 +164,7 @@ class Catalog(TreeItem):
 	def fast_count_files_dirs(path):
 		""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
 
-		_IMAGE_FILES_EXTENSION = FileImage.IMAGE_FILES_EXTENSION
+		_image_files_extension = FileImage.IMAGE_FILES_EXTENSION
 
 		def count_folder(path):
 			content = [ os.path.join(path, name)
@@ -176,7 +178,7 @@ class Catalog(TreeItem):
 				for item in content
 				if os.path.isdir(item)
 					or (os.path.isfile(item)
-						and os.path.splitext(item)[1].lower() in _IMAGE_FILES_EXTENSION
+						and os.path.splitext(item)[1].lower() in _image_files_extension
 					)
 			))
 
@@ -202,8 +204,8 @@ class Catalog(TreeItem):
 				image.desc = desc.strip()
 
 			if tags is not None:
-				ff_changed_tags = image.set_tags(tags)
-				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+				for key in image.set_tags(tags):
+					changed_tags.__setitem__(key, None)
 
 			if shot_date is not None:
 				image.shot_date = shot_date
@@ -217,8 +219,8 @@ class Catalog(TreeItem):
 		for image in images:
 			for key, val in data.iteritems():
 				if key == 'tags':
-					ff_changed_tags = image.set_tags(val)
-					[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
+					for key in image.set_tags(val):
+						changed_tags.__setitem__(key, None)
 
 				elif hasattr(image, key):
 					setattr(image, key, val)

@@ -185,8 +185,8 @@ class DataProvider:
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
-			def copy_directory(dir, next_offset):
-				for image in dir.files:
+			def copy_directory(directory, next_offset):
+				for image in directory.files:
 					image_thumb	= None
 					image_exif	= None
 
@@ -200,7 +200,7 @@ class DataProvider:
 
 					files_to_update.append((image, image_thumb, image_exif))
 
-				for subdir in dir.subdirs:
+				for subdir in directory.subdirs:
 					next_offset = copy_directory(subdir, next_offset)
 
 				return next_offset
@@ -235,8 +235,11 @@ class DataProvider:
 
 			# aktualizacja odnośników w katalogu
 			for image, image_thumb, image_exif in files_to_update:
-				if image_thumb is not None:		image.thumb = image_thumb
-				if image_exif is not None:		image.exif = image_exif
+				if image_thumb is not None:
+					image.thumb = image_thumb
+
+				if image_exif is not None:
+					image.exif = image_exif
 
 			# wywalenie starego pliku
 			os.unlink(old_filename)

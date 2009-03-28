@@ -79,8 +79,8 @@ class Tag(object):
 
 	def update_items_on_delete(self):
 		name = self.name
-		for file in self.files:
-			file.tags.remove(name)
+		for ifile in self.files:
+			ifile.tags.remove(name)
 
 		for directory in self.dirs:
 			directory.tags.remove(name)
@@ -140,7 +140,8 @@ class Tags(object):
 
 	def add_item(self, item):
 		if item.tags is not None and item.name is not None:
-			[ self._get_tag_list(tag).add_item(item) for tag in item.tags ]
+			for tag in item.tags:
+				self._get_tag_list(tag).add_item(item)
 
 
 	def update_item(self, item):
@@ -150,7 +151,8 @@ class Tags(object):
 
 	def remove_item(self, item):
 		if item.name is not None:
-			[ tag.remove_item(item) for tag in self._tags.itervalues() ]
+			for tag in self._tags.itervalues():
+				tag.remove_item(item)
 
 
 	##########################################################################

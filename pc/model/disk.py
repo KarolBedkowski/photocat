@@ -39,13 +39,13 @@ _ = wx.GetTranslation
 
 
 class Disk(Directory):
-	def __init__(self, id, name, parent, catalog, *args, **kwargs):
+	def __init__(self, oid, name, parent, catalog, *args, **kwargs):
 		self.catalog		= catalog
 		self.add_date		= kwargs.get('add_date')
 		self.update_date	= kwargs.get('update_date')
 		self.last_path		= None
 
-		Directory.__init__(self, id, name, parent, self, *args, **kwargs)
+		Directory.__init__(self, oid, name, parent, self, *args, **kwargs)
 
 
 	@property

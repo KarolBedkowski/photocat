@@ -25,7 +25,6 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-import string
 import time
 import re
 import types
@@ -37,7 +36,7 @@ import wx
 
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
-import TiffImagePlugin, PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
+import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
 from kpylibs.formaters		import format_human_size
@@ -85,7 +84,7 @@ class FileImage(CatalogFile):
 		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
 
 
-	def __init__(self, id, name, parent, disk, *args, **kwargs):
+	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 
 		self.thumb		= kwargs.get('thumb')
 		self.dimensions	= kwargs.get('dimensions')
@@ -101,7 +100,7 @@ class FileImage(CatalogFile):
 		if self.exif is not None and type(self.exif) == types.TupleType:
 			self.exif = self.exif[0]
 
-		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
+		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
 		self.is_raw = (self.name is not None) and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
@@ -177,9 +176,9 @@ class FileImage(CatalogFile):
 			return self.shot_date
 
 		if self.exif is not None:
-				shot_date = self.__get_exif_shot_date_value(self.exif_data)
-				if shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+			shot_date = self.__get_exif_shot_date_value(self.exif_data)
+			if shot_date is not None:
+				self.shot_date = time.mktime(shot_date)
 
 		return self.shot_date or self.date
 
@@ -277,7 +276,7 @@ class FileImage(CatalogFile):
 				image = PILImage.open(path)
 
 			except:
-				image =  PILImage.new('RGB', (1,1))
+				image =  PILImage.new('RGB', (1, 1))
 
 			if image.mode != 'RGB':
 				image = image.convert('RGB')
@@ -313,7 +312,9 @@ class FileImage(CatalogFile):
 		if 'EXIF FNumber' in exif:
 			try:
 				fnumber = eval(exif['EXIF FNumber'] + '.')
-				if int(fnumber) == fnumber: 	fnumber = int(fnumber)
+				if int(fnumber) == fnumber:
+					fnumber = int(fnumber)
+
 				shot_info.append((_('f'), fnumber))
 
 			except:
@@ -335,7 +336,9 @@ class FileImage(CatalogFile):
 		if 'EXIF FocalLength' in exif:
 			try:
 				flen = eval(exif['EXIF FocalLength'] + '.')
-				if int(flen) == flen: 	flen = int(flen)
+				if int(flen) == flen:
+					flen = int(flen)
+
 				shot_info.append((_('focal len.'), flen))
 
 			except:

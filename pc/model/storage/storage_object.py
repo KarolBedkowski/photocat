@@ -32,18 +32,18 @@ from kpylibs.singleton	import Singleton
 
 
 class _IdProvider(Singleton):
-	def init(self):
+	def init(self, *_args, **_kwds):
 		self.last_id = 0
 
 
-	def set(self, id):
-		if id < 0:
+	def set(self, oid):
+		if oid < 0:
 			return self.get()
 
-		if id > self.last_id:
-			self.last_id = id
+		if oid > self.last_id:
+			self.last_id = oid
 
-		return id
+		return oid
 
 
 	def get(self):
@@ -55,7 +55,7 @@ class _IdProvider(Singleton):
 ##########################################################################
 
 
-_id_provider = _IdProvider()
+_ID_PROVIDER = _IdProvider()
 
 
 ##########################################################################
@@ -63,22 +63,19 @@ _id_provider = _IdProvider()
 
 
 class StorageObject(object):
-	def __init__(self, id, *args, **kwargs):
-		self._id = None
-		self._invalid = False
-
-		if id is not None:
-			self._id = _id_provider.set(id)
+	def __init__(self, oid, *args, **kwargs):
+		self._invalid	= False
+		self._id		= None if oid is None else _ID_PROVIDER.set(oid)
 
 
 	def _get_id(self):
 		if self._id is None:
-			self._id = _id_provider.get()
+			self._id = _ID_PROVIDER.get()
 
 		return self._id
 
 	def _set_id(self, id):
-		self._id = _id_provider.set(id)
+		self._id = _ID_PROVIDER.set(id)
 
 	id = property(_get_id, _set_id)
 
@@ -102,7 +99,9 @@ class StorageObject(object):
 
 
 	def set_attributes(self, data):
-		[ setattr(self, key, val) for key, val in data.iteritems() if hasattr(self, key) ]
+		for key, val in data.iteritems():
+			if hasattr(self, key):
+				setattr(self, key, val)
 
 
 	def encode(self):
