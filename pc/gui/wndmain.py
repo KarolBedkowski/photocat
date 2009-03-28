@@ -42,13 +42,12 @@ from kpylibs.appconfig		import AppConfig
 from kpylibs.iconprovider	import IconProvider
 from kpylibs.guitools		import create_menu, create_toolbar_button, create_menu_item
 from kpylibs.wnd_shell		import WndShell
-from kpylibs.formaters		import format_human_size
 
 import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog, eprint, epdf, errors
+from pc.engine				import ecatalog, eprint, epdf
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -183,9 +182,9 @@ class WndMain(wx.Frame):
 
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
-			(_('&Add disk...'),		None,	_('Add disk to catalog'),				self._on_catalog_add,		None,		wx.ART_NEW_DIR),
+			(_('&Add disk...'),		None,	_('Add disk to catalog'),				self._on_catalog_add,		None,	wx.ART_NEW_DIR),
 			(_('&Update disk...'),	None,	_('Update selected disk'),				self._on_catalog_update_disk),
-			(_('&Delete disk...'),	None,	_('Delete selected disk from catalog'),	self._on_catalog_del_disk,	None,		wx.ART_DELETE),
+			(_('&Delete disk...'),	None,	_('Delete selected disk from catalog'),	self._on_catalog_del_disk,	None,	wx.ART_DELETE),
 			('-'),
 			(_('Delete selected &dir...'),	None,	'',								self._on_catalog_del_dir),
 			(_('Delete selected &image...'),	None,	'',							self._on_catalog_del_image),
@@ -243,9 +242,9 @@ class WndMain(wx.Frame):
 		self.__toolbar = toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.NO_BORDER|wx.TB_FLAT|wx.TB_TEXT)
 		toolbar.SetToolBitmapSize((16, 16))
 
-		def cbtn(label, function, iconname, description=''):
-			return create_toolbar_button(toolbar, label, function, self._icon_provider.get_image(iconname),
-					description=description)
+		#def cbtn(label, function, iconname, description=''):
+		#	return create_toolbar_button(toolbar, label, function, self._icon_provider.get_image(iconname),
+		#			description=description)
 
 		def cbtna(label, function, iconname, description=''):
 			return create_toolbar_button(toolbar, label, function, imgid=iconname, description=description)
@@ -288,7 +287,6 @@ class WndMain(wx.Frame):
 		dirty_catalogs = [ catalog for catalog in self._catalogs if catalog.dirty ]
 
 		if len(dirty_catalogs) > 0:
-			removed = []
 			for catalog in dirty_catalogs:
 				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption, 'PC')
@@ -302,7 +300,8 @@ class WndMain(wx.Frame):
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'), 'PC'):
 			return
 
-		[ catalog.close() for catalog in self._catalogs ]
+		for catalog in self._catalogs:
+			catalog.close()
 
 		appconfig = AppConfig()
 		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
@@ -480,13 +479,6 @@ class WndMain(wx.Frame):
 			catalog.fill_shot_date()
 
 
-	def _on_file_history(self, evt):
-		filehistnum = evt.GetId() - wx.ID_FILE1
-		config = AppConfig()
-		filename = config.last_open_files[filehistnum]
-		self.open_album(filename)
-
-
 	def _on_catalog_add(self, evt):
 		catalog = self.__get_selected_catalog()
 		if catalog is not None:
@@ -494,7 +486,7 @@ class WndMain(wx.Frame):
 			try:
 				disk = ecatalog.add_disk_to_catalog(catalog, self)
 
-			except Exception, err:
+			except Exception:
 				_LOG.exception('WndMain._on_catalog_add()')
 
 			else:
@@ -580,7 +572,9 @@ class WndMain(wx.Frame):
 			return
 
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
-			[ folder.remove_file(image) for image in selected_items ]
+			for image in selected_items:
+				folder.remove_file(image)
+
 			self._show_dir(folder)
 			if self._info_panel is not None:
 				self._info_panel.show_folder(folder)
@@ -640,7 +634,7 @@ class WndMain(wx.Frame):
 
 		catalog = self.__get_selected_catalog()
 		if show_dlg_edit_tags(self, catalog.tags_provider):
-			folder.catalog.dirty = True
+			catalog.dirty = True
 			self._dirs_tree.update_catalog_node(catalog)
 			self.__update_tags_timeline(catalog)
 
@@ -666,7 +660,8 @@ class WndMain(wx.Frame):
 
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
-				if not dialogs.message_box_warning_yesno(self, _('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
+				if not dialogs.message_box_warning_yesno(self, 
+						_('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
 					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -724,7 +719,7 @@ class WndMain(wx.Frame):
 			return
 
 		if isinstance(item, Disk):
-				dlg = DlgPropertiesDisk(self, item)
+			dlg = DlgPropertiesDisk(self, item)
 
 		elif isinstance(item, Directory):
 			dlg = DlgPropertiesDir(self, item)
@@ -822,7 +817,7 @@ class WndMain(wx.Frame):
 
 	def _on_dirtree_right_down(self, evt):
 		pt = evt.GetPosition()
-		item, flags = self._dirs_tree.HitTest(pt)
+		item, _flags = self._dirs_tree.HitTest(pt)
 		if item:
 			self._dirs_tree.SelectItem(item)
 
@@ -994,11 +989,9 @@ class WndMain(wx.Frame):
 	def __update_changed_tags(self, tags_provider, changed_tags):
 		""" wndmain.__update_changed_tags(tags_provider, changed_tags) -- aktualizacja tagów w drzewie """
 		if changed_tags is not None and len(changed_tags) > 0:
-			[ self._dirs_tree.update_node_tag(tag_item)
-				for tag_item
-				in (tags_provider[tag] for tag in changed_tags)
-				if tag_item.tree_node is not None
-			]
+			for tag_item in (tags_provider[tag] for tag in changed_tags):
+				if tag_item.tree_node is not None:
+					self._dirs_tree.update_node_tag(tag_item)
 
 			self._dirs_tree.update_node_tags(tags_provider)
 
@@ -1031,7 +1024,12 @@ class WndMain(wx.Frame):
 
 		if catalog_loaded:
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
-			dir_selected = not disk_selected and (isinstance(selected_tree_item, Directory) if selected_tree_item is not None else False)
+			dir_selected = not disk_selected and (
+					isinstance(selected_tree_item, Directory)
+					if selected_tree_item is not None 
+					else False
+			)
+
 			file_selected = len(self._photo_list.selected_items) > 0
 
 			mm_items = self._main_menu_catalog.GetMenuItems()
