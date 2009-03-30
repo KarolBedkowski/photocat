@@ -47,6 +47,24 @@ from kpylibs.validators		import MyValidator, validators
 
 _ = wx.GetTranslation
 
+_LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
+_LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
+
+_SMALL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
+_SMALL_FONT_STYLE.SetPointSize(_SMALL_FONT_STYLE.GetPointSize()-1)
+
+
+def _create_label(parent, title):
+	ctr = wx.StaticText(parent, -1, title)
+	ctr.SetFont(_LABEL_FONT_STYLE)
+	return ctr
+
+
+def _create_small_label(parent, title):
+	ctr = wx.StaticText(parent, -1, title)
+	ctr.SetFont(_SMALL_FONT_STYLE)
+	return ctr
+
 
 
 class DlgAddDisk(wx.Dialog):
@@ -61,8 +79,8 @@ class DlgAddDisk(wx.Dialog):
 		self.__load_disk_names(catalog, update)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_notebook(), 0, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._create_notebook(), 1, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 		self.SetSize((500, -1))
@@ -85,20 +103,24 @@ class DlgAddDisk(wx.Dialog):
 		panel = wx.Panel(parent, -1)
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Disk name:')), 0, wx.ALL, 5)
+		grid = wx.FlexGridSizer(3, 2, 5, 12)
+		grid.AddGrowableRow(1)
+		grid.AddGrowableCol(1)
+
+		grid.Add(wx.StaticText(panel, -1, _('Disk name:')))
 		self._disk_name = wx.TextCtrl(panel, -1,
 				validator=MyValidator(data_key=(data, 'name'), validators=validators.NotEmptyValidator(),
 						field=_('name'))
 		)
-		main_grid.Add(self._disk_name, 0, wx.EXPAND|wx.ALL, 5)
+		grid.Add(self._disk_name, 1, wx.EXPAND)
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Disk description:')), 0, wx.ALL, 5)
+		grid.Add(wx.StaticText(panel, -1, _('Disk description:')))
 		self._disk_descr = wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'descr')), style=wx.TE_MULTILINE)
-		main_grid.Add(self._disk_descr, 1, wx.EXPAND|wx.ALL, 5)
+		grid.Add(self._disk_descr, 1, wx.EXPAND)
 
 		last_dirs, last_dir = self.__get_last_dirs()
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Folder:')), 0, wx.ALL, 5)
+		grid.Add(wx.StaticText(panel, -1, _('Folder:')))
 		self._path = wx.ComboBox(panel, -1, last_dir,
 				validator=MyValidator(data_key=(data, 'path'), validators=validators.NotEmptyValidator(),
 						field=_('path')),
@@ -107,11 +129,13 @@ class DlgAddDisk(wx.Dialog):
 		size = self._path.GetSizeTuple()[1]
 		btn_sel_dir = wx.Button(panel, -1, '...', size=(size, size))
 
-		grid = wx.BoxSizer(wx.HORIZONTAL)
-		grid.Add(self._path, 1, wx.EXPAND)
-		grid.Add((5, 1))
-		grid.Add(btn_sel_dir, 0, wx.ALL)
-		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 5)
+		grid2 = wx.BoxSizer(wx.HORIZONTAL)
+		grid2.Add(self._path, 1, wx.EXPAND)
+		grid2.Add((5, 1))
+		grid2.Add(btn_sel_dir)
+		grid.Add(grid2, 1, wx.EXPAND)
+
+		main_grid.Add(grid, 1, wx.EXPAND|wx.ALL, 12)
 
 		panel.SetSizerAndFit(main_grid)
 
@@ -126,28 +150,40 @@ class DlgAddDisk(wx.Dialog):
 			data['load_captions_txt'] = True
 
 		panel = wx.Panel(parent, -1)
+		panel_grid = wx.BoxSizer(wx.VERTICAL)
+
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
 		main_grid.Add(
 				wx.CheckBox(panel, -1, _('Include empty directories'),
-						validator=MyValidator(data_key=(data, 'include_empty'))),
-				0, wx.EXPAND|wx.ALL, 5)
+						validator=MyValidator(data_key=(data, 'include_empty'))))
+
+		main_grid.Add((5, 5))
 
 		main_grid.Add(
-				wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))),
-				0, wx.EXPAND|wx.ALL, 5)
+				wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))))
+
+		main_grid.Add((5, 5))
 
 		main_grid.Add(
 				wx.CheckBox(panel, -1, _('Load info from captions.txt'),
-						validator=MyValidator(data_key=(data, 'load_captions_txt'))),
-				0, wx.EXPAND|wx.ALL, 5)
+						validator=MyValidator(data_key=(data, 'load_captions_txt'))))
 
-		main_grid.Add(wx.StaticText(panel, -1, _('Skip dirs (";" - separated):')))
-		main_grid.Add(
-				wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))),
-				0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add((5, 12))
+		main_grid.Add(_create_label(panel, _('Skipped directories')))
+		main_grid.Add((5, 5))
 
-		panel.SetSizerAndFit(main_grid)
+		grid = wx.FlexGridSizer(2, 2, 5, 12)
+		grid.AddGrowableCol(1)
+		grid.Add(wx.StaticText(panel, -1, _("Don't load:")))
+		grid.Add(wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))), 0, wx.EXPAND)
+		grid.Add((1, 1))
+		grid.Add(_create_small_label(panel, _('(Separate dirs by ";")')))
+
+		main_grid.Add(grid, 1, wx.EXPAND|wx.LEFT, 12)
+
+		panel_grid.Add(main_grid, 1, wx.EXPAND|wx.ALL, 12)
+		panel.SetSizerAndFit(panel_grid)
 		return panel
 
 
