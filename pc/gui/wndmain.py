@@ -694,11 +694,12 @@ class WndMain(wx.Frame):
 				else:
 					self.SetStatusText(_('Files: %d') % len(item))
 
-		if isinstance(item, Directory):
-			self._info_panel.show_folder(item)
+		if self._info_panel is not None:
+			if isinstance(item, Directory):
+				self._info_panel.show_folder(item)
 
-		else:
-			self._info_panel.clear()
+			else:
+				self._info_panel.clear()
 
 
 	def _on_dirtree_item_activate(self, evt):
