@@ -39,7 +39,7 @@ import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
 import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
-from kpylibs.formaters		import format_human_size
+from kabes.tools.formaters		import format_human_size
 
 from pc.lib					import EXIF
 

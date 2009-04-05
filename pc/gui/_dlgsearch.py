@@ -36,11 +36,11 @@ _LOG = logging.getLogger(__name__)
 import wx
 import wx.lib.buttons  as  buttons
 
-from kpylibs.guitools		import create_button
-from kpylibs.iconprovider	import IconProvider
-from kpylibs.appconfig		import AppConfig
-from kpylibs				import dialogs
-from kpylibs.singleton		import Singleton
+from kabes.tools.appconfig		import AppConfig
+from kabes.model.singleton		import Singleton
+from kabes.wxtools				import dialogs
+from kabes.wxtools.guitools		import create_button
+from kabes.wxtools.iconprovider	import IconProvider
 
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image

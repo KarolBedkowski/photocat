@@ -23,8 +23,8 @@ import time
 
 import wx
 
-from kpylibs.appconfig		import AppConfig
-from kpylibs				import dialogs
+from kabes.tools.appconfig	import AppConfig
+from kabes.wxtools			import dialogs
 
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation

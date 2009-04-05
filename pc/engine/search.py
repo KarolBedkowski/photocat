@@ -39,7 +39,7 @@ import re
 import wx
 _ = wx.GetTranslation
 
-from kpylibs.appconfig		import AppConfig
+from kabes.tools.appconfig		import AppConfig
 
 
 

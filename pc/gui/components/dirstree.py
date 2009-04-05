@@ -16,8 +16,7 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs.eventgenerator	import EventGenerator
-from kpylibs.iconprovider	import IconProvider
+from kabes.wxtools.iconprovider	import IconProvider
 
 from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags, Timeline
 
@@ -25,13 +24,12 @@ _ = wx.GetTranslation
 
 
 
-class DirsTree(wx.TreeCtrl, EventGenerator):
+class DirsTree(wx.TreeCtrl):
 	''' Drzewo katalogów '''
 
 	def __init__(self, parent, wxid=-1):
 		wx.TreeCtrl.__init__(self, parent, wxid,
 				style=wx.TR_HAS_BUTTONS|wx.TR_LINES_AT_ROOT|wx.TR_LINES_AT_ROOT|wx.TR_HIDE_ROOT|wx.SUNKEN_BORDER)
-		EventGenerator.__init__(self, ['change_selection'])
 
 		self.__icon_provider = IconProvider()
 		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 'calendar',

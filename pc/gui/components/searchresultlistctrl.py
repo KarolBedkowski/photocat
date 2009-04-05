@@ -39,7 +39,7 @@ _LOG = logging.getLogger(__name__)
 import wx
 import wx.lib.mixins.listctrl  as  listmix
 
-from kpylibs.formaters		import format_human_size
+from kabes.tools.formaters		import format_human_size
 
 _ = wx.GetTranslation
 

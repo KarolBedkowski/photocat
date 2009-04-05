@@ -47,15 +47,11 @@ except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
 
-# biblioteki
-sys.path.append('libs/kpylibs')
-
-
 ##########################################################################
 # logowanie
 import logging
-from kpylibs.logging_setup	import logging_setup
-from kpylibs.logging_wx		import logging_setup_wx
+from kabes.tools.logging_setup	import logging_setup
+from kabes.wxtools.logging_wx	import logging_setup_wx
 
 
 debug = sys.argv.count('-d') > 0
@@ -72,8 +68,8 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs.appconfig		import AppConfig
-from kpylibs				import kpylibs_setup
+from kabes.tools.appconfig	import AppConfig
+from kabes.wxtools			import setup_locale
 
 from pc.icons				import icons
 
@@ -96,11 +92,11 @@ class App(wx.App):
 		locale.AddCatalog('wxstd')
 		locale.AddCatalog('pc')
 
-		kpylibs_setup.setup_locale(locale)
+		setup_locale(locale)
 		
 		_LOG.info('locale: %s' % locale.GetName())
 
-		from kpylibs.iconprovider	import IconProvider
+		from kabes.wxtools.iconprovider	import IconProvider
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
 		icon_provider = IconProvider(icons)

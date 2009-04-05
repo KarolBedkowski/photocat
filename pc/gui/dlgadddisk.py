@@ -41,9 +41,9 @@ import os
 
 import wx
 
-from kpylibs.appconfig		import AppConfig
-from kpylibs.dialogs		import message_box_error
-from kpylibs.validators		import MyValidator, validators
+from kabes.tools.appconfig		import AppConfig
+from kabes.wxtools.dialogs		import message_box_error
+from kabes.wxtools.validators	import MyValidator, validators
 
 _ = wx.GetTranslation
 

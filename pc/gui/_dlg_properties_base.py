@@ -33,7 +33,7 @@ import sys
 import wx
 from wx.lib import masked
 
-from kpylibs.appconfig	import AppConfig
+from kabes.tools.appconfig	import AppConfig
 
 from components.tags_list_box import TagsListBox
 
