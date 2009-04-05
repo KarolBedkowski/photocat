@@ -1,4 +1,4 @@
-#!/usr/bin/python2.5 -OO
+#!/usr/bin/python -OO
 # -*- coding: utf8 -*-
 
 import psyco
