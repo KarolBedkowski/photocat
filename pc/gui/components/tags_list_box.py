@@ -32,14 +32,13 @@ if __name__ == '__main__':
 		sys.setappdefaultencoding("utf-8")
 	except:
 		sys.setdefaultencoding("utf-8")
-	sys.path.append('../../../libs/kpylibs')
 
 import sys
 import time
 
 import wx
 
-from kpylibs.guitools	import create_button
+from kabes.wxtools.guitools	import create_button
 
 _ = wx.GetTranslation
 

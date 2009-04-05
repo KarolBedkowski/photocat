@@ -30,7 +30,7 @@ __all__			= ['DlgPropertiesDisk']
 
 import wx
 
-from kpylibs.dialogs	import message_box_error
+from kabes.wxtools.dialogs	import message_box_error
 
 from _dlg_properties_base	import DlgPropertiesBase
 

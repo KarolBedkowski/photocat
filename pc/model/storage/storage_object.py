@@ -27,7 +27,7 @@ __revision__	= '$Id$'
 
 from types	import DictType
 
-from kpylibs.singleton	import Singleton
+from kabes.model.singleton	import Singleton
 
 
 

@@ -33,8 +33,8 @@ import wx
 from wx.lib import masked
 import  wx.lib.colourselect as  csel
 
-from kpylibs.appconfig	import AppConfig
-from kpylibs.validators	import MyValidator, validators
+from kabes.tools.appconfig		import AppConfig
+from kabes.wxtools.validators	import MyValidator, validators
 
 from pc.lib				import fonttools
 

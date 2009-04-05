@@ -37,11 +37,11 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs				import dialogs
-from kpylibs.appconfig		import AppConfig
-from kpylibs.iconprovider	import IconProvider
-from kpylibs.guitools		import create_menu, create_toolbar_button, create_menu_item
-from kpylibs.wnd_shell		import WndShell
+from kabes.tools.appconfig		import AppConfig
+from kabes.wxtools				import dialogs
+from kabes.wxtools.iconprovider	import IconProvider
+from kabes.wxtools.guitools		import create_menu, create_toolbar_button, create_menu_item
+from kabes.wxtools.wnd_shell	import WndShell
 
 import pc
 
@@ -276,8 +276,8 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout_info(self, parent):
-		panel = self._info_panel = InfoPanel(parent)
-		return panel
+		self._info_panel = InfoPanel(parent)
+		return self._info_panel
 
 
 	#########################################################################################################

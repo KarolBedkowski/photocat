@@ -33,9 +33,9 @@ import logging
 
 import wx
 
-from kpylibs				import dialogs
-from kpylibs.appconfig		import AppConfig
-from kpylibs.formaters		import format_human_size
+from kabes.wxtools			import dialogs
+from kabes.tools.appconfig	import AppConfig
+from kabes.tools.formaters	import format_human_size
 
 from pc.model				import Catalog
 from pc.model.storage		import Storage

@@ -32,8 +32,6 @@ import time
 import wx
 import wx.lib.scrolledpanel as scrolled
 
-from kpylibs.eventgenerator import EventGenerator
-
 
 _ = wx.GetTranslation
 
@@ -49,10 +47,9 @@ def _create_label(parent, title):
 
 
 
-class InfoPanel(wx.Panel, EventGenerator):
+class InfoPanel(wx.Panel):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
-		EventGenerator.__init__(self)
 
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		sizer.Add(self._create_layout(self), 1, wx.EXPAND)
