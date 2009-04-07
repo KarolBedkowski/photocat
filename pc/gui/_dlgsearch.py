@@ -128,17 +128,8 @@ class _DlgSearch(wx.Frame):
 		spittwnd.SetSashPosition(appconfig.get('settings', 'thumb_width', 200)+24)
 
 
-#	def SetStatusText(self, text, idx=0):
-#		''' dlgsearch.SetStatusText(text, [idx]) -- ustawienie textu w statusbarze
-#
-#			@param text		- tekst do wyświetlenia
-#			@param idx		- numer pola w statusbarze
-#
-#			Fake na potrzeby okna miniaturek.
-#		'''
-#		self._statusbar.SetStatusText(text, idx)
-
 	###############################################################################
+
 
 	def _create_panel_left(self, parent):
 		cbs = fpb.CaptionBarStyle()
@@ -273,26 +264,35 @@ class _DlgSearch(wx.Frame):
 	def _create_layout_result(self, parent):
 		panel = wx.Panel(parent, -1)
 		grid = wx.BoxSizer(wx.VERTICAL)
+
+		grid.Add(self._create_layout_list(panel), 		1, wx.EXPAND|wx.ALL, 12)
+		grid.Add(self._create_layout_thumbctrl(panel),	1, wx.EXPAND|wx.ALL, 12)
+		
 		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
 
-		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
+		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
+		self._btn_icons.Enable(False)
+		grid_btns.Add(self._btn_icons)
+		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+		
+		grid_btns.Add((5, 1), 1, wx.EXPAND)
+		
+		self._btn_properties = create_button(panel, None, self._on_btn_properties, wx.ID_PROPERTIES)
+		self._btn_properties.Enable(False)
 		grid_btns.Add(self._btn_properties)
 		
 		grid_btns.Add((5, 1))
 
 		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
+		self._btn_goto.Enable(False)
 		grid_btns.Add(self._btn_goto)
 
-		grid_btns.Add((5, 1))
+		grid_btns.Add((5, 1), 1, wx.EXPAND)
 
-		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid_btns.Add(self._btn_icons)
-		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+		grid_btns.Add(create_button(panel, None, self._on_btn_close, wx.ID_CLOSE))
 
-		grid.Add(grid_btns, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, 12)
+		grid.Add(grid_btns, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 12)
 
-		grid.Add(self._create_layout_list(panel), 		1, wx.EXPAND|wx.ALL, 12)
-		grid.Add(self._create_layout_thumbctrl(panel),	1, wx.EXPAND|wx.ALL, 12)
 		panel.SetSizerAndFit(grid)
 		
 		return panel
@@ -311,7 +311,7 @@ class _DlgSearch(wx.Frame):
 
 	def _create_layout_info(self, parent, cbs):
 		item = parent.AddFoldPanel(_('Info'), collapsed=True, cbstyle=cbs)
-		self._image_info = wx.ListCtrl(item, -1, size=(-1, 200), style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
+		self._image_info = wx.ListCtrl(item, -1, size=(-1, 250), style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
 		self._image_info.InsertColumn(0, '')
 		self._image_info.InsertColumn(1, '')
 		parent.AddFoldPanelWindow(item, self._image_info, fpb.FPB_ALIGN_WIDTH)
@@ -396,7 +396,6 @@ class _DlgSearch(wx.Frame):
 		if len(what) == 0:
 			return
 
-#		self._panel_preview.Show(False)
 		self._btn_properties.Enable(False)
 		self._btn_goto.Enable(False)
 
@@ -459,12 +458,15 @@ class _DlgSearch(wx.Frame):
 
 		dlg_progress.Destroy()
 
-		if len(self._result) == 0:
-			dialogs.message_box_info(self, _('Not found'), 'PC')
+		found = len(self._result) > 0
+		if found:
+			self.Layout()
 
 		else:
-#			self._panel_preview.Show(True)
-			self.Layout()
+			dialogs.message_box_info(self, _('Not found'), 'PC')
+
+		self._btn_icons.Enable(found)
+
 
 		last_search_text_ctrl = self._tc_text
 		last_search_text_ctrl.Clear()
@@ -507,11 +509,9 @@ class _DlgSearch(wx.Frame):
 		''' callback na zaznacznie rezultatu - wyświetlenie podglądu '''
 		itemidx	= evt.GetData()
 		item	= self._result[itemidx]
-		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(item))
-		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 		self._btn_goto.Enable(True)
+		self._show_preview(item)
 		self._show_image_info(item)
 
 
@@ -539,10 +539,15 @@ class _DlgSearch(wx.Frame):
 		self._show_icons(evt.GetIsDown())
 
 
+	def _on_btn_close(self, evt):
+		self.Close()
+
+
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
 		self._btn_goto.Enable(item is not None)
+		self._show_preview(item)
 		self._show_image_info(item)
 
 
@@ -551,8 +556,8 @@ class _DlgSearch(wx.Frame):
 		if item is not None:
 			if isinstance(item, FileImage):
 				self._parent.show_item(item.parent)
-				
-				
+
+
 	def _on_last_text_menu(self, evt):
 		text = self._last_text_menu.GetLabel(evt.GetId())
 		self._tc_text.SetValue(text)
@@ -588,6 +593,12 @@ class _DlgSearch(wx.Frame):
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 
+	def _show_preview(self, item):
+		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
+		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(item))
+		self._bmp_preview.Refresh()
+
+
 	def _show_icons(self, icons):
 		if icons and len(self._result) > 1000:
 			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
@@ -616,7 +627,6 @@ class _DlgSearch(wx.Frame):
 			self._thumbctrl.show_dir([])
 
 		self._bmp_preview.SetMinSize(size)
-		self._bmp_preview.Show(not icons)
 
 		self.Refresh()
 		self.Layout()
