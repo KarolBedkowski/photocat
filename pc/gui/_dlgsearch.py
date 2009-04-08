@@ -290,6 +290,7 @@ class _DlgSearch(wx.Frame):
 
 		self._bmp_preview = wx.StaticBitmap(item, -1)
 		size = (self._appconfig.get('settings', 'thumb_width', 200), self._appconfig.get('settings', 'thumb_height', 200))
+		self._bmp_preview.SetSize(size)
 		self._bmp_preview.SetMinSize(size)
 
 		parent.AddFoldPanelWindow(item, self._bmp_preview, fpb.FPB_ALIGN_WIDTH, 2, 12)

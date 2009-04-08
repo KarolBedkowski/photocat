@@ -129,9 +129,9 @@ class WndMain(wx.Frame):
 
 
 	def _create_layout(self, appconfig):
-		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
+		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SW_BORDER)
 
-		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1, style=wx.SP_NOBORDER|wx.SP_3DSASH)
+		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1, style=wx.SW_BORDER)
 		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2), self._create_layout_info(splitter2))
 		splitter2.SetMinimumPaneSize(0)
 
