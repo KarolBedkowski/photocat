@@ -12,7 +12,7 @@ SetCompressor /SOLID lzma
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
 
 ; MUI 1.67 compatible ------
-!include "MUI.nsh"
+!include "MUI2.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -45,6 +45,8 @@ var ICONS_GROUP
 ; Language files
 !insertmacro MUI_LANGUAGE "Polish"
 
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -65,8 +67,8 @@ Section "GrupaGlowna" SEC01
   SetOverwrite ifnewer
   File "dist\pc.exe"
   File "dist\modules.dat"
-  File "dist\MSVCR71.dll"
-  File "dist\MSVCP71.dll"
+;  File "dist\MSVCR71.dll"
+;  File "dist\MSVCP71.dll"
   File "dist\w9xpopen.exe"
   File "dist\LICENCE.txt"
   File "dist\LICENCE_EXIFpy.txt"
@@ -75,6 +77,7 @@ Section "GrupaGlowna" SEC01
   File "dist\README"
   File "dist\TODO"
   File "dist\CHANGELOG"
+  File "dist\python26.dll"
 
   CreateDirectory "$INSTDIR\locale\pl_PL\LC_MESSAGES"
   SetOutPath "$INSTDIR\locale\pl_PL\LC_MESSAGES"
@@ -134,6 +137,7 @@ Section Uninstall
   Delete "$INSTDIR\CHANGELOG"
   Delete "$INSTDIR\TODO"
   Delete "$INSTDIR\pc.cfg"
+  Delete "$INSTDIR\python26.dll"
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$DESKTOP\pc.lnk"
