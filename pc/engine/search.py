@@ -94,8 +94,9 @@ def find(what, options, catalogs, insert_func, progress_funct):
 			- opt_match_case	- dopasowanie wielkości liter (def=False)
 			- opt_regex			- wyszukiwanie po regex (def=False)
 	"""
-	match_case	= options is not None and options.get('opt_match_case', False)
-	regex		= options is not None and options.get('opt_regex', False)
+	options = options or {}
+	match_case	= options.get('opt_match_case', False)
+	regex		= options.get('opt_regex', False)
 
 	if not match_case:
 		what = what.lower()
@@ -116,7 +117,8 @@ def find(what, options, catalogs, insert_func, progress_funct):
 			# bez dopasowania case
 			cmpfunc = lambda x: (x.lower().find(what) > -1)
 
-	[ catalog.check_on_find(cmpfunc, insert_func, options, progress_funct) for catalog in catalogs ]
+	for catalog in catalogs:
+		catalog.check_on_find(cmpfunc, insert_func, options, progress_funct)
 
 	return what
 

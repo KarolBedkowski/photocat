@@ -154,18 +154,18 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
 		if progress_callback is not None:
 			if not progress_callback(self.name):
 				return
 
-		if options is None or options.get('search_for_dirs', True):
+		if options.get('search_for_dirs', True):
 			CatalogFile.check_on_find(self, cmpfunc, add_callback, options, progress_callback)
-		
+
 		for subdir in self.subdirs:
 			subdir.check_on_find(cmpfunc, add_callback, options, progress_callback)
 
-		if options is None or options.get('search_for_files', True):
+		if options.get('search_for_files', True):
 			for image in self.files:
 				image.check_on_find(cmpfunc, add_callback, options, progress_callback)
 

@@ -147,7 +147,7 @@ class Catalog(TreeItem):
 		return ''
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
 		for disk in self.disks:
 			disk.check_on_find(cmpfunc, add_callback, options, progress_callback)
 

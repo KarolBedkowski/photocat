@@ -156,27 +156,28 @@ class CatalogFile(StorageObject):
 		return updated_tags
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, _progress_callback=None):
-		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
+	def check_on_find(self, cmpfunc, add_callback, options, _progress_callback=None):
+		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów wyszukiwania '''
 
-		if options is None or options.get('search_in_names', True):
-			if self.name is not None and cmpfunc(self.name):
+		if options.get('search_in_names', True):
+			if self.name and cmpfunc(self.name):
 				if self._check_on_find_date(options):
 					add_callback(self)
 					return
 
-		if options is None or options.get('search_in_tags', True):
-			if self.tags is not None and self._check_on_find_date(options):
+		if options.get('search_in_descr', True):
+			if self.desc and cmpfunc(self.desc):
+				if self._check_on_find_date(options):
+					add_callback(self)
+					return
+
+		if options.get('search_in_tags', True):
+			if self.tags and self._check_on_find_date(options):
 				for tag in self.tags:
 					if cmpfunc(tag):
 						add_callback(self)
 						return
 
-		if options is None or options.get('search_in_descr', True):
-			if self.desc is not None and cmpfunc(self.desc):
-				if self._check_on_find_date(options):
-					add_callback(self)
-					return
 
 	##########################################################################
 
@@ -184,16 +185,13 @@ class CatalogFile(StorageObject):
 	def _check_on_find_date(self, options):
 		''' sprawdznie czy obiekt zawiera sie w danym zakresie  dat. '''
 		date = self.date_to_check
-		if options is None or date is None:
+		if date is None:
 			return True
 
 		if not options.get('search_date', False):
 			return True
 
-		if date >= options.get('search_date_start') and date <= options.get('search_date_end'):
-			return True
-
-		return False
+		return date >= options.get('search_date_start') and date <= options.get('search_date_end')
 
 
 	##########################################################################
