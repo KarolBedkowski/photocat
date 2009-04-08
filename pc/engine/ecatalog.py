@@ -340,4 +340,27 @@ def check_new_file_exists(filename):
 	return (index_exists or data_file), index_exists, data_exists
 
 
+
+SORT_BY_NAME = 0
+SORT_BY_DATE = 1
+SORT_BY_PATH = 2
+
+# sorting functions
+_SORTING_FUNCTIONS = {
+		SORT_BY_NAME: (lambda x: x.image.name, 										lambda x: x.name),
+		SORT_BY_PATH: (lambda x: x.image.disk.name + ": " + x.image.parent.path,	lambda x: x.disk.name + ": " + x.parent.path),
+		SORT_BY_DATE: (lambda x: x.image.date_to_check, 							lambda x: x.date_to_check)
+}
+
+def get_sorting_function(sort_by=SORT_BY_NAME, reverse=False, items_as_list=False):
+	''' get_sorting_function(sort_by, [reverse], [items_as_list]) -> (function, reverse) -- zwraca funkcję klucza do sortowania
+
+		@param sort_by - pole po którym będzie sortowanie (SORT_BY_NAME, SORT_BY_DATE, SORT_BY_PATH)
+		@param reverse - (bool) czy sortowanie w odwrotnej kolejności
+		@param items_as_list - (bool) czy elementy są podane jako lista czy jako lista elementów Thumb
+	'''
+	return _SORTING_FUNCTIONS[sort_by][1 if items_as_list else 0], reverse
+
+
+
 # vim: encoding=utf8: ff=unix:

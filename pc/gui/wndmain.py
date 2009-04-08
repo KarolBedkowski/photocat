@@ -419,7 +419,8 @@ class WndMain(wx.Frame):
 
 	def _on_file_export_pdf(self, evt):
 		if len(self._current_show_images) > 0 and epdf.EPDF_AVAILABLE:
-			images = sorted(self._current_show_images, self.__get_sort_function(None, True))
+			sort_key_func, reverse = self.__get_sort_function(True, True)
+			images = sorted(self._current_show_images, key=sort_key_func, reverse=reverse)
 			options = {
 					'show_captions': self._photo_list.show_captions,
 					'group_by': 	self._photo_list.group_by
@@ -429,8 +430,8 @@ class WndMain(wx.Frame):
 
 	def _on_file_print_prv(self, evt):
 		if len(self._current_show_images) > 0:
-
-			images = sorted(self._current_show_images, self.__get_sort_function(None, True))
+			sort_key_func, reverse = self.__get_sort_function(True, True)
+			images = sorted(self._current_show_images, key=sort_key_func, reverse=reverse)
 
 			appconfig = AppConfig()
 			options = {
@@ -660,7 +661,7 @@ class WndMain(wx.Frame):
 
 			elif len(item.files) > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
-				if not dialogs.message_box_warning_yesno(self, 
+				if not dialogs.message_box_warning_yesno(self,
 						_('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
 					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
@@ -901,7 +902,7 @@ class WndMain(wx.Frame):
 		if len(last_open_files) > 0:
 			for num, filepath in enumerate(last_open_files[:10]):
 				filename = os.path.basename(filepath)
-				menu.Append(wx.ID_FILE1+num, "&%d. %s\tCTRL+%d" % (num+1, filename, num+1), 
+				menu.Append(wx.ID_FILE1+num, "&%d. %s\tCTRL+%d" % (num+1, filename, num+1),
 						_('Open %s') % filepath)
 
 			self._main_menu_file_recent_item.Enable(True)
@@ -1027,7 +1028,7 @@ class WndMain(wx.Frame):
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
 			dir_selected = not disk_selected and (
 					isinstance(selected_tree_item, Directory)
-					if selected_tree_item is not None 
+					if selected_tree_item is not None
 					else False
 			)
 
@@ -1096,39 +1097,39 @@ class WndMain(wx.Frame):
 
 			@param images	- Directory|[FileImage]|(FileImage) do wyświetlania; None oznacza odswieżenie aktualnego katalogu
 		'''
-		images_as_list = False
-		if images is not None:
-			images_as_list = isinstance(images, list) or isinstance(images, tuple)
-			if not images_as_list:
-				if self._menu_view_show_recur.IsChecked():
-					images = images.images_recursive
+		force_sort = False
 
-				else:
-					images = images.files
+		if images:
+			if self._menu_view_show_recur.IsChecked() and hasattr(images, 'images_recursive'):
+				images = images.images_recursive
+				force_sort = True
+
+			elif hasattr(images, 'files'):
+				images = images.files
 
 		if images is None or len(images) > 0:
 			# jak sortujemy
-			group_by_date	= self._menu_view_group_date.IsChecked()
-			group_by_path	= self._menu_view_group_path.IsChecked()
-			cmp_func 		= self.__get_sort_function(images, images_as_list)
+			group_by = 0
 
-			if group_by_path:
+			if self._menu_view_group_path.IsChecked(): # group_by_path
 				group_by = 2
 
-			elif group_by_date:
+			elif self._menu_view_group_date.IsChecked(): #group_by_date
 				group_by = 1
 
-			else:
-				group_by = 0
-
 			self._photo_list.group_by = group_by
+			force_sort |= group_by > 0 or images is None
+
+			cmp_func = self.__get_sort_function(False, force_sort)
 
 			if images is None:
 				# odświeżenie widoku
 				self._photo_list.sort_current_dir(cmp_func)
+
 			else:
 				self._photo_list.show_dir(images, cmp_func)
 				self._current_show_images = images
+
 		else:
 			self._photo_list.show_dir(images)
 			self._current_show_images = images
@@ -1148,40 +1149,31 @@ class WndMain(wx.Frame):
 			self._info_panel.clear()
 
 
-	def __get_sort_function(self, images, images_as_list):
-		''' wndmain>__get_sort_function(images, images_as_list) -> func -- fukncja sortowania miniaturek '''
-		sort_by_name	= self._menu_view_sort_name.IsChecked()
-		desc			= self._menu_view_sort_desc.IsChecked()
-		gr_path			= self._menu_view_group_path.IsChecked()
-		cmp_func 		= None
+	def __get_sort_function(self, images_as_list, force=True):
+		''' wndmain.__get_sort_function(images_as_list, [force]) -> func -- fukncja sortowania miniaturek
 
-		if sort_by_name:
-			if desc:
-				# sort by name desc
-				cmp_func = lambda x, y: -cmp(x.name, y.name)
+			@params images_as_list - (bool) czy funkcja dla listy obiektów FileImage (true) czy lista obketów Thumb (false)
+			@params force - (bool) - wymuszenie sortowania listy (domyślnie nie sortowna dla nazw)
 
-			elif images is None or images_as_list:
-				# sort by name asc (tylko gdy dane z listy)
-				cmp_func = lambda x, y: cmp(x.name, y.name)
+			@return (funkcja klucza, reverse)
+		'''
+		desc = self._menu_view_sort_desc.IsChecked()
+		sort_by	= ecatalog.SORT_BY_DATE
 
-		elif gr_path:
-			if desc:
-				# groupowanie by ścieżka
-				cmp_func = lambda x, y: -cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
+		if self._menu_view_sort_name.IsChecked(): # sort by name
+			if desc or images_as_list or force:
+				sort_by = ecatalog.SORT_BY_NAME
 
 			else:
-				cmp_func = lambda x, y: cmp(x.disk.name + ": " + x.parent.path, y.disk.name + ": " + y.parent.path)
+				return None, False
 
-		else:
-			if desc:
-				# sort by date desc
-				cmp_func = lambda x, y: -cmp(x.date_to_check, y.date_to_check)
+		elif self._menu_view_group_path.IsChecked():
+			sort_by = ecatalog.SORT_BY_PATH
 
-			else:
-				#sort by date asc
-				cmp_func = lambda x, y: cmp(x.date_to_check, y.date_to_check)
+		return ecatalog.get_sorting_function(sort_by, desc, images_as_list)
 
-		return cmp_func
+
+
 
 
 # vim: encoding=utf8:
