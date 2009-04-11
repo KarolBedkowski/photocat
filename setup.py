@@ -12,12 +12,18 @@ except:
 
 from distutils.command.install_data import install_data
 
+try:
+	import py2exe
+except:
+	pass
+
 import pc
 
 version	= pc.__version__
+release = pc.__release__
 build	= time.asctime()
 
-data_files_extenstions = ('.mo', '.po', '.css', '.js', '.kid')
+data_files_extenstions = ('.mo', )# '.po')
 
 
 class smart_install_data(install_data):
@@ -65,17 +71,31 @@ def packages_for(filename, basePackage=""):
 
 
 packages = packages_for(".")
-data_files = (np_files_for('pc'))
-data_files.append(('', ['README', "TODO", "LICENCE.txt"]))
+data_files = [ (a[3:], b) for a, b in np_files_for('pc') ]
+data_files.append(('',
+	['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt", "LICENCE_python.txt", "LICENCE_wxPython.txt",
+		'CHANGELOG']
+))
 
+
+pctarget = dict(
+	script = "pc.py",
+	name = "pc",
+	version = version,
+	description = "pc - PhotoCatalog %s (%s) (build: %s)" % (version, release, build),
+	company_name = "Karol Będkowski",
+	copyright = "Copyright (C) Karol Będkowski 2007, 2008",
+	icon_resources = [(0, "pc/icons/icon.ico")],
+	other_resources = [("VERSIONTAG", 1, build)],
+)
 
 
 setup(
 	name='pc',
 	version=version,
-	author="Karol Będkowski",
+	author=pctarget['company_name'],
 	author_email='-',
-	description= "pc - Photo Catalog %s buld %s" % (version, build),
+	description = pctarget['description'],
 	long_description='-',
 	license='GPL v2',
 	url='-',
@@ -93,10 +113,20 @@ setup(
 	package_dir = packages,
 	#package_data={'pc.templates': ['*.kid', '*.js', '*.css']},
 	data_files = data_files,
-	cmdclass = {'install_data': smart_install_data},
+	#	cmdclass = {'install_data': smart_install_data},
 	include_package_data=True,
 	scripts=['pc.py'],
-	install_requires=['kid>=0.9.3', 'wxPython>=2.6.0', 'elementtree>=1.2.0']
+	install_requires=['wxPython>=2.6.0', 'kabes.model>=3.0.0', 'kabes.storage>=3.0.0', 'kabes.tools>=3.0.0', 'kabes.wxtools>=3.0.0'],
+	options = {"py2exe": {
+						"compressed":	1,
+						"optimize":		2,
+						"ascii":		0,
+						"bundle_files":	2,
+						"packages":		"PngImagePlugin, JpegImagePlugin, _rl_accel",
+				}},
+	zipfile = r"modules.dat",
+	windows = [pctarget],
+	#console = [pctarget],
 )
 
 
