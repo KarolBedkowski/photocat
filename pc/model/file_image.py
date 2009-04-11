@@ -57,7 +57,7 @@ _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 class FileImage(CatalogFile):
 
 	# lista rozszerzeń plików, które są ładowane (obsługiwane)
-	IMAGE_FILES_EXTENSION = (
+	IMAGE_FILES_EXTENSION = dict( (key, None) for key in (
 		'.jpg', '.jpe', '.jpeg',
 		'.png', '.gif', '.bmp', '.ico', '.pcx', '.psd',
 		'.ppm', '.pbm', '.pgm', '.pnm',
@@ -77,11 +77,11 @@ class FileImage(CatalogFile):
 		'.r3d',						# red raw
 		'.3fr',						# hasselblad raw
 		'.erf'						# epson raw
-	)
+	))
 
 	# list rozszerzeń plików, które są raw-ami
-	IMAGE_FILES_EXTENSION_RAW = ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
-		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
+	IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
+		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf'))
 
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
@@ -94,16 +94,16 @@ class FileImage(CatalogFile):
 		self._exif_data = None
 
 		# format pliku wer 1
-		if self.thumb is not None and type(self.thumb) == types.TupleType:
+		if self.thumb and type(self.thumb) == types.TupleType:
 			self.thumb = self.thumb[0]
 
-		if self.exif is not None and type(self.exif) == types.TupleType:
+		if self.exif and type(self.exif) == types.TupleType:
 			self.exif = self.exif[0]
 
 		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
-		self.is_raw = (self.name is not None) and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
+		self.is_raw = self.name and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
 
 
 	@property

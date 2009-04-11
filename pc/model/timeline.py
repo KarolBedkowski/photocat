@@ -117,7 +117,7 @@ class Timeline(object):
 	def __add_item(self, item):
 		''' timeline.__add_item(item) -- dodanie obiektu '''
 		date = item.shot_date
-		if date is None or date == 0:
+		if not date:
 			return
 
 		try:
@@ -129,15 +129,16 @@ class Timeline(object):
 		if self.level > 0:
 			self._files.append(item)
 
-		if self.level == 3:
-			return
+			if self.level == 3:
+				return
 
 		date_part = date[self.level]
 
-		subdir = self.dirs.get(date_part)
-		if subdir is None:
-			subdir = Timeline(date_part, self.catalog, self, self.level+1)
-			self.dirs[date_part] = subdir
+		if date_part in self.dirs:
+			subdir = self.dirs[date_part]
+
+		else:
+			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog, self, self.level+1)
 
 		subdir.__add_item(item)
 

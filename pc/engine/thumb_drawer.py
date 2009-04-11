@@ -133,8 +133,6 @@ class ThumbDrawer(object):
 		twc		= self.thumb_width - 10
 
 		if paint_rect is None:
-			y1 = 0
-			y2 = sys.maxint
 			painty1 = -1
 			painty2 = sys.maxint
 
@@ -146,9 +144,14 @@ class ThumbDrawer(object):
 		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
 		has_selected	= len(selected) > 0 if selected is not None else False
 
+		paint_rect_Intersects = paint_rect.Intersects
+		dc_DrawBitmap = dc.DrawBitmap
+		dc_SetTextForeground = dc.SetTextForeground
+		dc_DrawText = dc.DrawText
+
 		for ii, item, tx, ty, txwm, tyhm, rect in self._items_pos:
 			# czy rysowac
-			if paint_rect is not None and not paint_rect.Intersects(rect):
+			if paint_rect is not None and not paint_rect_Intersects(rect):
 				continue
 
 			# zaznaczenie
@@ -162,14 +165,14 @@ class ThumbDrawer(object):
 			tyi = ty + (th - item.imgheight) / 2
 
 			# rysowanie
-			dc.DrawBitmap(img, txi, tyi, True)
+			dc_DrawBitmap(img, txi, tyi, True)
 
 			# caption
 			if show_captions:
-				dc.SetTextForeground(caption_raw_color if item.is_raw else caption_color)
+				dc_SetTextForeground(caption_raw_color if item.is_raw else caption_color)
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
-				dc.DrawText(caption, txc, ty + th + 2)
+				dc_DrawText(caption, txc, ty + th + 2)
 
 		# group_bars
 		if self.group_by > ThumbDrawer.GROUP_BY_NONE:
@@ -178,11 +181,12 @@ class ThumbDrawer(object):
 			dc.SetTextForeground(self._header_color)
 
 			width = self._width - 20
+			dc_DrawLine = dc.DrawLine
 
 			for date, y1, y2 in self._group_bars:
 				if painty1 <= y2 and y1 <= painty2:
-					dc.DrawLine(10, y2, width, y2)
-					dc.DrawText(str(date), 10, y1)
+					dc_DrawLine(10, y2, width, y2)
+					dc_DrawText(str(date), 10, y1)
 
 		dc.EndDrawing()
 
@@ -228,7 +232,6 @@ class ThumbDrawer(object):
 
 		elif self.group_by == ThumbDrawer.GROUP_BY_PATH:
 			rows, height, last_index = self.__compute_thumbs_pos_path(height)
-			pass
 
 		else:
 			rows, height, last_index = self.__compute_thumbs_pos_normal(height)
@@ -267,6 +270,7 @@ class ThumbDrawer(object):
 		max_rows = max(int((height - 10) / thm), 1) - 1
 
 		items_pos = self._items_pos
+		items_pos_append = items_pos.append
 
 		for ii, item  in enumerate(self._items):
 			col = ii % cols
@@ -281,7 +285,7 @@ class ThumbDrawer(object):
 			tx = col * twm + padding
 			ty = row * thm + 5
 
-			items_pos.append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+			items_pos_append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
 		return row, ty+thm, len(items_pos)
 
@@ -349,7 +353,9 @@ class ThumbDrawer(object):
 		header_height = self._header_height
 
 		items_pos		= self._items_pos
+		items_pos_append = items_pos.append
 		group_bars		= self._group_bars	= []
+		group_bars_append = group_bars.append
 
 		for index, item  in enumerate(self._items):
 			col += 1
@@ -367,7 +373,7 @@ class ThumbDrawer(object):
 
 				row			= next_row
 				last_date	= item_date
-				group_bars.append((label, pos, pos+header_height+2))
+				group_bars_append((label, pos, pos+header_height+2))
 
 			elif col >= cols:
 				col = 0
@@ -381,7 +387,7 @@ class ThumbDrawer(object):
 			tx = col * twm + padding
 			ty = int(row * thm + 5)
 
-			items_pos.append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+			items_pos_append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
 
 		return row, ty+thm, len(items_pos)
 
@@ -393,13 +399,14 @@ class ThumbDrawer(object):
 			@return lista wysokości w px podanych fontów
 		'''
 		dc = wx.ClientDC(self._parent) if dest_dc is None else dest_dc
+		dc_SetFont = dc.SetFont
+		dc_GetCharHeight = dc.GetCharHeight
 
 		def compute(font):
-			dc.SetFont(font)
-			sh = dc.GetCharHeight()
-			return sh
+			dc_SetFont(font)
+			return dc_GetCharHeight()
 
-		return [ compute(font) for font in fonts ]
+		return ( compute(font) for font in fonts )
 
 
 

@@ -69,7 +69,7 @@ class StorageObject(object):
 
 
 	def _get_id(self):
-		if self._id is None:
+		if not self._id:
 			self._id = _ID_PROVIDER.get()
 
 		return self._id
