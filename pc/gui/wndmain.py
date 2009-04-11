@@ -643,6 +643,7 @@ class WndMain(wx.Frame):
 	def _on_dirtree_item_select(self, evt):
 		item = self._dirs_tree.selected_item
 		show_info = True
+		images_count = 0
 
 		self.__info_panel_clear()
 		self.__update_menus_toolbars()
@@ -650,16 +651,18 @@ class WndMain(wx.Frame):
 		if isinstance(item, Tag):
 			item = item.files
 			show_info = False
+			images_count = len(item)
 
 		elif isinstance(item, Timeline):
 			# wyświtelanie timeline
+			images_count = len(item.files)
 			if item.level == 0:
 				# nie wyświetlamy wszystkiego
 				self._show_dir([])
 				self._dirs_tree.Expand(self._dirs_tree.selected_node)
 				return
 
-			elif len(item.files) > 1000:
+			elif images_count > 1000:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
 				if not dialogs.message_box_warning_yesno(self,
 						_('Number of files exceed 1000!\nShow %d files?') % len(item.files), 'PC'):
@@ -668,12 +671,14 @@ class WndMain(wx.Frame):
 					self._dirs_tree.Expand(self._dirs_tree.selected_node)
 					return
 
-			item = item.files
 			show_info = False
 
 		elif not isinstance(item, Directory):
 			self._show_dir([])
 			return
+
+		else:
+			images_count = len(item.files)
 
 		self._dirs_tree.Expand(self._dirs_tree.selected_node)
 
@@ -693,7 +698,7 @@ class WndMain(wx.Frame):
 							dict(dirs=subdirs_count, files=files_count))
 
 				else:
-					self.SetStatusText(_('Files: %d') % len(item))
+					self.SetStatusText(_('Files: %d') % images_count)
 
 		if self._info_panel is not None:
 			if isinstance(item, Directory):
@@ -1100,12 +1105,16 @@ class WndMain(wx.Frame):
 		force_sort = False
 
 		if images:
+			if isinstance(images, Timeline):
+				force_sort = True
+
 			if self._menu_view_show_recur.IsChecked() and hasattr(images, 'images_recursive'):
 				images = images.images_recursive
 				force_sort = True
 
 			elif hasattr(images, 'files'):
 				images = images.files
+
 
 		if images is None or len(images) > 0:
 			# jak sortujemy
