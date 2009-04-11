@@ -65,26 +65,19 @@ CRCCheck on
 Section "GrupaGlowna" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File "dist\pc.exe"
+  File "dist\*.exe"
   File "dist\modules.dat"
-;  File "dist\MSVCR71.dll"
-;  File "dist\MSVCP71.dll"
-  File "dist\w9xpopen.exe"
-  File "dist\LICENCE.txt"
-  File "dist\LICENCE_EXIFpy.txt"
-  File "dist\LICENCE_python.txt"
-  File "dist\LICENCE_wxPython.txt"
+  File "dist\LICENCE*.*"
   File "dist\README"
   File "dist\TODO"
   File "dist\CHANGELOG"
-  File "dist\python26.dll"
+  File "dist\*.dll"
 
-  CreateDirectory "$INSTDIR\locale\pl_PL\LC_MESSAGES"
-  SetOutPath "$INSTDIR\locale\pl_PL\LC_MESSAGES"
-  File "dist\locale\pl_PL\LC_MESSAGES\pc.mo"
-  File "dist\locale\pl_PL\LC_MESSAGES\wxstd.mo"
-
+  CreateDirectory "$INSTDIR\locale"
+  SetOutPath "$INSTDIR\locale"
+  File /r "dist\locale\"
   SetOutPath "$INSTDIR"
+
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
@@ -122,29 +115,13 @@ FunctionEnd
 
 Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
-  Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\w9xpopen.exe"
-  Delete "$INSTDIR\MSVCR71.dll"
-  Delete "$INSTDIR\MSVCP71.dll"
-  Delete "$INSTDIR\modules.dat"
-  Delete "$INSTDIR\pc.exe"
-  Delete "$INSTDIR\pc.log"
-  Delete "$INSTDIR\LICENCE.txt"
-  Delete "$INSTDIR\LICENCE_EXIFpy.txt"
-  Delete "$INSTDIR\LICENCE_python.txt"
-  Delete "$INSTDIR\LICENCE_wxPython.txt"
-  Delete "$INSTDIR\README"
-  Delete "$INSTDIR\CHANGELOG"
-  Delete "$INSTDIR\TODO"
-  Delete "$INSTDIR\pc.cfg"
-  Delete "$INSTDIR\python26.dll"
-
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$DESKTOP\pc.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\pc.lnk"
 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir /r "$INSTDIR\locale"
+  RMDir /r "$INSTDIR"
   RMDir "$INSTDIR"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
