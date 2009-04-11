@@ -5,3 +5,4 @@ doc.dev
 *.index
 *.cfg
 *.pdf
+pc.egg-info

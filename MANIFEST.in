@@ -5,3 +5,5 @@ include LICENCE_EXIFpy.txt
 include LICENCE_python.txt
 include LICENCE_wxPython.txt
 recursive-include pc *.mo *.po *.pot
+recursive-include debian *
+recursive-include dist.linux *
