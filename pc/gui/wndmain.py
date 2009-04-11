@@ -1105,9 +1105,6 @@ class WndMain(wx.Frame):
 		force_sort = False
 
 		if images:
-			if isinstance(images, Timeline):
-				force_sort = True
-
 			if self._menu_view_show_recur.IsChecked() and hasattr(images, 'images_recursive'):
 				images = images.images_recursive
 				force_sort = True
@@ -1174,7 +1171,7 @@ class WndMain(wx.Frame):
 				sort_by = ecatalog.SORT_BY_NAME
 
 			else:
-				return None, False
+				return None
 
 		elif self._menu_view_group_path.IsChecked():
 			sort_by = ecatalog.SORT_BY_PATH

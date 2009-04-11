@@ -89,7 +89,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param sort_function - funkcja sortująca [opcja]
 		'''
 		self._items			= [ Thumb(image) for image in images ]
-		if sort_function is not None:
+		if sort_function:
 			key_func, reverse = sort_function
 			self._items.sort(key=key_func, reverse=reverse)
 
