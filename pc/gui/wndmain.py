@@ -128,6 +128,28 @@ class WndMain(wx.Frame):
 		self.__update_settings()
 
 
+	#########################################################################################################
+
+
+	@property
+	def catalogs_not_loaded(self):
+		return not self._catalogs
+
+
+	@property
+	def selected_catalog(self):
+		if self.catalogs_not_loaded:
+			return None
+
+		tree_selected = self._dirs_tree.selected_item
+		catalog = self._catalogs[0] if tree_selected is None else tree_selected.catalog
+
+		return catalog
+
+
+	#########################################################################################################
+
+
 	def _create_layout(self, appconfig):
 		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1, style=wx.SW_BORDER)
 
@@ -372,7 +394,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_close(self, evt):
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 		if catalog is None:
 			return
 
@@ -398,7 +420,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_rebuild(self, evt):
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 		if catalog is None:
 			return
 
@@ -475,13 +497,13 @@ class WndMain(wx.Frame):
 
 
 	def _on_debug_fill_shot_date(self, evt):
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 		if catalog is not None:
 			catalog.fill_shot_date()
 
 
 	def _on_catalog_add(self, evt):
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 		if catalog is not None:
 			disk = None
 			try:
@@ -501,7 +523,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_update_disk(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -527,7 +549,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_del_disk(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -545,7 +567,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_del_dir(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -561,20 +583,19 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_del_image(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
 		folder = self._dirs_tree.selected_item
 		if folder is None or isinstance(folder, Catalog):
 			return
 
-		selected_items = self._photo_list.selected_items
 		selected_count = self._photo_list.selected_count
 		if selected_count == 0:
 			return
 
 		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % selected_count, 'PC'):
-			for image in selected_items:
+			for image in self._photo_list.selected_items:
 				folder.remove_file(image)
 
 			self._show_dir(folder)
@@ -585,17 +606,15 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_search(self, evt):
-		if len(self._catalogs) == 0:
-			return
-
-		DlgSearchProvider().create(self, self._catalogs, self._dirs_tree.selected_item).Show()
+		if not self.catalogs_not_loaded:
+			DlgSearchProvider().create(self, self._catalogs, self._dirs_tree.selected_item).Show()
 
 
 	def _on_catalog_info(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 
 		files_count, subdirs_count = 0, 0
 		for disk in catalog.disks:
@@ -621,8 +640,7 @@ class WndMain(wx.Frame):
 
 		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
-			selected_items = self._photo_list.selected_items
-			changed_tags = Catalog.update_images_from_dict(selected_items, result)
+			changed_tags = Catalog.update_images_from_dict(self._photo_list.selected_items, result)
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
 			self.__update_changed_tags(folder.catalog.tags_provider, changed_tags)
@@ -631,10 +649,10 @@ class WndMain(wx.Frame):
 
 
 	def _on_catalog_edit_tags(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
-		catalog = self.__get_selected_catalog()
+		catalog = self.selected_catalog
 		if show_dlg_edit_tags(self, catalog.tags_provider):
 			catalog.dirty = True
 			self._dirs_tree.update_catalog_node(catalog)
@@ -754,8 +772,8 @@ class WndMain(wx.Frame):
 
 
 	def _on_thumb_sel_changed(self, evt):
-		selected = self._photo_list.selected_item
 		if self._info_panel is not None:
+			selected = self._photo_list.selected_item
 			if selected is None:
 				item = self._dirs_tree.selected_item
 				if isinstance(item, Directory):
@@ -808,7 +826,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_dirtree_key_down(self, evt):
-		if len(self._catalogs) == 0:
+		if self.catalogs_not_loaded:
 			return
 
 		if evt.GetKeyCode() == wx.WXK_DELETE:
@@ -840,7 +858,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_photolist_popupmenu(self, evt):
-		if self._photo_list.selected_item is not None:
+		if self._photo_list.selected_item:
 			self._photo_list.PopupMenu(self.__create_popup_menu_image(), evt.GetPosition())
 
 
@@ -856,42 +874,44 @@ class WndMain(wx.Frame):
 
 
 	def _open_file(self, filename):
-		if sum(( 1 for cat in self._catalogs if cat.catalog_filename == filename )) == 0:
-			try:
-				self.SetStatusText(_('Opening %s....  Please wait...') % filename)
-				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog = ecatalog.open_catalog(filename)
-				self._catalogs.append(catalog)
-				self._dirs_tree.add_catalog(catalog)
-				self.__update_last_open_files(filename)
-				self.SetStatusText(filename)
+		if filename in ( cat.catalog_filename for cat in self._catalogs ):
+			return
 
-			except Exception, err:
-				_LOG.exception('WndMain._open_file(%s)' % filename)
-				dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('Open file'))
-				self.SetStatusText(_('Error: %s') % err.message)
-				catalog = None
+		try:
+			self.SetStatusText(_('Opening %s....  Please wait...') % filename)
+			self.SetCursor(wx.HOURGLASS_CURSOR)
+			catalog = ecatalog.open_catalog(filename)
+			self._catalogs.append(catalog)
+			self._dirs_tree.add_catalog(catalog)
+			self.__update_last_open_files(filename)
+			self.SetStatusText(filename)
 
-			else:
-				if catalog is not None:
-					if catalog.readonly:
-						self.SetStatusText(_('Opened %s readonly') % filename)
+		except Exception, err:
+			_LOG.exception('WndMain._open_file(%s)' % filename)
+			dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('Open file'))
+			self.SetStatusText(_('Error: %s') % err.message)
+			catalog = None
 
-					else:
-						self.SetStatusText(_('Opened %s') % filename)
+		else:
+			if catalog is not None:
+				if catalog.readonly:
+					self.SetStatusText(_('Opened %s readonly') % filename)
 
-					dirty, dirtyp = catalog.dirty_objects_count
-					_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
-					if dirtyp > 10:
-						if dialogs.message_box_warning_yesno(self,
-								_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
-							if ecatalog.rebuild(catalog, self):
-								self.__save_catalog(catalog)
+				else:
+					self.SetStatusText(_('Opened %s') % filename)
 
-			finally:
-				self.SetCursor(wx.STANDARD_CURSOR)
+				dirty, dirtyp = catalog.dirty_objects_count
+				_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
+				if dirtyp > 10:
+					if dialogs.message_box_warning_yesno(self,
+							_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
+						if ecatalog.rebuild(catalog, self):
+							self.__save_catalog(catalog)
 
-			self.__update_menus_toolbars()
+		finally:
+			self.SetCursor(wx.STANDARD_CURSOR)
+
+		self.__update_menus_toolbars()
 
 
 	def __update_last_open_files(self, filename=None):
@@ -980,19 +1000,6 @@ class WndMain(wx.Frame):
 		return popup_menu
 
 
-	def __get_selected_catalog(self):
-		if len(self._catalogs) == 0:
-			return None
-
-		tree_selected = self._dirs_tree.selected_item
-		if tree_selected is None:
-			catalog = self._catalogs[0] if len(self._catalogs) > 0 else None
-
-		else:
-			catalog = tree_selected.catalog
-
-		return catalog
-
 
 	def __update_changed_tags(self, tags_provider, changed_tags):
 		""" wndmain.__update_changed_tags(tags_provider, changed_tags) -- aktualizacja tagów w drzewie """
@@ -1006,7 +1013,7 @@ class WndMain(wx.Frame):
 
 	def __update_menus_toolbars(self):
 		""" wndmain.__update_menus_toolbars() -- włączanie/wyłączanie pozycji menu/toolbar """
-		catalog_loaded = len(self._catalogs) > 0
+		catalog_loaded = not self.catalogs_not_loaded
 
 		catalog_writable = False
 		if catalog_loaded:
@@ -1032,11 +1039,7 @@ class WndMain(wx.Frame):
 
 		if catalog_loaded:
 			disk_selected = isinstance(selected_tree_item, Disk) if selected_tree_item is not None else False
-			dir_selected = not disk_selected and (
-					isinstance(selected_tree_item, Directory)
-					if selected_tree_item is not None
-					else False
-			)
+			dir_selected = not disk_selected and selected_tree_item is not None and isinstance(selected_tree_item, Directory)
 
 			file_selected = self._photo_list.selected_count > 0
 
