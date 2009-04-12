@@ -6,7 +6,7 @@ pc.engine.image
  -- engine do obsługi obrazów
 
  Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004, 2005, 2006 
+ Copyright (c) Karol Będkowski, 2004, 2005, 2006
 
  This file is part of Photo Catalog
 
@@ -43,7 +43,7 @@ from pc.model				import FileImage
 
 def load_image_from_item(item):
 	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka z katalogu.
-	
+
 		@return wxImage()
 	'''
 	img = None
@@ -52,24 +52,24 @@ def load_image_from_item(item):
 		try:
 			stream = cStringIO.StringIO(item.image)
 			img		= wx.ImageFromStream(stream)
-			
+
 		except Exception, err:
 			_LOG.exception('load_image_from_item %s error' % item.name)
 			img = wx.EmptyImage(1, 1)
-			
+
 		finally:
 			if stream is not None:
 				stream.close()
-	
+
 	else:
 		img = wx.EmptyImage(1, 1)
-		
+
 	return img
 
 
 def load_bitmap_from_item(item):
 	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka z katalogu.
-	
+
 		@return wxImage()
 	'''
 	img = load_image_from_item(item)

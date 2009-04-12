@@ -159,24 +159,19 @@ class CatalogFile(StorageObject):
 	def check_on_find(self, cmpfunc, add_callback, options, _progress_callback=None):
 		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów wyszukiwania '''
 
-		if options.get('search_in_names', True):
-			if self.name and cmpfunc(self.name):
-				if self._check_on_find_date(options):
+		if options.get('search_in_names', True) and self.name and cmpfunc(self.name) and self._check_on_find_date(options):
+			add_callback(self)
+			return
+
+		if options.get('search_in_descr', True) and self.desc and cmpfunc(self.desc) and self._check_on_find_date(options):
+			add_callback(self)
+			return
+
+		if options.get('search_in_tags', True) and self.tags and self._check_on_find_date(options):
+			for tag in self.tags:
+				if cmpfunc(tag):
 					add_callback(self)
 					return
-
-		if options.get('search_in_descr', True):
-			if self.desc and cmpfunc(self.desc):
-				if self._check_on_find_date(options):
-					add_callback(self)
-					return
-
-		if options.get('search_in_tags', True):
-			if self.tags and self._check_on_find_date(options):
-				for tag in self.tags:
-					if cmpfunc(tag):
-						add_callback(self)
-						return
 
 
 	##########################################################################

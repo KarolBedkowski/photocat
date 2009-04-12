@@ -143,7 +143,6 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols, opti
 		if show_captions:
 			par = Paragraph(item.name, style)
 			par.wrap(img_width, img_height)
-
 			row.append([ image, par ])
 
 		else:

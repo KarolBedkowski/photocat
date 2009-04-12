@@ -127,7 +127,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_drawer.thumb_width	= thumb_width
 		self._thumb_drawer.thumb_height = thumb_height
 
-		[ item.reset() for item in self._items ]
+		for item in self._items:
+			item.reset()
 
 		self._update()
 

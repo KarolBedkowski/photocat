@@ -314,9 +314,11 @@ class DirsTree(wx.TreeCtrl):
 			item.tree_node = node
 			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1], wx.TreeItemIcon_Normal)
 
-			[ add_subdir(node, subdir) for subdir in item.subdirs ]
+			for subdir in item.subdirs:
+				add_subdir(node, subdir)
 
-		[ add_subdir(node, subdir) for subdir in timeline.subdirs ]
+			for subdir in timeline.subdirs:
+				add_subdir(node, subdir)
 
 		self.SetCursor(wx.STANDARD_CURSOR)
 
@@ -341,9 +343,8 @@ class DirsTree(wx.TreeCtrl):
 		node = evt.GetItem()
 		item = self.GetItemData(node).GetData()
 
-		if isinstance(item, Timeline):
-			if item.level == 0:
-				self.update_timeline_node(item)
+		if isinstance(item, Timeline) and item.level == 0:
+			self.update_timeline_node(item)
 
 
 

@@ -290,6 +290,12 @@ class ThumbDrawer(object):
 		return row, ty+thm, len(items_pos)
 
 
+	_GROUP_TIMELINE_FUNC = (
+			lambda item:	time.localtime(item.image.date_to_check)[:3],
+			lambda item:	time.strftime('%x', time.localtime(item.image.date_to_check))
+	)
+
+
 	def __compute_thumbs_pos_timeline(self, height):
 		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 
@@ -300,13 +306,14 @@ class ThumbDrawer(object):
 			@return (row, height, last_index) - liczba wierszy i długość panelu
 		'''
 
-		def item_value_func(item):
-			return time.localtime(item.image.date_to_check)[:3]
-
-		def group_label_func(item):
-			return time.strftime('%x', time.localtime(item.image.date_to_check))
-
+		item_value_func, group_label_func = self._GROUP_TIMELINE_FUNC
 		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
+
+
+	_GROUP_PATH_FUNC = (
+			lambda item: item.image.parent.path,
+			lambda item: item.image.disk.name + ": " + item.image.parent.path
+	)
 
 
 	def __compute_thumbs_pos_path(self, height, level=86400):
@@ -320,12 +327,7 @@ class ThumbDrawer(object):
 			@return (row, height, last_index) - liczba wierszy i długość panelu
 		'''
 
-		def item_value_func(item):
-			return item.image.parent.path
-
-		def group_label_func(item):
-			return item.image.disk.name + ": " + item.image.parent.path
-
+		item_value_func, group_label_func = self._GROUP_PATH_FUNC
 		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
 
 

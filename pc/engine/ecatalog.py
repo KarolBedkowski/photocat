@@ -94,46 +94,46 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	dlg.Destroy()
 
 	disk = data['disk']
-	if result == wx.ID_OK:
-		allfiles = _count_files(data['path'], parent_wnd, title)/10240
+	if result != wx.ID_OK:
+		return None
 
-		if allfiles > 0:
-			dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, maximum=allfiles+100,
-					style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
-			dlg_progress.SetSize((600, -1))
-			dlg_progress.SetMinSize((600, -1))
-			dlg_progress.Center()
+	allfiles = _count_files(data['path'], parent_wnd, title)/10240
 
-			path_len = len(data['path'])+1
+	if allfiles > 0:
+		dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, maximum=allfiles+100,
+				style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+		dlg_progress.SetSize((600, -1))
+		dlg_progress.SetMinSize((600, -1))
+		dlg_progress.Center()
 
-			def update_progress(msg, cntr=[0]):
-				cntr[0] = cntr[0] + os.path.getsize(msg)/10240
-				if cntr[0] > allfiles: # zabezpieczenie na dziwne sytuacje
-					cntr[0] = max(0, cntr[0]-10)
-				return dlg_progress.Update(cntr[0], _("Loading file:\n%s") % msg[path_len:])[0]
+		path_len = len(data['path'])+1
 
-			try:
-				parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
-				if data['update']:
-					catalog.update_disk(disk, data['path'], descr=data['descr'], options=data,
-							on_update=update_progress, name=data['name'])
+		def update_progress(msg, cntr=[0]):
+			cntr[0] = cntr[0] + os.path.getsize(msg)/10240
+			if cntr[0] > allfiles: # zabezpieczenie na dziwne sytuacje
+				cntr[0] = max(0, cntr[0]-10)
+			return dlg_progress.Update(cntr[0], _("Loading file:\n%s") % msg[path_len:])[0]
 
-				else:
-					disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data,
-							on_update=update_progress)
+		try:
+			parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
+			if data['update']:
+				catalog.update_disk(disk, data['path'], descr=data['descr'], options=data,
+						on_update=update_progress, name=data['name'])
 
-				dlg_progress.Update(allfiles+100, _('Done!'))
+			else:
+				disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data,
+						on_update=update_progress)
 
-			except Exception, err:
-				_LOG.exception('_add_or_update_catalog(%r)' % data)
-				dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
-				raise errors.UpdateDiskError(err)
+			dlg_progress.Update(allfiles+100, _('Done!'))
 
-			finally:
-				parent_wnd.SetCursor(wx.STANDARD_CURSOR)
-				dlg_progress.Destroy()
-	else:
-		disk = None
+		except Exception, err:
+			_LOG.exception('_add_or_update_catalog(%r)' % data)
+			dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
+			raise errors.UpdateDiskError(err)
+
+		finally:
+			parent_wnd.SetCursor(wx.STANDARD_CURSOR)
+			dlg_progress.Destroy()
 
 	return disk
 
