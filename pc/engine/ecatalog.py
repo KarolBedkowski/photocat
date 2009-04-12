@@ -30,6 +30,8 @@ __revision__	= '$Id$'
 
 import os
 import logging
+import re
+import fnmatch
 
 import wx
 
@@ -96,6 +98,11 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	disk = data['disk']
 	if result != wx.ID_OK:
 		return None
+	
+	# kompilacja maski
+	mask_list = data.get('skip_dirs_list') or []
+	maskre_list = [ re.compile(fnmatch.translate(mask)) for mask in mask_list ]
+	data['skip_dirs_list'] = maskre_list
 
 	allfiles = _count_files(data['path'], parent_wnd, title)/10240
 

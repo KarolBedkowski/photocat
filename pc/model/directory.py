@@ -28,6 +28,7 @@ __revision__	= '$Id$'
 
 import os
 import logging
+
 _LOG = logging.getLogger(__name__)
 
 from _catalog_file	import CatalogFile
@@ -95,7 +96,7 @@ class Directory(CatalogFile, TreeItem):
 		CatalogFile.delete(self)
 		for sfile in self.files:
 			sfile.delete()
-		
+
 		for subdir in self.subdirs:
 			subdir.delete()
 
@@ -173,12 +174,21 @@ class Directory(CatalogFile, TreeItem):
 	def fill_shot_date(self):
 		for image in self.files:
 			image.fill_shot_date()
-		
+
 		for subdir in self.subdirs:
 			subdir.fill_shot_date()
 
 
 	##########################################################################
+
+
+	def _check_filename_in_skiplist(self, skip_dirs_list, name):
+		for skipmask in skip_dirs_list:
+			if skipmask.match(name):
+				return True
+
+		return False
+
 
 
 	def _load_subdirs(self, path, options, on_update):
@@ -187,10 +197,10 @@ class Directory(CatalogFile, TreeItem):
 		skip_dirs_list			= options.get('skip_dirs_list', [])
 
 		for subdir, subdir_path in subdirs:
-			if subdir in skip_dirs_list:
+			if self._check_filename_in_skiplist(skip_dirs_list, subdir):
 				continue
 
-			subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
+			subdir_obj = Directory(-1, subdir, self, self.disk)
 			if not subdir_obj.load(subdir_path, options, on_update):
 				return False
 
@@ -209,12 +219,13 @@ class Directory(CatalogFile, TreeItem):
 		skip_dirs_list		= options.get('skip_dirs_list', [])
 
 		for subdir, subdir_path in subdirs:
-			subdir_obj = dir_subdirs_names.get(subdir)
-			if subdir_obj is None:
-				if subdir in skip_dirs_list:
-					continue
+			if self._check_filename_in_skiplist(skip_dirs_list, subdir):
+				continue
 
-				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
+			subdir_obj = dir_subdirs_names.get(subdir)
+
+			if subdir_obj is None:
+				subdir_obj = Directory(-1, subdir, self, self.disk)
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
 
@@ -238,7 +249,7 @@ class Directory(CatalogFile, TreeItem):
 	def _load_files(self, path, options, on_update):
 		files = self.__folder_files_list(path)
 		for filename, file_path in files:
-			fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
+			fileimage = FileImage(-1, filename, self, disk=self.disk)
 			if not fileimage.load(file_path, options, on_update):
 				return False
 
@@ -255,7 +266,7 @@ class Directory(CatalogFile, TreeItem):
 		for filename, file_path in files:
 			fileimage = files_dict.get(filename)
 			if fileimage is None:
-				fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
+				fileimage = FileImage(-1, filename, self, disk=self.disk)
 				if not fileimage.load(file_path, options, on_update):
 					return False
 
