@@ -187,8 +187,7 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 			sdate.SetSecond(stime.GetSecond())
 
 			sdate_val = sdate.GetTicks()
-			if item.shot_date is None or item.shot_date != sdate_val:
-				result['shot_date'] = sdate_val
+			result['shot_date'] = sdate_val
 
 		elif self._cb_shot_date.Get3StateValue() == wx.CHK_UNCHECKED:
 			result['shot_date'] = None
