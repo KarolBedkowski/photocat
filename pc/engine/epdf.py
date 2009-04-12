@@ -37,9 +37,11 @@ try:
 	from reportlab.lib.units	import cm, inch
 	from reportlab.lib.styles	import getSampleStyleSheet
 	from reportlab.lib.enums	import TA_CENTER
+
 except Exception, err:
 	_LOG.warn('reportlab not available')
 	EPDF_AVAILABLE = False
+
 else:
 	_LOG.info('reportlab loaded')
 	EPDF_AVAILABLE = True
@@ -91,14 +93,13 @@ def _create_pdf(parent, items, options={}):
 		style_header.fontSize = 10
 		style_header.fontName = 'Times-Bold'
 
-
 		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT, rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
 				bottomMargin=MARGIN_BOTTOM, pageCompression=9)
 		page = []
 
 		grouping = options.get('group_by')
 		if grouping == GROUP_BY_DATE:
-			item_value_func = lambda i: int(i.date_to_check / 86400)
+			item_value_func = lambda i: time.localtime(i.date_to_check)[:3]
 			group_label_func = lambda i: time.strftime('%x', time.localtime(i.date_to_check))
 			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
 					item_value_func, group_label_func, options)
