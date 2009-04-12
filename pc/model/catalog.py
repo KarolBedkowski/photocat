@@ -110,7 +110,7 @@ class Catalog(TreeItem):
 		if self.readonly:
 			raise StandardError("read only")
 
-		disk = Disk(id=-1, name=name, parent=None, catalog=self)
+		disk = Disk(-1, name, None, self)
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
 		self.disks.append(disk)
