@@ -290,22 +290,21 @@ class ThumbDrawer(object):
 		return row, ty+thm, len(items_pos)
 
 
-	def __compute_thumbs_pos_timeline(self, height, level=86400):
+	def __compute_thumbs_pos_timeline(self, height):
 		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
 
 			@param height	- max wysokość
-			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
 			@return (row, height, last_index) - liczba wierszy i długość panelu
 		'''
 
 		def item_value_func(item):
-			return int(item.image.date_to_check / level)
+			return time.localtime(item.image.date_to_check)[:3]
 
 		def group_label_func(item):
-			return time.strftime('%x', time.localtime(item.image.date_to_check))
+			return time.strftime('%c', time.localtime(item.image.date_to_check))
 
 		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
 
