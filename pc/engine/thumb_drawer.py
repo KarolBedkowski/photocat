@@ -304,7 +304,7 @@ class ThumbDrawer(object):
 			return time.localtime(item.image.date_to_check)[:3]
 
 		def group_label_func(item):
-			return time.strftime('%c', time.localtime(item.image.date_to_check))
+			return time.strftime('%x', time.localtime(item.image.date_to_check))
 
 		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
 

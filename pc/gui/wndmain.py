@@ -161,7 +161,7 @@ class WndMain(wx.Frame):
 			(None,	'Ctrl-N',	_('Create new catalog'),	self._on_file_new,		wx.ID_NEW,		wx.ART_NEW),
 			(None,	'Ctrl+O',	_('Load catalog'),			self._on_file_open,		wx.ID_OPEN,		wx.ART_FILE_OPEN),
 			(None,	'Ctrl+S',	_('Save current catalog'),	self._on_file_save,		wx.ID_SAVE,		wx.ART_FILE_SAVE),
-			(_('Close catalog'),	'Ctrl+Q',	_('Close current catalog'),	self._on_file_close),
+			(_('Close catalog'),	'Ctrl+W',	_('Close current catalog'),	self._on_file_close),
 			('-'),
 			(_('Rebuild catalog'),	None,		_('Rebuild catalog'),		self._on_file_rebuild),
 			('-'),
