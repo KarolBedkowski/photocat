@@ -55,7 +55,7 @@ class CatalogFile(StorageObject):
 		self.name		= name
 		self.parent		= parent
 		self.disk		= disk
-		self.catalog	= disk.catalog
+		self.catalog	= kwargs.get('catalog') or disk.catalog
 
 		self._cached_path = None
 

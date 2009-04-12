@@ -188,7 +188,7 @@ class DlgPropertiesBase(wx.Dialog):
 		self._tags_listbox = TagsListBox(panel, -1)
 		item_tags = self._item.tags
 		if not self.readonly:
-			all_tags = self._item.disk.catalog.tags_provider.tags
+			all_tags = self._item.catalog.tags_provider.tags
 
 		else:
 			all_tags = item_tags

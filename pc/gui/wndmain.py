@@ -141,7 +141,7 @@ class WndMain(wx.Frame):
 		splitter2.SetSashGravity(1.0)
 
 		splitter.SetSashPosition(appconfig.get('main_wnd', 'splitter_v', 200))
-		splitter2.SetSashPosition(appconfig.get('main_wnd', 'splitter_h', -150))
+		splitter2.SetSashPosition(appconfig.get('main_wnd', 'splitter_h', -1))
 
 
 	def _create_main_menu(self):
@@ -568,11 +568,12 @@ class WndMain(wx.Frame):
 		if folder is None or isinstance(folder, Catalog):
 			return
 
-		selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
-		if len(selected_items) == 0:
+		selected_items = self._photo_list.selected_items
+		selected_count = self._photo_list.selected_count
+		if selected_count == 0:
 			return
 
-		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % len(selected_items), 'PC'):
+		if dialogs.message_box_warning_yesno(self, _('Delete %d images?') % selected_count, 'PC'):
 			for image in selected_items:
 				folder.remove_file(image)
 
@@ -614,13 +615,13 @@ class WndMain(wx.Frame):
 		if folder is None or isinstance(folder, Catalog) or len(folder.files) == 0:
 			return
 
-		image = FileImage(None, None, None, folder.disk, catalog=folder.catalog)
+		image = FileImage(None, None, None, None, catalog=folder.catalog)
 
 		result = {}
 
 		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
-			selected_items = [ folder.files[idx] for idx in self._photo_list.selected_items ]
+			selected_items = self._photo_list.selected_items
 			changed_tags = Catalog.update_images_from_dict(selected_items, result)
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
@@ -844,7 +845,7 @@ class WndMain(wx.Frame):
 
 
 	def _on_photo_popoup_properties(self, evt):
-		selected_count = len(self._photo_list.selected_items)
+		selected_count = self._photo_list.selected_count
 		if selected_count > 1:
 			self._on_catalog_edit_multi(evt)
 
@@ -1037,7 +1038,7 @@ class WndMain(wx.Frame):
 					else False
 			)
 
-			file_selected = len(self._photo_list.selected_items) > 0
+			file_selected = self._photo_list.selected_count > 0
 
 			mm_items = self._main_menu_catalog.GetMenuItems()
 			mm_items[0].Enable(catalog_writable)

@@ -96,7 +96,7 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 		self._tags_listbox = TagsListBox(panel, -1)
 		self._tags_listbox.Enable(False)
 		item_tags = self._item.tags
-		all_tags = self._item.disk.catalog.tags_provider.tags
+		all_tags = self._item.catalog.tags_provider.tags
 		self._tags_listbox.show(all_tags, item_tags)
 
 		sizer.Add(self._tags_listbox, 1, wx.EXPAND|wx.ALL, 12)

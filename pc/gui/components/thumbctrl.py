@@ -156,8 +156,17 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	@property
 	def selected_items(self):
-		''' thumbctrl.selected_items -> [] -- zwraca listę zaznaczonych obiektów '''
-		return self._selected_list
+		''' thumbctrl.selected_items -> (iter) -- zwraca listę zaznaczonych obiektów '''
+		if not self._selected_list:
+			return tuple()
+
+		return ( self._items[idx].image for idx in self._selected_list )
+
+
+	@property
+	def selected_count(self):
+		''' thumbctrl.selected_count -> int -- liczba zaznazonych elementów '''
+		return len(self._selected_list)
 
 
 	@property
