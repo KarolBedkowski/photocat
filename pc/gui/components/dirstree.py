@@ -317,8 +317,8 @@ class DirsTree(wx.TreeCtrl):
 			for subdir in item.subdirs:
 				add_subdir(node, subdir)
 
-			for subdir in timeline.subdirs:
-				add_subdir(node, subdir)
+		for subdir in timeline.subdirs:
+			add_subdir(node, subdir)
 
 		self.SetCursor(wx.STANDARD_CURSOR)
 
