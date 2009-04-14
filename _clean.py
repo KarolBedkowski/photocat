@@ -25,4 +25,7 @@ if __name__ == '__main__':
 
 		os.removedirs('build')
 
+	if os.path.exists('hotshot_edi_stats'):
+		os.remove('hotshot_edi_stats')
+
 # vim: encoding=utf8:ff=unix:

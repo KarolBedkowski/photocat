@@ -124,7 +124,7 @@ class FileImage(CatalogFile):
 		if self.thumb is None:
 			return None
 
-		return self.disk.catalog.data_provider.get_data(self.thumb)
+		return self.catalog.data_provider.get_data(self.thumb)
 
 
 	def _get_info(self):

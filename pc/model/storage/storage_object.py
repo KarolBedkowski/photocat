@@ -106,7 +106,7 @@ class StorageObject(object):
 
 	def encode(self):
 		result = {}
-		for key in self.__preserveattr__().keys():
+		for key in self.__preserveattr__().iterkeys():
 			val = getattr(self, key)
 			if val is not None:
 				result[key] = val
