@@ -44,6 +44,7 @@ from pc.model.storage		import Storage
 from pc.gui.dlgadddisk		import DlgAddDisk
 
 import errors
+import image
 
 
 _LOG = logging.getLogger(__name__)
@@ -345,6 +346,12 @@ def check_new_file_exists(filename):
 	index_exists = os.path.exists(filename)
 	data_exists = os.path.exists(data_file)
 	return (index_exists or data_file), index_exists, data_exists
+
+
+def catalog_close(catalog):
+	catalog.close()
+	image.clear_cache()
+
 
 
 

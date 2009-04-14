@@ -29,7 +29,7 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-
+from collections import deque
 import logging
 _LOG = logging.getLogger(__name__)
 
@@ -40,12 +40,27 @@ import wx
 from pc.model				import FileImage
 
 
+_CACHE = {}
+_CACHE_LIST = deque()
+
+
+
+def clear_cache():
+	_LOG.debug('clear_cache count=%d' % len(_CACHE))
+	_CACHE.clear()
+	_CACHE_LIST.clear()
+
 
 def load_image_from_item(item):
 	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka z katalogu.
 
 		@return wxImage()
 	'''
+
+	item_id = id(item)
+	if item_id in _CACHE:
+		return _CACHE[item_id]
+
 	img = None
 	if isinstance(item, FileImage):
 		stream = None
@@ -57,11 +72,19 @@ def load_image_from_item(item):
 			_LOG.exception('load_image_from_item %s error' % item.name)
 			img = wx.EmptyImage(1, 1)
 
+		else:
+			if len(_CACHE_LIST) > 4000:
+				del _CACHE[_CACHE_LIST.popleft()]
+
+			_CACHE[item_id] = img
+			_CACHE_LIST.append(item_id)
+
 		finally:
 			if stream is not None:
 				stream.close()
 
 	else:
+		_LOG.warn('item %r not FileImage' % item)
 		img = wx.EmptyImage(1, 1)
 
 	return img

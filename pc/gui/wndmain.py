@@ -323,7 +323,7 @@ class WndMain(wx.Frame):
 			return
 
 		for catalog in self._catalogs:
-			catalog.close()
+			ecatalog.catalog_close(catalog)
 
 		appconfig = AppConfig()
 		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
@@ -413,7 +413,7 @@ class WndMain(wx.Frame):
 			return
 
 		self._dirs_tree.delete_item(catalog)
-		catalog.close()
+		ecatalog.catalog_close(catalog)
 		self._catalogs.remove(catalog)
 		self.__update_menus_toolbars()
 		DlgSearchProvider().close_all()
