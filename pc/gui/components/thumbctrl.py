@@ -70,9 +70,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_height	= 200
 
 		self._items				= []
-		self._selected_list		= []
-		self._selected			= -1
-		self._last_preloaded	= -1
+		self._reset()
 
 		self.Bind(wx.EVT_SIZE,			self.__on_resize)
 		self.Bind(wx.EVT_PAINT,			self.__on_paint)
@@ -80,6 +78,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_LEFT_DCLICK,	self.__on_mouse_dbclick)
 		self.Bind(wx.EVT_RIGHT_DOWN,	self.__on_mouse_right_down)
 		self.Bind(wx.EVT_IDLE,			self.__on_idle)
+
+
+	def _reset(self):
+		self._selected_list		= []
+		self._selected			= -1
+		self._last_preloaded	= -1
+		self._last_preloaded_status = None
 
 
 	def show_dir(self, images, sort_function=None):
@@ -93,9 +98,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 			key_func, reverse = sort_function
 			self._items.sort(key=key_func, reverse=reverse)
 
+		self._reset()
 		self._last_preloaded	= -1 if self.thumbs_preload else len(self._items)
-		self._selected			= -1
-		self._selected_list		= []
 
 		self.Scroll(0, 0)
 		self._update()
@@ -108,8 +112,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		'''
 		key_func, reverse = sort_function
 		self._items.sort(key=key_func, reverse=reverse)
-		self._selected_list = []
-		self._selected		= -1
+		self._reset()
 
 		self.Scroll(0, 0)
 		self._update()
@@ -311,11 +314,15 @@ class ThumbCtrl(wx.ScrolledWindow):
 				self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
 
 				if self._status_wnd is not None:
-					self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)
+					now_preloaded = int(20*self._last_preloaded/len_items)
+					if now_preloaded != self._last_preloaded_status:
+						self._last_preloaded_status = now_preloaded
+						self._status_wnd.SetStatusText("%d%%" % (now_preloaded*5), 1)
 
 				evt.RequestMore(True)
 
-			elif self._status_wnd:
+			elif self._status_wnd and self._last_preloaded_status:
+				self._last_preloaded_status = None
 				self._status_wnd.SetStatusText("", 1)
 
 		evt.Skip()
