@@ -31,6 +31,8 @@ __all__			= ['DlgProperties']
 
 import wx
 
+from kabes.tools.appconfig		import AppConfig
+
 from pc.engine			import image
 
 from _dlg_properties_base	import DlgPropertiesBase
@@ -60,7 +62,11 @@ class DlgProperties(DlgPropertiesBase):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(self._item))
+
+		appconfig = AppConfig()
+		thumbw, thumbh = appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+
+		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(self._item, thumbw, thumbh)[0])
 		sizer.Add(self._bmp_preview, 0, wx.ALIGN_CENTER|wx.ALL, 12)
 
 		bsizer = wx.FlexGridSizer(2, 2, 5, 12)

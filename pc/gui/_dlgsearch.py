@@ -113,9 +113,8 @@ class _DlgSearch(wx.Frame):
 		else:
 			self.Move(position)
 
-		self._thumbctrl.set_thumb_size(
-				appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
-		)
+		self._thumb_width, self._thumb_height = appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+		self._thumbctrl.set_thumb_size(self._thumb_width, self._thumb_height)
 		self._thumbctrl.thumbs_preload = appconfig.get('settings', 'view_preload', True)
 
 		self._tc_text.SetFocus()
@@ -579,7 +578,7 @@ class _DlgSearch(wx.Frame):
 
 	def _show_preview(self, item):
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(item))
+		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(item, self._thumb_width, self._thumb_height)[0])
 		self._bmp_preview.Refresh()
 
 
