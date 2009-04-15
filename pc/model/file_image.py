@@ -133,7 +133,7 @@ class FileImage(CatalogFile):
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 
 		date = None
-		if self.shot_date:
+		if self.shot_date > 0:
 			try:
 				date = time.strftime('%c', time.localtime(self.shot_date))
 
@@ -145,9 +145,9 @@ class FileImage(CatalogFile):
 
 		exif = self.exif_data
 		if exif is not None:
-			if date is None:
+			if date is None and self.shot_date is None:
 				date = self.__get_exif_shot_date(exif)
-				if date is not None:
+				if date:
 					result.append((51, _('Date'), date))
 
 			if 'Image Model' in exif:
@@ -172,12 +172,15 @@ class FileImage(CatalogFile):
 			Jeżeli nie jest wypełniony shot_date (wersja 2.1-) to próba pobrania z exifa.
 			Jeżeli nie ma w exifie - data pliku.
 		"""
-		if self.shot_date is not None:
+
+		if self.shot_date > 0:
 			return self.shot_date
 
 		if self.exif is not None:
 			shot_date = self.__get_exif_shot_date_value(self.exif_data)
-			if shot_date is not None:
+			if shot_date == 0:
+				self.shot_date = 0
+			elif shot_date is not None:
 				self.shot_date = time.mktime(shot_date)
 
 		return self.shot_date or self.date
@@ -198,7 +201,9 @@ class FileImage(CatalogFile):
 			self.shot_date = None
 			if self._exif_data is not None:
 				shot_date = self.__get_exif_shot_date_value(self._exif_data)
-				if shot_date is not None:
+				if shot_date == 0:
+					self.shot_date = 0
+				elif shot_date is not None:
 					self.shot_date = time.mktime(shot_date)
 
 			return True
@@ -215,7 +220,9 @@ class FileImage(CatalogFile):
 				self.shot_date = None
 				if self._exif_data is not None:
 					shot_date = self.__get_exif_shot_date_value(self._exif_data)
-					if shot_date is not None:
+					if shot_date == 0:
+						self.shot_date = 0
+					elif shot_date is not None:
 						self.shot_date = time.mktime(shot_date)
 
 			return True
@@ -228,7 +235,9 @@ class FileImage(CatalogFile):
 			exif = self.exif_data
 			if exif is not None:
 				shot_date = self.__get_exif_shot_date_value(exif)
-				if shot_date is not None:
+				if shot_date == 0:
+					self.shot_date = 0
+				elif shot_date is not None:
 					self.shot_date = time.mktime(shot_date)
 
 
@@ -357,7 +366,7 @@ class FileImage(CatalogFile):
 				except:
 					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
 
-		return None
+		return 0
 
 
 	def __get_exif_shot_date(self, exif):
