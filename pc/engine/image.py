@@ -97,7 +97,7 @@ def load_bitmap_from_item_with_size(item, width, height):
 	img_width	= img.GetWidth()
 	img_height	= img.GetHeight()
 
-	scale = min(float(width) / img_width, float(height) / img_height)
+	scale = min(float(width) / img_width, float(height) / img_height, 1)
 	img_width	= int(img_width * scale)
 	img_height	= int(img_height * scale)
 
