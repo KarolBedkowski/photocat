@@ -45,7 +45,7 @@ if '--profile' in sys.argv:
 	cProfile.run('run()', 'profile.tmp')
 	import pstats
 	import time
-	with open('profile_result%d_txt' % int(time.time()), 'w') as out:
+	with open('profile_result_%d.txt' % int(time.time()), 'w') as out:
 		s=pstats.Stats('profile.tmp', stream=out)
 #		s.strip_dirs()
 		s.sort_stats('cumulative').print_stats('pc', 50)
