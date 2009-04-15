@@ -176,12 +176,7 @@ class FileImage(CatalogFile):
 		if self.shot_date > 0:
 			return self.shot_date
 
-		if self.exif is not None:
-			shot_date = self.__get_exif_shot_date_value(self.exif_data)
-			if shot_date == 0:
-				self.shot_date = 0
-			elif shot_date is not None:
-				self.shot_date = time.mktime(shot_date)
+		self.__set_shot_date_from_exif(self.exif_data)
 
 		return self.shot_date or self.date
 
@@ -199,12 +194,7 @@ class FileImage(CatalogFile):
 			self._load_thumb(path, options)
 			self._load_exif(path)
 			self.shot_date = None
-			if self._exif_data is not None:
-				shot_date = self.__get_exif_shot_date_value(self._exif_data)
-				if shot_date == 0:
-					self.shot_date = 0
-				elif shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+			self.__set_shot_date_from_exif(self._exif_data)
 
 			return True
 
@@ -218,12 +208,7 @@ class FileImage(CatalogFile):
 				self._load_thumb(path, options)
 				self._load_exif(path)
 				self.shot_date = None
-				if self._exif_data is not None:
-					shot_date = self.__get_exif_shot_date_value(self._exif_data)
-					if shot_date == 0:
-						self.shot_date = 0
-					elif shot_date is not None:
-						self.shot_date = time.mktime(shot_date)
+				self.__set_shot_date_from_exif(self._exif_data)
 
 			return True
 
@@ -232,13 +217,7 @@ class FileImage(CatalogFile):
 
 	def fill_shot_date(self):
 		if self.shot_date is None and self.exif is not None:
-			exif = self.exif_data
-			if exif is not None:
-				shot_date = self.__get_exif_shot_date_value(exif)
-				if shot_date == 0:
-					self.shot_date = 0
-				elif shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+			self.__set_shot_date_from_exif(self.exif_data)
 
 
 	##########################################################################
@@ -318,16 +297,16 @@ class FileImage(CatalogFile):
 
 		append('EXIF ExposureTime', _('t'))
 
-		if 'EXIF FNumber' in exif:
-			try:
-				fnumber = eval(exif['EXIF FNumber'] + '.')
-				if int(fnumber) == fnumber:
-					fnumber = int(fnumber)
+		def get_value(key, name):
+			if key in exif:
+				try:
+					val = eval(exif[key] + '.')
+					shot_info.append((name, int(val) if int(val) == val else val))
+				
+				except:
+					_LOG.exception('_get_info exif %s "%s"' % (key, exif.get(key)))
 
-				shot_info.append((_('f'), fnumber))
-
-			except:
-				_LOG.exception('_get_info exif fnumber "%s"' % exif.get('EXIF FNumber'))
+		get_value('EXIF FNumber', _('f'))
 
 		if 'EXIF ISOSpeedRatings' in exif:
 			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
@@ -341,17 +320,7 @@ class FileImage(CatalogFile):
 				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
 
 		append('EXIF Flash', _('flash'))
-
-		if 'EXIF FocalLength' in exif:
-			try:
-				flen = eval(exif['EXIF FocalLength'] + '.')
-				if int(flen) == flen:
-					flen = int(flen)
-
-				shot_info.append((_('focal len.'), flen))
-
-			except:
-				_LOG.exception('_get_info exif flen "%s"' % exif.get('EXIF FocalLength'))
+		get_value('EXIF FocalLength', _('focal len.'))
 
 		return shot_info
 
@@ -372,6 +341,19 @@ class FileImage(CatalogFile):
 	def __get_exif_shot_date(self, exif):
 		ddate = self.__get_exif_shot_date_value(exif)
 		return None if ddate is None else time.strftime('%c', ddate)
+
+
+	def __set_shot_date_from_exif(self, exif):
+		if exif is None:
+			return
+
+		shot_date = self.__get_exif_shot_date_value(exif)
+		if shot_date == 0:
+			self.shot_date = 0
+
+		elif shot_date is not None:
+			self.shot_date = time.mktime(shot_date)
+
 
 
 	##########################################################################
