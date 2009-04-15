@@ -29,6 +29,7 @@ __all__			= []
 
 
 import os
+import sys
 try:
 	os.chdir(os.path.dirname(__file__))
 
@@ -37,6 +38,23 @@ except:
 
 from pc	import run
 
-run()
+if '--profile' in sys.argv:
+	sys.argv.remove('--profile')
+	import cProfile
+	print 'Profiling....'
+	cProfile.run('run()', 'profile.tmp')
+	import pstats
+	import time
+	with open('profile_result%d_txt' % int(time.time()), 'w') as out:
+		s=pstats.Stats('profile.tmp', stream=out)
+#		s.strip_dirs()
+		s.sort_stats('cumulative').print_stats('pc', 50)
+
+		out.write('\n\n----------------------------\n\n')
+
+		s.sort_stats('time').print_stats('pc', 50)
+
+else:
+	run()
 
 # vim: encoding=utf8: ff=unix: 
