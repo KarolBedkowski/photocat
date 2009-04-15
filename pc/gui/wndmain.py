@@ -82,8 +82,8 @@ class WndMain(wx.Frame):
 
 		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=size)
 
-		self._app			= app
 		self._debug			= debug
+		self._app			= app
 
 		self._catalogs		= []
 		self._layout_splitter	= None
@@ -332,6 +332,7 @@ class WndMain(wx.Frame):
 		appconfig.set('main_wnd', 'splitter_v', self._layout_splitter_v.GetSashPosition())
 
 		self._app.ExitMainLoop()
+		evt.Skip()
 
 
 	def _on_size(self, evt):
