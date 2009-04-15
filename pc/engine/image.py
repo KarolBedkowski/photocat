@@ -58,25 +58,13 @@ def load_image_from_item(item):
 	'''
 
 	img = None
-	if isinstance(item, FileImage):
-		stream = None
-		try:
-			stream = cStringIO.StringIO(item.image)
-			img		= wx.ImageFromStream(stream)
+	try:
+		img		= wx.ImageFromStream(cStringIO.StringIO(item.image))
 
-		except Exception, err:
-			_LOG.exception('load_image_from_item %s error' % item.name)
-			img = wx.EmptyImage(1, 1)
+	except Exception, err:
+		_LOG.exception('load_image_from_item %s error' % item.name)
 
-		finally:
-			if stream is not None:
-				stream.close()
-
-	else:
-		_LOG.warn('item %r not FileImage' % item)
-		img = wx.EmptyImage(1, 1)
-
-	return img
+	return img or wx.EmptyImage(1, 1)
 
 
 def load_bitmap_from_item(item):
@@ -89,6 +77,14 @@ def load_bitmap_from_item(item):
 
 
 def load_bitmap_from_item_with_size(item, width, height):
+	''' load_bitmap_from_item_with_size(item, width, height) -> wx.Bitmap -- załadowanie i ewentualne
+			przeskalowanie obrazka
+
+		@param item - element FileImage
+		@param width - docelowa szerokość
+		@param height - docelowa wysokość
+		@return wxBitmap
+	'''
 	item_id = (id(item), width, height)
 	if item_id in _CACHE:
 		return _CACHE[item_id]
