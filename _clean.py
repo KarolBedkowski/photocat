@@ -7,7 +7,7 @@ if __name__ == '__main__':
 	for root, dirs, files in os.walk('.', topdown=False):
 		for name in files:
 			if name.endswith('.pyd') or name.endswith('.pyc') or name.endswith('~') or name.endswith('.pyo') \
-					or name.endswith('.log'):
+					or name.endswith('.log') or name.startswith('profile_result_') or name.endswith('.tmp'):
 				filename = os.path.join(root, name) 
 				print 'Delete ', filename
 				os.remove(filename)
