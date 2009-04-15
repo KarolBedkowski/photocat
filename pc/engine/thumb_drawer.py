@@ -144,7 +144,7 @@ class ThumbDrawer(object):
 		selected_bottom	= ((self._caption_height + 15) if show_captions else 6)
 		has_selected	= len(selected) > 0 if selected is not None else False
 
-		paint_rect_Intersects = paint_rect.Intersects
+		paint_rect_Intersects = paint_rect.Intersects if paint_rect else None
 		dc_DrawBitmap = dc.DrawBitmap
 		dc_SetTextForeground = dc.SetTextForeground
 		dc_DrawText = dc.DrawText
