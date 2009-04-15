@@ -46,7 +46,7 @@ _CACHE_LIST = deque()
 
 
 def clear_cache():
-	_LOG.debug('clear_cache count=%d' % len(_CACHE))
+	_LOG.info('clear_cache count=%d' % len(_CACHE))
 	_CACHE.clear()
 	_CACHE_LIST.clear()
 
@@ -56,10 +56,6 @@ def load_image_from_item(item):
 
 		@return wxImage()
 	'''
-
-	item_id = id(item)
-	if item_id in _CACHE:
-		return _CACHE[item_id]
 
 	img = None
 	if isinstance(item, FileImage):
@@ -71,13 +67,6 @@ def load_image_from_item(item):
 		except Exception, err:
 			_LOG.exception('load_image_from_item %s error' % item.name)
 			img = wx.EmptyImage(1, 1)
-
-		else:
-			if len(_CACHE_LIST) > 4000:
-				del _CACHE[_CACHE_LIST.popleft()]
-
-			_CACHE[item_id] = img
-			_CACHE_LIST.append(item_id)
 
 		finally:
 			if stream is not None:
@@ -97,6 +86,32 @@ def load_bitmap_from_item(item):
 	'''
 	img = load_image_from_item(item)
 	return img.ConvertToBitmap() if img is not None else None
+
+
+def load_bitmap_from_item_with_size(item, width, height):
+	item_id = (id(item), width, height)
+	if item_id in _CACHE:
+		return _CACHE[item_id]
+
+	img = load_image_from_item(item)
+	img_width	= img.GetWidth()
+	img_height	= img.GetHeight()
+
+	scale = min(float(width) / img_width, float(height) / img_height)
+	img_width	= int(img_width * scale)
+	img_height	= int(img_height * scale)
+
+	img = img.Scale(img_width, img_height)
+	bitmap = img.ConvertToBitmap()
+
+	result = bitmap, img_width, img_height
+
+	if len(_CACHE_LIST) > 2000:
+		del _CACHE[_CACHE_LIST.popleft()]
+
+	_CACHE[item_id] = result
+
+	return result
 
 
 

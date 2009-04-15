@@ -47,7 +47,7 @@ import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.model.storage		import Storage
-from pc.engine				import ecatalog, eprint, epdf
+from pc.engine				import ecatalog, eprint, epdf, image
 
 from components.dirstree	import DirsTree
 from components.infopanel	import InfoPanel
@@ -1071,6 +1071,7 @@ class WndMain(wx.Frame):
 		show_info = appconfig.get('settings', 'view_show_info', True)
 		self._menu_view_show_info.Check(show_info)
 		self._toggle_info_panel(show_info)
+		image.clear_cache()
 
 
 	def _toggle_info_panel(self, show=None):

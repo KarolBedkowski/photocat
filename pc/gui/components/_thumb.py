@@ -31,7 +31,7 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from pc.engine.image		import load_image_from_item
+from pc.engine.image		import load_bitmap_from_item_with_size
 
 
 
@@ -54,16 +54,6 @@ class Thumb:
 		self._caption_width = -1
 
 
-	def _load_image(self):
-		''' thumb._load_image() -> wxImage -- załadowanie obrazka '''
-		img = load_image_from_item(self.image)
-
-		self.imgwidth	= img.GetWidth()
-		self.imgheight	= img.GetHeight()
-
-		return img
-
-
 	#########################################################################
 
 
@@ -76,30 +66,8 @@ class Thumb:
 
 			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się nie zmienił)
 		'''
-		img = None
-		if self.imgwidth is None:
-			# nie załadowano obrazka
-			img = self._load_image()
 
-		if width < self.imgwidth or height < self.imgheight:
-			# wymagany jest mniejszy obrazek niż załadowano
-			if img is None:
-				# załadowanie obrazka (jeżeli jeszcze nie załadowan)
-				img = self._load_image()
-
-			# przeskalowanie obrazka
-			scale = min(float(width) / self.imgwidth, float(height) / self.imgheight)
-			self.imgwidth	= int(self.imgwidth * scale)
-			self.imgheight	= int(self.imgheight * scale)
-
-			img = img.Scale(self.imgwidth, self.imgheight)
-
-			self._bitmap = img.ConvertToBitmap()
-
-		elif self._bitmap is None:
-			# jest obrazek ale nie ma bitmapy
-			self._bitmap = img.ConvertToBitmap()
-
+		self._bitmap, self.imgwidth, self.imgheight = load_bitmap_from_item_with_size(self.image, width, height)
 		return self._bitmap
 
 
