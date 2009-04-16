@@ -180,7 +180,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	@property
-	def selected_index(self)
+	def selected_index(self):
 		''' thumbctrl.selected_index -> (int, int) -- zwraca index zaznaczonego elementu
 				i liczbę elementów
 		'''

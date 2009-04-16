@@ -464,15 +464,25 @@ class _DlgSearch(wx.Frame):
 		''' Wyświetlenie właściwości pliku '''
 		# FIXME: po edycji powinno się aktualizować drzewo
 		if self._thumbctrl.IsShown():
-			item = self._thumbctrl.selected_item
-
+			item_idx, items_count = self._thumbctrl.selected_index
 		else:
-			item = self._get_selected_result_item()
+			item, item_idx = self._get_selected_result_item()
+			items_count = len(self._result)
 
-		if item is not None:
-			dlg = DlgProperties(self, item)
-			dlg.ShowModal()
+		while item_idx > -1:
+			item = self._result[item_idx]
+			dlg = DlgProperties(self, item, show_next_prev=(item_idx>0, item_idx<items_count-1))
+			res = dlg.ShowModal()
 			dlg.Destroy()
+
+			if res == wx.ID_BACKWARD:
+				item_idx -= 1
+
+			elif res == wx.ID_FORWARD:
+				item_idx += 1
+
+			else:
+				break
 
 
 	def _on_btn_goto(self, evt):
@@ -480,7 +490,7 @@ class _DlgSearch(wx.Frame):
 
 
 	def _on_list_activate(self, evt):
-		item = self._get_selected_result_item()
+		item, item_idx = self._get_selected_result_item()
 		if item is not None:
 			if isinstance(item, Directory) or isinstance(item, Disk):
 				self._parent.show_item(item)
@@ -553,12 +563,13 @@ class _DlgSearch(wx.Frame):
 	def _get_selected_result_item(self):
 		listctrl = self._result_list
 		item = None
+		itemidx = -1
 		if listctrl.GetSelectedItemCount() > 0:
 			index	= listctrl.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 
-		return item
+		return item, itemidx
 
 
 	def _show_image_info(self, item):
