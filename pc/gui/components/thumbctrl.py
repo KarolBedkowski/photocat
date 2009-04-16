@@ -179,6 +179,14 @@ class ThumbCtrl(wx.ScrolledWindow):
 		return self._items[self._selected].image if self._selected > -1 else None
 
 
+	@property
+	def selected_index(self)
+		''' thumbctrl.selected_index -> (int, int) -- zwraca index zaznaczonego elementu
+				i liczbę elementów
+		'''
+		return (-1, -1) if self._selected == -1 else (self._selected, len(self._items))
+
+
 	def _set_show_captions(self, show_captions):
 		self._thumb_drawer.show_captions = show_captions
 
@@ -195,6 +203,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		return self._thumb_drawer.group_by
 
 	group_by = property(_get_group_by, _set_group_by)
+
+
+	def get_item_by_index(self, idx):
+		''' thumbctrl.get_item_by_index(idx) -> item -- zwraca element o podanym indeksie '''
+		return self._items[idx].image
+
 
 	#######################################################################################
 
