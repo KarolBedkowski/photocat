@@ -70,7 +70,7 @@ class _DlgSearch(wx.Frame):
 
 	def __init__(self, parent, catalogs, selected_item=None):
 		wx.Frame.__init__(self, parent, -1, _('Find'),
-				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE|wx.MAXIMIZE_BOX|wx.MINIMIZE_BOX )
+				style=wx.DEFAULT_FRAME_STYLE|wx.FULL_REPAINT_ON_RESIZE)
 
 		self._catalogs	= catalogs
 		self._parent	= parent
@@ -249,7 +249,7 @@ class _DlgSearch(wx.Frame):
 
 	def _create_layout_result(self, parent):
 		panel = wx.Panel(parent, -1)
-		grid = wx.BoxSizer(wx.VERTICAL)
+		self._grid_result = grid = wx.BoxSizer(wx.VERTICAL)
 
 		grid.Add(self._create_layout_list(panel), 		1, wx.EXPAND|wx.ALL, 12)
 		grid.Add(self._create_layout_thumbctrl(panel),	1, wx.EXPAND|wx.ALL, 12)
@@ -622,8 +622,7 @@ class _DlgSearch(wx.Frame):
 
 		self._bmp_preview.SetMinSize(size)
 
-		self.Refresh()
-		self.Layout()
+		self._grid_result.RecalcSizes()
 
 		self._btn_goto.Enable(False)
 		self._btn_properties.Enable(False)
