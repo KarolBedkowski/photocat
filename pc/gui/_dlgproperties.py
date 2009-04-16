@@ -44,8 +44,8 @@ _ = wx.GetTranslation
 class DlgProperties(DlgPropertiesBase):
 	''' Dialog o programie '''
 
-	def __init__(self, parent, item):
-		DlgPropertiesBase.__init__(self, parent, item, item.catalog.readonly)
+	def __init__(self, parent, item, show_next_prev=False):
+		DlgPropertiesBase.__init__(self, parent, item, item.catalog.readonly, show_next_prev=show_next_prev)
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)

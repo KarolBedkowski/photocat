@@ -34,6 +34,7 @@ import wx
 from wx.lib import masked
 
 from kabes.tools.appconfig	import AppConfig
+from kabes.wxtools.guitools		import create_button
 
 from components.tags_list_box import TagsListBox
 
@@ -48,11 +49,12 @@ class DlgPropertiesBase(wx.Dialog):
 	''' Dialog o programie '''
 	_CONFIG_KEY = 'properties_wnd'
 
-	def __init__(self, parent, item, readonly=False, title=None):
+	def __init__(self, parent, item, readonly=False, title=None, show_next_prev=False):
 		wx.Dialog.__init__(self, parent, -1, title or _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 
 		self._item		= item
 		self.readonly	= readonly
+		self._show_next_prev = show_next_prev
 
 		# lista zmienionych podczas edycji nazw tagów
 		self.changed_tags		= None
@@ -76,11 +78,26 @@ class DlgPropertiesBase(wx.Dialog):
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 12)
 
-		if self.readonly:
-			main_grid.Add(self.CreateStdDialogButtonSizer(wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
+		btns = wx.CANCEL
+		if not self.readonly:
+			btns |= wx.OK
+		
+		grid = self.CreateStdDialogButtonSizer(btns)
+		
+		if self._show_next_prev:
+			btn_prev = create_button(self, None, self._on_btn_prev, wx.ID_BACKWARD)
+			grid.Insert(0, btn_prev)
+			grid.Insert(1, (10, 5))
+			btn_next = create_button(self, None, self._on_btn_next, wx.ID_FORWARD)
+			grid.Insert(2, btn_next)
+			
+			grid.Insert(3, (5, 5), 1, wx.EXPAND)
 
-		else:
-			main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
+			prev, next = self._show_next_prev
+			btn_prev.Enable(prev)
+			btn_next.Enable(next)
+
+		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 
@@ -277,6 +294,13 @@ class DlgPropertiesBase(wx.Dialog):
 		self._tc_shot_time.Enable(value)
 		self._lb_shot_date.Enable(value)
 
+
+	def _on_btn_next(self, evt):
+		self.EndModal(wx.ID_FORWARD)
+
+
+	def _on_btn_prev(self, evt):
+		self.EndModal(wx.ID_BACKWARD)
 
 
 # vim: encoding=utf8:
