@@ -340,7 +340,7 @@ class FileImage(CatalogFile):
 
 	def __get_exif_shot_date(self, exif):
 		ddate = self.__get_exif_shot_date_value(exif)
-		return None if ddate is None else time.strftime('%c', ddate)
+		return None if not ddate else time.strftime('%c', ddate)
 
 
 	def __set_shot_date_from_exif(self, exif):
