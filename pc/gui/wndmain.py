@@ -795,11 +795,14 @@ class WndMain(wx.Frame):
 
 
 	def _on_thumb_dclick(self, evt):
-		selected = self._photo_list.selected_item
-		if selected is not None:
-			dlg = DlgProperties(self, selected)
-			if dlg.ShowModal() == wx.ID_OK:
-
+		selected_idx, items_count = self._photo_list.selected_index
+		items_count -= 1
+		while selected_idx > -1:
+			selected = self._photo_list.get_item_by_index(selected_idx)
+			dlg = DlgProperties(self, selected, show_next_prev=(selected_idx>0, selected_idx<items_count))
+			result = dlg.ShowModal()
+			dlg.Destroy()
+			if result == wx.ID_OK:
 				if self._info_panel is not None:
 					self._info_panel.show(selected)
 
@@ -807,7 +810,18 @@ class WndMain(wx.Frame):
 				self._dirs_tree.update_catalog_node(selected.catalog)
 				self.__update_changed_tags(selected.catalog.tags_provider, dlg.changed_tags)
 
-			dlg.Destroy()
+				break
+
+			elif result == wx.ID_BACKWARD:
+				selected_idx -=1
+
+			elif result == wx.ID_FORWARD:
+				selected_idx +=1
+
+			else:
+				break
+
+
 
 
 	def _on_file_history(self, evt):
