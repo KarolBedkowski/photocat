@@ -966,8 +966,14 @@ class WndMain(wx.Frame):
 
 
 	def show_item(self, folder):
+		''' wndmain.show_item(folder) -- wyświetlenia podanego folderu '''
 		self._dirs_tree.show_node(folder)
 		self._dirs_tree.SelectItem(folder.tree_node)
+
+
+	def select_item(self, item):
+		''' wndmain.select_item(item) -- zaznaczenie podanego elelemntu '''
+		self._photo_list.select_item(item)
 
 
 	def __create_popup_menu(self, item):

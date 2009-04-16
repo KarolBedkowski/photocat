@@ -497,6 +497,9 @@ class _DlgSearch(wx.Frame):
 
 			elif isinstance(item, FileImage):
 				self._parent.show_item(item.parent)
+				self._parent.select_item(item)
+
+			self._parent.Raise()
 
 
 	def _on_list_item_selected(self, evt):

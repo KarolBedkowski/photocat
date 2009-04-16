@@ -210,6 +210,15 @@ class ThumbCtrl(wx.ScrolledWindow):
 		return self._items[idx].image
 
 
+	def select_item(self, item2select):
+		''' thumbctrl.select_item(item) -- zaznaczenie elementu '''
+		for idx, item in enumerate(self._items):
+			if item.image == item2select:
+				self._selected = idx
+				self._selected_list = [idx]
+				break
+
+
 	#######################################################################################
 
 
