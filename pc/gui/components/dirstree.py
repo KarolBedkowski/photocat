@@ -130,7 +130,7 @@ class DirsTree(wx.TreeCtrl):
 			@param catalog 		- katalog do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_catalog %s' % catalog.name)
+		_LOG.debug('update_node_catalog %s', catalog.name)
 		self.Freeze()
 
 		catalog_node = catalog.tree_node
@@ -161,7 +161,7 @@ class DirsTree(wx.TreeCtrl):
 			@param disk 		- dysk do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_disk %s'  % disk.name)
+		_LOG.debug('update_node_disk %s', disk.name)
 		disk_node = disk.tree_node
 
 		if disk_node is None or not disk_node.IsOk():
@@ -183,7 +183,7 @@ class DirsTree(wx.TreeCtrl):
 			@param directory	- folder do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_directory %s'  %directory.name)
+		_LOG.debug('update_node_directory %s', directory.name)
 		dir_node = directory.tree_node
 
 		if dir_node is None or not dir_node.IsOk():
@@ -258,7 +258,7 @@ class DirsTree(wx.TreeCtrl):
 			@param tag			- element tag do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('_update_node_tag %s' % tag)
+		_LOG.debug('_update_node_tag %s', tag)
 		node = tag.tree_node
 
 		self.DeleteChildren(node)
@@ -293,7 +293,7 @@ class DirsTree(wx.TreeCtrl):
 
 	def update_timeline_node(self, timeline):
 		''' dirtree.update_timeline_node(timeline) -- odsiweżenie elementu lini czasu '''
-		_LOG.debug('update_timeline_node cat= %s' % timeline.catalog.name)
+		_LOG.debug('update_timeline_node cat= %s', timeline.catalog.name)
 
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 

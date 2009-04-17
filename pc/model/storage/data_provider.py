@@ -70,7 +70,7 @@ class DataProvider:
 			@param offset_size (offset, size) danych do pobrania
 			@return dane
 		'''
-		_LOG.debug('DataProvider.get_data(%d)' % offset)
+		_LOG.debug('DataProvider.get_data(%d)', offset)
 		src_file = src_file or self._file
 		if src_file is None:
 			_LOG.warn('DataProvider.get: file closed')
@@ -97,7 +97,7 @@ class DataProvider:
 		'''
 		length = len(data)
 		offset = self.next_offset
-		_LOG.debug('DataProvider.put_data(%d, len=%d)' % (offset, length))
+		_LOG.debug('DataProvider.put_data(%d, len=%d)', offset, length)
 
 		self.next_offset = self._write_block(self._file, offset, length, data)
 
@@ -108,7 +108,7 @@ class DataProvider:
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
-		_LOG.debug('DataProvider.open(%s)' % self.filename)
+		_LOG.debug('DataProvider.open(%s)', self.filename)
 
 		self.close()
 
@@ -123,7 +123,7 @@ class DataProvider:
 				self.next_offset = self._check_file(self._file)
 
 			except Exception, e:
-				_LOG.exception('DataProvider.open(%s) error ' % self.filename)
+				_LOG.exception('DataProvider.open(%s) error ', self.filename)
 				self.close()
 				raise StandardError(e)
 
@@ -133,7 +133,7 @@ class DataProvider:
 
 
 	def save(self):
-		_LOG.debug("DataProvider.save() next_offset=%d" % self.next_offset)
+		_LOG.debug("DataProvider.save() next_offset=%d", self.next_offset)
 		if not self._readonly:
 			self.saved_next_offset = self.next_offset
 			self.saved_objects_count = self.objects_count
@@ -291,15 +291,15 @@ class DataProvider:
 
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: next_offset=%d' % next_offset)
+		_LOG.debug('DataProvider._check_file: next_offset=%d', next_offset)
 
 		# liczba plikow
 		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
+		_LOG.debug('DataProvider._check_file: objects_count=%d', self.objects_count)
 
 		# liczba plikow
 		self.saved_next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: saved_next_offset=%d' % self.saved_next_offset)
+		_LOG.debug('DataProvider._check_file: saved_next_offset=%d', self.saved_next_offset)
 
 		if self.saved_next_offset == 0 or self.saved_next_offset > next_offset:
 			self.saved_next_offset = next_offset
@@ -309,7 +309,7 @@ class DataProvider:
 
 		# liczba plikow
 		self.saved_objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: saved_objects_count=%d' % self.saved_objects_count)
+		_LOG.debug('DataProvider._check_file: saved_objects_count=%d', self.saved_objects_count)
 
 		if self.saved_objects_count == 0 or self.saved_objects_count > self.objects_count:
 			self.saved_objects_count = self.objects_count
@@ -362,7 +362,7 @@ class DataProvider:
 			@param data			dane do zapisania
 			@return następny offset (koneic danych)
 		'''
-		_LOG.debug('DataProvider._write_block(%d, %d)' % (offset, size))
+		_LOG.debug('DataProvider._write_block(%d, %d)', offset, size)
 		dest_file.seek(offset)
 		# nagłówek bloku
 		dest_file.write(pack('LLL', self._DATA_BLOCK_HEADER_PREFIX, offset, size))

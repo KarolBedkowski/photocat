@@ -81,7 +81,7 @@ def _create_pdf(parent, items, options={}):
 
 	cols = max(int((defaultPageSize[0] - MARGIN_LEFT - MARGIN_RIGHT) / (img_width + 0.5 * cm)), 1)
 
-	_LOG.info('create_pdf filename=%s' % filename)
+	_LOG.info('create_pdf filename=%s', filename)
 	parent.SetCursor(wx.HOURGLASS_CURSOR)
 	try:
 		stylesheet = getSampleStyleSheet()
@@ -116,7 +116,7 @@ def _create_pdf(parent, items, options={}):
 		doc.build(page, onLaterPages=__my_page, onFirstPage=__my_page)
 
 	except Exception, err:
-		_LOG.exception('create_pdf error. file=%s' % filename)
+		_LOG.exception('create_pdf error. file=%s', filename)
 		dialogs.message_box_error(parent, _('Error:\n%s') % str(err),  _('Export to PDF'))
 
 	else:

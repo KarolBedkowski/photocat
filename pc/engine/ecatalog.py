@@ -135,7 +135,7 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 			dlg_progress.Update(allfiles+100, _('Done!'))
 
 		except Exception, err:
-			_LOG.exception('_add_or_update_catalog(%r)' % data)
+			_LOG.exception('_add_or_update_catalog(%r)', data)
 			dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
 			raise errors.UpdateDiskError(err)
 
@@ -226,7 +226,7 @@ def open_catalog(filename):
 		@retuen obiekt Catalog
 		@exception OpenCatalogError
 	'''
-	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
+	_LOG.debug("ecatalog.open_catalog(%s)" , filename)
 
 	# plik indeksu
 	# istnienie
@@ -240,7 +240,7 @@ def open_catalog(filename):
 	# zapis
 	file_writable = os.access(filename, os.W_OK)
 	if not file_writable:
-		_LOG.debug("file %s not writable" % filename)
+		_LOG.debug("file %s not writable", filename)
 
 	# plik danych
 	data_file = os.path.splitext(filename)[0] + '.data'
@@ -255,16 +255,16 @@ def open_catalog(filename):
 	# zapisywanie
 	data_writable = os.access(data_file, os.W_OK)
 	if not data_writable:
-		_LOG.debug("file %s not writable" % data_file)
+		_LOG.debug("file %s not writable", data_file)
 
 	# ścieżka
 	path_writable = os.access(os.path.dirname(filename), os.W_OK)
 	if not path_writable:
-		_LOG.debug("dir with file %s not writable" % filename)
+		_LOG.debug("dir with file %s not writable", filename)
 
 	writable = file_writable and path_writable and data_writable
-	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)" % (filename, writable, file_writable,
-			path_writable, data_writable))
+	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)", filename, writable, file_writable,
+			path_writable, data_writable)
 
 	try:
 		catalog = Storage.load(filename)
@@ -284,7 +284,7 @@ def new_catalog(filename):
 		@retuen obiekt Catalog
 		@exception OpenCatalogError
 	'''
-	_LOG.debug("ecatalog.open_catalog(%s)" % filename)
+	_LOG.debug("ecatalog.open_catalog(%s)", filename)
 
 	path = os.path.dirname(filename)
 

@@ -113,7 +113,7 @@ class FileImage(CatalogFile):
 				self._exif_data = dict(eval(self.disk.catalog.data_provider.get_data(self.exif)))
 
 			except:
-				_LOG.exception('FileImage.exif_data file=%s' % self.name)
+				_LOG.exception('FileImage.exif_data file=%s', self.name)
 				self._exif_data = None
 
 		return self._exif_data
@@ -138,7 +138,7 @@ class FileImage(CatalogFile):
 				date = time.strftime('%c', time.localtime(self.shot_date))
 
 			except:
-				_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
+				_LOG.exception('_get_info convert to date error shot_date=%r', self.shot_date)
 
 			else:
 				result.append((51, _('Date'), date))
@@ -224,7 +224,7 @@ class FileImage(CatalogFile):
 
 
 	def _load_exif(self, path):
-		_LOG.debug('FileImage._load_exif(%s)' % path)
+		_LOG.debug('FileImage._load_exif(%s)', path)
 		self.exif = None
 		jpeg_file = None
 		try:
@@ -245,7 +245,7 @@ class FileImage(CatalogFile):
 					self.exif = self.disk.catalog.data_provider.append(str_exif)
 
 		except StandardError:
-			_LOG.exception('load_exif error file=%s' % path)
+			_LOG.exception('load_exif error file=%s', path)
 
 		finally:
 			if jpeg_file is not None:
@@ -258,7 +258,7 @@ class FileImage(CatalogFile):
 			@param path		- ścieżka do pliku
 			@param options	- opcje
 		'''
-		_LOG.debug('FileImage._load_thumb(%s)' % path)
+		_LOG.debug('FileImage._load_thumb(%s)', path)
 		try:
 			try:
 				image = PILImage.open(path)
@@ -284,7 +284,7 @@ class FileImage(CatalogFile):
 			output.close()
 
 		except StandardError:
-			_LOG.exception('PILImage error file=%s' % path)
+			_LOG.exception('PILImage error file=%s', path)
 			self.thumb = None
 
 
@@ -304,7 +304,7 @@ class FileImage(CatalogFile):
 					shot_info.append((name, int(val) if int(val) == val else val))
 				
 				except:
-					_LOG.exception('_get_info exif %s "%s"' % (key, exif.get(key)))
+					_LOG.exception('_get_info exif %s "%s"', key, exif.get(key))
 
 		get_value('EXIF FNumber', _('f'))
 
@@ -317,7 +317,7 @@ class FileImage(CatalogFile):
 				shot_info.append((_('iso'), iso))
 
 			except:
-				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
+				_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
 
 		append('EXIF Flash', _('flash'))
 		get_value('EXIF FocalLength', _('focal len.'))
@@ -333,7 +333,7 @@ class FileImage(CatalogFile):
 					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
 
 				except:
-					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
+					_LOG.exception('_get_info key=%s val="%s"', exif_key, exif[exif_key])
 
 		return 0
 

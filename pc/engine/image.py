@@ -46,7 +46,7 @@ _CACHE_LIST = deque()
 
 
 def clear_cache():
-	_LOG.info('clear_cache count=%d' % len(_CACHE))
+	_LOG.info('clear_cache count=%d', len(_CACHE))
 	_CACHE.clear()
 	_CACHE_LIST.clear()
 
@@ -62,7 +62,7 @@ def load_image_from_item(item):
 		img		= wx.ImageFromStream(cStringIO.StringIO(item.image))
 
 	except Exception, err:
-		_LOG.exception('load_image_from_item %s error' % item.name)
+		_LOG.exception('load_image_from_item %s error', item.name)
 
 	return img or wx.EmptyImage(1, 1)
 

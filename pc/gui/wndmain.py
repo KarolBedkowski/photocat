@@ -358,7 +358,7 @@ class WndMain(wx.Frame):
 					self._dirs_tree.add_catalog(catalog)
 
 				except Exception, err:
-					_LOG.exception('WndMain._on_file_new(%s)' % filename)
+					_LOG.exception('WndMain._on_file_new(%s)', filename)
 					dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('New file'))
 					self.SetStatusText(_('Error: %s') % err.message)
 
@@ -902,7 +902,7 @@ class WndMain(wx.Frame):
 			self.SetStatusText(filename)
 
 		except Exception, err:
-			_LOG.exception('WndMain._open_file(%s)' % filename)
+			_LOG.exception('WndMain._open_file(%s)', filename)
 			dialogs.message_box_error(self, (_('Error opening file %s:\n') % filename) + err.message, _('Open file'))
 			self.SetStatusText(_('Error: %s') % err.message)
 			catalog = None
@@ -916,7 +916,7 @@ class WndMain(wx.Frame):
 					self.SetStatusText(_('Opened %s') % filename)
 
 				dirty, dirtyp = catalog.dirty_objects_count
-				_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d' % (filename, dirty, dirtyp))
+				_LOG.info('WndMain._open_file(%s) successfull dirty_object=%d/%d', filename, dirty, dirtyp)
 				if dirtyp > 10:
 					if dialogs.message_box_warning_yesno(self,
 							_('Catalog file contain %d%% unused entries.\nRebuild catalog?') % dirtyp, 'PC'):
@@ -959,7 +959,7 @@ class WndMain(wx.Frame):
 				Storage.save(catalog)
 
 			except:
-				_LOG.exception('WndMain._on_file_save(%s)' % catalog.caption)
+				_LOG.exception('WndMain._on_file_save(%s)', catalog.caption)
 				dialogs.message_box_error(self, _('Error saving catalog %s') % catalog.catalog_filename, _('Save catalog'))
 
 		self.SetCursor(wx.STANDARD_CURSOR)

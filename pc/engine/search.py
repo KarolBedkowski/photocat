@@ -101,7 +101,7 @@ def find(what, options, catalogs, insert_func, progress_funct):
 	if not match_case:
 		what = what.lower()
 
-	_LOG.debug('find: "%s"' % what)
+	_LOG.debug('find: "%s"', what)
 
 	if regex:
 		# wyszukiwanie po regex

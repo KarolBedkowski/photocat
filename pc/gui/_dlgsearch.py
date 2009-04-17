@@ -387,7 +387,7 @@ class _DlgSearch(wx.Frame):
 
 		try:
 			options = self._get_options()
-			_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
+			_LOG.debug('DlgSearch._on_btn_find options: %r', options)
 
 		except _OptionsError, err:
 			dialogs.message_box_info(self, _("Bad options:\n%s") % err, 'PC')

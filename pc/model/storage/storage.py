@@ -48,7 +48,7 @@ class Storage:
 
 	@staticmethod
 	def load(filename):
-		_LOG.info('Storage.load catalog=%s' % filename)
+		_LOG.info('Storage.load catalog=%s', filename)
 		from pc	import model
 
 		input_file	= None
@@ -84,7 +84,7 @@ class Storage:
 						continue
 
 					if not class_name in class_names:
-						_LOG.warn('invalid class name: "%s"' % line)
+						_LOG.warn('invalid class name: "%s"', line)
 						continue
 
 					klass	= class_names[class_name]
@@ -103,7 +103,7 @@ class Storage:
 							data['disk']	= objects.get(disk_id)
 
 						elif class_name != 'Disk':
-							_LOG.warn("no disk id=%d line='%s'" % (disk_id, line))
+							_LOG.warn("no disk id=%d line='%s'", disk_id, line)
 
 					# utworzenie klasy
 					objects[oid] = new_object = klass(oid, **data)
@@ -113,7 +113,7 @@ class Storage:
 							catalog.disks.append(new_object)
 
 						else:
-							_LOG.warn('id without parent "%s"' % line)
+							_LOG.warn('id without parent "%s"', line)
 
 					else:
 						data['parent'].add_child(new_object)
@@ -122,13 +122,13 @@ class Storage:
 					catalog.tags_provider.add_item(new_object)
 
 				except:
-					_LOG.exception('Storage.load(%s) line="%s"' % (filename, line))
+					_LOG.exception('Storage.load(%s) line="%s"', filename, line)
 					raise InvalidFileError()
 
 			catalog.disks.sort(key=operator.attrgetter('name'))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
 
-			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d' % (filename, catalog.object_in_files))
+			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d', filename, catalog.object_in_files)
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
@@ -143,13 +143,13 @@ class Storage:
 			if input_file is not None:
 				input_file.close()
 
-		_LOG.info('Storage.load finished in %0.2f sec' % (time.time() - time_start))
+		_LOG.info('Storage.load finished in %0.2f sec', (time.time() - time_start))
 		return catalog
 
 
 	@staticmethod
 	def save(catalog):
-		_LOG.info('Storage.save catalog=%s' % catalog.catalog_filename)
+		_LOG.info('Storage.save catalog=%s', catalog.catalog_filename)
 		output_file = None
 		time_start = time.time()
 		try:
@@ -176,7 +176,7 @@ class Storage:
 			if output_file is not None:
 				output_file.close()
 
-		_LOG.info('Storage.save catalog finished in %0.2f sec' % (time.time() - time_start))
+		_LOG.info('Storage.save catalog finished in %0.2f sec', (time.time() - time_start))
 
 
 	######################################################
@@ -193,7 +193,7 @@ class Storage:
 					and version <= Storage.SUPPORTED_FILE_VERSION_MAX), version
 
 		except:
-			_LOG.exception('Storage.__check_header line = "%s"' % line)
+			_LOG.exception('Storage.__check_header line = "%s"', line)
 
 		return False, None
 

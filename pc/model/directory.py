@@ -110,7 +110,7 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def load(self, path, options, on_update):
-		_LOG.debug('Directory.load(%s)' % path)
+		_LOG.debug('Directory.load(%s)', path)
 		if CatalogFile.load(self, path, options, on_update):
 			if not self._load_subdirs(path, options, on_update):
 				return False
@@ -127,7 +127,7 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def update(self, path, options, on_update):
-		_LOG.debug('Directory.update(%s)' % path)
+		_LOG.debug('Directory.update(%s)', path)
 		if CatalogFile.update(self, path, options, on_update)[1]:
 			if not self._update_subdirs(path, options, on_update):
 				return False
@@ -326,7 +326,7 @@ class Directory(CatalogFile, TreeItem):
 		if not os.path.exists(captions_file_path):
 			return
 
-		_LOG.debug('Directory._load_caption_txt(%s)' % captions_file_path)
+		_LOG.debug('Directory._load_caption_txt(%s)', captions_file_path)
 
 		captions_file = open(captions_file_path, 'r')
 		current_file_name = None
@@ -365,7 +365,7 @@ class Directory(CatalogFile, TreeItem):
 		if len(file_data) == 0:
 			return
 
-		_LOG.debug('Directory._load_caption_txt_process_file(%s)' % file_name)
+		_LOG.debug('Directory._load_caption_txt_process_file(%s)', file_name)
 
 		if file_name == '.':
 			update_obj = self
