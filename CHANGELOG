@@ -1,7 +1,9 @@
-2009-04-05 (v 1.5.0a)
+2009-04-17 (v 1.5.0b0)
 
 Karol Będkowski:
-      all: poprawa uability
+      all: poprawa usability
+      all: optymalizacja
+      gui: dodanie możliwości przechodzenia między zdjęciami we właściwościach
 
 
 2008-11-29 (v 1.4.2b4)

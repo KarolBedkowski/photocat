@@ -49,9 +49,9 @@ class DlgProperties(DlgPropertiesBase):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_layout_page_main(notebook), 	_('Main'))
+		notebook.AddPage(self._create_layout_page_main(notebook),	_('Main'))
 		notebook.AddPage(self._create_layout_page_desc(notebook),	_('Comment'))
-		notebook.AddPage(self._create_layout_page_exif(notebook), 	_('Exif'))
+		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
 		notebook.AddPage(self._create_layout_page_tags(notebook),	_('Tags'))
 		notebook.AddPage(self._create_layout_page_other(notebook),	_('Other'))
 		return notebook
