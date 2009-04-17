@@ -296,10 +296,12 @@ class DlgPropertiesBase(wx.Dialog):
 
 
 	def _on_btn_next(self, evt):
+		self._on_close()
 		self.EndModal(wx.ID_FORWARD)
 
 
 	def _on_btn_prev(self, evt):
+		self._on_close()
 		self.EndModal(wx.ID_BACKWARD)
 
 
