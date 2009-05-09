@@ -146,6 +146,9 @@ class Catalog(TreeItem):
 	def encode(self):
 		return ''
 
+	def encode3(self):
+		return ''
+
 
 	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
 		for disk in self.disks:
