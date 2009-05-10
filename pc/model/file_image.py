@@ -55,7 +55,7 @@ _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 
 class FileImage(CatalogFile):
-	_FV3_CLASS_NAME = 1048576 + 3
+	FV3_CLASS_NAME = 1048576 + 3
 
 	# lista rozszerzeń plików, które są ładowane (obsługiwane)
 	IMAGE_FILES_EXTENSION = dict( (key, None) for key in (

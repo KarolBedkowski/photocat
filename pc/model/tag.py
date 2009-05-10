@@ -91,7 +91,7 @@ class Tag(object):
 
 
 class Tags(object):
-	_FV3_CLASS_NAME = 1048576 + 4
+	FV3_CLASS_NAME = 1048576 + 4
 
 	def __init__(self, catalog):
 		self._tags = {}
@@ -139,7 +139,7 @@ class Tags(object):
 	##########################################################################
 
 	def encode3(self):
-		return 0, self._FV3_CLASS_NAME, self.tags
+		return 0, self.FV3_CLASS_NAME, self.tags
 
 
 	##########################################################################

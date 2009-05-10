@@ -26,11 +26,6 @@ __revision__	= '$Id$'
 
 
 from types	import DictType
-try:
-	import cPickle as pickle
-except ImportError:
-	import pickle
-import struct
 
 from kabes.model.singleton	import Singleton
 
@@ -68,7 +63,7 @@ _ID_PROVIDER = _IdProvider()
 
 
 class StorageObject(object):
-	_FV3_CLASS_NAME = ord(' ')
+	FV3_CLASS_NAME = 0
 
 	def __init__(self, oid, *args, **kwargs):
 		self._invalid	= False
@@ -128,10 +123,7 @@ class StorageObject(object):
 			if val is not None:
 				result[key] = val
 
-		#data = pickle.dumps(result, -1)
-
-		return self.id, self._FV3_CLASS_NAME, result
-		#struct.pack('LLL', self.id, len(self.__class__.__name__), len(data)) + self.__class__.__name__ + data
+		return self.id, self.FV3_CLASS_NAME, result
 
 
 	##########################################################################
@@ -170,12 +162,11 @@ class StorageObject(object):
 	@classmethod
 	def decode3(cls, data):
 		#attributes = cls.__preserveattr__() # nie potrzebne?
-		eval_data = pickle.loads(data)
 
-		if type(eval_data) != DictType:
-			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(eval_data)))
+		if type(data) != DictType:
+			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(data)))
 
-		return eval_data
+		return data
 
 
 # vim: encoding=utf8: ff=unix:

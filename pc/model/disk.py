@@ -39,7 +39,7 @@ _ = wx.GetTranslation
 
 
 class Disk(Directory):
-	_FV3_CLASS_NAME = 1048576 + 1
+	FV3_CLASS_NAME = 1048576 + 1
 
 	def __init__(self, oid, name, parent, catalog, *args, **kwargs):
 		self.catalog		= catalog
