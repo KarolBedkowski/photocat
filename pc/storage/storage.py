@@ -29,7 +29,7 @@ __revision__	= '$Id$'
 import gzip
 import time
 import operator
-
+import struct
 try:
 	import cPickle as pickle
 except ImportError:
@@ -41,6 +41,7 @@ _LOG = logging.getLogger(__name__)
 
 from storage_errors	import LoadFileError, InvalidFileError, SaveFileError
 
+from pc.model import Disk, Catalog, FileImage, Directory, Tags
 
 
 class Storage:
@@ -56,11 +57,9 @@ class Storage:
 	@staticmethod
 	def load(filename):
 		_LOG.info('Storage.load catalog=%s', filename)
-		from pc	import model
 
 		input_file	= None
-		catalog		= model.Catalog(filename)
-		class_names	= {'Directory': model.Directory, 'Disk': model.Disk, 'FileImage': model.FileImage}
+		catalog		= Catalog(filename)
 		objects		= {}
 
 		time_start = time.time()
@@ -73,11 +72,12 @@ class Storage:
 			if not fileok:
 				raise InvalidFileError()
 
+			_LOG.info('Storage.load fileversion: %d (%s)', version, line)
 			if version == 3:
-				Storage.__load_v3(input_file, catalog, class_names, objects, filename)
+				Storage.__load_v3(input_file, catalog, objects, filename)
 
 			else:
-				Storage.__load_v2(input_file, catalog, class_names, objects, filename)
+				Storage.__load_v2(input_file, catalog, objects, filename)
 
 			catalog.disks.sort(key=operator.attrgetter('name'))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
@@ -173,16 +173,21 @@ class Storage:
 		try:
 			output_file = gzip.open(catalog.catalog_filename, 'w')
 			output_file.write(Storage.__get_header() + '\n')
-
-			tags = pickle.dumps(catalog.tags_provider.tags, -1)
-
-			output_file.write('TAGS|0|%d\n' % len(tags))
-			output_file.write(tags)
-
+			
 			_LOG.debug('Storage.save file opened, header written')
 
+			oid, class_name, odata = catalog.tags_provider.encode3()
+			tags = pickle.dumps(odata, -1)
+			output_file.write(Storage.__pack_header(oid, class_name, len(tags)))
+			output_file.write(tags)
+
 			def write_item(item):
-				output_file.write(item.encode3())
+				oid, class_name, odata = item.encode3()
+				if oid is not None:
+					data = pickle.dumps(odata, -1)
+					output_file.write(Storage.__pack_header(oid, class_name, len(data)))
+					output_file.write(data)
+
 				map(write_item, item.childs_to_store)
 
 			write_item(catalog)
@@ -198,9 +203,18 @@ class Storage:
 			if output_file is not None:
 				output_file.close()
 
+	__HEADER_HEAD = 'XYZ'
+
 
 	@staticmethod
-	def __load_v2(input_file, catalog, class_names, objects, filename):
+	def __pack_header(oid, o_type_id, data_len, extra_len=0):
+		return struct.pack('cccLLLL', Storage.__HEADER_HEAD[0], Storage.__HEADER_HEAD[1], Storage.__HEADER_HEAD[2], oid, o_type_id, data_len, extra_len)
+
+
+	@staticmethod
+	def __load_v2(input_file, catalog, objects, filename):
+		class_names	= {'Directory': Directory, 'Disk': Disk, 'FileImage': FileImage}
+
 		while True:
 			line = input_file.readline()
 			if line == '':
@@ -261,36 +275,52 @@ class Storage:
 				raise InvalidFileError()
 
 
+	__HEADER_LEN = struct.calcsize("cccLLLL")
+	__HEADER_HEAD_TUPLE = tuple(__HEADER_HEAD)
+
 	@staticmethod
-	def __load_v3(input_file, catalog, class_names, objects, filename):
+	def __load_header(input_file):
+		data = input_file.read(Storage.__HEADER_LEN)
+		if not data:
+			return None, None, None, None
+		
+		h1, h2, h3, oid, o_type_id, data_len, extra_len = struct.unpack('cccLLLL', data)
+		if (h1, h2, h3) != Storage.__HEADER_HEAD_TUPLE:
+			_LOG.warn('header error: %r' % data)
+			raise InvalidFileError()
+
+		return oid, o_type_id, data_len, extra_len
+		
+
+	@staticmethod
+	def __load_v3(input_file, catalog, objects, filename):
+		class_names = dict(( (clazz._FV3_CLASS_NAME, clazz) for clazz in (Directory, Disk, FileImage) ))
+		class_names_tags = Tags._FV3_CLASS_NAME
+
+		head_len = struct.calcsize("LLL")
+		line = ''
+		head = ''
+		oid = ''
+
+		tags_provider = catalog.tags_provider
+
 		while True:
-			line = input_file.readline()
-			if line == '':
-				break
-
-			line = line.strip()
-			if line == '' or line.startswith('#'):
-				continue
-
 			try:
-				class_name, oid, data_len = line.split("|", 2)
-				oid = int(oid)
-				data_len = int(data_len)
+				oid, o_type_id, data_len, extra_len = Storage.__load_header(input_file)
+				if oid is None:
+					break
+				
 				data = input_file.read(data_len)
 
-				#print line
-				#print len(data)
-				#print data
-
-				if class_name == 'TAGS':
-					catalog.tags_provider.tags = pickle.loads(data)
+				if o_type_id == class_names_tags:
+					tags_provider.tags = pickle.loads(data)
 					continue
 
-				if not class_name in class_names:
-					_LOG.warn('invalid class name: "%s"', line)
+				if not o_type_id in class_names:
+					_LOG.warn('invalid class name: "%r"', o_type_id)
 					continue
 
-				klass	= class_names[class_name]
+				klass	= class_names[o_type_id]
 				data	= klass.decode3(data)
 
 				data['parent']	= None
@@ -305,27 +335,28 @@ class Storage:
 					if disk_id in objects:
 						data['disk']	= objects.get(disk_id)
 
-					elif class_name != 'Disk':
-						_LOG.warn("no disk id=%d line='%s'", disk_id, line)
+					elif o_type_id != Disk._FV3_CLASS_NAME:
+						_LOG.warn("no disk id=%d oid=%d", disk_id, oid)
 
 				# utworzenie klasy
 				objects[oid] = new_object = klass(oid, **data)
 
 				if data.get('parent') is None:
-					if class_name == 'Disk':
+					if o_type_id ==  Disk._FV3_CLASS_NAME:
 						catalog.disks.append(new_object)
 
 					else:
-						_LOG.warn('id without parent "%s"', line)
+						_LOG.warn('id without parent oid="%d"', oid)
 
 				else:
 					data['parent'].add_child(new_object)
 
 				# tagi
-				catalog.tags_provider.add_item(new_object)
+				tags_provider.add_item(new_object)
 
-			except:
-				_LOG.exception('Storage.load(%s) line="%s"', filename, line)
+			except Exception,err:
+				print err
+				_LOG.exception('Storage.load(%s) head="%s" oid=%d', filename, head, oid)
 				raise InvalidFileError()
 
 

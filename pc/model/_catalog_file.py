@@ -35,7 +35,7 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from storage import StorageObject
+from pc.storage.storage_object import StorageObject
 
 _ = wx.GetTranslation
 

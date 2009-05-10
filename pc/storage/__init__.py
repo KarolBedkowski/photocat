@@ -26,10 +26,6 @@ __revision__	= '$Id$'
 
 
 
-from storage		import Storage
-from storage_object	import StorageObject
-from data_provider	import DataProvider
-
 
 
 # vim: encoding=utf8: ff=unix:

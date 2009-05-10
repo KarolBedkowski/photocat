@@ -30,6 +30,7 @@ try:
 	import cPickle as pickle
 except ImportError:
 	import pickle
+import struct
 
 from kabes.model.singleton	import Singleton
 
@@ -67,6 +68,8 @@ _ID_PROVIDER = _IdProvider()
 
 
 class StorageObject(object):
+	_FV3_CLASS_NAME = ord(' ')
+
 	def __init__(self, oid, *args, **kwargs):
 		self._invalid	= False
 		self._id		= None if oid is None else _ID_PROVIDER.set(oid)
@@ -125,9 +128,10 @@ class StorageObject(object):
 			if val is not None:
 				result[key] = val
 
-		data = pickle.dumps(result, -1)
+		#data = pickle.dumps(result, -1)
 
-		return '|'.join((self.__class__.__name__, str(self.id), str(len(data)))) + "\n" + data
+		return self.id, self._FV3_CLASS_NAME, result
+		#struct.pack('LLL', self.id, len(self.__class__.__name__), len(data)) + self.__class__.__name__ + data
 
 
 	##########################################################################

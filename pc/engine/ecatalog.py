@@ -40,7 +40,7 @@ from kabes.tools.appconfig	import AppConfig
 from kabes.tools.formaters	import format_human_size
 
 from pc.model				import Catalog
-from pc.model.storage		import Storage
+from pc.storage.storage		import Storage
 from pc.gui.dlgadddisk		import DlgAddDisk
 
 import errors

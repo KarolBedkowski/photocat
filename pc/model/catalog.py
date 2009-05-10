@@ -29,9 +29,10 @@ __revision__	= '$Id$'
 import os
 import operator
 
+from pc.storage.data_provider import DataProvider
+
 from gui		import TreeItem
 from disk		import Disk
-from storage	import DataProvider
 from tag		import Tags
 from timeline	import Timeline
 from file_image	import FileImage
@@ -147,7 +148,7 @@ class Catalog(TreeItem):
 		return ''
 
 	def encode3(self):
-		return ''
+		return None, None, None
 
 
 	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):

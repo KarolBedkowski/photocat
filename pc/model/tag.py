@@ -91,6 +91,8 @@ class Tag(object):
 
 
 class Tags(object):
+	_FV3_CLASS_NAME = 1048576 + 4
+
 	def __init__(self, catalog):
 		self._tags = {}
 		self.catalog = catalog
@@ -133,6 +135,11 @@ class Tags(object):
 	@property
 	def tags_items(self):
 		return self._tags.iteritems()
+
+	##########################################################################
+
+	def encode3(self):
+		return 0, self._FV3_CLASS_NAME, self.tags
 
 
 	##########################################################################

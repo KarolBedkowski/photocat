@@ -46,7 +46,7 @@ from kabes.wxtools.wnd_shell	import WndShell
 import pc
 
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
-from pc.model.storage		import Storage
+from pc.storage.storage		import Storage
 from pc.engine				import ecatalog, eprint, epdf, image
 
 from components.dirstree	import DirsTree

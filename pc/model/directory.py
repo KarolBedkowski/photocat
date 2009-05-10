@@ -38,6 +38,8 @@ from file_image		import FileImage
 
 
 class Directory(CatalogFile, TreeItem):
+	_FV3_CLASS_NAME = 1048576 + 2
+
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 		TreeItem.__init__(self)
