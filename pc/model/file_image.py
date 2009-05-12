@@ -26,31 +26,20 @@ __revision__	= '$Id$'
 
 
 import time
-import re
 import types
 import logging
 _LOG = logging.getLogger(__name__)
-import cStringIO
 
 import wx
 
-import Image as PILImage
-import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
-import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
-#PILImage._initialized = 3
-
 from kabes.tools.formaters		import format_human_size
 
-from pc.lib					import EXIF
+from pc.engine.image		import load_thumb_from_file, load_exif_from_file
 
 from _catalog_file			import CatalogFile
 
 _ = wx.GetTranslation
 
-
-
-_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
-_RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 
 
@@ -192,8 +181,8 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self._load_thumb(path, options)
-			self._load_exif(path)
+			self.thumb, self.dimensions = load_thumb_from_file(path, options, self.disk.catalog.data_provider)
+			self.exif, self._exif_data = load_exif_from_file(path, self.disk.catalog.data_provider)
 			self.shot_date = None
 			self.__set_shot_date_from_exif(self._exif_data)
 
@@ -206,8 +195,8 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self._load_thumb(path, options)
-				self._load_exif(path)
+				self.thumb, self.dimensions = load_thumb_from_file(path, options, self.disk.catalog.data_provider)
+				self.exif, self._exif_data = load_exif_from_file(path, self.disk.catalog.data_provider)
 				self.shot_date = None
 				self.__set_shot_date_from_exif(self._exif_data)
 
@@ -222,71 +211,6 @@ class FileImage(CatalogFile):
 
 
 	##########################################################################
-
-
-	def _load_exif(self, path):
-		_LOG.debug('FileImage._load_exif(%s)', path)
-		self.exif = None
-		jpeg_file = None
-		try:
-			jpeg_file = open(path, 'rb')
-			exif = EXIF.process_file(jpeg_file)
-			if exif is not None:
-				self._exif_data = {}
-				for key, val in exif.iteritems():
-					if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') or
-							key.startswith('EXIF Tag ') or key.startswith('MakerNote Tag ')):
-						continue
-
-					val = str(val).replace('\0', '').strip()
-					self._exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
-
-				if len(self._exif_data) > 0:
-					str_exif = repr(self._exif_data)
-					self.exif = self.disk.catalog.data_provider.append(str_exif)
-
-		except StandardError:
-			_LOG.exception('load_exif error file=%s', path)
-
-		finally:
-			if jpeg_file is not None:
-				jpeg_file.close()
-
-
-	def _load_thumb(self, path, options):
-		''' file_image._load_thumb(path, options) -- ładowanie miniaturki z pliku i zapisanie katalogu
-
-			@param path		- ścieżka do pliku
-			@param options	- opcje
-		'''
-		_LOG.debug('FileImage._load_thumb(%s)', path)
-		try:
-			try:
-				image = PILImage.open(path)
-
-			except:
-				image =  PILImage.new('RGB', (1, 1))
-
-			if image.mode != 'RGB':
-				image = image.convert('RGB')
-
-			self.dimensions = image.size
-
-			thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
-			thumb_compression = options.get('thumb_compression', 50)
-
-			if self.dimensions[0] > thumbsize[0] or self.dimensions[1] > thumbsize[1]:
-				image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-
-			# zapisanie miniaturki przez StringIO
-			output = cStringIO.StringIO()
-			image.save(output, "JPEG", quality=thumb_compression)
-			self.thumb = self.disk.catalog.data_provider.append(output.getvalue())
-			output.close()
-
-		except StandardError:
-			_LOG.exception('PILImage error file=%s', path)
-			self.thumb = None
 
 
 	def __get_exif_shotinfo(self, exif):

@@ -34,15 +34,24 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 import cStringIO
+import re
 
 import wx
 
-from pc.model				import FileImage
+import Image as PILImage
+import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
+import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
+#PILImage._initialized = 3
+
+from pc.lib					import EXIF
+
 
 
 _CACHE = {}
 _CACHE_LIST = deque()
 
+_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
+_RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
 
 def clear_cache():
@@ -110,6 +119,87 @@ def load_bitmap_from_item_with_size(item, width, height):
 
 	return result
 
+
+
+def load_thumb_from_file(path, options, data_provider):
+	''' load_thumb_from_file(path, options, data_provider) -- ładowanie miniaturki z pliku i zapisanie katalogu
+
+		@param path		- ścieżka do pliku
+		@param options	- opcje
+		@param data_provider	- DataProvider
+	'''
+	_LOG.debug('load_thumb_from_file(%s)', path)
+	dimensions = None
+	thumb = None
+
+	try:
+		try:
+			image = PILImage.open(path)
+
+		except:
+			image =  PILImage.new('RGB', (1, 1))
+
+		if image.mode != 'RGB':
+			image = image.convert('RGB')
+
+		dimensions = image.size
+
+		thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
+		thumb_compression = options.get('thumb_compression', 50)
+
+		if dimensions[0] > thumbsize[0] or dimensions[1] > thumbsize[1]:
+			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
+
+		# zapisanie miniaturki przez StringIO
+		output = cStringIO.StringIO()
+		image.save(output, "JPEG", quality=thumb_compression)
+		thumb = data_provider.append(output.getvalue())
+		output.close()
+
+	except StandardError:
+		_LOG.exception('load_thumb_from_file error file=%s', path)
+		thumb = None
+
+	return thumb, dimensions
+
+
+
+def load_exif_from_file(path, data_provider):
+	''' load_exif_from_file(path, data_provider) -- ładowanie exifa z pliku i zapisanie w katalogu
+
+		@param path		- ścieżka do pliku
+		@param data_provider	- DataProvider
+	'''
+	_LOG.debug('load_exif_from_file(%s)', path)
+	self_exif = None
+	exif_data = {}
+
+	jpeg_file = None
+	try:
+		jpeg_file = open(path, 'rb')
+		exif = EXIF.process_file(jpeg_file)
+		if exif is not None:
+			exif_data = {}
+			for key, val in exif.iteritems():
+				if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') or
+						key.startswith('EXIF Tag ') or key.startswith('MakerNote Tag ')):
+					continue
+
+				val = str(val).replace('\0', '').strip()
+				exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
+
+			if len(exif_data) > 0:
+				str_exif = repr(exif_data)
+				self_exif = data_provider.append(str_exif)
+
+	except StandardError:
+		_LOG.exception('load_exif_from_file error file=%s', path)
+
+	finally:
+		if jpeg_file is not None:
+			jpeg_file.close()
+
+	return self_exif, exif_data
 
 
 # vim: encoding=utf8: ff=unix:
