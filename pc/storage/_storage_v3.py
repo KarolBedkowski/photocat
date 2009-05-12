@@ -103,8 +103,15 @@ class StorageV3:
 					break
 				
 				data = input_file.read(data_len)
+				if len(data) < data_len:
+					_LOG.error('truncated file data (expect: %d, have: %d)', data_len, len(data))
+					raise InvalidFileError()
+
 				if extra_len:
 					data_extra = input_file.read(extra_len)
+					if len(data_extra) < extra_len:
+						_LOG.error('truncated file extra (expect: %d, have: %d)', extra_len, len(data_extra))
+						raise InvalidFileError()
 
 				if o_type_id == class_names_tags:
 					tags_provider.tags = pickle.loads(data)
@@ -149,7 +156,6 @@ class StorageV3:
 				tags_provider.add_item(new_object)
 
 			except Exception,err:
-				print err
 				_LOG.exception('StorageV3.load(%s) oid=%d', filename, oid)
 				raise InvalidFileError()
 
@@ -164,6 +170,11 @@ class StorageV3:
 		data = input_file.read(StorageV3.__HEADER_LEN)
 		if not data:
 			return None, None, None, None
+
+		if len(data) != StorageV3.__HEADER_LEN:
+			_LOG.warn('file truncated header: (except: %d, load: %d)', StorageV3.__HEADER_LEN, len(data))
+			raise InvalidFileError()
+
 		
 		h1, h2, h3, oid, o_type_id, data_len, extra_len = struct.unpack('cccLLLL', data)
 		if (h1, h2, h3) != StorageV3.__HEADER_HEAD_TUPLE:
