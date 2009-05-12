@@ -192,7 +192,6 @@ class Directory(CatalogFile, TreeItem):
 		return False
 
 
-
 	def _load_subdirs(self, path, options, on_update):
 		subdirs					= self.__folder_subdirs_list(path)
 		include_empty_subdirs	= options.get('include_empty_subdirs', False)

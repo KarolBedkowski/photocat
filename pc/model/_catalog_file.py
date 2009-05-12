@@ -35,7 +35,8 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from pc.storage.storage_object import StorageObject
+from pc.engine.efile			import get_file_date_size
+from pc.storage.storage_object	import StorageObject
 
 _ = wx.GetTranslation
 
@@ -123,8 +124,7 @@ class CatalogFile(StorageObject):
 
 	def load(self, path, _options, on_update):
 		""" załadowanie danych o obiekcie """
-		self.size = os.path.getsize(path)
-		self.date = os.path.getmtime(path)
+		self.size, self.date = get_file_date_size(path)
 		return on_update(path)
 
 
@@ -134,8 +134,7 @@ class CatalogFile(StorageObject):
 		'''
 		old_size = self.size
 		old_date = self.date
-		self.size = os.path.getsize(path)
-		self.date = os.path.getmtime(path)
+		self.size, self.date = get_file_date_size(path)
 		return (old_size != self.size or old_date != self.date), on_update(path)
 
 

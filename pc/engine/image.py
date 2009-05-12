@@ -202,4 +202,6 @@ def load_exif_from_file(path, data_provider):
 	return self_exif, exif_data
 
 
+
+
 # vim: encoding=utf8: ff=unix:
