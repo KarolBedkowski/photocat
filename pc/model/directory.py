@@ -28,6 +28,7 @@ __revision__	= '$Id$'
 
 import os
 import logging
+import itertools
 
 _LOG = logging.getLogger(__name__)
 
@@ -82,13 +83,7 @@ class Directory(CatalogFile, TreeItem):
 
 	@property
 	def images_recursive(self):
-		# TODO: zmienic na yield(?)
-		res = []
-		for subdir in self.subdirs:
-			res.extend(subdir.images_recursive)
-
-		res.extend(self.files)
-		return res
+		return itertools.chain(self.files, *[ subdir.images_recursive for subdir in self.subdirs ])
 
 	##########################################################################
 

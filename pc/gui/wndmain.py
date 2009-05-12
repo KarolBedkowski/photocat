@@ -1132,7 +1132,7 @@ class WndMain(wx.Frame):
 
 		if images:
 			if self._menu_view_show_recur.IsChecked() and hasattr(images, 'images_recursive'):
-				images = images.images_recursive
+				images = list(images.images_recursive)
 				force_sort = True
 
 			elif hasattr(images, 'files'):
