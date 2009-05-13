@@ -39,7 +39,7 @@ from kabes.wxtools			import dialogs
 from kabes.tools.appconfig	import AppConfig
 from kabes.tools.formaters	import format_human_size
 
-from pc.model				import Catalog
+from pc.model				import Catalog, FileImage
 from pc.storage.storage		import Storage
 from pc.gui.dlgadddisk		import DlgAddDisk
 
@@ -64,7 +64,7 @@ def _count_files(path, parent_wnd, title):
 	dlg_progress = wx.ProgressDialog(title, _("Counting files..."), parent=parent_wnd, maximum=1,
 			style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
 
-	allfiles = Catalog.fast_count_files_dirs(path) + 1
+	allfiles = fast_count_files_dirs(path) + 1
 
 	dlg_progress.Destroy()
 
@@ -374,6 +374,50 @@ def get_sorting_function(sort_by=SORT_BY_NAME, reverse=False, items_as_list=Fals
 		@param items_as_list - (bool) czy elementy są podane jako lista czy jako lista elementów Thumb
 	'''
 	return _SORTING_FUNCTIONS[sort_by][1 if items_as_list else 0], reverse
+
+
+
+def fast_count_files_dirs(path):
+	""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
+
+	_image_files_extension = FileImage.IMAGE_FILES_EXTENSION
+
+	def count_folder(path):
+		content = [ os.path.join(path, name)
+				for name
+				in os.listdir(path)
+				if not name.startswith('.')
+		]
+
+		content_size = sum((
+			os.path.getsize(item)
+			for item in content
+			if os.path.isdir(item)
+				or (os.path.isfile(item)
+					and os.path.splitext(item)[1].lower() in _image_files_extension
+				)
+		))
+
+		content_size += sum( ( count_folder(item) for item in content if os.path.isdir(item) ) )
+		return content_size
+
+	return count_folder(path)
+
+
+
+def update_images_from_dict(images, data):
+	changed_tags = {}
+	for image in images:
+		for key, val in data.iteritems():
+			if key == 'tags':
+				for key in image.set_tags(val):
+					changed_tags.__setitem__(key, None)
+
+			elif hasattr(image, key):
+				setattr(image, key, val)
+	
+	return changed_tags.keys()
+
 
 
 

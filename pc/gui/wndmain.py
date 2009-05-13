@@ -641,7 +641,7 @@ class WndMain(wx.Frame):
 
 		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
-			changed_tags = Catalog.update_images_from_dict(self._photo_list.selected_items, result)
+			changed_tags = ecatalog.update_images_from_dict(self._photo_list.selected_items, result)
 			folder.catalog.dirty = True
 			self._dirs_tree.update_catalog_node(folder.catalog)
 			self.__update_changed_tags(folder.catalog.tags_provider, changed_tags)
