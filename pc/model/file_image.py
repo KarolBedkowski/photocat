@@ -34,7 +34,7 @@ import wx
 
 from kabes.tools.formaters		import format_human_size
 
-from pc.engine.image		import load_thumb_from_file, load_exif_from_file
+from pc.engine.image		import load_thumb_from_file, load_exif_from_file, load_exif_from_storage, get_exit_shot_date_value, get_exif_shotinfo
 
 from _catalog_file			import CatalogFile
 
@@ -84,11 +84,11 @@ class FileImage(CatalogFile):
 		self._exif_data = None
 
 		# format pliku wer 1
-		if self.thumb and type(self.thumb) == types.TupleType:
-			self.thumb = self.thumb[0]
+#		if self.thumb and type(self.thumb) == types.TupleType:
+#			self.thumb = self.thumb[0]
 
-		if self.exif and type(self.exif) == types.TupleType:
-			self.exif = self.exif[0]
+#		if self.exif and type(self.exif) == types.TupleType:
+#			self.exif = self.exif[0]
 
 		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
@@ -100,7 +100,7 @@ class FileImage(CatalogFile):
 	def exif_data(self):
 		if self._exif_data is None and self.exif is not None:
 			try:
-				self._exif_data = dict(eval(self.disk.catalog.data_provider.get_data(self.exif)))
+				self._exif_data = load_exif_from_storage(self.exif, self.catalog.data_provider)
 
 			except:
 				_LOG.exception('FileImage.exif_data file=%s', self.name)
@@ -134,17 +134,17 @@ class FileImage(CatalogFile):
 				result.append((51, _('Date'), date))
 
 		exif = self.exif_data
-		if exif is not None:
+		if exif:
 			if date is None and self.shot_date is None:
-				date = self.__get_exif_shot_date(exif)
-				if date:
-					result.append((51, _('Date'), date))
+				ddate = get_exit_shot_date_value(exif)
+				if ddate:
+					result.append((51, _('Date'), time.strftime('%c', ddate)))
 
 			if 'Image Model' in exif:
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
 
 			# informacje o zdjeciu
-			shot_info = self.__get_exif_shotinfo(exif)
+			shot_info = get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
 
@@ -181,8 +181,8 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self.thumb, self.dimensions = load_thumb_from_file(path, options, self.disk.catalog.data_provider)
-			self.exif, self._exif_data = load_exif_from_file(path, self.disk.catalog.data_provider)
+			self.thumb, self.dimensions = load_thumb_from_file(path, options, self.catalog.data_provider)
+			self.exif, self._exif_data = load_exif_from_file(path, self.catalog.data_provider)
 			self.shot_date = None
 			self.__set_shot_date_from_exif(self._exif_data)
 
@@ -195,8 +195,8 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self.thumb, self.dimensions = load_thumb_from_file(path, options, self.disk.catalog.data_provider)
-				self.exif, self._exif_data = load_exif_from_file(path, self.disk.catalog.data_provider)
+				self.thumb, self.dimensions = load_thumb_from_file(path, options, self.catalog.data_provider)
+				self.exif, self._exif_data = load_exif_from_file(path, self.catalog.data_provider)
 				self.shot_date = None
 				self.__set_shot_date_from_exif(self._exif_data)
 
@@ -213,72 +213,16 @@ class FileImage(CatalogFile):
 	##########################################################################
 
 
-	def __get_exif_shotinfo(self, exif):
-		shot_info = []
-
-		def append(key, name):
-			if key in exif:
-				shot_info.append((name, exif[key]))
-
-		append('EXIF ExposureTime', _('t'))
-
-		def get_value(key, name):
-			if key in exif:
-				try:
-					val = eval(exif[key] + '.')
-					shot_info.append((name, int(val) if int(val) == val else val))
-				
-				except:
-					_LOG.exception('_get_info exif %s "%s"', key, exif.get(key))
-
-		get_value('EXIF FNumber', _('f'))
-
-		if 'EXIF ISOSpeedRatings' in exif:
-			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
-
-		elif 'MakerNote ISOSetting' in exif:
-			try:
-				iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
-				shot_info.append((_('iso'), iso))
-
-			except:
-				_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
-
-		append('EXIF Flash', _('flash'))
-		get_value('EXIF FocalLength', _('focal len.'))
-
-		return shot_info
-
-
-	def __get_exif_shot_date_value(self, exif):
-		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
-			if exif_key in exif:
-				try:
-					value = exif[exif_key]
-					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
-
-				except:
-					_LOG.exception('_get_info key=%s val="%s"', exif_key, exif[exif_key])
-
-		return 0
-
-
-	def __get_exif_shot_date(self, exif):
-		ddate = self.__get_exif_shot_date_value(exif)
-		return None if not ddate else time.strftime('%c', ddate)
-
-
 	def __set_shot_date_from_exif(self, exif):
 		if exif is None:
 			return
 
-		shot_date = self.__get_exif_shot_date_value(exif)
+		shot_date = get_exit_shot_date_value(exif)
 		if shot_date == 0:
 			self.shot_date = 0
 
 		elif shot_date is not None:
 			self.shot_date = time.mktime(shot_date)
-
 
 
 	##########################################################################

@@ -29,12 +29,18 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
+
 from collections import deque
 import logging
 _LOG = logging.getLogger(__name__)
 
 import cStringIO
 import re
+
+try:
+	import cPickle as pickle
+except ImportError:
+	import pickle
 
 import wx
 
@@ -47,17 +53,23 @@ from pc.lib					import EXIF
 
 
 
+_ = wx.GetTranslation
+
 _CACHE = {}
 _CACHE_LIST = deque()
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
 _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
+_EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime')
+
+
 
 def clear_cache():
 	_LOG.info('clear_cache count=%d', len(_CACHE))
 	_CACHE.clear()
 	_CACHE_LIST.clear()
+
 
 
 def load_image_from_item(item):
@@ -76,6 +88,7 @@ def load_image_from_item(item):
 	return img or wx.EmptyImage(1, 1)
 
 
+
 def load_bitmap_from_item(item):
 	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka z katalogu.
 
@@ -83,6 +96,7 @@ def load_bitmap_from_item(item):
 	'''
 	img = load_image_from_item(item)
 	return img.ConvertToBitmap() if img is not None else None
+
 
 
 def load_bitmap_from_item_with_size(item, width, height):
@@ -189,7 +203,7 @@ def load_exif_from_file(path, data_provider):
 				exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
 
 			if len(exif_data) > 0:
-				str_exif = repr(exif_data)
+				str_exif = pickle.dumps(exif_data, -1)
 				self_exif = data_provider.append(str_exif)
 
 	except StandardError:
@@ -201,6 +215,70 @@ def load_exif_from_file(path, data_provider):
 
 	return self_exif, exif_data
 
+
+
+def load_exif_from_storage(exifidx, data_provider):
+	data  = data_provider.get_data(exifidx)
+	if data[0] == '\x80':
+		try:
+			return pickle.loads(data)
+		
+		except pickle.UnpicklingError:
+			pass
+
+	return dict(eval(data))
+
+
+
+def get_exit_shot_date_value(exif):
+	for exif_key in _EXIF_SHOTDATE_KEYS:
+		if exif_key in exif:
+			try:
+				value = exif[exif_key]
+				return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
+
+			except:
+				_LOG.exception('_get_info key=%s val="%s"', exif_key, exif[exif_key])
+
+	return 0
+
+
+
+def get_exif_shotinfo(exif):
+	shot_info = []
+
+	def append(key, name):
+		if key in exif:
+			shot_info.append((name, exif[key]))
+
+	append('EXIF ExposureTime', _('t'))
+
+	def get_value(key, name):
+		if key in exif:
+			try:
+				val = eval(exif[key] + '.')
+				shot_info.append((name, int(val) if int(val) == val else val))
+
+			except:
+				_LOG.exception('_get_info exif %s "%s"', key, exif.get(key))
+
+	get_value('EXIF FNumber', _('f'))
+
+	if 'EXIF ISOSpeedRatings' in exif:
+		append('EXIF ISOSpeedRatings', _('iso'))
+
+	elif 'MakerNote ISOSetting' in exif:
+		try:
+			iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
+			shot_info.append((_('iso'), iso))
+
+		except:
+			_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
+
+	append('EXIF Flash', _('flash'))
+	get_value('EXIF FocalLength', _('focal len.'))
+
+	return shot_info
 
 
 
