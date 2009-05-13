@@ -32,9 +32,9 @@ import itertools
 
 _LOG = logging.getLogger(__name__)
 
-from _catalog_file	import CatalogFile
-from gui			import TreeItem
-from file_image		import FileImage
+from pc.model._catalog_file	import CatalogFile
+from pc.model.gui			import TreeItem
+from pc.model.file_image	import FileImage
 
 
 

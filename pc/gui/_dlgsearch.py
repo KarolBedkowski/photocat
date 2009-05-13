@@ -49,7 +49,7 @@ from pc.engine				import search, image
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 from components.searchresultlistctrl	import SearchResultListCtrl
 
-from _dlgproperties	import DlgProperties
+from pc.gui._dlgproperties	import DlgProperties
 
 _ = wx.GetTranslation
 

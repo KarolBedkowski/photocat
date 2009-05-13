@@ -30,7 +30,7 @@ __all__			= ['DlgPropertiesDir']
 
 import wx
 
-from _dlg_properties_base import DlgPropertiesBase
+from pc.gui._dlg_properties_base import DlgPropertiesBase
 
 _ = wx.GetTranslation
 

@@ -31,11 +31,11 @@ import operator
 
 from pc.storage.data_provider import DataProvider
 
-from gui		import TreeItem
-from disk		import Disk
-from tag		import Tags
-from timeline	import Timeline
-from file_image	import FileImage
+from pc.model.gui		import TreeItem
+from pc.model.disk		import Disk
+from pc.model.tag		import Tags
+from pc.model.timeline	import Timeline
+from pc.model.file_image	import FileImage
 
 
 

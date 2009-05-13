@@ -36,7 +36,7 @@ from wx.lib import masked
 from kabes.tools.appconfig	import AppConfig
 from kabes.wxtools.guitools		import create_button
 
-from components.tags_list_box import TagsListBox
+from pc.gui.components.tags_list_box import TagsListBox
 
 _ = wx.GetTranslation
 

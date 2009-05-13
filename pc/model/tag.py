@@ -26,7 +26,7 @@ __revision__	= '$Id$'
 
 
 
-from file_image	import FileImage
+from pc.model.file_image	import FileImage
 
 
 

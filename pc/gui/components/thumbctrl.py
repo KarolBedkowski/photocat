@@ -38,7 +38,7 @@ import wx.lib.newevent
 from pc.lib	import fonttools
 from pc.engine.thumb_drawer import ThumbDrawer
 
-from _thumb import Thumb
+from pc.gui.components._thumb import Thumb
 
 
 (ThumbSelectionChangeEvent,		EVT_THUMB_SELECTION_CHANGE)		= wx.lib.newevent.NewEvent()

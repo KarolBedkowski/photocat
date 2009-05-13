@@ -49,18 +49,18 @@ from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.storage.storage		import Storage
 from pc.engine				import ecatalog, eprint, epdf, image
 
-from components.dirstree	import DirsTree
-from components.infopanel	import InfoPanel
-from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
+from pc.gui.components.dirstree	import DirsTree
+from pc.gui.components.infopanel	import InfoPanel
+from pc.gui.components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 
-from _dlgabout				import show_about_box
-from _dlgproperties			import DlgProperties
-from _dlgproperties_dir		import DlgPropertiesDir
-from _dlgproperties_disk	import DlgPropertiesDisk
-from _dlgproperties_mutli	import DlgPropertiesMulti
-from _dlgsearch				import DlgSearchProvider
-from _dlgsettings			import DlgSettings
-from _dlg_edit_tags			import show_dlg_edit_tags
+from pc.gui._dlgabout				import show_about_box
+from pc.gui._dlgproperties			import DlgProperties
+from pc.gui._dlgproperties_dir		import DlgPropertiesDir
+from pc.gui._dlgproperties_disk		import DlgPropertiesDisk
+from pc.gui._dlgproperties_mutli	import DlgPropertiesMulti
+from pc.gui._dlgsearch				import DlgSearchProvider
+from pc.gui._dlgsettings			import DlgSettings
+from pc.gui._dlg_edit_tags			import show_dlg_edit_tags
 
 _ = wx.GetTranslation
 

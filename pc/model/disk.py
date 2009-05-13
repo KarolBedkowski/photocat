@@ -32,7 +32,7 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from directory	import Directory
+from pc.model.directory	import Directory
 
 _ = wx.GetTranslation
 

@@ -32,7 +32,7 @@ import wx
 
 from kabes.wxtools.dialogs	import message_box_error
 
-from _dlg_properties_base	import DlgPropertiesBase
+from pc.gui._dlg_properties_base	import DlgPropertiesBase
 
 _ = wx.GetTranslation
 
