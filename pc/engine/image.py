@@ -32,10 +32,9 @@ __revision__	= '$Id$'
 
 from collections import deque
 import logging
-_LOG = logging.getLogger(__name__)
-
 import cStringIO
 import re
+import time
 
 try:
 	import cPickle as pickle
@@ -52,7 +51,7 @@ import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImageP
 from pc.lib					import EXIF
 
 
-
+_LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
 
 _CACHE = {}
@@ -279,6 +278,15 @@ def get_exif_shotinfo(exif):
 	get_value('EXIF FocalLength', _('focal len.'))
 
 	return shot_info
+
+
+# list rozszerzeń plików, które są raw-ami
+_IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
+		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf'))
+
+
+def is_file_raw(name):
+	return name and (name.split('.')[-1].lower() in _IMAGE_FILES_EXTENSION_RAW)
 
 
 

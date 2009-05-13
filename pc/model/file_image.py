@@ -26,20 +26,18 @@ __revision__	= '$Id$'
 
 
 import time
-import types
 import logging
 _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kabes.tools.formaters		import format_human_size
+from kabes.tools.formaters	import format_human_size
 
-from pc.engine.image		import load_thumb_from_file, load_exif_from_file, load_exif_from_storage, get_exit_shot_date_value, get_exif_shotinfo
+from pc.engine	import image	as eimage
 
-from _catalog_file			import CatalogFile
+from pc.model._catalog_file		import CatalogFile
 
 _ = wx.GetTranslation
-
 
 
 
@@ -69,9 +67,6 @@ class FileImage(CatalogFile):
 		'.erf'						# epson raw
 	))
 
-	# list rozszerzeń plików, które są raw-ami
-	IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
-		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf'))
 
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
@@ -83,24 +78,17 @@ class FileImage(CatalogFile):
 
 		self._exif_data = None
 
-		# format pliku wer 1
-#		if self.thumb and type(self.thumb) == types.TupleType:
-#			self.thumb = self.thumb[0]
-
-#		if self.exif and type(self.exif) == types.TupleType:
-#			self.exif = self.exif[0]
-
 		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
-		self.is_raw = self.name and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
+		self.is_raw = eimage.is_file_raw(self.name)
 
 
 	@property
 	def exif_data(self):
 		if self._exif_data is None and self.exif is not None:
 			try:
-				self._exif_data = load_exif_from_storage(self.exif, self.catalog.data_provider)
+				self._exif_data = eimage.load_exif_from_storage(self.exif, self.catalog.data_provider)
 
 			except:
 				_LOG.exception('FileImage.exif_data file=%s', self.name)
@@ -136,7 +124,7 @@ class FileImage(CatalogFile):
 		exif = self.exif_data
 		if exif:
 			if date is None and self.shot_date is None:
-				ddate = get_exit_shot_date_value(exif)
+				ddate = eimage.get_exit_shot_date_value(exif)
 				if ddate:
 					result.append((51, _('Date'), time.strftime('%c', ddate)))
 
@@ -144,7 +132,7 @@ class FileImage(CatalogFile):
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
 
 			# informacje o zdjeciu
-			shot_info = get_exif_shotinfo(exif)
+			shot_info = eimage.get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
 
@@ -181,8 +169,8 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self.thumb, self.dimensions = load_thumb_from_file(path, options, self.catalog.data_provider)
-			self.exif, self._exif_data = load_exif_from_file(path, self.catalog.data_provider)
+			self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
+			self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
 			self.shot_date = None
 			self.__set_shot_date_from_exif(self._exif_data)
 
@@ -195,8 +183,8 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self.thumb, self.dimensions = load_thumb_from_file(path, options, self.catalog.data_provider)
-				self.exif, self._exif_data = load_exif_from_file(path, self.catalog.data_provider)
+				self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
+				self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
 				self.shot_date = None
 				self.__set_shot_date_from_exif(self._exif_data)
 
@@ -217,7 +205,7 @@ class FileImage(CatalogFile):
 		if exif is None:
 			return
 
-		shot_date = get_exit_shot_date_value(exif)
+		shot_date = eimage.get_exit_shot_date_value(exif)
 		if shot_date == 0:
 			self.shot_date = 0
 
