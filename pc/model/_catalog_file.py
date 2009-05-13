@@ -119,7 +119,7 @@ class CatalogFile(StorageObject):
 		StorageObject.delete(self)
 		if self.tags is not None and len(self.tags) > 0:
 			_LOG.debug('delete tags from %s', self.name)
-			self.disk.catalog.tags_provider.remove_item(self)
+			self.catalog.tags_provider.remove_item(self)
 
 
 	def load(self, path, _options, on_update):
@@ -151,7 +151,7 @@ class CatalogFile(StorageObject):
 			updated_tags = [ tag for tag in tags if tag not in self.tags] + [ tag for tag in self.tags if tag not in tags ]
 
 		self.tags = tuple(tags) if len(tags) > 0 else None
-		self.disk.catalog.tags_provider.update_item(self)
+		self.catalog.tags_provider.update_item(self)
 		return updated_tags
 
 
