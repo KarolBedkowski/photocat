@@ -159,14 +159,5 @@ class StorageObject(object):
 		return eval_data
 
 
-	@classmethod
-	def decode3(cls, data):
-		#attributes = cls.__preserveattr__() # nie potrzebne?
-
-		if type(data) != DictType:
-			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(data)))
-
-		return data
-
 
 # vim: encoding=utf8: ff=unix:

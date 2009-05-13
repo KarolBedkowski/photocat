@@ -29,6 +29,7 @@ __revision__	= '$Id$'
 import gzip
 import struct
 import logging
+from types import DictType
 try:
 	import cPickle as pickle
 except ImportError:
@@ -69,23 +70,20 @@ class _ObjectFactory:
 			return None
 
 		klass	= _CLASS_NAMES[o_type_id]
-		data	= klass.decode3(pickle.loads(data))
+		data	= pickle.loads(data)
 
-		data['catalog']	= self.catalog
+		if type(data) != DictType:
+			_LOG.warn('_ObjectFactory.create_object oid: %d, unknow data: "%s" type=%s', oid, eval_data, type(data))
+			return None
 
-		# wstawienie obiektow nadrzędnych
-		parent = None
-		if 'parent_id' in data:
-			parent = self.objects.get(data['parent_id'])
-
-		data['parent'] = parent
+		parent = self.objects.get(data['parent_id']) if 'parent_id' in data else None
 
 		disk_id = data.get('disk_id')
 		if disk_id and disk_id in self.objects:
 			data['disk'] = self.objects[disk_id]
 
 		# utworzenie klasy
-		self.objects[oid] = new_object = klass(oid, **data)
+		self.objects[oid] = new_object = klass(oid, parent=parent, catalog=self.catalog, **data)
 
 		if parent:
 			parent.add_child(new_object)
