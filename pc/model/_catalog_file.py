@@ -35,14 +35,15 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from storage import StorageObject
+from pc.engine.efile			import get_file_date_size
+from pc.storage.storage_object	import StorageObject
 
 _ = wx.GetTranslation
 
 
 
 class CatalogFile(StorageObject):
-	def __init__(self, id, name, parent, disk, *args, **kwargs):
+	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		self.size = kwargs.get('size')
 		self.date = kwargs.get('date')
 		self.tags = kwargs.get('tags')
@@ -50,12 +51,12 @@ class CatalogFile(StorageObject):
 		if self.desc is not None and type(self.desc) != types.UnicodeType:
 			self.desc = unicode(self.desc)
 
-		StorageObject.__init__(self, id, *args, **kwargs)
+		StorageObject.__init__(self, oid, *args, **kwargs)
 
 		self.name		= name
 		self.parent		= parent
 		self.disk		= disk
-		self.catalog	= disk.catalog
+		self.catalog	= kwargs.get('catalog') or disk.catalog
 
 		self._cached_path = None
 
@@ -117,25 +118,23 @@ class CatalogFile(StorageObject):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		StorageObject.delete(self)
 		if self.tags is not None and len(self.tags) > 0:
-			_LOG.debug('delete tags from %s' % self.name)
-			self.disk.catalog.tags_provider.remove_item(self)
+			_LOG.debug('delete tags from %s', self.name)
+			self.catalog.tags_provider.remove_item(self)
 
 
-	def load(self, path, options, on_update):
+	def load(self, path, _options, on_update):
 		""" załadowanie danych o obiekcie """
-		self.size = os.path.getsize(path)
-		self.date = os.path.getmtime(path)
+		self.size, self.date = get_file_date_size(path)
 		return on_update(path)
 
 
-	def update(self, path, options, on_update):
+	def update(self, path, _options, on_update):
 		''' aktualizacja eleentu
 			return: True=obiekt się zmienił
 		'''
 		old_size = self.size
 		old_date = self.date
-		self.size = os.path.getsize(path)
-		self.date = os.path.getmtime(path)
+		self.size, self.date = get_file_date_size(path)
 		return (old_size != self.size or old_date != self.date), on_update(path)
 
 
@@ -152,31 +151,27 @@ class CatalogFile(StorageObject):
 			updated_tags = [ tag for tag in tags if tag not in self.tags] + [ tag for tag in self.tags if tag not in tags ]
 
 		self.tags = tuple(tags) if len(tags) > 0 else None
-		self.disk.catalog.tags_provider.update_item(self)
+		self.catalog.tags_provider.update_item(self)
 		return updated_tags
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
-		''' obj.check_on_find(text, [options]) -> [] -- lista obiektów spełniających kryteria wyszukiwania '''
+	def check_on_find(self, cmpfunc, add_callback, options, _progress_callback=None):
+		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów wyszukiwania '''
 
-		if options is None or options.get('search_in_names', True):
-			if self.name is not None and cmpfunc(self.name):
-				if self._check_on_find_date(options):
+		if options.get('search_in_names', True) and self.name and cmpfunc(self.name) and self._check_on_find_date(options):
+			add_callback(self)
+			return
+
+		if options.get('search_in_descr', True) and self.desc and cmpfunc(self.desc) and self._check_on_find_date(options):
+			add_callback(self)
+			return
+
+		if options.get('search_in_tags', True) and self.tags and self._check_on_find_date(options):
+			for tag in self.tags:
+				if cmpfunc(tag):
 					add_callback(self)
 					return
 
-		if options is None or options.get('search_in_tags', True):
-			if self.tags is not None and self._check_on_find_date(options):
-				for tag in self.tags:
-					if cmpfunc(tag):
-						add_callback(self)
-						return
-
-		if options is None or options.get('search_in_descr', True):
-			if self.desc is not None and cmpfunc(self.desc):
-				if self._check_on_find_date(options):
-					add_callback(self)
-					return
 
 	##########################################################################
 
@@ -184,16 +179,13 @@ class CatalogFile(StorageObject):
 	def _check_on_find_date(self, options):
 		''' sprawdznie czy obiekt zawiera sie w danym zakresie  dat. '''
 		date = self.date_to_check
-		if options is None or date is None:
+		if date is None:
 			return True
 
 		if not options.get('search_date', False):
 			return True
 
-		if date >= options.get('search_date_start') and date <= options.get('search_date_end'):
-			return True
-
-		return False
+		return date >= options.get('search_date_start') and date <= options.get('search_date_end')
 
 
 	##########################################################################

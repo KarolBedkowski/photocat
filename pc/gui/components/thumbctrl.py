@@ -38,7 +38,7 @@ import wx.lib.newevent
 from pc.lib	import fonttools
 from pc.engine.thumb_drawer import ThumbDrawer
 
-from _thumb import Thumb
+from pc.gui.components._thumb import Thumb
 
 
 (ThumbSelectionChangeEvent,		EVT_THUMB_SELECTION_CHANGE)		= wx.lib.newevent.NewEvent()
@@ -66,10 +66,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.thumbs_preload = thumbs_preload
 		self._status_wnd	= status_wnd
 
+		self._thumb_width	= 200
+		self._thumb_height	= 200
+
 		self._items				= []
-		self._selected_list		= []
-		self._selected			= -1
-		self._last_preloaded	= -1
+		self._reset()
 
 		self.Bind(wx.EVT_SIZE,			self.__on_resize)
 		self.Bind(wx.EVT_PAINT,			self.__on_paint)
@@ -79,6 +80,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_IDLE,			self.__on_idle)
 
 
+	def _reset(self):
+		self._selected_list		= []
+		self._selected			= -1
+		self._last_preloaded	= -1
+		self._last_preloaded_status = None
+
+
 	def show_dir(self, images, sort_function=None):
 		''' thumbctrl.show_dir(images) -- wyświetlenie listy miniaturek
 
@@ -86,12 +94,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param sort_function - funkcja sortująca [opcja]
 		'''
 		self._items			= [ Thumb(image) for image in images ]
-		if sort_function is not None:
-			self._items.sort(lambda x, y: sort_function(x.image, y.image))
+		if sort_function:
+			key_func, reverse = sort_function
+			self._items.sort(key=key_func, reverse=reverse)
 
+		self._reset()
 		self._last_preloaded	= -1 if self.thumbs_preload else len(self._items)
-		self._selected			= -1
-		self._selected_list		= []
 
 		self.Scroll(0, 0)
 		self._update()
@@ -102,9 +110,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 			@param sort_function - funkcja sortująca
 		'''
-		self._items.sort(lambda x, y: sort_function(x.image, y.image))
-		self._selected_list = []
-		self._selected		= -1
+		key_func, reverse = sort_function
+		self._items.sort(key=key_func, reverse=reverse)
+		self._reset()
 
 		self.Scroll(0, 0)
 		self._update()
@@ -122,7 +130,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self._thumb_drawer.thumb_width	= thumb_width
 		self._thumb_drawer.thumb_height = thumb_height
 
-		[ item.reset() for item in self._items ]
+		for item in self._items:
+			item.reset()
 
 		self._update()
 
@@ -151,14 +160,31 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	@property
 	def selected_items(self):
-		''' thumbctrl.selected_items -> [] -- zwraca listę zaznaczonych obiektów '''
-		return self._selected_list
+		''' thumbctrl.selected_items -> (iter) -- zwraca listę zaznaczonych obiektów '''
+		if not self._selected_list:
+			return tuple()
+
+		return ( self._items[idx].image for idx in self._selected_list )
+
+
+	@property
+	def selected_count(self):
+		''' thumbctrl.selected_count -> int -- liczba zaznazonych elementów '''
+		return len(self._selected_list)
 
 
 	@property
 	def selected_item(self):
 		''' thumbctrl.selected_item -> item -- zwraca ostatni zaznaczony element lub None '''
 		return self._items[self._selected].image if self._selected > -1 else None
+
+
+	@property
+	def selected_index(self):
+		''' thumbctrl.selected_index -> (int, int) -- zwraca index zaznaczonego elementu
+				i liczbę elementów
+		'''
+		return (-1, -1) if self._selected == -1 else (self._selected, len(self._items))
 
 
 	def _set_show_captions(self, show_captions):
@@ -177,6 +203,21 @@ class ThumbCtrl(wx.ScrolledWindow):
 		return self._thumb_drawer.group_by
 
 	group_by = property(_get_group_by, _set_group_by)
+
+
+	def get_item_by_index(self, idx):
+		''' thumbctrl.get_item_by_index(idx) -> item -- zwraca element o podanym indeksie '''
+		return self._items[idx].image
+
+
+	def select_item(self, item2select):
+		''' thumbctrl.select_item(item) -- zaznaczenie elementu '''
+		for idx, item in enumerate(self._items):
+			if item.image == item2select:
+				self._selected = idx
+				self._selected_list = [idx]
+				break
+
 
 	#######################################################################################
 
@@ -296,11 +337,15 @@ class ThumbCtrl(wx.ScrolledWindow):
 				self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
 
 				if self._status_wnd is not None:
-					self._status_wnd.SetStatusText("%d%%" % (100*self._last_preloaded/len_items), 1)
+					now_preloaded = int(20*self._last_preloaded/len_items)
+					if now_preloaded != self._last_preloaded_status:
+						self._last_preloaded_status = now_preloaded
+						self._status_wnd.SetStatusText("%d%%" % (now_preloaded*5), 1)
 
 				evt.RequestMore(True)
 
-			elif self._status_wnd:
+			elif self._status_wnd and self._last_preloaded_status:
+				self._last_preloaded_status = None
 				self._status_wnd.SetStatusText("", 1)
 
 		evt.Skip()

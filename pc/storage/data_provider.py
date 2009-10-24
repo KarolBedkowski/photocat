@@ -53,8 +53,12 @@ class DataProvider:
 		self.filename		= os.path.splitext(filename)[0] + ".data"
 		self.objects_count	= 0
 
+		self.saved_next_offset		= 0
+		self.saved_objects_count	= 0
+
 		self._file					= None
 		self._last_offset_file_pos	= len(self._DATA_FILE_HEADER_ID) + calcsize("I")
+		self._readonly				= False
 
 
 	def __del__(self):
@@ -66,7 +70,7 @@ class DataProvider:
 			@param offset_size (offset, size) danych do pobrania
 			@return dane
 		'''
-		_LOG.debug('DataProvider.get_data(%d)' % offset)
+		_LOG.debug('DataProvider.get_data(%d)', offset)
 		src_file = src_file or self._file
 		if src_file is None:
 			_LOG.warn('DataProvider.get: file closed')
@@ -93,32 +97,33 @@ class DataProvider:
 		'''
 		length = len(data)
 		offset = self.next_offset
-		_LOG.debug('DataProvider.put_data(%d, len=%d)' % (offset, length))
+		_LOG.debug('DataProvider.put_data(%d, len=%d)', offset, length)
 
 		self.next_offset = self._write_block(self._file, offset, length, data)
 
 		return offset
 
 
-	def open(self, force_new=False):
+	def open(self, force_new=False, readonly=False):
 		''' DataProvider.open([force_new]) -- otwarcie pliku danych
 			@param force_new wymuszenie utworzenia nowego pliku
 		'''
-		_LOG.debug('DataProvider.open(%s)' % self.filename)
+		_LOG.debug('DataProvider.open(%s)', self.filename)
 
 		self.close()
 
 		self._file = None
+		self._readonly = readonly
 		if os.path.exists(self.filename) and force_new:
 			os.unlink(self.filename)
 
 		if not force_new and os.path.exists(self.filename):
 			try:
-				self._file = file(self.filename, 'r+b')
+				self._file = file(self.filename, ('rb' if readonly else 'r+b'))
 				self.next_offset = self._check_file(self._file)
 
 			except Exception, e:
-				_LOG.exception('DataProvider.open(%s) error ' % self.filename)
+				_LOG.exception('DataProvider.open(%s) error ', self.filename)
 				self.close()
 				raise StandardError(e)
 
@@ -127,9 +132,20 @@ class DataProvider:
 			self.next_offset = self._write_header(self._file)
 
 
+	def save(self):
+		_LOG.debug("DataProvider.save() next_offset=%d", self.next_offset)
+		if not self._readonly:
+			self.saved_next_offset = self.next_offset
+			self.saved_objects_count = self.objects_count
+			self._write_next_offset(self._file, self.next_offset)
+			self._file.flush()
+
+
 	def close(self):
 		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
+			if not self._readonly:
+				self._file.truncate(max(self.saved_next_offset, self._DATA_FILE_HEADER_SIZE))
 			self._file.close()
 			self._file = None
 
@@ -141,6 +157,7 @@ class DataProvider:
 			@param catalog katalog do przebudowy
 			@return ilość zaoszczędzonego miejsca
 		'''
+		self.saved_next_offset = self.next_offset
 		self._file.flush()
 
 		saved_space		= -1
@@ -168,8 +185,8 @@ class DataProvider:
 				return next_offset
 
 			# kopiowanie katalogu z podkatalogami
-			def copy_directory(dir, next_offset):
-				for image in dir.files:
+			def copy_directory(directory, next_offset):
+				for image in directory.files:
 					image_thumb	= None
 					image_exif	= None
 
@@ -183,7 +200,7 @@ class DataProvider:
 
 					files_to_update.append((image, image_thumb, image_exif))
 
-				for subdir in dir.subdirs:
+				for subdir in directory.subdirs:
 					next_offset = copy_directory(subdir, next_offset)
 
 				return next_offset
@@ -218,8 +235,11 @@ class DataProvider:
 
 			# aktualizacja odnośników w katalogu
 			for image, image_thumb, image_exif in files_to_update:
-				if image_thumb is not None:		image.thumb = image_thumb
-				if image_exif is not None:		image.exif = image_exif
+				if image_thumb is not None:
+					image.thumb = image_thumb
+
+				if image_exif is not None:
+					image.exif = image_exif
 
 			# wywalenie starego pliku
 			os.unlink(old_filename)
@@ -271,11 +291,31 @@ class DataProvider:
 
 		# ostatni offset
 		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: next_offset=%d' % self.next_offset)
+		_LOG.debug('DataProvider._check_file: next_offset=%d', next_offset)
 
 		# liczba plikow
 		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: objects_count=%d' % self.objects_count)
+		_LOG.debug('DataProvider._check_file: objects_count=%d', self.objects_count)
+
+		# liczba plikow
+		self.saved_next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
+		_LOG.debug('DataProvider._check_file: saved_next_offset=%d', self.saved_next_offset)
+
+		if self.saved_next_offset == 0 or self.saved_next_offset > next_offset:
+			self.saved_next_offset = next_offset
+
+		else:
+			next_offset = self.saved_next_offset
+
+		# liczba plikow
+		self.saved_objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
+		_LOG.debug('DataProvider._check_file: saved_objects_count=%d', self.saved_objects_count)
+
+		if self.saved_objects_count == 0 or self.saved_objects_count > self.objects_count:
+			self.saved_objects_count = self.objects_count
+
+		else:
+			self.objects_count = self.saved_objects_count
 
 		return next_offset
 
@@ -289,7 +329,7 @@ class DataProvider:
 
 		# zapisanie nagłówka
 		dest_file.seek(0)
-		dest_file.write("\x00" * self._DATA_BLOCK_HEADER_SIZE)
+		dest_file.write("\x00" * self._DATA_FILE_HEADER_SIZE)
 		dest_file.seek(0)
 		dest_file.write(self._DATA_FILE_HEADER_ID)
 
@@ -311,7 +351,7 @@ class DataProvider:
 			@param next_offset	koniec danych
 		'''
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("LL", next_offset, self.objects_count))
+		dest_file.write(pack("LLLL", next_offset, self.objects_count, self.saved_next_offset, self.saved_objects_count))
 
 
 	def _write_block(self, dest_file, offset, size, data):
@@ -322,7 +362,7 @@ class DataProvider:
 			@param data			dane do zapisania
 			@return następny offset (koneic danych)
 		'''
-		_LOG.debug('DataProvider._write_block(%d, %d)' % (offset, size))
+		_LOG.debug('DataProvider._write_block(%d, %d)', offset, size)
 		dest_file.seek(offset)
 		# nagłówek bloku
 		dest_file.write(pack('LLL', self._DATA_BLOCK_HEADER_PREFIX, offset, size))

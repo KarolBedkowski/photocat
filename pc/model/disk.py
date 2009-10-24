@@ -32,20 +32,22 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from directory	import Directory
+from pc.model.directory	import Directory
 
 _ = wx.GetTranslation
 
 
 
 class Disk(Directory):
-	def __init__(self, id, name, parent, catalog, *args, **kwargs):
+	FV3_CLASS_NAME = 1048576 + 1
+
+	def __init__(self, oid, name, parent, catalog, *args, **kwargs):
 		self.catalog		= catalog
 		self.add_date		= kwargs.get('add_date')
 		self.update_date	= kwargs.get('update_date')
 		self.last_path		= None
 
-		Directory.__init__(self, id, name, parent, self, *args, **kwargs)
+		Directory.__init__(self, oid, name, parent, self, *args, **kwargs)
 
 
 	@property

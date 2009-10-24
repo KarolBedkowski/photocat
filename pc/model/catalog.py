@@ -27,18 +27,20 @@ __revision__	= '$Id$'
 
 
 import os
+import operator
 
-from gui		import TreeItem
-from disk		import Disk
-from storage	import DataProvider
-from tag		import Tags
-from timeline	import Timeline
-from file_image	import FileImage
+from pc.storage.data_provider import DataProvider
+
+from pc.model.gui		import TreeItem
+from pc.model.disk		import Disk
+from pc.model.tag		import Tags
+from pc.model.timeline	import Timeline
+from pc.model.file_image	import FileImage
 
 
 
 class Catalog(TreeItem):
-	def __init__(self, filename):
+	def __init__(self, filename, readonly=False):
 		TreeItem.__init__(self)
 
 		self.catalog_filename	= filename
@@ -46,6 +48,7 @@ class Catalog(TreeItem):
 		self.last_id			= None
 		self.last_offset		= None
 		self.dirty				= True
+		self.readonly 			= readonly
 
 		self.disks				= []
 		self.catalog			= self
@@ -59,7 +62,7 @@ class Catalog(TreeItem):
 
 	@property
 	def caption(self):
-		return self.name + (self.dirty and ' *' or '')
+		return self.name + (self.dirty and ' *' or '') + (self.readonly and ' [ReadOnly]' or '')
 
 
 	@property
@@ -105,16 +108,22 @@ class Catalog(TreeItem):
 
 
 	def add_disk(self, path, name, descr, options, on_update):
-		disk = Disk(id=-1, name=name, parent=None, catalog=self)
+		if self.readonly:
+			raise StandardError("read only")
+
+		disk = Disk(-1, name, None, self)
 		disk.desc = descr
 		disk.load(path, options, on_update=on_update)
 		self.disks.append(disk)
-		self.disks.sort(lambda x,y: cmp(x.name, y.name))
+		self.disks.sort(key=operator.attrgetter('name'))
 		self.dirty = True
 		return disk
 
 
 	def remove_disk(self, disk):
+		if self.readonly:
+			raise StandardError("read only")
+
 		if disk in self.disks:
 			disk.delete()
 			self.disks.remove(disk)
@@ -125,6 +134,9 @@ class Catalog(TreeItem):
 
 
 	def update_disk(self, disk, path, name, descr, options, on_update):
+		if self.readonly:
+			raise StandardError("read only")
+
 		disk.name = name
 		disk.desc = descr
 		disk.update(path, options, on_update)
@@ -135,69 +147,21 @@ class Catalog(TreeItem):
 	def encode(self):
 		return ''
 
+	def encode3(self):
+		return None, None, None
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
-		[ disk.check_on_find(cmpfunc, add_callback, options, progress_callback) for disk in self.disks ]
+
+	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
+		for disk in self.disks:
+			disk.check_on_find(cmpfunc, add_callback, options, progress_callback)
 
 
 	def fill_shot_date(self):
-		[ disk.fill_shot_date() for disk in self.disks ]
+		for disk in self.disks:
+			disk.fill_shot_date()
 
 
 	##########################################################################
-
-
-	@staticmethod
-	def fast_count_files_dirs(path):
-		""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
-
-		_IMAGE_FILES_EXTENSION = FileImage.IMAGE_FILES_EXTENSION
-
-		def count_folder(path):
-			content = [ os.path.join(path, name)
-					for name
-					in os.listdir(path)
-					if not name.startswith('.')
-			]
-
-			content_size = sum((
-				os.path.getsize(item)
-				for item in content
-				if os.path.isdir(item)
-					or (os.path.isfile(item)
-						and os.path.splitext(item)[1].lower() in _IMAGE_FILES_EXTENSION
-					)
-			))
-
-			content_size += sum( ( count_folder(item) for item in content if os.path.isdir(item) ) )
-			return content_size
-
-		return count_folder(path)
-
-
-	@staticmethod
-	def update_images_from_image(images, master_image):
-		""" Przepisanie atrybutów z jednego obiektu do drugiego.
-			Przepisywane są tylko te, które nie są None.
-			(Do edycji wielu plików na raz)
-		"""
-		desc = master_image.desc
-		tags = master_image.tags
-		shot_date = master_image.shot_date
-		changed_tags = {}
-
-		for image in images:
-			if desc is not None:
-				image.desc = desc.strip()
-
-			if tags is not None:
-				ff_changed_tags = image.set_tags(tags)
-				[ changed_tags.__setitem__(key, None) for key in ff_changed_tags ]
-
-			if shot_date is not None:
-				image.shot_date = shot_date
-
-		return changed_tags.keys()
 
 
 

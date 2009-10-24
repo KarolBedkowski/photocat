@@ -25,40 +25,27 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-import string
 import time
-import re
-import types
 import logging
 _LOG = logging.getLogger(__name__)
-import cStringIO
 
 import wx
 
-import Image as PILImage
-import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
-import TiffImagePlugin, PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
-#PILImage._initialized = 3
+from kabes.tools.formaters	import format_human_size
 
-from kpylibs.formaters		import format_human_size
+from pc.engine	import image	as eimage
 
-from pc.lib					import EXIF
-
-from _catalog_file			import CatalogFile
+from pc.model._catalog_file		import CatalogFile
 
 _ = wx.GetTranslation
 
 
 
-_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
-_RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
-
-
-
 class FileImage(CatalogFile):
+	FV3_CLASS_NAME = 1048576 + 3
 
 	# lista rozszerzeń plików, które są ładowane (obsługiwane)
-	IMAGE_FILES_EXTENSION = (
+	IMAGE_FILES_EXTENSION = dict( (key, None) for key in (
 		'.jpg', '.jpe', '.jpeg',
 		'.png', '.gif', '.bmp', '.ico', '.pcx', '.psd',
 		'.ppm', '.pbm', '.pgm', '.pnm',
@@ -78,14 +65,11 @@ class FileImage(CatalogFile):
 		'.r3d',						# red raw
 		'.3fr',						# hasselblad raw
 		'.erf'						# epson raw
-	)
-
-	# list rozszerzeń plików, które są raw-ami
-	IMAGE_FILES_EXTENSION_RAW = ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
-		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf')
+	))
 
 
-	def __init__(self, id, name, parent, disk, *args, **kwargs):
+
+	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 
 		self.thumb		= kwargs.get('thumb')
 		self.dimensions	= kwargs.get('dimensions')
@@ -94,27 +78,20 @@ class FileImage(CatalogFile):
 
 		self._exif_data = None
 
-		# format pliku wer 1
-		if self.thumb is not None and type(self.thumb) == types.TupleType:
-			self.thumb = self.thumb[0]
-
-		if self.exif is not None and type(self.exif) == types.TupleType:
-			self.exif = self.exif[0]
-
-		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
+		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
-		self.is_raw = (self.name is not None) and (self.name.split('.')[-1].lower() in self.IMAGE_FILES_EXTENSION_RAW)
+		self.is_raw = eimage.is_file_raw(self.name)
 
 
 	@property
 	def exif_data(self):
 		if self._exif_data is None and self.exif is not None:
 			try:
-				self._exif_data = dict(eval(self.disk.catalog.data_provider.get_data(self.exif)))
+				self._exif_data = eimage.load_exif_from_storage(self.exif, self.catalog.data_provider)
 
 			except:
-				_LOG.exception('FileImage.exif_data file=%s' % self.name)
+				_LOG.exception('FileImage.exif_data file=%s', self.name)
 				self._exif_data = None
 
 		return self._exif_data
@@ -125,7 +102,7 @@ class FileImage(CatalogFile):
 		if self.thumb is None:
 			return None
 
-		return self.disk.catalog.data_provider.get_data(self.thumb)
+		return self.catalog.data_provider.get_data(self.thumb)
 
 
 	def _get_info(self):
@@ -134,28 +111,28 @@ class FileImage(CatalogFile):
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 
 		date = None
-		if self.shot_date:
+		if self.shot_date > 0:
 			try:
 				date = time.strftime('%c', time.localtime(self.shot_date))
 
 			except:
-				_LOG.exception('_get_info convert to date error shot_date=%r' % self.shot_date)
+				_LOG.exception('_get_info convert to date error shot_date=%r', self.shot_date)
 
 			else:
 				result.append((51, _('Date'), date))
 
 		exif = self.exif_data
-		if exif is not None:
-			if date is None:
-				date = self.__get_exif_shot_date(exif)
-				if date is not None:
-					result.append((51, _('Date'), date))
+		if exif:
+			if date is None and self.shot_date is None:
+				ddate = eimage.get_exit_shot_date_value(exif)
+				if ddate:
+					result.append((51, _('Date'), time.strftime('%c', ddate)))
 
-			if exif.has_key('Image Model'):
+			if 'Image Model' in exif:
 				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
 
 			# informacje o zdjeciu
-			shot_info = self.__get_exif_shotinfo(exif)
+			shot_info = eimage.get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
 				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
 
@@ -173,13 +150,11 @@ class FileImage(CatalogFile):
 			Jeżeli nie jest wypełniony shot_date (wersja 2.1-) to próba pobrania z exifa.
 			Jeżeli nie ma w exifie - data pliku.
 		"""
-		if self.shot_date is not None:
+
+		if self.shot_date > 0:
 			return self.shot_date
 
-		if self.exif is not None:
-				shot_date = self.__get_exif_shot_date_value(self.exif_data)
-				if shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+		self.__set_shot_date_from_exif(self.exif_data)
 
 		return self.shot_date or self.date
 
@@ -194,13 +169,10 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self._load_thumb(path, options)
-			self._load_exif(path)
+			self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
+			self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
 			self.shot_date = None
-			if self._exif_data is not None:
-				shot_date = self.__get_exif_shot_date_value(self._exif_data)
-				if shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+			self.__set_shot_date_from_exif(self._exif_data)
 
 			return True
 
@@ -211,13 +183,10 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self._load_thumb(path, options)
-				self._load_exif(path)
+				self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
+				self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
 				self.shot_date = None
-				if self._exif_data is not None:
-					shot_date = self.__get_exif_shot_date_value(self._exif_data)
-					if shot_date is not None:
-						self.shot_date = time.mktime(shot_date)
+				self.__set_shot_date_from_exif(self._exif_data)
 
 			return True
 
@@ -226,140 +195,22 @@ class FileImage(CatalogFile):
 
 	def fill_shot_date(self):
 		if self.shot_date is None and self.exif is not None:
-			exif = self.exif_data
-			if exif is not None:
-				shot_date = self.__get_exif_shot_date_value(exif)
-				if shot_date is not None:
-					self.shot_date = time.mktime(shot_date)
+			self.__set_shot_date_from_exif(self.exif_data)
 
 
 	##########################################################################
 
 
-	def _load_exif(self, path):
-		_LOG.debug('FileImage._load_exif(%s)' % path)
-		self.exif = None
-		jpeg_file = None
-		try:
-			jpeg_file = open(path, 'rb')
-			exif = EXIF.process_file(jpeg_file)
-			if exif is not None:
-				self._exif_data = {}
-				for key, val in exif.iteritems():
-					if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') or
-							key.startswith('EXIF Tag ') or key.startswith('MakerNote Tag ')):
-						continue
+	def __set_shot_date_from_exif(self, exif):
+		if exif is None:
+			return
 
-					val = str(val).replace('\0', '').strip()
-					self._exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
+		shot_date = eimage.get_exit_shot_date_value(exif)
+		if shot_date == 0:
+			self.shot_date = 0
 
-				if len(self._exif_data) > 0:
-					str_exif = repr(self._exif_data)
-					self.exif = self.disk.catalog.data_provider.append(str_exif)
-
-		except StandardError:
-			_LOG.exception('load_exif error file=%s' % path)
-
-		finally:
-			if jpeg_file is not None:
-				jpeg_file.close()
-
-
-	def _load_thumb(self, path, options):
-		''' file_image._load_thumb(path, options) -- ładowanie miniaturki z pliku i zapisanie katalogu
-
-			@param path		- ścieżka do pliku
-			@param options	- opcje
-		'''
-		_LOG.debug('FileImage._load_thumb(%s)' % path)
-		try:
-			try:
-				image = PILImage.open(path)
-
-			except:
-				image =  PILImage.new('RGB', (1,1))
-
-			if image.mode != 'RGB':
-				image = image.convert('RGB')
-
-			self.dimensions = image.size
-
-			thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
-			thumb_compression = options.get('thumb_compression', 50)
-
-			if self.dimensions[0] > thumbsize[0] or self.dimensions[1] > thumbsize[1]:
-				image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-
-			# zapisanie miniaturki przez StringIO
-			output = cStringIO.StringIO()
-			image.save(output, "JPEG", quality=thumb_compression)
-			self.thumb = self.disk.catalog.data_provider.append(output.getvalue())
-			output.close()
-
-		except StandardError:
-			_LOG.exception('PILImage error file=%s' % path)
-			self.thumb = None
-
-
-	def __get_exif_shotinfo(self, exif):
-		shot_info = []
-
-		def append(key, name):
-			if exif.has_key(key):
-				shot_info.append((name, exif[key]))
-
-		append('EXIF ExposureTime', _('t'))
-
-		if exif.has_key('EXIF FNumber'):
-			try:
-				fnumber = eval(exif['EXIF FNumber'] + '.')
-				if int(fnumber) == fnumber: 	fnumber = int(fnumber)
-				shot_info.append((_('f'), fnumber))
-
-			except:
-				_LOG.exception('_get_info exif fnumber "%s"' % exif.get('EXIF FNumber'))
-
-		if exif.has_key('EXIF ISOSpeedRatings'):
-			shot_info.append((_('iso'), exif['EXIF ISOSpeedRatings']))
-
-		elif exif.has_key('MakerNote ISOSetting'):
-			try:
-				iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
-				shot_info.append((_('iso'), iso))
-
-			except:
-				_LOG.exception('_get_info exif iso "%s"' % exif.get('MakerNote ISOSetting'))
-
-		append('EXIF Flash', _('flash'))
-
-		if exif.has_key('EXIF FocalLength'):
-			try:
-				flen = eval(exif['EXIF FocalLength'] + '.')
-				if int(flen) == flen: 	flen = int(flen)
-				shot_info.append((_('focal len.'), flen))
-
-			except:
-				_LOG.exception('_get_info exif flen "%s"' % exif.get('EXIF FocalLength'))
-
-		return shot_info
-
-
-	def __get_exif_shot_date_value(self, exif):
-		for exif_key in ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime'):
-			if exif.has_key(exif_key):
-				try:
-					value = exif[exif_key]
-					return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
-
-				except:
-					_LOG.exception('_get_info key=%s val="%s"' % (exif_key, exif[exif_key]))
-
-		return None
-
-
-	def __get_exif_shot_date(self, exif):
-		ddate = self.__get_exif_shot_date_value(exif)
-		return None if ddate is None else time.strftime('%c', ddate)
+		elif shot_date is not None:
+			self.shot_date = time.mktime(shot_date)
 
 
 	##########################################################################

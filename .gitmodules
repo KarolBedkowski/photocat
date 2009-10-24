@@ -1,3 +1,0 @@
-[submodule "libs/kpylibs"]
-	path = libs/kpylibs
-	url = git@github.com:sep870/kpylibs.git

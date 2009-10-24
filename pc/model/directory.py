@@ -28,17 +28,21 @@ __revision__	= '$Id$'
 
 import os
 import logging
+import itertools
+
 _LOG = logging.getLogger(__name__)
 
-from _catalog_file	import CatalogFile
-from gui			import TreeItem
-from file_image		import FileImage
+from pc.model._catalog_file	import CatalogFile
+from pc.model.gui			import TreeItem
+from pc.model.file_image	import FileImage
 
 
 
 class Directory(CatalogFile, TreeItem):
-	def __init__(self, id, name, parent, disk, *args, **kwargs):
-		CatalogFile.__init__(self, id, name, parent, disk, *args, **kwargs)
+	FV3_CLASS_NAME = 1048576 + 2
+
+	def __init__(self, oid, name, parent, disk, *args, **kwargs):
+		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 		TreeItem.__init__(self)
 
 		self.files		= []
@@ -79,10 +83,7 @@ class Directory(CatalogFile, TreeItem):
 
 	@property
 	def images_recursive(self):
-		res = []
-		[ res.extend(subdir.images_recursive) for subdir in self.subdirs ]
-		res.extend(self.files)
-		return res
+		return itertools.chain(self.files, *[ subdir.images_recursive for subdir in self.subdirs ])
 
 	##########################################################################
 
@@ -90,8 +91,11 @@ class Directory(CatalogFile, TreeItem):
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
 		CatalogFile.delete(self)
-		[ sfile.delete() for sfile in self.files ]
-		[ subdir.delete() for subdir in self.subdirs ]
+		for sfile in self.files:
+			sfile.delete()
+
+		for subdir in self.subdirs:
+			subdir.delete()
 
 
 	def add_child(self, item):
@@ -103,10 +107,13 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def load(self, path, options, on_update):
-		_LOG.debug('Directory.load(%s)' % path)
+		_LOG.debug('Directory.load(%s)', path)
 		if CatalogFile.load(self, path, options, on_update):
-			if not self._load_subdirs(path, options, on_update):	return False
-			if not self._load_files(path, options, on_update):	 	return False
+			if not self._load_subdirs(path, options, on_update):
+				return False
+
+			if not self._load_files(path, options, on_update):
+				return False
 
 			if options.get('load_captions_txt', True):
 				self._load_caption_txt(path)
@@ -117,7 +124,7 @@ class Directory(CatalogFile, TreeItem):
 
 
 	def update(self, path, options, on_update):
-		_LOG.debug('Directory.update(%s)' % path)
+		_LOG.debug('Directory.update(%s)', path)
 		if CatalogFile.update(self, path, options, on_update)[1]:
 			if not self._update_subdirs(path, options, on_update):
 				return False
@@ -139,32 +146,45 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
-	def remove_file(self, file):
-		file.delete()
-		self.files.remove(file)
+	def remove_file(self, fileitem):
+		fileitem.delete()
+		self.files.remove(fileitem)
 		self.catalog.dirty = True
 
 
-	def check_on_find(self, cmpfunc, add_callback, options=None, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
 		if progress_callback is not None:
 			if not progress_callback(self.name):
 				return
 
-		if options is None or options.get('search_for_dirs', True):
+		if options.get('search_for_dirs', True):
 			CatalogFile.check_on_find(self, cmpfunc, add_callback, options, progress_callback)
 
-		[ subdir.check_on_find(cmpfunc, add_callback, options, progress_callback)	for subdir in self.subdirs ]
+		for subdir in self.subdirs:
+			subdir.check_on_find(cmpfunc, add_callback, options, progress_callback)
 
-		if options is None or options.get('search_for_files', True):
-			[ image.check_on_find(cmpfunc, add_callback, options, progress_callback)	for image in self.files ]
+		if options.get('search_for_files', True):
+			for image in self.files:
+				image.check_on_find(cmpfunc, add_callback, options, progress_callback)
 
 
 	def fill_shot_date(self):
-		[ image.fill_shot_date() for image in self.files ]
-		[ subdir.fill_shot_date() for subdir in self.subdirs ]
+		for image in self.files:
+			image.fill_shot_date()
+
+		for subdir in self.subdirs:
+			subdir.fill_shot_date()
 
 
 	##########################################################################
+
+
+	def _check_filename_in_skiplist(self, skip_dirs_list, name):
+		for skipmask in skip_dirs_list:
+			if skipmask.match(name):
+				return True
+
+		return False
 
 
 	def _load_subdirs(self, path, options, on_update):
@@ -173,10 +193,10 @@ class Directory(CatalogFile, TreeItem):
 		skip_dirs_list			= options.get('skip_dirs_list', [])
 
 		for subdir, subdir_path in subdirs:
-			if subdir in skip_dirs_list:
+			if self._check_filename_in_skiplist(skip_dirs_list, subdir):
 				continue
 
-			subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
+			subdir_obj = Directory(-1, subdir, self, self.disk)
 			if not subdir_obj.load(subdir_path, options, on_update):
 				return False
 
@@ -195,12 +215,13 @@ class Directory(CatalogFile, TreeItem):
 		skip_dirs_list		= options.get('skip_dirs_list', [])
 
 		for subdir, subdir_path in subdirs:
-			subdir_obj = dir_subdirs_names.get(subdir)
-			if subdir_obj is None:
-				if subdir in skip_dirs_list:
-					continue
+			if self._check_filename_in_skiplist(skip_dirs_list, subdir):
+				continue
 
-				subdir_obj = Directory(id=-1, name=subdir, parent=self, disk=self.disk)
+			subdir_obj = dir_subdirs_names.get(subdir)
+
+			if subdir_obj is None:
+				subdir_obj = Directory(-1, subdir, self, self.disk)
 				if not subdir_obj.load(subdir_path, options, on_update):
 					return False
 
@@ -215,7 +236,8 @@ class Directory(CatalogFile, TreeItem):
 		self.subdirs = new_subdirs
 
 		# usuniecie starych katalogow
-		[ subdir.delete() for subdir in dir_subdirs_names.itervalues() ]
+		for subdir in dir_subdirs_names.itervalues():
+			subdir.delete()
 
 		return True
 
@@ -223,7 +245,7 @@ class Directory(CatalogFile, TreeItem):
 	def _load_files(self, path, options, on_update):
 		files = self.__folder_files_list(path)
 		for filename, file_path in files:
-			fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
+			fileimage = FileImage(-1, filename, self, disk=self.disk)
 			if not fileimage.load(file_path, options, on_update):
 				return False
 
@@ -240,7 +262,7 @@ class Directory(CatalogFile, TreeItem):
 		for filename, file_path in files:
 			fileimage = files_dict.get(filename)
 			if fileimage is None:
-				fileimage = FileImage(id=-1, name=filename, parent=self, disk=self.disk)
+				fileimage = FileImage(-1, filename, self, disk=self.disk)
 				if not fileimage.load(file_path, options, on_update):
 					return False
 
@@ -254,7 +276,9 @@ class Directory(CatalogFile, TreeItem):
 		self.files = new_files
 
 		# usuniecie starych plikow
-		[ file.delete() for file in files_dict.itervalues() ]
+		for ifile in files_dict.itervalues():
+			ifile.delete()
+
 		return True
 
 
@@ -298,7 +322,7 @@ class Directory(CatalogFile, TreeItem):
 		if not os.path.exists(captions_file_path):
 			return
 
-		_LOG.debug('Directory._load_caption_txt(%s)' % captions_file_path)
+		_LOG.debug('Directory._load_caption_txt(%s)', captions_file_path)
 
 		captions_file = open(captions_file_path, 'r')
 		current_file_name = None
@@ -337,7 +361,7 @@ class Directory(CatalogFile, TreeItem):
 		if len(file_data) == 0:
 			return
 
-		_LOG.debug('Directory._load_caption_txt_process_file(%s)' % file_name)
+		_LOG.debug('Directory._load_caption_txt_process_file(%s)', file_name)
 
 		if file_name == '.':
 			update_obj = self
@@ -353,7 +377,7 @@ class Directory(CatalogFile, TreeItem):
 			desc = ( file_data[key]
 					for key
 					in ('Title', 'Subtitle', 'Date', 'Desc')
-					if file_data.has_key(key)
+					if key in file_data
 			)
 			update_obj.desc = unicode('\n'.join(desc))
 

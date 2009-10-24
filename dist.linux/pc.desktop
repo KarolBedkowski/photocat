@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=/usr/share/pc/src/pc/icons/folder_image.png
+Name=Photo Catalog
+Exec=/usr/bin/pc
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Graphics;
+StartupNotify=false
+

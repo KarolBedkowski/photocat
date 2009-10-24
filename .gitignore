@@ -5,3 +5,6 @@ doc.dev
 *.index
 *.cfg
 *.pdf
+pc.egg-info
+profile.tmp
+profile_result_*.txt

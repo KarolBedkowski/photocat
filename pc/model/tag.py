@@ -26,7 +26,7 @@ __revision__	= '$Id$'
 
 
 
-from file_image	import FileImage
+from pc.model.file_image	import FileImage
 
 
 
@@ -65,7 +65,7 @@ class Tag(object):
 		if isinstance(item, FileImage):
 			if item in self.files:
 				self.files.remove(item)
-				
+
 		elif item in self.dirs:
 			self.dirs.remove(item)
 
@@ -77,6 +77,13 @@ class Tag(object):
 		else:
 			self.dirs.append(item)
 
+	def update_items_on_delete(self):
+		name = self.name
+		for ifile in self.files:
+			ifile.tags.remove(name)
+
+		for directory in self.dirs:
+			directory.tags.remove(name)
 
 
 ####################################################################################################################
@@ -84,6 +91,8 @@ class Tag(object):
 
 
 class Tags(object):
+	FV3_CLASS_NAME = 1048576 + 4
+
 	def __init__(self, catalog):
 		self._tags = {}
 		self.catalog = catalog
@@ -101,14 +110,36 @@ class Tags(object):
 	##########################################################################
 
 
-	@property
-	def tags(self):
+	def _get_tags(self):
 		return self._tags.keys()
+
+	def _set_tags(self, tags):
+		# usuniecie brakujących
+		to_del = []
+		for tag, tagobj in self._tags.iteritems():
+			if tag not in tags:
+				tagobj.update_items_on_delete()
+				to_del.append(tag)
+
+		for tag in to_del:
+			self._tags.pop(tag)
+
+		# dodanie nowych
+		for tag in tags:
+			if tag not in self._tags:
+				self._tags[tag] = Tag(tag, self.catalog)
+
+	tags = property(_get_tags, _set_tags)
 
 
 	@property
 	def tags_items(self):
 		return self._tags.iteritems()
+
+	##########################################################################
+
+	def encode3(self):
+		return 0, self.FV3_CLASS_NAME, self.tags
 
 
 	##########################################################################
@@ -116,7 +147,8 @@ class Tags(object):
 
 	def add_item(self, item):
 		if item.tags is not None and item.name is not None:
-			[ self._get_tag_list(tag).add_item(item) for tag in item.tags ]
+			for tag in item.tags:
+				self._get_tag_list(tag).add_item(item)
 
 
 	def update_item(self, item):
@@ -126,13 +158,14 @@ class Tags(object):
 
 	def remove_item(self, item):
 		if item.name is not None:
-			[ tag.remove_item(item) for tag in self._tags.itervalues() ]
+			for tag in self._tags.itervalues():
+				tag.remove_item(item)
 
 
 	##########################################################################
 
 	def _get_tag_list(self, tag):
-		if self._tags.has_key(tag):
+		if tag in self._tags:
 			return self._tags[tag]
 
 		tag_obj = Tag(tag, self.catalog)

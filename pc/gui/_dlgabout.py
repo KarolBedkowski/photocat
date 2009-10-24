@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
@@ -46,7 +46,7 @@ def show_about_box(parent):
 	}
 
 	info = wx.AboutDialogInfo()
-	info.Name = "PictureCatalog"
+	info.Name = "PhotoCatalog"
 	info.Version = pc.__version__
 	info.Copyright = "(C) Karol Będkowski 2007,2008"
 	#info.Description = wordwrap('''''', 350, wx.ClientDC(parent))

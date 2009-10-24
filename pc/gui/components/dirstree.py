@@ -16,8 +16,7 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kpylibs.eventgenerator	import EventGenerator
-from kpylibs.iconprovider	import IconProvider
+from kabes.wxtools.iconprovider	import IconProvider
 
 from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags, Timeline
 
@@ -25,13 +24,12 @@ _ = wx.GetTranslation
 
 
 
-class DirsTree(wx.TreeCtrl, EventGenerator):
+class DirsTree(wx.TreeCtrl):
 	''' Drzewo katalogów '''
 
 	def __init__(self, parent, wxid=-1):
 		wx.TreeCtrl.__init__(self, parent, wxid,
 				style=wx.TR_HAS_BUTTONS|wx.TR_LINES_AT_ROOT|wx.TR_LINES_AT_ROOT|wx.TR_HIDE_ROOT|wx.SUNKEN_BORDER)
-		EventGenerator.__init__(self, ['change_selection'])
 
 		self.__icon_provider = IconProvider()
 		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 'calendar',
@@ -132,7 +130,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			@param catalog 		- katalog do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_catalog %s' % catalog.name)
+		_LOG.debug('update_node_catalog %s', catalog.name)
 		self.Freeze()
 
 		catalog_node = catalog.tree_node
@@ -163,7 +161,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			@param disk 		- dysk do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_disk %s'  % disk.name)
+		_LOG.debug('update_node_disk %s', disk.name)
 		disk_node = disk.tree_node
 
 		if disk_node is None or not disk_node.IsOk():
@@ -185,7 +183,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			@param directory	- folder do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('update_node_directory %s'  %directory.name)
+		_LOG.debug('update_node_directory %s', directory.name)
 		dir_node = directory.tree_node
 
 		if dir_node is None or not dir_node.IsOk():
@@ -260,7 +258,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			@param tag			- element tag do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
 		'''
-		_LOG.debug('_update_node_tag %s' % tag)
+		_LOG.debug('_update_node_tag %s', tag)
 		node = tag.tree_node
 
 		self.DeleteChildren(node)
@@ -295,7 +293,7 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 
 	def update_timeline_node(self, timeline):
 		''' dirtree.update_timeline_node(timeline) -- odsiweżenie elementu lini czasu '''
-		_LOG.debug('update_timeline_node cat= %s' % timeline.catalog.name)
+		_LOG.debug('update_timeline_node cat= %s', timeline.catalog.name)
 
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 
@@ -316,9 +314,11 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 			item.tree_node = node
 			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1], wx.TreeItemIcon_Normal)
 
-			[ add_subdir(node, subdir) for subdir in item.subdirs ]
+			for subdir in item.subdirs:
+				add_subdir(node, subdir)
 
-		[ add_subdir(node, subdir) for subdir in timeline.subdirs ]
+		for subdir in timeline.subdirs:
+			add_subdir(node, subdir)
 
 		self.SetCursor(wx.STANDARD_CURSOR)
 
@@ -343,9 +343,8 @@ class DirsTree(wx.TreeCtrl, EventGenerator):
 		node = evt.GetItem()
 		item = self.GetItemData(node).GetData()
 
-		if isinstance(item, Timeline):
-			if item.level == 0:
-				self.update_timeline_node(item)
+		if isinstance(item, Timeline) and item.level == 0:
+			self.update_timeline_node(item)
 
 
 

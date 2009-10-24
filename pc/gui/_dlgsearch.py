@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
@@ -33,19 +33,15 @@ import sys
 import logging
 _LOG = logging.getLogger(__name__)
 
-import time
-import cStringIO
-import re
-
 import wx
-import wx.lib.buttons  as  buttons
-import wx.lib.mixins.listctrl  as  listmix
+import wx.lib.buttons			as buttons
+import wx.lib.foldpanelbar		as fpb
 
-from kpylibs.guitools		import create_button
-from kpylibs.iconprovider	import IconProvider
-from kpylibs.appconfig		import AppConfig
-from kpylibs				import dialogs
-from kpylibs.singleton		import Singleton
+from kabes.tools.appconfig		import AppConfig
+from kabes.model.singleton		import Singleton
+from kabes.wxtools				import dialogs
+from kabes.wxtools.guitools		import create_button
+from kabes.wxtools.iconprovider	import IconProvider
 
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
@@ -53,7 +49,7 @@ from pc.engine				import search, image
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 from components.searchresultlistctrl	import SearchResultListCtrl
 
-from _dlgproperties	import DlgProperties
+from pc.gui._dlgproperties	import DlgProperties
 
 _ = wx.GetTranslation
 
@@ -69,12 +65,12 @@ class _OptionsError(StandardError):
 ###############################################################################
 
 
-class _DlgSearch(wx.Dialog):
+class _DlgSearch(wx.Frame):
 	''' Dialog wyszukiwania '''
 
 	def __init__(self, parent, catalogs, selected_item=None):
-		wx.Dialog.__init__(self, parent, -1, _('Find'),
-				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE|wx.MAXIMIZE_BOX|wx.MINIMIZE_BOX )
+		wx.Frame.__init__(self, parent, -1, _('Find'),
+				style=wx.DEFAULT_FRAME_STYLE|wx.FULL_REPAINT_ON_RESIZE)
 
 		self._catalogs	= catalogs
 		self._parent	= parent
@@ -85,20 +81,27 @@ class _DlgSearch(wx.Dialog):
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 
-		self._appconfig = appconfig = AppConfig()
+		self._appconfig = AppConfig()
 
-		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_layout_fields(),		0, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self._create_layout_adv_search(),	0, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self._create_layout_result(),		1, wx.EXPAND|wx.ALL, 5)
+		self._create_layout()
+
+		self.Bind(wx.EVT_CLOSE, self._on_close)
+
+
+	###############################################################################
+
+
+	def _create_layout(self):
+		spittwnd = wx.SplitterWindow(self, -1, style=wx.SP_LIVE_UPDATE|wx.SW_BORDER )
+		spittwnd.SplitVertically(self._create_panel_left(spittwnd), self._create_layout_result(spittwnd), 100)
+		spittwnd.SetMinimumPaneSize(200)
 
 		self._statusbar = wx.StatusBar(self, -1)
 		self._statusbar.SetFieldsCount(2)
 		self._statusbar.SetStatusWidths([-1, 50])
-		main_grid.Add(self._statusbar, 0, wx.EXPAND)
+		self.SetStatusBar(self._statusbar)
 
-		self.SetSizerAndFit(main_grid)
-
+		appconfig = self._appconfig
 		size = appconfig.get('search_wnd', 'size', (640, 480))
 		self.SetMinSize((640, 480))
 		self.SetSize(size)
@@ -110,86 +113,200 @@ class _DlgSearch(wx.Dialog):
 		else:
 			self.Move(position)
 
+		self._thumb_width, self._thumb_height = appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+		self._thumbctrl.set_thumb_size(self._thumb_width, self._thumb_height)
 		self._thumbctrl.thumbs_preload = appconfig.get('settings', 'view_preload', True)
 
-		self.Bind(wx.EVT_CLOSE, self._on_close)
-
 		self._tc_text.SetFocus()
+		spittwnd.SetSashPosition(appconfig.get('settings', 'thumb_width', 200)+24)
 
 
-	def SetStatusText(self, text, idx=0):
-		''' dlgsearch.SetStatusText(text, [idx]) -- ustawienie textu w statusbarze
+	def _create_panel_left(self, parent):
+		cbs = fpb.CaptionBarStyle()
+		cbs.SetCaptionStyle(fpb.CAPTIONBAR_RECTANGLE)
 
-			@param text		- tekst do wyświetlenia
-			@param idx		- numer pola w statusbarze
-
-			Fake na potrzeby okna miniaturek.
-		'''
-		self._statusbar.SetStatusText(text, idx)
-
-	###############################################################################
-
-	def _create_layout_fields(self):
-		grid = wx.FlexGridSizer(1, 3, 2, 2)
-		grid.AddGrowableCol(1)
-
-		grid.Add(wx.StaticText(self, -1, _('Text')), 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-
-		self._tc_text = wx.ComboBox(self, -1, choices=search.get_last_search())
-		grid.Add(self._tc_text, 1, wx.EXPAND)
-
-		button = create_button(self, _('Find'), self._on_btn_find)
-		button.SetDefault()
-		grid.Add(button, 0, wx.EXPAND)
-
-		return grid
-
-
-	def _create_layout_result(self):
-		grid = wx.BoxSizer(wx.HORIZONTAL)
-		grid.Add(self._create_layout_list(), 		1, wx.EXPAND|wx.ALL, 5)
-		grid.Add(self._create_layout_thumbctrl(),	1, wx.EXPAND|wx.ALL, 5)
-		grid.Add(self._create_layout_preview(),		0, wx.EXPAND|wx.ALL, 5)
-		return grid
-
-
-	def _create_layout_preview(self):
-		panel = self._panel_preview = wx.Panel(self, -1)
+		panel = wx.Panel(parent, -1)
 		grid = wx.BoxSizer(wx.VERTICAL)
 
-		self._bmp_preview = wx.StaticBitmap(panel, -1)
-		grid.Add(self._bmp_preview, 0, wx.EXPAND|wx.ALL, 5)
+		pnl = fpb.FoldPanelBar(panel, -1, wx.DefaultPosition, wx.Size(200,-1), fpb.FPB_DEFAULT_STYLE)
+		self._create_layout_fields(pnl, cbs)
+		self._create_layout_options(pnl, cbs)
+		self._create_layout_advanced(pnl, cbs)
+		self._create_layout_preview(pnl, cbs)
+		self._create_layout_info(pnl, cbs)
 
-		self._image_info = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
-		self._image_info.InsertColumn(0, '')
-		self._image_info.InsertColumn(1, '')
-		grid.Add(self._image_info, 1, wx.EXPAND|wx.ALL, 5)
-
-		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
-
-		self._btn_properties = create_button(panel, _("Properties"), self._on_btn_properties)
-		grid_btns.Add(self._btn_properties, 1, wx.EXPAND|wx.ALL, 1)
-
-		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
-		grid_btns.Add(self._btn_goto, 1, wx.EXPAND|wx.ALL, 1)
-
-		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
-		grid_btns.Add(self._btn_icons, 1, wx.EXPAND|wx.ALL, 1)
-		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
-
-		grid.Add(grid_btns, 0, wx.EXPAND)
-
-		panel.SetSizer(grid)
-		panel.Show(False)
-
-		size = (self._appconfig.get('settings', 'thumb_width', 200), self._appconfig.get('settings', 'thumb_height', 200))
-		self._bmp_preview.SetMinSize(size)
+		grid.Add(pnl, 1, wx.EXPAND|wx.LEFT|wx.TOP|wx.BOTTOM, 12)
+		panel.SetSizerAndFit(grid)
 
 		return panel
 
 
-	def _create_layout_list(self):
-		listctrl = self._result_list = SearchResultListCtrl(self, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+	def _create_layout_fields(self, parent, cbs):
+		item = parent.AddFoldPanel(_('Search'), collapsed=False, cbstyle=cbs)
+		self._tc_text = wx.SearchCtrl(item, style=wx.TE_PROCESS_ENTER)
+		#wx.ComboBox(item, -1, choices=search.get_last_search())
+		parent.AddFoldPanelWindow(item, self._tc_text, fpb.FPB_ALIGN_WIDTH, 5)
+
+		parent.AddFoldPanelWindow(item, wx.Panel(item, -1, size=(12, 12)), fpb.FPB_ALIGN_WIDTH, 5)
+
+		self._make_last_search_menu()
+
+		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_btn_find, self._tc_text)
+		self.Bind(wx.EVT_TEXT_ENTER, self._on_btn_find, self._tc_text)
+
+		return item
+
+
+	def _create_layout_advanced(self, parent, cbs):
+		item = parent.AddFoldPanel(_('Advanced'), collapsed=True, cbstyle=cbs)
+		self._cpanel = item
+		parent.AddFoldPanelWindow(item, wx.StaticText(item, -1, _('Search in fields:')), fpb.FPB_ALIGN_WIDTH, 5)
+
+		def add(name):
+			cb = wx.CheckBox(item, -1, name)
+			cb.SetValue(True)
+			parent.AddFoldPanelWindow(item, cb, fpb.FPB_ALIGN_WIDTH, 5, 12)
+			return cb
+
+		self._cb_search_in_names = add(_("names"))
+		self._cb_search_in_descrs = add(_("descriptions"))
+		self._cb_search_in_tags = add(_("tags"))
+
+		parent.AddFoldPanelSeparator(item)
+
+		# szukanie plików/katalogów
+		parent.AddFoldPanelWindow(item, wx.StaticText(item, -1, _('Search for:')), fpb.FPB_ALIGN_WIDTH, 5)
+
+		panel = wx.Panel(item, -1)
+		box = wx.BoxSizer(wx.HORIZONTAL)
+		self._cb_search_for_files = wx.CheckBox(panel, -1, _("files"))
+		self._cb_search_for_files.SetValue(True)
+		box.Add(self._cb_search_for_files, 1, wx.EXPAND)
+		box.Add((5, 5))
+		self._cb_search_for_dirs =  wx.CheckBox(panel, -1, _("dirs"))
+		self._cb_search_for_dirs.SetValue(True)
+		box.Add(self._cb_search_for_dirs, 1, wx.EXPAND)
+
+		panel.SetSizerAndFit(box)
+		parent.AddFoldPanelWindow(item, panel, fpb.FPB_ALIGN_WIDTH, 2, 24)
+
+		parent.AddFoldPanelSeparator(item)
+
+		# szukanie w ...
+		parent.AddFoldPanelWindow(item, wx.StaticText(item, -1, _('Search in disks/catalogs:')), fpb.FPB_ALIGN_WIDTH, 5)
+		cb = self._sb_search_in_catalog = wx.ComboBox(item, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
+		parent.AddFoldPanelWindow(item, cb, fpb.FPB_ALIGN_WIDTH, 5, 12)
+
+		if self._selected_item is not None:
+			if isinstance(self._selected_item, Disk):
+				map(cb.Append, (_("<current catalog>"), _("<current disk>")))
+
+			elif isinstance(self._selected_item, Directory):
+				map(cb.Append, (_("<current catalog>"), _("<current disk>"), _("<current dir>")))
+
+			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:
+				map(cb.Append, (_("<current catalog>"), _("<current disk>")))
+
+		for cat in self._catalogs:
+			cb.Append(_("catalog: %s") % cat.name)
+
+		parent.AddFoldPanelSeparator(item)
+
+		# szukanie wg dat
+		self._cb_date = wx.CheckBox(item, -1, _("Search by date"))
+		parent.AddFoldPanelWindow(item, self._cb_date, fpb.FPB_ALIGN_WIDTH, 5)
+
+		panel = wx.Panel(item, -1)
+		box = wx.FlexGridSizer(2, 2, 5, 12)
+		box.Add(wx.StaticText(panel, -1, _('begin:')), 0, wx.ALIGN_CENTER_VERTICAL)
+
+		self._dp_start_date = wx.DatePickerCtrl(panel, size=(120, -1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
+		box.Add(self._dp_start_date)
+
+		box.Add(wx.StaticText(panel, -1, _('end:')), 0, wx.ALIGN_CENTER_VERTICAL)
+		self._dp_stop_date = wx.DatePickerCtrl(panel, size=(120, -1), style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
+		box.Add(self._dp_stop_date)
+
+		panel.SetSizerAndFit(box)
+		parent.AddFoldPanelWindow(item, panel, fpb.FPB_ALIGN_LEFT, 5, 12)
+
+		parent.AddFoldPanelWindow(item, wx.Panel(item, -1, size=(12, 12)), fpb.FPB_ALIGN_WIDTH, 5)
+		return item
+
+
+	def _create_layout_options(self, parent, cbs):
+		item = parent.AddFoldPanel(_('Options'), collapsed=True, cbstyle=cbs)
+
+		self._cb_regex = wx.CheckBox(item, -1, _("Regular expression"))
+		parent.AddFoldPanelWindow(item, self._cb_regex, fpb.FPB_ALIGN_WIDTH)
+
+		self._cb_match_case = wx.CheckBox(item, -1, _("Match case"))
+		parent.AddFoldPanelWindow(item, self._cb_match_case, fpb.FPB_ALIGN_WIDTH)
+
+		parent.AddFoldPanelWindow(item, wx.Panel(item, -1, size=(12, 12)), fpb.FPB_ALIGN_WIDTH, 2, 12)
+		return item
+
+
+	def _create_layout_result(self, parent):
+		panel = wx.Panel(parent, -1)
+		self._grid_result = grid = wx.BoxSizer(wx.VERTICAL)
+
+		grid.Add(self._create_layout_list(panel), 		1, wx.EXPAND|wx.ALL, 12)
+		grid.Add(self._create_layout_thumbctrl(panel),	1, wx.EXPAND|wx.ALL, 12)
+
+		grid_btns = wx.BoxSizer(wx.HORIZONTAL)
+
+		self._btn_icons = buttons.GenToggleButton(panel, -1, _('Icons'))
+		self._btn_icons.Enable(False)
+		grid_btns.Add(self._btn_icons)
+		self.Bind(wx.EVT_BUTTON, self._on_btn_icons, self._btn_icons)
+
+		grid_btns.Add((5, 1), 1, wx.EXPAND)
+
+		self._btn_properties = create_button(panel, None, self._on_btn_properties, wx.ID_PROPERTIES)
+		self._btn_properties.Enable(False)
+		grid_btns.Add(self._btn_properties)
+
+		grid_btns.Add((5, 1))
+
+		self._btn_goto = create_button(panel, _("Go to..."), self._on_btn_goto)
+		self._btn_goto.Enable(False)
+		grid_btns.Add(self._btn_goto)
+
+		grid_btns.Add((5, 1), 1, wx.EXPAND)
+
+		grid_btns.Add(create_button(panel, None, self._on_btn_close, wx.ID_CLOSE))
+
+		grid.Add(grid_btns, 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 12)
+
+		panel.SetSizerAndFit(grid)
+
+		return panel
+
+
+	def _create_layout_preview(self, parent, cbs):
+		item = parent.AddFoldPanel(_('Preview'), collapsed=False, cbstyle=cbs)
+
+		self._bmp_preview = wx.StaticBitmap(item, -1)
+		size = (self._appconfig.get('settings', 'thumb_width', 200), self._appconfig.get('settings', 'thumb_height', 200))
+		self._bmp_preview.SetSize(size)
+		self._bmp_preview.SetMinSize(size)
+
+		parent.AddFoldPanelWindow(item, self._bmp_preview, fpb.FPB_ALIGN_WIDTH, 2, 12)
+		return item
+
+
+	def _create_layout_info(self, parent, cbs):
+		item = parent.AddFoldPanel(_('Info'), collapsed=True, cbstyle=cbs)
+		self._image_info = wx.ListCtrl(item, -1, size=(-1, 250), style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
+		self._image_info.InsertColumn(0, '')
+		self._image_info.InsertColumn(1, '')
+		parent.AddFoldPanelWindow(item, self._image_info, fpb.FPB_ALIGN_WIDTH)
+		return item
+
+
+	def _create_layout_list(self, parent):
+		listctrl = self._result_list = SearchResultListCtrl(parent, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 		listctrl.SetImageList(self._icon_provider.get_image_list(), wx.IMAGE_LIST_SMALL)
 		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
 				self._icon_provider.get_image_index('sm_down'))
@@ -203,125 +320,14 @@ class _DlgSearch(wx.Dialog):
 		return listctrl
 
 
-	def _create_layout_adv_search(self):
-		cp = self._cpanel = wx.CollapsiblePane(self, label=_("Advanced"))
-		self._create_pane_adv_search(cp.GetPane())
-
-		self.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self._on_panel_advsearch_changed, cp)
-
-		return cp
-
-
-	def _create_layout_thumbctrl(self):
-		self._thumbctrl = ThumbCtrl(self, status_wnd=self)
+	def _create_layout_thumbctrl(self, parent):
+		self._thumbctrl = ThumbCtrl(parent, status_wnd=self)
 		self._thumbctrl.Hide()
 
 		self._thumbctrl.Bind(EVT_THUMB_SELECTION_CHANGE,	self._on_thumb_sel_changed)
 		self._thumbctrl.Bind(EVT_THUMB_DBCLICK,				self._on_thumb_dclick)
 
 		return self._thumbctrl
-
-
-	def _create_pane_adv_search(self, pane):
-		sizer = wx.BoxSizer(wx.VERTICAL)
-
-		subsizer1 = wx.BoxSizer(wx.HORIZONTAL)
-
-		# szukanie w opisach/nazwach/tagach
-		box = wx.StaticBox(pane, -1, _("Search in"))
-		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
-
-		def add(name):
-			cb = wx.CheckBox(pane, -1, name)
-			cb.SetValue(True)
-			bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
-			return cb
-
-		self._cb_search_in_names = add(_("names"))
-		bsizer.Add((10, 10))
-		self._cb_search_in_descrs = add(_("descriptions"))
-		bsizer.Add((10, 10))
-		self._cb_search_in_tags = add(_("tags"))
-		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
-
-		# szukanie plików/katalogów
-		box = wx.StaticBox(pane, -1, _("Search for"))
-		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
-
-		def add(name):
-			cb = wx.CheckBox(pane, -1, name)
-			cb.SetValue(True)
-			bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
-			return cb
-
-		self._cb_search_for_files = add(_("files"))
-		bsizer.Add((10, 10))
-		self._cb_search_for_dirs = add(("dirs"))
-		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
-
-		# szukanie w ...
-		box = wx.StaticBox(pane, -1, _("Search in:"))
-		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
-		cb = self._sb_search_in_catalog = wx.ComboBox(pane, -1, _("<all>"), choices=[_("<all>")], style=wx.CB_READONLY)
-
-		if self._selected_item is not None:
-			if isinstance(self._selected_item, Disk):
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
-
-			elif isinstance(self._selected_item, Directory):
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>"), _("<current dir>")) ]
-
-			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:
-				[ cb.Append(val) for val in (_("<current catalog>"), _("<current disk>")) ]
-
-		[ cb.Append(_("catalog: %s") % cat.name) for cat in self._catalogs ]
-
-		bsizer.Add(cb, 0, wx.EXPAND|wx.ALL, 5)
-		subsizer1.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
-
-		sizer.Add(subsizer1, 0, wx.EXPAND)
-
-		##############################
-
-		subsizer2 = wx.BoxSizer(wx.HORIZONTAL)
-
-		# szukanie wg dat
-		box = wx.StaticBox(pane, -1, _("Date"))
-		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
-
-		self._cb_date = wx.CheckBox(pane, -1, _("Search by date"))
-		bsizer.Add(self._cb_date, 0, wx.EXPAND|wx.ALL, 5)
-		bsizer.Add((10, 10))
-		bsizer.Add(wx.StaticText(pane, -1, _("begin:")), 0, wx.ALIGN_CENTER_VERTICAL)
-
-		self._dp_start_date = wx.DatePickerCtrl(pane, size=(120,-1),
-				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
-		bsizer.Add(self._dp_start_date, 0, wx.EXPAND|wx.ALL, 5)
-
-		bsizer.Add((10, 10))
-
-		bsizer.Add(wx.StaticText(pane, -1, _("end:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self._dp_stop_date = wx.DatePickerCtrl(pane, size=(120,-1),
-				style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.SUNKEN_BORDER)
-		bsizer.Add(self._dp_stop_date, 0, wx.EXPAND|wx.ALL, 5)
-
-		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
-
-		# opcje
-		box = wx.StaticBox(pane, -1, _("Options"))
-		bsizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
-
-		self._cb_regex = wx.CheckBox(pane, -1, _("Regex"))
-		bsizer.Add(self._cb_regex, 0, wx.EXPAND|wx.ALL, 5)
-		bsizer.Add((10, 10))
-		self._cb_match_case = wx.CheckBox(pane, -1, _("Match case"))
-		bsizer.Add(self._cb_match_case, 0, wx.EXPAND|wx.ALL, 5)
-
-		subsizer2.Add(bsizer, 0, wx.EXPAND|wx.ALL, 5)
-
-		sizer.Add(subsizer2, 0, wx.EXPAND)
-
-		pane.SetSizer(sizer)
 
 
 	#########################################################################
@@ -334,7 +340,7 @@ class _DlgSearch(wx.Dialog):
 			names	= self._cb_search_in_names.IsChecked()
 			descr	= self._cb_search_in_descrs.IsChecked()
 			tags	= self._cb_search_in_tags.IsChecked()
-			if not(names == descr and names == tags):
+			if not (names == descr and names == tags):
 				options['search_in_names']	= names
 				options['search_in_descr']	= descr
 				options['search_in_tags']	= tags
@@ -361,6 +367,13 @@ class _DlgSearch(wx.Dialog):
 		return options
 
 
+	def _make_last_search_menu(self, items=None):
+		self._last_text_menu = menu = wx.Menu()
+		for txt in (items or search.get_last_search()):
+			self.Bind(wx.EVT_MENU, self._on_last_text_menu, menu.Append(-1, txt))
+
+		self._tc_text.SetMenu(menu)
+
 	#########################################################################
 
 
@@ -369,13 +382,13 @@ class _DlgSearch(wx.Dialog):
 		if len(what) == 0:
 			return
 
-		self._panel_preview.Show(False)
 		self._btn_properties.Enable(False)
 		self._btn_goto.Enable(False)
 
 		try:
 			options = self._get_options()
-			_LOG.debug('DlgSearch._on_btn_find options: %r' % options)
+			_LOG.debug('DlgSearch._on_btn_find options: %r', options)
+
 		except _OptionsError, err:
 			dialogs.message_box_info(self, _("Bad options:\n%s") % err, 'PC')
 			return
@@ -432,17 +445,16 @@ class _DlgSearch(wx.Dialog):
 
 		dlg_progress.Destroy()
 
-		if len(self._result) == 0:
-			dialogs.message_box_info(self, _('Not found'), 'PC')
-
-		else:
-			self._panel_preview.Show(True)
+		found = len(self._result) > 0
+		if found:
 			self.Layout()
 
-		last_search_text_ctrl = self._tc_text
-		last_search_text_ctrl.Clear()
-		[ last_search_text_ctrl.Append(text) for text in search.update_last_search(what) ]
-		last_search_text_ctrl.SetValue(what)
+		else:
+			dialogs.message_box_info(self, _('Not found'), 'PC')
+
+		self._btn_icons.Enable(found)
+
+		self._make_last_search_menu(search.update_last_search(what))
 
 		self._statusbar.SetStatusText(_('Found %(folders)d folders and %(files)d files') %
 				dict(folders=counters[1], files=counters[0]))
@@ -452,15 +464,25 @@ class _DlgSearch(wx.Dialog):
 		''' Wyświetlenie właściwości pliku '''
 		# FIXME: po edycji powinno się aktualizować drzewo
 		if self._thumbctrl.IsShown():
-			item = self._thumbctrl.selected_item
-
+			item_idx, items_count = self._thumbctrl.selected_index
 		else:
-			item = self._get_selected_result_item()
+			item, item_idx = self._get_selected_result_item()
+			items_count = len(self._result)
 
-		if item is not None:
-			dlg = DlgProperties(self, item)
-			dlg.ShowModal()
+		while item_idx > -1:
+			item = self._result[item_idx]
+			dlg = DlgProperties(self, item, show_next_prev=(item_idx>0, item_idx<items_count-1))
+			res = dlg.ShowModal()
 			dlg.Destroy()
+
+			if res == wx.ID_BACKWARD:
+				item_idx -= 1
+
+			elif res == wx.ID_FORWARD:
+				item_idx += 1
+
+			else:
+				break
 
 
 	def _on_btn_goto(self, evt):
@@ -468,24 +490,25 @@ class _DlgSearch(wx.Dialog):
 
 
 	def _on_list_activate(self, evt):
-		item = self._get_selected_result_item()
+		item, item_idx = self._get_selected_result_item()
 		if item is not None:
 			if isinstance(item, Directory) or isinstance(item, Disk):
 				self._parent.show_item(item)
 
 			elif isinstance(item, FileImage):
 				self._parent.show_item(item.parent)
+				self._parent.select_item(item)
+
+			self._parent.Raise()
 
 
 	def _on_list_item_selected(self, evt):
 		''' callback na zaznacznie rezultatu - wyświetlenie podglądu '''
 		itemidx	= evt.GetData()
 		item	= self._result[itemidx]
-		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item(item))
-		self._bmp_preview.Refresh()
 		self._btn_properties.Enable(True)
 		self._btn_goto.Enable(True)
+		self._show_preview(item)
 		self._show_image_info(item)
 
 
@@ -506,16 +529,22 @@ class _DlgSearch(wx.Dialog):
 		''' callback na zwinięcie/rozwinięcie panelu '''
 		# trzeba przebudować layout po zwinięciu/rozwinięciu panelu
 		self.Layout()
+		evt.Skip()
 
 
 	def _on_btn_icons(self, evt):
 		self._show_icons(evt.GetIsDown())
 
 
+	def _on_btn_close(self, evt):
+		self.Close()
+
+
 	def _on_thumb_sel_changed(self, evt):
 		item = self._thumbctrl.selected_item
 		self._btn_properties.Enable(item is not None)
 		self._btn_goto.Enable(item is not None)
+		self._show_preview(item)
 		self._show_image_info(item)
 
 
@@ -526,18 +555,24 @@ class _DlgSearch(wx.Dialog):
 				self._parent.show_item(item.parent)
 
 
+	def _on_last_text_menu(self, evt):
+		text = self._last_text_menu.GetLabel(evt.GetId())
+		self._tc_text.SetValue(text)
+
+
 	##########################################################################
 
 
 	def _get_selected_result_item(self):
 		listctrl = self._result_list
 		item = None
+		itemidx = -1
 		if listctrl.GetSelectedItemCount() > 0:
 			index	= listctrl.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
 			itemidx	= listctrl.GetItemData(index)
 			item	= self._result[itemidx]
 
-		return item
+		return item, itemidx
 
 
 	def _show_image_info(self, item):
@@ -553,6 +588,12 @@ class _DlgSearch(wx.Dialog):
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+
+
+	def _show_preview(self, item):
+		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
+		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(item, self._thumb_width, self._thumb_height)[0])
+		self._bmp_preview.Refresh()
 
 
 	def _show_icons(self, icons):
@@ -573,11 +614,6 @@ class _DlgSearch(wx.Dialog):
 			size = (self._appconfig.get('settings', 'thumb_width', 200),
 					self._appconfig.get('settings', 'thumb_height', 200))
 
-		self._bmp_preview.SetMinSize(size)
-		self._bmp_preview.Show(not icons)
-
-		self.Layout()
-
 		self._image_info.DeleteAllItems()
 
 		if icons:
@@ -585,7 +621,11 @@ class _DlgSearch(wx.Dialog):
 			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 
 		else:
-			self._thumbctrl.clear()
+			self._thumbctrl.show_dir([])
+
+		self._bmp_preview.SetMinSize(size)
+
+		self._grid_result.RecalcSizes()
 
 		self._btn_goto.Enable(False)
 		self._btn_properties.Enable(False)
@@ -627,7 +667,9 @@ class DlgSearchProvider(Singleton):
 
 	def close_all(self):
 		''' DlgSearchProvider().close_all() -- zamknięcie wszystkich okien '''
-		[ dlg.Close(True) for dlg in self._dialogs ]
+		for dlg in self._dialogs:
+			dlg.Close(True)
+
 		self._dialogs = []
 
 

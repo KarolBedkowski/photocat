@@ -6,7 +6,7 @@ pc.engine.errors
  -- klasy wyjątków wyrzucanych przez engine
 
  Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004, 2005, 2006 
+ Copyright (c) Karol Będkowski, 2004, 2005, 2006
 
  This file is part of Photo Catalog
 
@@ -39,6 +39,9 @@ class UpdateDiskError(StandardError):
 	pass
 
 
+
+class OpenCatalogError(StandardError):
+	pass
 
 
 

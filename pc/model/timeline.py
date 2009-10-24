@@ -29,8 +29,7 @@ __all__ = ["Timeline"]
 
 
 import time
-
-from file_image	import FileImage
+import operator
 
 
 
@@ -98,7 +97,7 @@ class Timeline(object):
 	@property
 	def subdirs(self):
 		''' timeline.subdirs -> [] -- lista pod-obiektów Timeline sortowana wg daty '''
-		return sorted(self.dirs.values(), lambda x,y: cmp(x.date, y.date))
+		return sorted(self.dirs.values(), key=operator.attrgetter('date'))
 
 
 	@property
@@ -118,7 +117,7 @@ class Timeline(object):
 	def __add_item(self, item):
 		''' timeline.__add_item(item) -- dodanie obiektu '''
 		date = item.shot_date
-		if date is None or date == 0:
+		if not date:
 			return
 
 		try:
@@ -130,15 +129,16 @@ class Timeline(object):
 		if self.level > 0:
 			self._files.append(item)
 
-		if self.level == 3:
-			return
+			if self.level == 3:
+				return
 
 		date_part = date[self.level]
 
-		subdir = self.dirs.get(date_part)
-		if subdir is None:
-			subdir = Timeline(date_part, self.catalog, self, self.level+1)
-			self.dirs[date_part] = subdir
+		if date_part in self.dirs:
+			subdir = self.dirs[date_part]
+
+		else:
+			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog, self, self.level+1)
 
 		subdir.__add_item(item)
 
@@ -153,18 +153,26 @@ class Timeline(object):
 		if self.level != 0:
 			return
 
-		def add_dir(dir):
-			[ self.__add_item(item) for item in dir.files if item.is_valid ]
-			[ add_dir(subdir) for subdir in dir.subdirs if subdir.is_valid ]
+		def add_dir(directory):
+			for item in directory.files:
+				if item.is_valid:
+					self.__add_item(item)
 
-		[ add_dir(item) for item in self.catalog.disks ]
+			for subdir in directory.subdirs:
+				if subdir.is_valid:
+					add_dir(subdir)
+
+		for item in self.catalog.disks:
+			add_dir(item)
 
 		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie
 		def sort_subdir(subdir):
-			subdir._files.sort(lambda x,y: cmp(x.shot_date, y.shot_date))
-			[ sort_subdir(subsubdir) for subsubdir in subdir.dirs.itervalues() ]
+			subdir._files.sort(key=operator.attrgetter('shot_date'))
+			for subsubdir in subdir.dirs.itervalues():
+				sort_subdir(subsubdir)
 
-		[ sort_subdir(subdir) for subdir in self.dirs.itervalues()]
+		for subdir in self.dirs.itervalues():
+			sort_subdir(subdir)
 
 
 

@@ -30,199 +30,137 @@ import sys
 import time
 
 import wx
+import wx.lib.scrolledpanel as scrolled
 
-from kpylibs.guitools	import create_button
-from kpylibs.eventgenerator import EventGenerator
 
 _ = wx.GetTranslation
 
+_LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
+_LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 
 
-class InfoPanel(wx.Panel, EventGenerator):
+
+def _create_label(parent, title):
+	ctr = wx.StaticText(parent, -1, title)
+	ctr.SetFont(_LABEL_FONT_STYLE)
+	return ctr
+
+
+
+class InfoPanel(wx.Panel):
 	def __init__(self, *args, **kwargs):
 		wx.Panel.__init__(self, *args, **kwargs)
-		EventGenerator.__init__(self)
-		
+
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(self._create_layout(), 1, wx.EXPAND)
+		sizer.Add(self._create_layout(self), 1, wx.EXPAND)
 		self.SetSizerAndFit(sizer)
 
-		self._image = None
-		self._folder = None
 
+	def _create_layout(self, parent):
+		self._panel_main = panel = scrolled.ScrolledPanel(parent, -1)
+		panel_sizer = wx.BoxSizer(wx.VERTICAL)
 
-	def _create_layout(self):
-		self._notebook = notebook = self._notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_layout_page_main(notebook),	_('Main'))
-		notebook.AddPage(self._create_layout_page_exif(notebook),	_('Exif'))
-		notebook.AddPage(self._create_layout_page_folder(notebook),	_('Folder'))
-		return notebook
+		self._panel_info_main = wx.Panel(panel, -1)
+		panel_sizer.Add(self._panel_info_main, 0, wx.EXPAND|wx.ALL, 12)
 
+		panel_sizer.Add((12, 12))
 
-	def _create_layout_page_main(self, parent):
-		panel = wx.Panel(parent, -1)
-		listctrl = self._listctrl_main = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		self._panel_info_exif = wx.Panel(panel, -1)
+		panel_sizer.Add(self._panel_info_exif, 0, wx.EXPAND|wx.ALL, 12)
 
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(listctrl, 1, wx.EXPAND)
-
-		subsizer = wx.BoxSizer(wx.VERTICAL)
-		subsizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND)
-		subsizer.Add(textctrl, 1, wx.EXPAND)
-		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
-
-		panel.SetSizerAndFit(sizer)
-
-		listctrl.InsertColumn(0, '')
-		listctrl.InsertColumn(1, '')
-
-		return panel
-
-
-	def _create_layout_page_exif(self, parent):
-		panel = wx.Panel(parent, -1)
-
-		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
-
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(listctrl, 1, wx.EXPAND)
-		panel.SetSizerAndFit(sizer)
-
-		listctrl.InsertColumn(0, _('Tag'))
-		listctrl.InsertColumn(1, _('Value'))
-
-		return panel
-
-
-	def _create_layout_page_folder(self, parent):
-		panel = wx.Panel(parent, -1)
-
-		listctrl = self._listctrl_folder = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.LC_NO_HEADER|wx.SUNKEN_BORDER)
-		textctrl = self._textctrl_folder_descr = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
-
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.Add(listctrl, 1, wx.EXPAND|wx.ALL, 5)
-
-		subsizer = wx.BoxSizer(wx.VERTICAL)
-		subsizer.Add(wx.StaticText(panel, -1, _("Description")), 0, wx.EXPAND)
-		subsizer.Add(textctrl, 1, wx.EXPAND)
-		sizer.Add(subsizer, 1, wx.EXPAND|wx.ALL, 5)
-		panel.SetSizerAndFit(sizer)
-
-		listctrl.InsertColumn(0, '')
-		listctrl.InsertColumn(1, '')
-
+		panel.SetSizerAndFit(panel_sizer)
 		return panel
 
 
 	#########################################################################
 
 
-	def _show_main(self, image):
-		listctrl = self._listctrl_main
+	def _show_main(self, image, what):
+		panel = self._panel_info_main
+		panel.DestroyChildren()
+		
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-		def insert(key, val):
-			idx = listctrl.InsertStringItem(sys.maxint, str(key))
-			listctrl.SetStringItem(idx, 1, str(val))
+		subsizer = wx.BoxSizer(wx.VERTICAL)
+		subsizer.Add(_create_label(panel, what), 0, wx.EXPAND|wx.BOTTOM, 5)
 
-		[ insert(key, val) for dummy, key, val in sorted(image.info) ]
+		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
+		bsizer.AddGrowableCol(1)
 
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		for dummy, key, val in sorted(image.info):
+			if key == '':
+				bsizer.Add((1,5))
+				bsizer.Add((1,5))
 
+			else:
+				bsizer.Add(_create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
 
-	def _show_desc(self, image):
-		self._textctrl_desc.SetValue(str(image.desc or ''))
+		subsizer.Add(bsizer, 1, wx.EXPAND|wx.LEFT, 12)
+
+		sizer.Add(subsizer)
+
+		if image.desc:
+			sizer.Add((12, 12))
+
+			subsizer = wx.BoxSizer(wx.VERTICAL)
+			subsizer.Add(_create_label(panel, _("Description")), 0, wx.EXPAND|wx.BOTTOM, 5)
+
+			st_desc = wx.TextCtrl(panel, -1, image.desc, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.BORDER_NONE)
+			st_desc.SetBackgroundColour(panel.GetBackgroundColour())
+			subsizer.Add(st_desc, 1, wx.EXPAND|wx.LEFT, 12)
+			
+			sizer.Add(subsizer, 1, wx.EXPAND)
+
+		panel.SetSizerAndFit(sizer)
 
 
 	def _show_exif(self, image):
-		listctrl = self._listctrl_exif
-		exif_data =  image.exif_data
+		# exif
+		panel = self._panel_info_exif
 
-		if exif_data is not None and len(exif_data) > 0:
-			for key, val in sorted(exif_data.iteritems()):
-				idx = listctrl.InsertStringItem(sys.maxint, str(key))
-				listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
+		if image.exif_data is not None and len(image.exif_data) > 0:
+			sizer = wx.BoxSizer(wx.VERTICAL)
 
-			self._notebook.SetPageText(1, _('Exif'))
+			sizer.Add(_create_label(panel, _("Exif")), 0, wx.EXPAND|wx.BOTTOM, 5)
 
-		else:
-			self._notebook.SetPageText(1, _('No Exif'))
+			bsizer = wx.FlexGridSizer(2, 2, 5, 12)
+			bsizer.AddGrowableCol(1)
 
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+			for key, val in sorted(image.exif_data.iteritems()):
+				bsizer.Add(_create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				stext = wx.StaticText(panel, -1, str(val[:100]))
+				#stext = wx.TextCtrl(panel, -1, str(val), style=wx.TE_READONLY|wx.BORDER_NONE)
+				bsizer.Add(stext, 1, wx.EXPAND)
 
-
-	def _show_folder(self, folder):
-		listctrl = self._listctrl_folder
-
-		def insert(key, val):
-			idx = listctrl.InsertStringItem(sys.maxint, str(key))
-			listctrl.SetStringItem(idx, 1, str(val))
-
-		[ insert(key, val) for dummy, key, val in sorted(folder.info) ]
-
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-
-		self._textctrl_folder_descr.SetValue(str(folder.desc or ""))
-
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+			sizer.Add(bsizer, 0, wx.EXPAND|wx.LEFT, 12)
+			panel.SetSizerAndFit(sizer)
 
 
 	#########################################################################
 
 
 	def show(self, image):
+		self.Freeze()
 		self.clear()
-		self._image = image
-		self._show_main(image)
-		self._show_desc(image)
+		self._show_main(image, _("File"))
 		self._show_exif(image)
+		self._panel_main.SetupScrolling(scroll_x=False)
+		self.Thaw()
 
 
 	def show_folder(self, folder):
-		self._folder = folder
-		self._show_folder(folder)
+		self.Freeze()
+		self._show_main(folder, _("Directory"))
+		self._panel_main.SetupScrolling(scroll_x=False)
+		self.Thaw()
 
 
 	def clear(self):
-		self._image = None
-		self._listctrl_main.DeleteAllItems()
-		self._listctrl_exif.DeleteAllItems()
-		self._textctrl_desc.SetValue('')
-
-
-	def clear_folder(self):
-		self._folder is None
-		self._listctrl_folder.DeleteAllItems()
-		self._textctrl_folder_descr.SetValue('')
-
-
-	def show_page(self, page):
-		""" infopanel.show_page(page) -- pokazanie strony o podanym indexie """
-		self._notebook.SetSelection(page)
+		panel = self._panel_info_exif
+		panel.DestroyChildren()
 
 	#########################################################################
-
-
-	def _on_update_descr(self, evt):
-		if self._image is not None:
-			new_descr = self._textctrl_desc.GetValue()
-			if new_descr != self._image.desc:
-				self._image.desc = new_descr
-				self.event_call('update_image', self._image)
-
-
-	def _on_update_folder_descr(self, evt):
-		if self._folder is not None:
-			new_descr = self._textctrl_folder_descr.GetValue()
-			if new_descr != self._folder.desc:
-				self._folder.desc = new_descr
-				self.event_call('update_folder', self._folder)
 
 
 

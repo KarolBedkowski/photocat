@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
@@ -33,8 +33,8 @@ import wx
 from wx.lib import masked
 import  wx.lib.colourselect as  csel
 
-from kpylibs.appconfig	import AppConfig
-from kpylibs.validators	import MyValidator, validators
+from kabes.tools.appconfig		import AppConfig
+from kabes.wxtools.validators	import MyValidator, validators
 
 from pc.lib				import fonttools
 
@@ -59,8 +59,8 @@ class DlgSettings(wx.Dialog):
 		self._data = self._load_settings()
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 5)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
+		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 
@@ -81,16 +81,16 @@ class DlgSettings(wx.Dialog):
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
-		sizer = wx.FlexGridSizer(2, 2, 5, 5)
+		sizer = wx.FlexGridSizer(3, 2, 5, 12)
 		sizer.AddGrowableCol(1)
 
 		def add(label, control):
 			sizer.Add(wx.StaticText(panel, -1, label), 0, wx.LEFT|wx.TOP, 2)
-			sizer.Add(control, 1, wx.EXPAND)
+			sizer.Add(control, 0)
 			return control
 
 		self._tc_thumb_width = add(_('Thumb width:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=50, max=500,
+				integerWidth=3, allowNegative=False, min=50, max=500, size=(50, -1),
 				validator=MyValidator(data_key=(self._data, 'thumb_width'), field=_('thumb width'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
@@ -98,7 +98,7 @@ class DlgSettings(wx.Dialog):
 		))
 
 		self._tc_thumb_height = add(_('Thumb height:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=50, max=500,
+				integerWidth=3, allowNegative=False, min=50, max=500, size=(50, -1),
 				validator=MyValidator(data_key=(self._data, 'thumb_height'), field=_('thumb height'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
@@ -106,14 +106,14 @@ class DlgSettings(wx.Dialog):
 		))
 
 		self._tc_thumb_compression = add(_('Compression:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=20, max=100,
+				integerWidth=3, allowNegative=False, min=20, max=100, size=(50, -1),
 				validator=MyValidator(data_key=(self._data, 'thumb_compression'), field=_('compression'),
 						validators=[validators.IntValidator(), validators.MinValueValidator(20),
 								validators.MaxValueValidator(100)
 						])
 		))
 
-		grid.Add(sizer, 1, wx.EXPAND|wx.ALL, 5)
+		grid.Add(sizer, 1, wx.EXPAND|wx.ALL, 12)
 
 		panel.SetSizerAndFit(grid)
 		return panel
@@ -124,17 +124,21 @@ class DlgSettings(wx.Dialog):
 
 		grid = wx.BoxSizer(wx.VERTICAL)
 
+		box_options = wx.BoxSizer(wx.VERTICAL)
+
 		self._tc_thumb_preload = wx.CheckBox(panel, -1, _('Thumb preload'),
 				validator=MyValidator(data_key=(self._data, 'view_preload'))
 		)
-		grid.Add(self._tc_thumb_preload, 0, wx.EXPAND|wx.ALL, 5)
+		box_options.Add(self._tc_thumb_preload, 0, wx.EXPAND)
 
 		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'),
 				validator=MyValidator(data_key=(self._data, 'view_show_captions'))
 		)
-		grid.Add(self._tc_thumb_captions, 0, wx.EXPAND|wx.ALL, 5)
+		box_options.Add(self._tc_thumb_captions, 0, wx.EXPAND)
 
-		grid.Add(self._create_layout_page_view_selfonts(panel), 0, wx.EXPAND|wx.ALL, 5)
+		grid.Add(box_options, 0, wx.EXPAND|wx.ALL, 12)
+
+		grid.Add(self._create_layout_page_view_selfonts(panel), 0, wx.EXPAND|wx.ALL, 12)
 
 		panel.SetSizerAndFit(grid)
 
@@ -142,7 +146,7 @@ class DlgSettings(wx.Dialog):
 
 
 	def _create_layout_page_view_selfonts(self, panel):
-		fgrid = wx.FlexGridSizer(3, 3, 5, 5)
+		fgrid = wx.FlexGridSizer(3, 3, 5, 12)
 		fgrid.AddGrowableCol(1)
 
 		def add(caption, prefix, function, funcion_sel_color):
@@ -170,11 +174,14 @@ class DlgSettings(wx.Dialog):
 				validator=MyValidator(data_key=(self._data, 'thumb_raw_custom_color'))
 		)
 		fgrid.Add(self._tc_raw_custom_color, 1, wx.EXPAND)
+
+		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_raw_custom_color, self._tc_raw_custom_color)
+
 		color = fonttools.str2color(self._data.get('thumb_raw_color'), wx.Colour(70, 70, 255))
-		btn_color = csel.ColourSelect(panel, -1, colour=color)
+		self._btn_raw_color = btn_color = csel.ColourSelect(panel, -1, colour=color)
+		btn_color.Enable(self._data.get('thumb_raw_custom_color', False))
 		self.Bind(csel.EVT_COLOURSELECT, self._on_btn_raw_color, btn_color)
 		fgrid.Add(btn_color, 0, wx.EXPAND)
-
 
 		return fgrid
 
@@ -182,21 +189,20 @@ class DlgSettings(wx.Dialog):
 	#########################################################################
 
 
-	def _on_ok(self, evt):
+	def _on_ok(self, _evt):
 		if not self.Validate():
 			return
 
 		if not self.TransferDataFromWindow():
 			return
 
-		if self._data['thumb_height'] < 25 or self._data['thumb_height'] > 500:
-			self._data['thumb_height'] = 200
-
-		if self._data['thumb_width'] < 25 or self._data['thumb_width'] > 500:
-			self._data['thumb_width'] = 200
-
-		if self._data['thumb_compression'] < 10 or self._data['thumb_compression'] > 100:
-			self._data['thumb_compression'] = 50
+		def check_and_correct(key, minimal, maximal, default):
+			if self._data[key] < minimal or self._data[key] > maximal:
+				self._data[key] = default
+	
+		check_and_correct('thumb_height', 25, 500, 200)
+		check_and_correct('thumb_width', 25, 500, 200)
+		check_and_correct('thumb_compression', 10, 100, 50)
 
 		self._save_settings()
 		self.EndModal(wx.ID_OK)
@@ -207,7 +213,7 @@ class DlgSettings(wx.Dialog):
 			evt.Skip()
 
 
-	def _on_btn_caption_font(self, evt):
+	def _on_btn_caption_font(self, _evt):
 		font_name = self._select_font('thumb')
 		if font_name is not None:
 			self._btn_thumb_font.SetLabel(font_name)
@@ -217,7 +223,7 @@ class DlgSettings(wx.Dialog):
 		self._data['thumb_font_color'] = fonttools.color2str(evt.GetValue())
 
 
-	def _on_btn_timeline_font(self, evt):
+	def _on_btn_timeline_font(self, _evt):
 		font_name = self._select_font('header')
 		if font_name is not None:
 			self._btn_timeline_font.SetLabel(font_name)
@@ -230,6 +236,9 @@ class DlgSettings(wx.Dialog):
 	def _on_btn_raw_color(self, evt):
 		self._data['thumb_raw_color'] = fonttools.color2str(evt.GetValue())
 
+	def _on_checkbox_raw_custom_color(self, evt):
+		value = evt.IsChecked()
+		self._btn_raw_color.Enable(value)
 
 	#########################################################################
 
@@ -245,7 +254,7 @@ class DlgSettings(wx.Dialog):
 	def _save_settings(self):
 		appconfig = AppConfig()
 		data = self._data
-		for key, default in data.iteritems():
+		for key in data.iterkeys():
 			appconfig.set('settings', key, data[key])
 
 

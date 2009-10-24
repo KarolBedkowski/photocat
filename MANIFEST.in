@@ -1,4 +1,9 @@
-include LICENCE.txt
 include TODO
-include README
-recursive-include sag3 *.kid *.css *.js *.mo *.po *.pot
+include CHANGELOG
+include LICENCE.txt
+include LICENCE_EXIFpy.txt
+include LICENCE_python.txt
+include LICENCE_wxPython.txt
+recursive-include pc *.mo *.po *.pot
+recursive-include debian *
+recursive-include dist.linux *
