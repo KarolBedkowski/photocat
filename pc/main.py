@@ -36,7 +36,6 @@ except Exception, err:
 	print 'No psyco........ (%s)' % str(err)
 
 
-import os
 import sys
 import imp
 
@@ -46,8 +45,15 @@ try:
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
-import wxversion
-wxversion.select('2.8')
+
+def _is_frozen():
+	return (hasattr(sys, "frozen")		# new py2exe
+			or hasattr(sys, "importers")	# old py2exe
+			or imp.is_frozen("__main__"))	# tools/freeze
+
+if not _is_frozen():
+	import wxversion
+	wxversion.select('2.8')
 
 
 ##########################################################################
