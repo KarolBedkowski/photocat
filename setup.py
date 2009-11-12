@@ -125,8 +125,8 @@ setup(
 						"packages":		"PngImagePlugin, JpegImagePlugin, _rl_accel",
 				}},
 	zipfile = r"modules.dat",
-	windows = [pctarget],
-	#console = [pctarget],
+	#windows = [pctarget],
+	console = [pctarget],
 )
 
 

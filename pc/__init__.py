@@ -26,11 +26,8 @@ __revision__	= '$Id$'
 
 __all__			= ['run']
 
-
-__version__		= '1.6.1'
+__version__		= '1.6.2'
 __release__		= '2009-11-12'
-
-
 
 
 from pc.main import run
