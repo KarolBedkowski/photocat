@@ -7,7 +7,7 @@ Standards-Version: 3.7.3
 
 Package: pc
 Architecture: any
-Depends: python (>=2.5), python-wxgtk2.8 
+Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8)
 Suggests: python-reportlab (>=2.0), python-psyco, 
 Description: Photo Catalog
  Program to catalog pictures on cds.

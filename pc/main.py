@@ -46,6 +46,9 @@ try:
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
+import wxversion
+wxversion.select('2.8')
+
 
 ##########################################################################
 # logowanie
@@ -64,7 +67,6 @@ _LOG = logging.getLogger(__name__)
 
 
 ##########################################################################
-
 
 import wx
 
