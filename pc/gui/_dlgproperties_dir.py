@@ -63,7 +63,8 @@ class DlgPropertiesDir(DlgPropertiesBase):
 		changed		= False
 
 		new_desc		= self._textctrl_desc.GetValue().strip()
-		changed_desc	= (new_desc != '') if (item.desc is None) else (new_desc != item.desc)
+		changed_desc	= ((new_desc != '') 
+				if (item.desc is None) else (new_desc != item.desc))
 
 		if changed_desc:
 			item.desc	= new_desc

@@ -33,12 +33,8 @@ if __name__ == '__main__':
 	except:
 		sys.setdefaultencoding("utf-8")
 
-import sys
-import time
 
 import wx
-
-from kabes.wxtools.guitools	import create_button
 
 _ = wx.GetTranslation
 
@@ -56,7 +52,8 @@ class TagsListBox(wx.CheckListBox):
 
 	@property
 	def selected(self):
-		return [ tag for idx, tag in enumerate(self._all_tags) if self.IsChecked(idx) ]
+		return [ tag for idx, tag in enumerate(self._all_tags) 
+				if self.IsChecked(idx) ]
 
 	#########################################################################
 
@@ -92,7 +89,8 @@ if __name__ == '__main__':
 			item_tags = ['b', 'd']
 			tlp.show(all_tags, item_tags)
 
-			sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 5)
+			sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
+					wx.EXPAND|wx.ALL, 5)
 
 			self.SetSizer(sizer)
 			sizer.Fit(self)

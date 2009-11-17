@@ -88,7 +88,8 @@ class FileImage(CatalogFile):
 	def exif_data(self):
 		if self._exif_data is None and self.exif is not None:
 			try:
-				self._exif_data = eimage.load_exif_from_storage(self.exif, self.catalog.data_provider)
+				self._exif_data = eimage.load_exif_from_storage(self.exif,
+						self.catalog.data_provider)
 
 			except:
 				_LOG.exception('FileImage.exif_data file=%s', self.name)
@@ -116,7 +117,8 @@ class FileImage(CatalogFile):
 				date = time.strftime('%c', time.localtime(self.shot_date))
 
 			except:
-				_LOG.exception('_get_info convert to date error shot_date=%r', self.shot_date)
+				_LOG.exception('_get_info convert to date error shot_date=%r',
+						self.shot_date)
 
 			else:
 				result.append((51, _('Date'), date))
@@ -129,12 +131,14 @@ class FileImage(CatalogFile):
 					result.append((51, _('Date'), time.strftime('%c', ddate)))
 
 			if 'Image Model' in exif:
-				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'), exif['Image Model'])))
+				result.append((52, _('Camera'), "%s %s" % (exif.get('Image Make'),
+					exif['Image Model'])))
 
 			# informacje o zdjeciu
 			shot_info = eimage.get_exif_shotinfo(exif)
 			if len(shot_info) > 0:
-				result.append((53, _('Settings'), ';   '.join(('%s:%s' % keyval for keyval in shot_info))))
+				result.append((53, _('Settings'),
+						';   '.join(('%s:%s' % keyval for keyval in shot_info))))
 
 		if self.size is not None:
 			result.append((201, _('File size'), format_human_size(self.size)))
@@ -169,8 +173,10 @@ class FileImage(CatalogFile):
 
 	def load(self, path, options, on_update):
 		if CatalogFile.load(self, path, options, on_update):
-			self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
-			self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
+			self.thumb, self.dimensions = eimage.load_thumb_from_file(path,
+					options, self.catalog.data_provider)
+			self.exif, self._exif_data = eimage.load_exif_from_file(path,
+					self.catalog.data_provider)
 			self.shot_date = None
 			self.__set_shot_date_from_exif(self._exif_data)
 
@@ -183,8 +189,10 @@ class FileImage(CatalogFile):
 		changes, process = CatalogFile.update(self, path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
-				self.thumb, self.dimensions = eimage.load_thumb_from_file(path, options, self.catalog.data_provider)
-				self.exif, self._exif_data = eimage.load_exif_from_file(path, self.catalog.data_provider)
+				self.thumb, self.dimensions = eimage.load_thumb_from_file(path,
+						options, self.catalog.data_provider)
+				self.exif, self._exif_data = eimage.load_exif_from_file(path,
+						self.catalog.data_provider)
 				self.shot_date = None
 				self.__set_shot_date_from_exif(self._exif_data)
 
@@ -219,7 +227,8 @@ class FileImage(CatalogFile):
 	@classmethod
 	def _attrlist(cls):
 		attribs = CatalogFile._attrlist()
-		attribs.extend((('shot_date', int), ('thumb', tuple), ('dimensions', tuple), ('exif', tuple)))
+		attribs.extend((('shot_date', int), ('thumb', tuple),
+			('dimensions', tuple), ('exif', tuple)))
 		return attribs
 
 

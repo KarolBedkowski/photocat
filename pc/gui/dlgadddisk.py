@@ -80,7 +80,8 @@ class DlgAddDisk(wx.Dialog):
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_notebook(), 1, wx.EXPAND|wx.ALL, 12)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
+				wx.EXPAND|wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 		self.SetSize((500, -1))
@@ -109,20 +110,24 @@ class DlgAddDisk(wx.Dialog):
 
 		grid.Add(wx.StaticText(panel, -1, _('Disk name:')))
 		self._disk_name = wx.TextCtrl(panel, -1,
-				validator=MyValidator(data_key=(data, 'name'), validators=validators.NotEmptyValidator(),
+				validator=MyValidator(data_key=(data, 'name'), 
+						validators=validators.NotEmptyValidator(), 
 						field=_('name'))
 		)
 		grid.Add(self._disk_name, 1, wx.EXPAND)
 
 		grid.Add(wx.StaticText(panel, -1, _('Disk description:')))
-		self._disk_descr = wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'descr')), style=wx.TE_MULTILINE)
+		self._disk_descr = wx.TextCtrl(panel, -1, 
+				validator=MyValidator(data_key=(data, 'descr')), 
+						style=wx.TE_MULTILINE)
 		grid.Add(self._disk_descr, 1, wx.EXPAND)
 
 		last_dirs, last_dir = self.__get_last_dirs()
 
 		grid.Add(wx.StaticText(panel, -1, _('Folder:')))
 		self._path = wx.ComboBox(panel, -1, last_dir,
-				validator=MyValidator(data_key=(data, 'path'), validators=validators.NotEmptyValidator(),
+				validator=MyValidator(data_key=(data, 'path'), 
+						validators=validators.NotEmptyValidator(),
 						field=_('path')),
 				choices=last_dirs)
 
@@ -154,20 +159,18 @@ class DlgAddDisk(wx.Dialog):
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
-		main_grid.Add(
-				wx.CheckBox(panel, -1, _('Include empty directories'),
-						validator=MyValidator(data_key=(data, 'include_empty'))))
+		main_grid.Add(wx.CheckBox(panel, -1, _('Include empty directories'),
+				validator=MyValidator(data_key=(data, 'include_empty'))))
 
 		main_grid.Add((5, 5))
 
-		main_grid.Add(
-				wx.CheckBox(panel, -1, _('Force load files'), validator=MyValidator(data_key=(data, 'force'))))
+		main_grid.Add(wx.CheckBox(panel, -1, _('Force load files'), 
+				validator=MyValidator(data_key=(data, 'force'))))
 
 		main_grid.Add((5, 5))
 
-		main_grid.Add(
-				wx.CheckBox(panel, -1, _('Load info from captions.txt'),
-						validator=MyValidator(data_key=(data, 'load_captions_txt'))))
+		main_grid.Add(wx.CheckBox(panel, -1, _('Load info from captions.txt'),
+				validator=MyValidator(data_key=(data, 'load_captions_txt'))))
 
 		main_grid.Add((5, 12))
 		main_grid.Add(_create_label(panel, _('Skipped directories')))
@@ -176,7 +179,8 @@ class DlgAddDisk(wx.Dialog):
 		grid = wx.FlexGridSizer(2, 2, 5, 12)
 		grid.AddGrowableCol(1)
 		grid.Add(wx.StaticText(panel, -1, _("Don't load:")))
-		grid.Add(wx.TextCtrl(panel, -1, validator=MyValidator(data_key=(data, 'skip_subdirs'))), 0, wx.EXPAND)
+		grid.Add(wx.TextCtrl(panel, -1, validator=MyValidator(
+				data_key=(data, 'skip_subdirs'))), 0, wx.EXPAND)
 		grid.Add((1, 1))
 		grid.Add(_create_small_label(panel, _('(Separate dirs by ";")')))
 
@@ -192,7 +196,8 @@ class DlgAddDisk(wx.Dialog):
 
 	def _on_btn_sel_dir(self, evt):
 		curr_dir = self._path.GetValue()
-		if curr_dir is None or len(curr_dir) == 0 or not os.path.exists(curr_dir) or not os.path.isdir(curr_dir):
+		if (curr_dir is None or len(curr_dir) == 0 or not os.path.exists(curr_dir)
+				or not os.path.isdir(curr_dir)):
 			curr_dir = os.path.abspath(os.curdir)
 
 		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir,
@@ -215,7 +220,8 @@ class DlgAddDisk(wx.Dialog):
 		name = self._data['name']
 
 		if self._catalog_disk_names is not None and name in self._catalog_disk_names:
-			message_box_error(self, _('Name already exists in catalog!'), _('Add disk'))
+			message_box_error(self, _('Name already exists in catalog!'), 
+					_('Add disk'))
 			return
 
 		current_path  = self._data['path']
@@ -225,14 +231,16 @@ class DlgAddDisk(wx.Dialog):
 			return
 
 		last_dirs = [ current_path ] + [ path
-				for path in ( self._path.GetString(idx) for idx in xrange(min(self._path.GetCount(), 9)) )
+				for path in ( self._path.GetString(idx)
+					for idx in xrange(min(self._path.GetCount(), 9)) )
 				if path != current_path
 		]
 
 		if __name__ != '__main__':
 			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
 
-		self._data['skip_dirs_list'] = [ dirname.strip() for dirname in self._data['skip_subdirs'].split(';') ]
+		self._data['skip_dirs_list'] = [ dirname.strip() for dirname in 
+				self._data['skip_subdirs'].split(';') ]
 		self.EndModal(wx.ID_OK)
 
 
@@ -258,10 +266,12 @@ class DlgAddDisk(wx.Dialog):
 		if catalog is not None:
 			if update:
 				name = self._data['name']
-				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks if disk.name != name) )
+				self._catalog_disk_names = tuple((disk.name 
+						for disk in catalog.disks if disk.name != name) )
 
 			else:
-				self._catalog_disk_names = tuple( ( disk.name for disk in catalog.disks ) )
+				self._catalog_disk_names = tuple((disk.name 
+						for disk in catalog.disks))
 
 
 

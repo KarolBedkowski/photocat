@@ -34,7 +34,7 @@ import logging
 _LOG = logging.getLogger(__name__)
 
 
-from pc.model import Disk, Catalog, FileImage, Directory, Tags
+from pc.model import Disk, Catalog, FileImage, Directory
 
 from storage_errors	import LoadFileError, InvalidFileError, SaveFileError
 from _storage_v3	import StorageV3
@@ -79,7 +79,8 @@ class Storage:
 			catalog.disks.sort(key=operator.attrgetter('name'))
 			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
 
-			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d', filename, catalog.object_in_files)
+			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d', filename,
+					catalog.object_in_files)
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
@@ -94,7 +95,7 @@ class Storage:
 			if input_file is not None:
 				input_file.close()
 
-		_LOG.info('Storage.load finished in %0.2f sec', (time.time() - time_start))
+		_LOG.info('Storage.load finished in %0.2f sec', (time.time()-time_start))
 		return catalog
 
 
@@ -105,7 +106,8 @@ class Storage:
 
 		StorageV3.save(catalog, Storage.__get_header())
 
-		_LOG.info('Storage.save catalog finished in %0.2f sec', (time.time() - time_start))
+		_LOG.info('Storage.save catalog finished in %0.2f sec',
+				(time.time()-time_start))
 
 
 	######################################################
@@ -166,7 +168,8 @@ class Storage:
 
 	@staticmethod
 	def __load_v2(input_file, catalog, objects, filename):
-		class_names	= {'Directory': Directory, 'Disk': Disk, 'FileImage': FileImage}
+		class_names	= {'Directory': Directory, 'Disk': Disk,
+				'FileImage': FileImage}
 
 		while True:
 			line = input_file.readline()

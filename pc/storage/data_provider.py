@@ -79,7 +79,8 @@ class DataProvider:
 		src_file.seek(offset)
 
 		# naglowek
-		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(self._DATA_BLOCK_HEADER_SIZE))
+		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(
+				self._DATA_BLOCK_HEADER_SIZE))
 		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
 		offset_dont_match = h_offset != offset
 		if prefix_dont_match or offset_dont_match:
@@ -145,7 +146,8 @@ class DataProvider:
 		''' DataProvider.close() -- zamknięcie pliku '''
 		if self._file is not None:
 			if not self._readonly:
-				self._file.truncate(max(self.saved_next_offset, self._DATA_FILE_HEADER_SIZE))
+				self._file.truncate(max(self.saved_next_offset, 
+						self._DATA_FILE_HEADER_SIZE))
 			self._file.close()
 			self._file = None
 
@@ -177,7 +179,8 @@ class DataProvider:
 			# kopiowanie danych
 			def copy_data(offset, new_offset):
 				data = self.get_data(offset)
-				next_offset = self._write_block(new_file, new_offset, len(data), data)
+				next_offset = self._write_block(new_file, new_offset, len(data),
+						data)
 				if progress_callback:
 					if not progress_callback(self.objects_count):
 						raise AbortRebuild()
@@ -261,11 +264,12 @@ class DataProvider:
 		return saved_space
 
 
-	######################################################################################
+	############################################################################
 
 
 	def _check_file(self, dest_file):
-		""" DataProvider._check_file(dest_file) -> int -- sprawdzenie nagłówka pliku
+		""" DataProvider._check_file(dest_file) -> int -- sprawdzenie nagłówka 
+			pliku
 			@param dest_file	plik do którego są zapisywane
 			@return koniec danych
 
@@ -283,10 +287,12 @@ class DataProvider:
 
 		# sprawdzenie wersji
 		version = unpack("I", dest_file.read(calcsize("I")))[0]
-		if version > self._DATA_FILE_VERSION_MAX or version < self._DATA_FILE_VERSION_MIN:
+		if version > self._DATA_FILE_VERSION_MAX \
+				or version < self._DATA_FILE_VERSION_MIN:
 			raise IOError(
 				'Invalid file version: %d (supported %d-%d)' % \
-					(version, self._DATA_FILE_VERSION_MIN, self._DATA_FILE_VERSION_MAX)
+					(version, self._DATA_FILE_VERSION_MIN, 
+							self._DATA_FILE_VERSION_MAX)
 			)
 
 		# ostatni offset
@@ -295,11 +301,13 @@ class DataProvider:
 
 		# liczba plikow
 		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: objects_count=%d', self.objects_count)
+		_LOG.debug('DataProvider._check_file: objects_count=%d', 
+				self.objects_count)
 
 		# liczba plikow
 		self.saved_next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: saved_next_offset=%d', self.saved_next_offset)
+		_LOG.debug('DataProvider._check_file: saved_next_offset=%d',
+				self.saved_next_offset)
 
 		if self.saved_next_offset == 0 or self.saved_next_offset > next_offset:
 			self.saved_next_offset = next_offset
@@ -309,9 +317,11 @@ class DataProvider:
 
 		# liczba plikow
 		self.saved_objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
-		_LOG.debug('DataProvider._check_file: saved_objects_count=%d', self.saved_objects_count)
+		_LOG.debug('DataProvider._check_file: saved_objects_count=%d',
+				self.saved_objects_count)
 
-		if self.saved_objects_count == 0 or self.saved_objects_count > self.objects_count:
+		if (self.saved_objects_count == 0 \
+				or self.saved_objects_count > self.objects_count):
 			self.saved_objects_count = self.objects_count
 
 		else:
@@ -321,7 +331,8 @@ class DataProvider:
 
 
 	def _write_header(self, dest_file):
-		''' DataProvider._write_header(dest_file) -> int -- zapisanie nagłówka pliku
+		''' DataProvider._write_header(dest_file) -> int -- zapisanie nagłówka
+			pliku
 			@param dest_file	plik do którego są zapisywane
 			@return koniec nagłówka
 		'''
@@ -346,16 +357,19 @@ class DataProvider:
 
 
 	def _write_next_offset(self, dest_file, next_offset):
-		''' DataProvider._write_next_offset(dest_file, next_offset) -- zapisanie w nagłówku pliku danych o końcu danych
+		''' DataProvider._write_next_offset(dest_file, next_offset) -- zapisanie
+			w nagłówku pliku danych o końcu danych
 			@param dest_file	plik do którego są zapisywane
 			@param next_offset	koniec danych
 		'''
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("LLLL", next_offset, self.objects_count, self.saved_next_offset, self.saved_objects_count))
+		dest_file.write(pack("LLLL", next_offset, self.objects_count,
+				self.saved_next_offset, self.saved_objects_count))
 
 
 	def _write_block(self, dest_file, offset, size, data):
-		'''DataProvider._write_block(dest_file, offset, size, data) -> int -- zapisanie bloku danych
+		'''DataProvider._write_block(dest_file, offset, size, data) -> int
+			-- zapisanie bloku danych
 			@param dest_file	plik do którego są zapisywane
 			@param offset		offset początku
 			@param size			rozmiar bloku danych (bez nagłówka)

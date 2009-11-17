@@ -68,7 +68,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.DeleteAllItems()
 
 
-	###########################################################################################
+	############################################################################
 
 
 	def _get_result(self):
@@ -80,11 +80,12 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 	result = property(_get_result, _set_result)
 
 
-	###########################################################################################
+	############################################################################
 
 
 	def set_sort_icons(self, up, down):
-		''' srlc.set_sort_icons(up, down) -- ustawienie ikon dla pokazania sortowania '''
+		''' srlc.set_sort_icons(up, down) -- ustawienie ikon dla pokazania 
+			sortowania '''
 		self._icons = (down, up)
 
 
@@ -110,7 +111,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
 
-	###########################################################################################
+	############################################################################
 
 	def GetListCtrl(self):
 		return self

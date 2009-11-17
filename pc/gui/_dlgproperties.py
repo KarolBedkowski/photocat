@@ -45,7 +45,8 @@ class DlgProperties(DlgPropertiesBase):
 	''' Dialog o programie '''
 
 	def __init__(self, parent, item, show_next_prev=False):
-		DlgPropertiesBase.__init__(self, parent, item, item.catalog.readonly, show_next_prev=show_next_prev)
+		DlgPropertiesBase.__init__(self, parent, item, item.catalog.readonly, 
+				show_next_prev=show_next_prev)
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
@@ -64,9 +65,11 @@ class DlgProperties(DlgPropertiesBase):
 		self._bmp_preview = wx.StaticBitmap(panel, -1)
 
 		appconfig = AppConfig()
-		thumbw, thumbh = appconfig.get('settings', 'thumb_width', 200), appconfig.get('settings', 'thumb_height', 200)
+		thumbw = appconfig.get('settings', 'thumb_width', 200)
+		thumbh = appconfig.get('settings', 'thumb_height', 200)
 
-		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(self._item, thumbw, thumbh)[0])
+		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(
+				self._item, thumbw, thumbh)[0])
 		sizer.Add(self._bmp_preview, 0, wx.ALIGN_CENTER|wx.ALL, 12)
 
 		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
@@ -78,7 +81,8 @@ class DlgProperties(DlgPropertiesBase):
 				bsizer.Add((1, 5))
 
 			else:
-				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(self._create_label(panel, key + ":"), 0, 
+						wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
 
 		sizer.Add(bsizer, 1, wx.ALL|wx.ALIGN_CENTER, 12)
@@ -94,7 +98,8 @@ class DlgProperties(DlgPropertiesBase):
 		changed		= False
 
 		new_desc		= self._textctrl_desc.GetValue().strip()
-		changed_desc	= (new_desc != '') if (item.desc is None) else (new_desc != item.desc)
+		changed_desc	= ((new_desc != '') 
+				if (item.desc is None) else (new_desc != item.desc))
 
 		if changed_desc:
 			item.desc	= new_desc

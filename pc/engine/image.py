@@ -45,7 +45,8 @@ import wx
 
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
-import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin, IcoImagePlugin, TgaImagePlugin
+import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin
+import IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
 from pc.lib					import EXIF
@@ -57,10 +58,12 @@ _ = wx.GetTranslation
 _CACHE = {}
 _CACHE_LIST = deque()
 
-_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 'EXIF UserComment']
+_IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
+		'EXIF UserComment']
 _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 
-_EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 'EXIF DateTime')
+_EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 
+		'EXIF DateTime')
 
 
 
@@ -72,7 +75,8 @@ def clear_cache():
 
 
 def load_image_from_item(item):
-	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka z katalogu.
+	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka
+		z katalogu.
 
 		@return wxImage()
 	'''
@@ -89,7 +93,8 @@ def load_image_from_item(item):
 
 
 def load_bitmap_from_item(item):
-	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka z katalogu.
+	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka
+		z katalogu.
 
 		@return wxImage()
 	'''
@@ -99,8 +104,8 @@ def load_bitmap_from_item(item):
 
 
 def load_bitmap_from_item_with_size(item, width, height):
-	''' load_bitmap_from_item_with_size(item, width, height) -> wx.Bitmap -- załadowanie i ewentualne
-			przeskalowanie obrazka
+	''' load_bitmap_from_item_with_size(item, width, height) -> wx.Bitmap 
+		-- załadowanie i ewentualne przeskalowanie obrazka
 
 		@param item - element FileImage
 		@param width - docelowa szerokość
@@ -135,7 +140,8 @@ def load_bitmap_from_item_with_size(item, width, height):
 
 
 def load_thumb_from_file(path, options, data_provider):
-	''' load_thumb_from_file(path, options, data_provider) -- ładowanie miniaturki z pliku i zapisanie katalogu
+	''' load_thumb_from_file(path, options, data_provider) -- ładowanie 
+		miniaturki z pliku i zapisanie katalogu
 
 		@param path		- ścieżka do pliku
 		@param options	- opcje
@@ -157,7 +163,8 @@ def load_thumb_from_file(path, options, data_provider):
 
 		dimensions = image.size
 
-		thumbsize = (options.get('thumb_width', 200), options.get('thumb_height', 200))
+		thumbsize = (options.get('thumb_width', 200), 
+				options.get('thumb_height', 200))
 		thumb_compression = options.get('thumb_compression', 50)
 
 		if dimensions[0] > thumbsize[0] or dimensions[1] > thumbsize[1]:
@@ -178,7 +185,8 @@ def load_thumb_from_file(path, options, data_provider):
 
 
 def load_exif_from_file(path, data_provider):
-	''' load_exif_from_file(path, data_provider) -- ładowanie exifa z pliku i zapisanie w katalogu
+	''' load_exif_from_file(path, data_provider) -- ładowanie exifa z pliku 
+		i zapisanie w katalogu
 
 		@param path		- ścieżka do pliku
 		@param data_provider	- DataProvider
@@ -194,8 +202,9 @@ def load_exif_from_file(path, data_provider):
 		if exif is not None:
 			exif_data = {}
 			for key, val in exif.iteritems():
-				if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') or
-						key.startswith('EXIF Tag ') or key.startswith('MakerNote Tag ')):
+				if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ') 
+						or key.startswith('EXIF Tag ') 
+						or key.startswith('MakerNote Tag ')):
 					continue
 
 				val = str(val).replace('\0', '').strip()
@@ -234,10 +243,12 @@ def get_exit_shot_date_value(exif):
 		if exif_key in exif:
 			try:
 				value = exif[exif_key]
-				return time.strptime(value, '%Y:%m:%d %H:%M:%S') if value != '0000:00:00 00:00:00' else None
+				return (time.strptime(value, '%Y:%m:%d %H:%M:%S') 
+						if value != '0000:00:00 00:00:00' else None)
 
 			except:
-				_LOG.exception('_get_info key=%s val="%s"', exif_key, exif[exif_key])
+				_LOG.exception('_get_info key=%s val="%s"', exif_key, 
+						exif[exif_key])
 
 	return 0
 
@@ -272,7 +283,8 @@ def get_exif_shotinfo(exif):
 			shot_info.append((_('iso'), iso))
 
 		except:
-			_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
+			_LOG.exception('_get_info exif iso "%s"', 
+					exif.get('MakerNote ISOSetting'))
 
 	append('EXIF Flash', _('flash'))
 	get_value('EXIF FocalLength', _('focal len.'))
@@ -281,7 +293,8 @@ def get_exif_shotinfo(exif):
 
 
 # list rozszerzeń plików, które są raw-ami
-_IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf', 'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
+_IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf', 
+		'sr2', 'crw', 'cr2', 'kdc', 'dcr', 'raf', 'mef', 'mos',
 		'mrw', 'orf', 'pef', 'ptx', 'x3f', 'raw', 'r3d', '3fr', 'erf'))
 
 

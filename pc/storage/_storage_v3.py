@@ -37,12 +37,14 @@ except ImportError:
 
 from storage_errors	import InvalidFileError, SaveFileError
 
-from pc.model import Disk, Catalog, FileImage, Directory, Tags
+from pc.model import Disk, FileImage, Directory, Tags
 
 
 _LOG = logging.getLogger(__name__)
 
-_CLASS_NAMES = dict(( (clazz.FV3_CLASS_NAME, clazz) for clazz in (Directory, Disk, FileImage) ))
+_CLASS_NAMES = dict(( 
+		(clazz.FV3_CLASS_NAME, clazz) for clazz in (Directory, Disk, FileImage)
+))
 _CLASS_NAMES_TAGS = Tags.FV3_CLASS_NAME
 _CLASS_NAMES_DISK = Disk.FV3_CLASS_NAME
 
@@ -58,7 +60,8 @@ class _ObjectFactory:
 
 
 	def create_object(self, oid, o_type_id, data, *argv, **kwarg):
-		''' obj_factory.create_object(oid, o_type_id, data, ...) -> object -- utworzenie obiektu.
+		''' obj_factory.create_object(oid, o_type_id, data, ...) -> object 
+			-- utworzenie obiektu.
 			Tworzy obiekt i dodaje go do struktury.
 
 			@param oid			id obiektu
@@ -66,24 +69,28 @@ class _ObjectFactory:
 			@param data			dane do zdekodowania
 		'''
 		if not o_type_id in _CLASS_NAMES:
-			_LOG.warn('_ObjectFactory.create_object invalid class name: "%r"', o_type_id)
+			_LOG.warn('_ObjectFactory.create_object invalid class name: "%r"',
+					o_type_id)
 			return None
 
 		klass	= _CLASS_NAMES[o_type_id]
 		data	= pickle.loads(data)
 
 		if type(data) != DictType:
-			_LOG.warn('_ObjectFactory.create_object oid: %d, unknow data: "%s" type=%s', oid, eval_data, type(data))
+			_LOG.warn('_ObjectFactory.create_object oid: %d, unknow data: "%s" type=%s',
+					oid, data, type(data))
 			return None
 
-		parent = self.objects.get(data['parent_id']) if 'parent_id' in data else None
+		parent = self.objects.get(
+				data['parent_id']) if 'parent_id' in data else None
 
 		disk_id = data.get('disk_id')
 		if disk_id and disk_id in self.objects:
 			data['disk'] = self.objects[disk_id]
 
 		# utworzenie klasy
-		self.objects[oid] = new_object = klass(oid, parent=parent, catalog=self.catalog, **data)
+		self.objects[oid] = new_object = klass(oid, parent=parent,
+				catalog=self.catalog, **data)
 
 		if parent:
 			parent.add_child(new_object)
@@ -125,7 +132,8 @@ class StorageV3:
 				oid, class_name, odata = item.encode3()
 				if oid is not None:
 					data = pickle.dumps(odata, -1)
-					output_file.write(StorageV3.__pack_header(oid, class_name, len(data)))
+					output_file.write(StorageV3.__pack_header(oid, class_name,
+							len(data)))
 					output_file.write(data)
 
 				map(write_item, item.childs_to_store)
@@ -159,21 +167,24 @@ class StorageV3:
 
 				data = input_file.read(data_len)
 				if len(data) < data_len:
-					_LOG.error('truncated file data (expect: %d, have: %d)', data_len, len(data))
+					_LOG.error('truncated file data (expect: %d, have: %d)',
+							data_len, len(data))
 					raise InvalidFileError()
 
 				data_extra = None
 				if extra_len:
 					data_extra = input_file.read(extra_len)
 					if len(data_extra) < extra_len:
-						_LOG.error('truncated file extra (expect: %d, have: %d)', extra_len, len(data_extra))
+						_LOG.error('truncated file extra (expect: %d, have: %d)',
+								extra_len, len(data_extra))
 						raise InvalidFileError()
 
 				if o_type_id == _CLASS_NAMES_TAGS:
 					tags_provider.tags = pickle.loads(data)
 					continue
 
-				new_object = obj_factory.create_object(oid, o_type_id, data, data_extra)
+				new_object = obj_factory.create_object(oid, o_type_id, data,
+						data_extra)
 				if new_object:
 					# tagi
 					tags_provider.add_item(new_object)
@@ -185,7 +196,9 @@ class StorageV3:
 
 	@staticmethod
 	def __pack_header(oid, o_type_id, data_len, extra_len=0):
-		return struct.pack('cccLLLL', StorageV3.__HEADER_HEAD[0], StorageV3.__HEADER_HEAD[1], StorageV3.__HEADER_HEAD[2], oid, o_type_id, data_len, extra_len)
+		return struct.pack('cccLLLL', StorageV3.__HEADER_HEAD[0],
+				StorageV3.__HEADER_HEAD[1], StorageV3.__HEADER_HEAD[2], oid,
+				o_type_id, data_len, extra_len)
 
 
 	@staticmethod
@@ -195,7 +208,8 @@ class StorageV3:
 			return None, None, None, None
 
 		if len(data) != StorageV3.__HEADER_LEN:
-			_LOG.warn('file truncated header: (except: %d, load: %d)', StorageV3.__HEADER_LEN, len(data))
+			_LOG.warn('file truncated header: (except: %d, load: %d)',
+					StorageV3.__HEADER_LEN, len(data))
 			raise InvalidFileError()
 
 		h1, h2, h3, oid, o_type_id, data_len, extra_len = struct.unpack('cccLLLL', data)

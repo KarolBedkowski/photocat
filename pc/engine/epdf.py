@@ -32,7 +32,8 @@ _ = wx.GetTranslation
 
 # próba załadowania reportlab
 try:
-	from reportlab.platypus		import SimpleDocTemplate, Table, Paragraph, Image, Spacer
+	from reportlab.platypus		import (SimpleDocTemplate, Table, Paragraph
+			, Image, Spacer)
 	from reportlab.rl_config	import defaultPageSize
 	from reportlab.lib.units	import cm, inch
 	from reportlab.lib.styles	import getSampleStyleSheet
@@ -79,7 +80,9 @@ def _create_pdf(parent, items, options={}):
 	img_width	= appconfig.get('settings', 'thumb_width', 200) / 150 * inch
 	img_height	= appconfig.get('settings', 'thumb_height', 200) / 150 * inch
 
-	cols = max(int((defaultPageSize[0] - MARGIN_LEFT - MARGIN_RIGHT) / (img_width + 0.5 * cm)), 1)
+	cols = max(
+			int((defaultPageSize[0]-MARGIN_LEFT-MARGIN_RIGHT)/(img_width+0.5*cm)),
+			1)
 
 	_LOG.info('create_pdf filename=%s', filename)
 	parent.SetCursor(wx.HOURGLASS_CURSOR)
@@ -93,31 +96,35 @@ def _create_pdf(parent, items, options={}):
 		style_header.fontSize = 10
 		style_header.fontName = 'Times-Bold'
 
-		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT, rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
+		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT, 
+				rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP, 
 				bottomMargin=MARGIN_BOTTOM, pageCompression=9)
 		page = []
 
 		grouping = options.get('group_by')
 		if grouping == GROUP_BY_DATE:
 			item_value_func = lambda i: time.localtime(i.date_to_check)[:3]
-			group_label_func = lambda i: time.strftime('%x', time.localtime(i.date_to_check))
-			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
-					item_value_func, group_label_func, options)
+			group_label_func = lambda i: time.strftime('%x', 
+					time.localtime(i.date_to_check))
+			_create_doc_group_by(page, items, style, style_header, img_width, 
+					img_height, cols, item_value_func, group_label_func, options)
 
 		elif grouping == GROUP_BY_PATH:
 			item_value_func = lambda i: i.parent.path
 			group_label_func = lambda i: i.disk.name + ": " + i.parent.path
-			_create_doc_group_by(page, items, style, style_header, img_width, img_height, cols,
-					item_value_func, group_label_func, options)
+			_create_doc_group_by(page, items, style, style_header, img_width, 
+					img_height, cols, item_value_func, group_label_func, options)
 
 		else:
-			_create_doc_group_none(page, items, style, img_width, img_height, cols, options)
+			_create_doc_group_none(page, items, style, img_width, img_height, 
+					cols, options)
 
 		doc.build(page, onLaterPages=__my_page, onFirstPage=__my_page)
 
 	except Exception, err:
 		_LOG.exception('create_pdf error. file=%s', filename)
-		dialogs.message_box_error(parent, _('Error:\n%s') % str(err),  _('Export to PDF'))
+		dialogs.message_box_error(parent, _('Error:\n%s') % str(err),  
+				_('Export to PDF'))
 
 	else:
 		dialogs.message_box_info(parent, _('Done!'), _('Export to PDF'))
@@ -128,7 +135,8 @@ def _create_pdf(parent, items, options={}):
 ###########################################################################
 
 
-def _create_doc_group_none(page, items, style, img_width, img_height, cols, options):
+def _create_doc_group_none(page, items, style, img_width, img_height, cols, 
+			options):
 	data = []
 	row	= []
 
@@ -162,8 +170,8 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols, opti
 	page.append(table)
 
 
-def _create_doc_group_by(page, items, style, style_header, img_width, img_height, cols, item_value_func,
-			group_label_func, options):
+def _create_doc_group_by(page, items, style, style_header, img_width, img_height, 
+			cols, item_value_func, group_label_func, options):
 	data = []
 	row	= []
 
@@ -227,8 +235,9 @@ def _create_doc_group_by(page, items, style, style_header, img_width, img_height
 ###########################################################################
 
 
-def _create_pdf_no_reportlab(*argv, **kwarg):
-	dialogs.message_box_info(parent, 'Export to PDF not available!\nNo reportlab!', _('Export to PDF'))
+def _create_pdf_no_reportlab(parent, *argv, **kwarg):
+	dialogs.message_box_info(parent, 'Export to PDF not available!\nNo reportlab!',
+			_('Export to PDF'))
 
 
 ###########################################################################

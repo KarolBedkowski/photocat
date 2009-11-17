@@ -62,7 +62,8 @@ class Catalog(TreeItem):
 
 	@property
 	def caption(self):
-		return self.name + (self.dirty and ' *' or '') + (self.readonly and ' [ReadOnly]' or '')
+		return (self.name + (self.dirty and ' *' or '') 
+			+ (self.readonly and ' [ReadOnly]' or ''))
 
 
 	@property
@@ -78,8 +79,8 @@ class Catalog(TreeItem):
 	@property
 	def object_in_files(self):
 		def count_objects_in_dir(directory):
-			return sum((image.data_objects_count for image in directory.files)) + \
-					sum(( count_objects_in_dir(subdir) for subdir in directory.subdirs ))
+			return sum((image.data_objects_count for image in directory.files)) \
+					+ sum((count_objects_in_dir(subdir) for subdir in directory.subdirs))
 
 		return sum(( count_objects_in_dir(disk) for disk in self.disks ))
 

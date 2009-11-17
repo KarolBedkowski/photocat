@@ -60,7 +60,8 @@ class DlgEditTags(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent):
-		wx.Dialog.__init__(self, parent, -1, _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		wx.Dialog.__init__(self, parent, -1, _('Properties'), 
+				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 
 		dlg_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid = wx.BoxSizer(wx.VERTICAL)
@@ -72,7 +73,8 @@ class DlgEditTags(wx.Dialog):
 
 		dlg_grid.Add(main_grid, 1, wx.EXPAND|wx.ALL, 12)
 
-		dlg_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 12)
+		dlg_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
+				wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 12)
 
 		self.SetSizerAndFit(dlg_grid)
 		self.SetSize((300, 400))

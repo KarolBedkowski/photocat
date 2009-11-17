@@ -29,36 +29,37 @@ __revision__	= '$Id$'
 import logging
 _LOG = logging.getLogger(__name__)
 
-import math
-import time
 
 import wx
 import wx.lib.newevent
 
-from pc.lib	import fonttools
 from pc.engine.thumb_drawer import ThumbDrawer
 
 from pc.gui.components._thumb import Thumb
 
 
-(ThumbSelectionChangeEvent,		EVT_THUMB_SELECTION_CHANGE)		= wx.lib.newevent.NewEvent()
-(ThumbDblClickEvent,			EVT_THUMB_DBCLICK)				= wx.lib.newevent.NewEvent()
+(ThumbSelectionChangeEvent,	EVT_THUMB_SELECTION_CHANGE)	= wx.lib.newevent.NewEvent()
+(ThumbDblClickEvent,		EVT_THUMB_DBCLICK)			= wx.lib.newevent.NewEvent()
 
 
 
 class ThumbCtrl(wx.ScrolledWindow):
 	''' Kontrolka wyświetlająca miniaturki obrazków '''
 
-	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, thumbs_preload=True, show_captions=True):
-		''' ThumbCtrl(parent, [wxid], [status_wnd], [thumbs_preload]) -> new object -- konstruktor
+	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, 
+				thumbs_preload=True, show_captions=True):
+		''' ThumbCtrl(parent, [wxid], [status_wnd], [thumbs_preload]) -> 
+			new object -- konstruktor
 
 			@param parent		-- okno nadrzędne
 			@param wxid			-- id tworzonego obiektu
-			@param status_wnd	-- okno, w którego statusbarze będzie ustawiany procent załadowania
+			@param status_wnd	-- okno, w którego statusbarze będzie ustawiany 
+					procent załadowania
 			@param thumbs_preload	-- bool: włącza ładowanie w tle miniaturek
 			@param show_captions	-- bool: włącza wyświetlanie podpisów
 		'''
-		wx.ScrolledWindow.__init__(self, parent, wxid, style=wx.BORDER_SUNKEN|wx.HSCROLL|wx.VSCROLL)
+		wx.ScrolledWindow.__init__(self, parent, wxid, 
+				style=wx.BORDER_SUNKEN|wx.HSCROLL|wx.VSCROLL)
 
 		self.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_LISTBOX))
 
@@ -106,7 +107,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def sort_current_dir(self, sort_function):
-		''' thumbctrl.sort_current_dir(sort_function) -- posortowanie i odświeżenie widoku
+		''' thumbctrl.sort_current_dir(sort_function) -- posortowanie 
+			i odświeżenie widoku
 
 			@param sort_function - funkcja sortująca
 		'''
@@ -119,7 +121,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def set_thumb_size(self, thumb_width, thumb_height):
-		''' thumbctrl.set_thumb_size(thumb_width, thumb_height) -- ustawienie nowego rozmiaru miniaturek i odświerzenie
+		''' thumbctrl.set_thumb_size(thumb_width, thumb_height) -- ustawienie 
+			nowego rozmiaru miniaturek i odświerzenie
 
 			@param thumb_width		- nowa szerokość
 			@param thumb_height		- nowa wysokość
@@ -150,7 +153,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def set_captions_font(self, fontdata):
-		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek i odświerzenie
+		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek 
+			i odświerzenie
 
 			@param fontdata - słownik z informacją o fontach
 		'''
@@ -160,7 +164,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	@property
 	def selected_items(self):
-		''' thumbctrl.selected_items -> (iter) -- zwraca listę zaznaczonych obiektów '''
+		''' thumbctrl.selected_items -> (iter) -- zwraca listę zaznaczonych 
+			obiektów '''
 		if not self._selected_list:
 			return tuple()
 
@@ -175,14 +180,15 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 	@property
 	def selected_item(self):
-		''' thumbctrl.selected_item -> item -- zwraca ostatni zaznaczony element lub None '''
+		''' thumbctrl.selected_item -> item -- zwraca ostatni zaznaczony element
+			lub None '''
 		return self._items[self._selected].image if self._selected > -1 else None
 
 
 	@property
 	def selected_index(self):
-		''' thumbctrl.selected_index -> (int, int) -- zwraca index zaznaczonego elementu
-				i liczbę elementów
+		''' thumbctrl.selected_index -> (int, int) -- zwraca index zaznaczonego
+			elementu i liczbę elementów
 		'''
 		return (-1, -1) if self._selected == -1 else (self._selected, len(self._items))
 
@@ -206,7 +212,8 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def get_item_by_index(self, idx):
-		''' thumbctrl.get_item_by_index(idx) -> item -- zwraca element o podanym indeksie '''
+		''' thumbctrl.get_item_by_index(idx) -> item -- zwraca element o podanym
+			indeksie '''
 		return self._items[idx].image
 
 
@@ -219,7 +226,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 				break
 
 
-	#######################################################################################
+	############################################################################
 
 
 	def _update(self):
@@ -237,11 +244,12 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Refresh()
 
 
-	##################################################################################
+	############################################################################
 
 
 	def __on_paint(self, event):
-		''' thumbctrl.__on_paint(event) -- callback na EVT_PAINT - przerysowanie kontrolki'''
+		''' thumbctrl.__on_paint(event) -- callback na EVT_PAINT - przerysowanie
+			kontrolki'''
 
 		size = self.GetClientSize()
 		paintRect = wx.Rect(0, 0, size.GetWidth(), size.GetHeight())
@@ -328,13 +336,15 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 
 	def __on_idle(self, evt):
-		''' thumbctrl.__on_idle(evt) -- callback na EVT_IDLE - ładowanie w tle miniaturek '''
+		''' thumbctrl.__on_idle(evt) -- callback na EVT_IDLE - ładowanie w tle 
+			miniaturek '''
 		if self.IsShownOnScreen():
 			len_items = len(self._items)
 
 			if self._last_preloaded <  len_items -1 :
 				self._last_preloaded += 1
-				self._items[self._last_preloaded].get_bitmap(self._thumb_width, self._thumb_height)
+				self._items[self._last_preloaded].get_bitmap(self._thumb_width, 
+						self._thumb_height)
 
 				if self._status_wnd is not None:
 					now_preloaded = int(20*self._last_preloaded/len_items)

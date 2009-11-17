@@ -80,7 +80,8 @@ class CatalogFile(StorageObject):
 
 		result.append((199, '', ''))
 		if self.date is not None:
-			result.append((200, _('File date'), time.strftime('%c', time.localtime(self.date))))
+			result.append((200, _('File date'), 
+					time.strftime('%c', time.localtime(self.date))))
 
 		return result
 
@@ -100,7 +101,8 @@ class CatalogFile(StorageObject):
 	@property
 	def path(self):
 		if self._cached_path is None:
-			self._cached_path = self.name if self.parent is None else os.path.join(self.parent.path, self.name)
+			self._cached_path = (self.name if self.parent is None 
+					else os.path.join(self.parent.path, self.name))
 
 		return self._cached_path
 
@@ -148,25 +150,31 @@ class CatalogFile(StorageObject):
 			updated_tags = self.tags
 
 		else:
-			updated_tags = [ tag for tag in tags if tag not in self.tags] + [ tag for tag in self.tags if tag not in tags ]
+			updated_tags = [ tag for tag in tags if tag not in self.tags] + [
+					tag for tag in self.tags if tag not in tags ]
 
 		self.tags = tuple(tags) if len(tags) > 0 else None
 		self.catalog.tags_provider.update_item(self)
 		return updated_tags
 
 
-	def check_on_find(self, cmpfunc, add_callback, options, _progress_callback=None):
-		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów wyszukiwania '''
+	def check_on_find(self, cmpfunc, add_callback, options, 
+			_progress_callback=None):
+		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów 
+			wyszukiwania '''
 
-		if options.get('search_in_names', True) and self.name and cmpfunc(self.name) and self._check_on_find_date(options):
+		if options.get('search_in_names', True) and self.name \
+				and cmpfunc(self.name) and self._check_on_find_date(options):
 			add_callback(self)
 			return
 
-		if options.get('search_in_descr', True) and self.desc and cmpfunc(self.desc) and self._check_on_find_date(options):
+		if options.get('search_in_descr', True) and self.desc \
+				and cmpfunc(self.desc) and self._check_on_find_date(options):
 			add_callback(self)
 			return
 
-		if options.get('search_in_tags', True) and self.tags and self._check_on_find_date(options):
+		if options.get('search_in_tags', True) and self.tags \
+				and self._check_on_find_date(options):
 			for tag in self.tags:
 				if cmpfunc(tag):
 					add_callback(self)
@@ -185,7 +193,8 @@ class CatalogFile(StorageObject):
 		if not options.get('search_date', False):
 			return True
 
-		return date >= options.get('search_date_start') and date <= options.get('search_date_end')
+		return (date >= options.get('search_date_start') 
+				and date <= options.get('search_date_end'))
 
 
 	##########################################################################

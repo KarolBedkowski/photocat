@@ -26,9 +26,6 @@ __revision__	= '$Id$'
 
 
 
-import sys
-import time
-
 import wx
 import wx.lib.scrolledpanel as scrolled
 
@@ -93,7 +90,8 @@ class InfoPanel(wx.Panel):
 				bsizer.Add((1,5))
 
 			else:
-				bsizer.Add(_create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(_create_label(panel, key + ":"), 0, 
+						wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
 
 		subsizer.Add(bsizer, 1, wx.EXPAND|wx.LEFT, 12)
@@ -104,9 +102,11 @@ class InfoPanel(wx.Panel):
 			sizer.Add((12, 12))
 
 			subsizer = wx.BoxSizer(wx.VERTICAL)
-			subsizer.Add(_create_label(panel, _("Description")), 0, wx.EXPAND|wx.BOTTOM, 5)
+			subsizer.Add(_create_label(panel, _("Description")), 0, 
+					wx.EXPAND|wx.BOTTOM, 5)
 
-			st_desc = wx.TextCtrl(panel, -1, image.desc, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.BORDER_NONE)
+			st_desc = wx.TextCtrl(panel, -1, image.desc,
+					style=wx.TE_MULTILINE|wx.TE_READONLY|wx.BORDER_NONE)
 			st_desc.SetBackgroundColour(panel.GetBackgroundColour())
 			subsizer.Add(st_desc, 1, wx.EXPAND|wx.LEFT, 12)
 			
@@ -128,7 +128,8 @@ class InfoPanel(wx.Panel):
 			bsizer.AddGrowableCol(1)
 
 			for key, val in sorted(image.exif_data.iteritems()):
-				bsizer.Add(_create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(_create_label(panel, key + ":"), 0, 
+						wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 				stext = wx.StaticText(panel, -1, str(val[:100]))
 				#stext = wx.TextCtrl(panel, -1, str(val), style=wx.TE_READONLY|wx.BORDER_NONE)
 				bsizer.Add(stext, 1, wx.EXPAND)

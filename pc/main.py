@@ -142,7 +142,8 @@ def run():
 
 	_LOG.info('run')
 	use_home_dir = wx.Platform != '__WXMSW__'
-	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir, app_name='pc')
+	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir, 
+			app_name='pc')
 	app_config.load()
 
 	_LOG.info('run: starting app...')

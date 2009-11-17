@@ -105,7 +105,8 @@ class _Printout(wx.Printout):
 		self._calc_scale(dc)
 		width, height = self._calc_layout(dc)
 
-		res		= self.drawer.update(self._items_per_page[page-1], width, height, dc=dc)
+		res = self.drawer.update(self._items_per_page[page-1], width, height, 
+				dc=dc)
 		cols, rows, virtual_size, size_hints, scroll_rate, last_index = res
 
 		self.drawer.draw(dc, None)

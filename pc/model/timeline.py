@@ -60,7 +60,7 @@ class Timeline(object):
 		self._files		= []
 
 
-	###################################################################################
+	############################################################################
 
 
 	@property
@@ -96,7 +96,8 @@ class Timeline(object):
 
 	@property
 	def subdirs(self):
-		''' timeline.subdirs -> [] -- lista pod-obiektów Timeline sortowana wg daty '''
+		''' timeline.subdirs -> [] -- lista pod-obiektów Timeline sortowana
+			wg daty '''
 		return sorted(self.dirs.values(), key=operator.attrgetter('date'))
 
 
@@ -111,7 +112,7 @@ class Timeline(object):
 		return files
 
 
-	###################################################################################
+	############################################################################
 
 
 	def __add_item(self, item):
@@ -138,12 +139,13 @@ class Timeline(object):
 			subdir = self.dirs[date_part]
 
 		else:
-			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog, self, self.level+1)
+			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog,
+					self, self.level+1)
 
 		subdir.__add_item(item)
 
 
-	###################################################################################
+	############################################################################
 
 
 	def load(self):

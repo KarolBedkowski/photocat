@@ -62,7 +62,8 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
 		bsizer.AddGrowableCol(1)
 
-		bsizer.Add(self._create_label(panel, _("Name") + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+		bsizer.Add(self._create_label(panel, _("Name") + ":"), 0, 
+				wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 		self._tc_name = wx.TextCtrl(panel, -1)
 		bsizer.Add(self._tc_name , 1, wx.EXPAND)
 
@@ -76,7 +77,8 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 				bsizer.Add((1, 5))
 
 			else:
-				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(self._create_label(panel, key + ":"), 0, 
+						wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
 
 		sizer.Add(bsizer, 1, wx.ALL|wx.ALIGN_CENTER, 12)
@@ -93,7 +95,8 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 
 		new_name = self._tc_name.GetValue()
 		if len(new_name.strip()) == 0:
-			message_box_error(self, _("You must provide name for disk"), _("Disk"))
+			message_box_error(self, _("You must provide name for disk"),
+					_("Disk"))
 			self._tc_name.SetFocus()
 			return
 
@@ -102,7 +105,8 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 			item.name = new_name
 
 		new_desc		= self._textctrl_desc.GetValue().strip()
-		changed_desc	= (new_desc != '') if (item.desc is None) else (new_desc != item.desc)
+		changed_desc	= ((new_desc != '') 
+				if (item.desc is None) else (new_desc != item.desc))
 
 		if changed_desc:
 			item.desc	= new_desc

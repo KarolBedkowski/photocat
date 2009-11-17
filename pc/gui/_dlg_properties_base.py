@@ -49,8 +49,10 @@ class DlgPropertiesBase(wx.Dialog):
 	''' Dialog o programie '''
 	_CONFIG_KEY = 'properties_wnd'
 
-	def __init__(self, parent, item, readonly=False, title=None, show_next_prev=False):
-		wx.Dialog.__init__(self, parent, -1, title or _('Properties'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+	def __init__(self, parent, item, readonly=False, title=None, 
+				show_next_prev=False):
+		wx.Dialog.__init__(self, parent, -1, title or _('Properties'),
+				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 
 		self._item		= item
 		self.readonly	= readonly
@@ -137,7 +139,8 @@ class DlgPropertiesBase(wx.Dialog):
 				bsizer.Add((1, 5))
 
 			else:
-				bsizer.Add(self._create_label(panel, key + ":"), 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
+				bsizer.Add(self._create_label(panel, key + ":"), 0, 
+						wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
 				bsizer.Add(wx.StaticText(panel, -1, str(val)), 1, wx.EXPAND)
 
 		sizer.Add(bsizer, 1, wx.ALL|wx.ALIGN_CENTER, 12)
@@ -153,7 +156,8 @@ class DlgPropertiesBase(wx.Dialog):
 
 		sizer.Add(self._create_label(panel, _("Comment")))
 
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, 
+				style=wx.TE_MULTILINE)
 		textctrl.SetEditable(not self.readonly)
 		textctrl.SetValue(str(self._item.desc or ''))
 
@@ -173,7 +177,8 @@ class DlgPropertiesBase(wx.Dialog):
 
 		sizer.Add(self._create_label(panel, _("Exif")))
 
-		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+		listctrl = self._listctrl_exif = wx.ListCtrl(panel, -1, 
+				style=wx.LC_REPORT|wx.SUNKEN_BORDER)
 		sizer.Add(listctrl, 1, wx.EXPAND|wx.LEFT|wx.TOP, 12)
 
 		listctrl.InsertColumn(0, _('Tag'))
@@ -229,12 +234,14 @@ class DlgPropertiesBase(wx.Dialog):
 
 		subsizer = wx.BoxSizer(wx.VERTICAL)
 
-		shot_date_present = self._item.shot_date is not None and self._item.shot_date > 0
+		shot_date_present = (self._item.shot_date is not None 
+				and self._item.shot_date > 0)
 
 		if not self.readonly:
 			self._cb_shot_date = wx.CheckBox(panel, 1, _("Set shot date"))
 			self._cb_shot_date.SetValue(shot_date_present)
-			self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
+			self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, 
+					self._cb_shot_date)
 			subsizer.Add(self._cb_shot_date)
 
 		date_sizer = wx.BoxSizer(wx.HORIZONTAL)

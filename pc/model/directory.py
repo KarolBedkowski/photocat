@@ -78,12 +78,14 @@ class Directory(CatalogFile, TreeItem):
 
 	@property
 	def subdirs_count(self):
-		return sum((subdir.subdirs_count for subdir in self.subdirs)) + len(self.subdirs)
+		return (sum((subdir.subdirs_count for subdir in self.subdirs)) \
+				+ len(self.subdirs))
 
 
 	@property
 	def images_recursive(self):
-		return itertools.chain(self.files, *[ subdir.images_recursive for subdir in self.subdirs ])
+		return itertools.chain(self.files, \
+				*[ subdir.images_recursive for subdir in self.subdirs ])
 
 	##########################################################################
 
@@ -152,20 +154,24 @@ class Directory(CatalogFile, TreeItem):
 		self.catalog.dirty = True
 
 
-	def check_on_find(self, cmpfunc, add_callback, options, progress_callback=None):
+	def check_on_find(self, cmpfunc, add_callback, options,
+			progress_callback=None):
 		if progress_callback is not None:
 			if not progress_callback(self.name):
 				return
 
 		if options.get('search_for_dirs', True):
-			CatalogFile.check_on_find(self, cmpfunc, add_callback, options, progress_callback)
+			CatalogFile.check_on_find(self, cmpfunc, add_callback, options,
+					progress_callback)
 
 		for subdir in self.subdirs:
-			subdir.check_on_find(cmpfunc, add_callback, options, progress_callback)
+			subdir.check_on_find(cmpfunc, add_callback, options,
+					progress_callback)
 
 		if options.get('search_for_files', True):
 			for image in self.files:
-				image.check_on_find(cmpfunc, add_callback, options, progress_callback)
+				image.check_on_find(cmpfunc, add_callback, options,
+						progress_callback)
 
 
 	def fill_shot_date(self):
@@ -342,17 +348,20 @@ class Directory(CatalogFile, TreeItem):
 					current_file_name = line
 
 			elif line == '':
-				self._load_caption_txt_process_file(current_file_name, current_file_data)
+				self._load_caption_txt_process_file(current_file_name,
+						current_file_data)
 				current_file_data = {}
 				current_file_name = None
 
 			else:
 				key, dummy, val = line.partition('=')
-				if key in ('Title', 'Subtitle', 'Date', 'Desc') and len(val.strip()) > 0:
+				if key in ('Title', 'Subtitle', 'Date', 'Desc') \
+						and len(val.strip()) > 0:
 					current_file_data[key] = val
 
 		if current_file_name != None:
-			self._load_caption_txt_process_file(current_file_name, current_file_data)
+			self._load_caption_txt_process_file(current_file_name,
+					current_file_data)
 
 		captions_file.close()
 
@@ -367,7 +376,8 @@ class Directory(CatalogFile, TreeItem):
 			update_obj = self
 
 		else:
-			find_update_obj = [ image for image in self.files if image.name == file_name]
+			find_update_obj = [ image for image in self.files
+					if image.name == file_name ]
 			if len(find_update_obj) != 1:
 				return
 

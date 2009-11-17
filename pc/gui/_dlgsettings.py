@@ -53,14 +53,16 @@ class DlgSettings(wx.Dialog):
 	'''
 
 	def __init__(self, parent):
-		wx.Dialog.__init__(self, parent, -1, _('Program settings'), style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
+		wx.Dialog.__init__(self, parent, -1, _('Program settings'), 
+				style=wx.RESIZE_BORDER|wx.DEFAULT_DIALOG_STYLE)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
 		self._data = self._load_settings()
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND|wx.ALL, 12)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
+				wx.EXPAND|wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 
@@ -71,8 +73,8 @@ class DlgSettings(wx.Dialog):
 
 	def _create_layout_notebook(self):
 		notebook = self._notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_layout_page_thumbs(notebook),		_('Thumbs'))
-		notebook.AddPage(self._create_layout_page_view(notebook),		_('View'))
+		notebook.AddPage(self._create_layout_page_thumbs(notebook),	_('Thumbs'))
+		notebook.AddPage(self._create_layout_page_view(notebook),	_('View'))
 		return notebook
 
 
@@ -90,25 +92,35 @@ class DlgSettings(wx.Dialog):
 			return control
 
 		self._tc_thumb_width = add(_('Thumb width:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=50, max=500, size=(50, -1),
-				validator=MyValidator(data_key=(self._data, 'thumb_width'), field=_('thumb width'),
-						validators=[validators.IntValidator(), validators.MinValueValidator(50),
+				integerWidth=3, allowNegative=False, min=50, max=500,
+				size=(50, -1),
+				validator=MyValidator(data_key=(self._data, 'thumb_width'), 
+						field=_('thumb width'),
+						validators=[validators.IntValidator(), 
+								validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
 						])
 		))
 
 		self._tc_thumb_height = add(_('Thumb height:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=50, max=500, size=(50, -1),
-				validator=MyValidator(data_key=(self._data, 'thumb_height'), field=_('thumb height'),
-						validators=[validators.IntValidator(), validators.MinValueValidator(50),
+				integerWidth=3, allowNegative=False, min=50, max=500, 
+				size=(50, -1),
+				validator=MyValidator(data_key=(self._data, 'thumb_height'), 
+						field=_('thumb height'),
+						validators=[validators.IntValidator(), 
+								validators.MinValueValidator(50),
 								validators.MaxValueValidator(500)
 						])
 		))
 
-		self._tc_thumb_compression = add(_('Compression:'), masked.NumCtrl(panel, -1,
-				integerWidth=3, allowNegative=False, min=20, max=100, size=(50, -1),
-				validator=MyValidator(data_key=(self._data, 'thumb_compression'), field=_('compression'),
-						validators=[validators.IntValidator(), validators.MinValueValidator(20),
+		self._tc_thumb_compression = add(_('Compression:'), 
+				masked.NumCtrl(panel, -1,
+				integerWidth=3, allowNegative=False, min=20, max=100, 
+				size=(50, -1),
+				validator=MyValidator(data_key=(self._data, 'thumb_compression'),
+						field=_('compression'),
+						validators=[validators.IntValidator(), 
+							validators.MinValueValidator(20),
 								validators.MaxValueValidator(100)
 						])
 		))
@@ -138,7 +150,8 @@ class DlgSettings(wx.Dialog):
 
 		grid.Add(box_options, 0, wx.EXPAND|wx.ALL, 12)
 
-		grid.Add(self._create_layout_page_view_selfonts(panel), 0, wx.EXPAND|wx.ALL, 12)
+		grid.Add(self._create_layout_page_view_selfonts(panel), 0, 
+				wx.EXPAND|wx.ALL, 12)
 
 		panel.SetSizerAndFit(grid)
 
@@ -150,35 +163,42 @@ class DlgSettings(wx.Dialog):
 		fgrid.AddGrowableCol(1)
 
 		def add(caption, prefix, function, funcion_sel_color):
-			fgrid.Add(wx.StaticText(panel, -1, caption), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+			fgrid.Add(wx.StaticText(panel, -1, caption), 0, 
+					wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
-			btn = wx.Button(panel, -1, self._data.get('%s_font' % prefix, _('default')), size=(150, -1))
+			btn = wx.Button(panel, -1, self._data.get('%s_font' % prefix, 
+					_('default')), size=(150, -1))
 			self.Bind(wx.EVT_BUTTON, function, btn)
 			fgrid.Add(btn, 1, wx.EXPAND)
 
-			color = fonttools.str2color(self._data.get('%s_font_color' % prefix), wx.Colour(127, 127, 127))
+			color = fonttools.str2color(self._data.get('%s_font_color' % prefix),
+					wx.Colour(127, 127, 127))
 			btn_color = csel.ColourSelect(panel, -1, colour=color)
 			self.Bind(csel.EVT_COLOURSELECT, funcion_sel_color, btn_color)
 			fgrid.Add(btn_color, 0, wx.EXPAND)
 
 			return btn, btn_color
 
-		self._btn_thumb_font, self._btn_thumb_color	= add(
-				_("Caption font:"),		'thumb',		self._on_btn_caption_font,	self._on_btn_caption_color)
+		self._btn_thumb_font, self._btn_thumb_color	= add( _("Caption font:"),
+				'thumb', self._on_btn_caption_font,	self._on_btn_caption_color)
 
-		self._btn_timeline_font, self._btn_timeline_color = add(
-				_("Header font:"),		'header',		self._on_btn_timeline_font,	self._on_btn_timeline_color)
+		self._btn_timeline_font, self._btn_timeline_color = add(_("Header font:"),
+				'header', self._on_btn_timeline_font, self._on_btn_timeline_color)
 
-		fgrid.Add(wx.StaticText(panel, -1, "RAW"), 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+		fgrid.Add(wx.StaticText(panel, -1, "RAW"), 0, 
+				wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 		self._tc_raw_custom_color = wx.CheckBox(panel, -1, _('Use custom color'),
 				validator=MyValidator(data_key=(self._data, 'thumb_raw_custom_color'))
 		)
 		fgrid.Add(self._tc_raw_custom_color, 1, wx.EXPAND)
 
-		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_raw_custom_color, self._tc_raw_custom_color)
+		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_raw_custom_color, 
+				self._tc_raw_custom_color)
 
-		color = fonttools.str2color(self._data.get('thumb_raw_color'), wx.Colour(70, 70, 255))
-		self._btn_raw_color = btn_color = csel.ColourSelect(panel, -1, colour=color)
+		color = fonttools.str2color(self._data.get('thumb_raw_color'), 
+				wx.Colour(70, 70, 255))
+		self._btn_raw_color = btn_color = csel.ColourSelect(panel, -1, 
+				colour=color)
 		btn_color.Enable(self._data.get('thumb_raw_custom_color', False))
 		self.Bind(csel.EVT_COLOURSELECT, self._on_btn_raw_color, btn_color)
 		fgrid.Add(btn_color, 0, wx.EXPAND)

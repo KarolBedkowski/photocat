@@ -67,9 +67,11 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 
 		self._cb_comment = wx.CheckBox(panel, -1, _("Set comment"))
 		sizer.Add(self._cb_comment, 0, wx.LEFT|wx.TOP, 12)
-		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_set_comment, self._cb_comment)
+		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_set_comment, 
+				self._cb_comment)
 
-		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, style=wx.TE_MULTILINE)
+		textctrl = self._textctrl_desc = wx.TextCtrl(panel, -1, 
+				style=wx.TE_MULTILINE)
 		textctrl.Enable(False)
 		textctrl.SetValue(str(self._item.desc or ''))
 
@@ -119,7 +121,8 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 		self._cb_shot_date = wx.CheckBox(panel, 1, _("Set shot date"),
 				style=wx.CHK_3STATE|wx.CHK_ALLOW_3RD_STATE_FOR_USER)
 		self._cb_shot_date.Set3StateValue(wx.CHK_UNDETERMINED )
-		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, self._cb_shot_date)
+		self.Bind(wx.EVT_CHECKBOX, self._on_checkbox_short_date, 
+				self._cb_shot_date)
 		subsizer.Add(self._cb_shot_date)
 
 		date_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -165,7 +168,8 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 
 		if self._cb_comment.IsChecked():
 			new_desc		= self._textctrl_desc.GetValue().strip()
-			changed_desc	= (new_desc != '') if (item.desc is None) else (new_desc != item.desc)
+			changed_desc	= ((new_desc != '') 
+					if (item.desc is None) else (new_desc != item.desc))
 
 			if changed_desc:
 				result['desc'] = new_desc

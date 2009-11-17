@@ -18,7 +18,7 @@ import wx
 
 from kabes.wxtools.iconprovider	import IconProvider
 
-from pc.model import Tag, FileImage, Catalog, Directory, Disk, Tags, Timeline
+from pc.model import Disk, Timeline
 
 _ = wx.GetTranslation
 
@@ -29,11 +29,13 @@ class DirsTree(wx.TreeCtrl):
 
 	def __init__(self, parent, wxid=-1):
 		wx.TreeCtrl.__init__(self, parent, wxid,
-				style=wx.TR_HAS_BUTTONS|wx.TR_LINES_AT_ROOT|wx.TR_LINES_AT_ROOT|wx.TR_HIDE_ROOT|wx.SUNKEN_BORDER)
+				style=(wx.TR_HAS_BUTTONS|wx.TR_LINES_AT_ROOT|wx.TR_LINES_AT_ROOT
+						|wx.TR_HIDE_ROOT|wx.SUNKEN_BORDER))
 
 		self.__icon_provider = IconProvider()
-		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 'calendar',
-				'date', 'calendar_view_month', 'calendar_view_day', 'calendar_view_week',
+		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag', 
+				'calendar', 'date', 'calendar_view_month', 'calendar_view_day',
+				'calendar_view_week',
 				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
 		self.SetImageList(self.__icon_provider.get_image_list())
@@ -63,7 +65,8 @@ class DirsTree(wx.TreeCtrl):
 
 	@property
 	def selected_item(self):
-		''' dirtree.selected_item -> Directory -- pobranie zaznaczonego elementu drzewa '''
+		''' dirtree.selected_item -> Directory -- pobranie zaznaczonego 
+			elementu drzewa '''
 		node = self.GetSelection()
 		data = None
 		if node.IsOk():
@@ -76,7 +79,8 @@ class DirsTree(wx.TreeCtrl):
 
 	@property
 	def selected_node_parent(self):
-		''' dirtree.selected_node_parent -> Directory -- pobranie parenta zaznaczonego elementu drzewa '''
+		''' dirtree.selected_node_parent -> Directory -- pobranie parenta 
+			zaznaczonego elementu drzewa '''
 		node = self.GetSelection()
 		parent = None
 		if node.IsOk():
@@ -109,7 +113,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_catalog_node(self, node):
-		''' dirtree.update_catalog_node(node) -- odświerzenie etykiety elementu drzewa '''
+		''' dirtree.update_catalog_node(node) -- odświerzenie etykiety 
+			elementu drzewa '''
 		self.SetItemText(node.tree_node, node.caption)
 
 
@@ -125,7 +130,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_node_catalog(self, catalog, recursive=True):
-		''' dirtree.update_node_catalog(catalog, [recursive]) -- odświeżenie katalogu
+		''' dirtree.update_node_catalog(catalog, [recursive]) -- odświeżenie 
+			katalogu
 
 			@param catalog 		- katalog do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
@@ -136,8 +142,10 @@ class DirsTree(wx.TreeCtrl):
 		catalog_node = catalog.tree_node
 
 		if catalog_node is None or not catalog_node.IsOk():
-			catalog_node = catalog.tree_node = self.AppendItem(self._root, catalog.caption, data=wx.TreeItemData(catalog))
-			self.SetItemImage(catalog_node, self._icon_folderimg_idx, wx.TreeItemIcon_Normal)
+			catalog_node = catalog.tree_node = self.AppendItem(self._root, 
+					catalog.caption, data=wx.TreeItemData(catalog))
+			self.SetItemImage(catalog_node, self._icon_folderimg_idx, 
+					wx.TreeItemIcon_Normal)
 
 		else:
 			self.SetItemText(catalog_node, catalog.caption)
@@ -156,7 +164,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_node_disk(self, disk, recursive=True):
-		''' dirtree.update_node_disk(disk, recursive=True) -- odsiweżenie elementu drzewa - dysku
+		''' dirtree.update_node_disk(disk, recursive=True) -- odsiweżenie 
+			elementu drzewa - dysku
 
 			@param disk 		- dysk do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
@@ -165,8 +174,10 @@ class DirsTree(wx.TreeCtrl):
 		disk_node = disk.tree_node
 
 		if disk_node is None or not disk_node.IsOk():
-			disk_node = disk.tree_node = self.AppendItem(disk.catalog.tree_node, disk.caption, data=wx.TreeItemData(disk))
-			self.SetItemImage(disk_node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
+			disk_node = disk.tree_node = self.AppendItem(disk.catalog.tree_node,
+					disk.caption, data=wx.TreeItemData(disk))
+			self.SetItemImage(disk_node, self._icon_disk_idx, 
+					wx.TreeItemIcon_Normal)
 
 		else:
 			self.SetItemText(disk_node, disk.caption)
@@ -178,7 +189,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_node_directory(self, directory, recursive=True):
-		''' dirtree.update_node_directory(dir, recursive=True) -- odsiweżenie elementu drzewa - folderu
+		''' dirtree.update_node_directory(dir, recursive=True) -- odsiweżenie
+			elementu drzewa - folderu
 
 			@param directory	- folder do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
@@ -188,7 +200,8 @@ class DirsTree(wx.TreeCtrl):
 
 		if dir_node is None or not dir_node.IsOk():
 			dir_node = directory.tree_node = self.AppendItem(
-					directory.parent.tree_node, directory.caption, data=wx.TreeItemData(directory))
+					directory.parent.tree_node, directory.caption,
+					data=wx.TreeItemData(directory))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
 
@@ -206,7 +219,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_node_tags(self, tags, clear=False):
-		''' dirtree.update_node_tags(tags, recursive=True) -- odsiweżenie gałęzi tagów
+		''' dirtree.update_node_tags(tags, recursive=True) -- odsiweżenie gałęzi
+			tagów
 
 			@param tags			- element tag do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
@@ -214,8 +228,8 @@ class DirsTree(wx.TreeCtrl):
 		node = tags.tree_node
 
 		if node is None or not node.IsOk():
-			node = tags.tree_node = self.AppendItem(tags.catalog.tree_node, _('Tags'),
-					data=wx.TreeItemData(tags.catalog.tags_provider))
+			node = tags.tree_node = self.AppendItem(tags.catalog.tree_node, 
+					_('Tags'), data=wx.TreeItemData(tags.catalog.tags_provider))
 			self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
 
 		elif clear:
@@ -225,8 +239,10 @@ class DirsTree(wx.TreeCtrl):
 		for tag_name, tag in tags.tags_items:
 			if tag.count > 0:
 				if tag.tree_node is None or clear:
-					tag.tree_node = tag_node = self.AppendItem(node, tag.caption, data=wx.TreeItemData(tag))
-					self.SetItemImage(tag_node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
+					tag.tree_node = tag_node = self.AppendItem(node, 
+							tag.caption, data=wx.TreeItemData(tag))
+					self.SetItemImage(tag_node, self._icon_tags_idx,
+							wx.TreeItemIcon_Normal)
 
 				else:
 					self.SetItemText(tag.tree_node, tag.caption)
@@ -253,7 +269,8 @@ class DirsTree(wx.TreeCtrl):
 
 
 	def update_node_tag(self, tag):
-		''' dirtree.update_node_tag(tag, recursive=True) -- odsiweżenie pojedyńczego taga
+		''' dirtree.update_node_tag(tag, recursive=True) -- odsiweżenie 
+			pojedyńczego taga
 
 			@param tag			- element tag do odświerzenia
 			@param recursive	- czy odświerzać też gałąź (def=true)
@@ -272,7 +289,8 @@ class DirsTree(wx.TreeCtrl):
 			return
 
 		def add_subdir(parent_node, item):
-			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
+			node = self.AppendItem(parent_node, item.caption, 
+					data=wx.TreeItemData(item))
 			if isinstance(item, Disk):
 				self.SetItemImage(node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
 
@@ -292,15 +310,16 @@ class DirsTree(wx.TreeCtrl):
 	#####################################################################
 
 	def update_timeline_node(self, timeline):
-		''' dirtree.update_timeline_node(timeline) -- odsiweżenie elementu lini czasu '''
+		''' dirtree.update_timeline_node(timeline) -- odsiweżenie elementu lini
+			czasu '''
 		_LOG.debug('update_timeline_node cat= %s', timeline.catalog.name)
 
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 
 		node = timeline.tree_node
 		if node is None or not node.IsOk():
-			node = timeline.tree_node = self.AppendItem(timeline.catalog.tree_node, _('Timeline'),
-					data=wx.TreeItemData(timeline))
+			node = timeline.tree_node = self.AppendItem(timeline.catalog.tree_node,
+					_('Timeline'), data=wx.TreeItemData(timeline))
 
 			self.SetItemImage(node, self._icon_timeline_idx, wx.TreeItemIcon_Normal)
 
@@ -310,9 +329,11 @@ class DirsTree(wx.TreeCtrl):
 		timeline.load()
 
 		def add_subdir(parent_node, item):
-			node = self.AppendItem(parent_node, item.caption, data=wx.TreeItemData(item))
+			node = self.AppendItem(parent_node, item.caption, 
+					data=wx.TreeItemData(item))
 			item.tree_node = node
-			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1], wx.TreeItemIcon_Normal)
+			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1], 
+					wx.TreeItemIcon_Normal)
 
 			for subdir in item.subdirs:
 				add_subdir(node, subdir)
@@ -327,7 +348,8 @@ class DirsTree(wx.TreeCtrl):
 
 	def _on_tree_delete_item(self, evt):
 		''' dirtree._on_tree_delete_item(evt) -- callback na EVT_TREE_DELETE_ITEM.
-			Usuwane elementy musza miec czyszczone tree_node - w wxgtk nie dziala dobrze IsOk
+			Usuwane elementy musza miec czyszczone tree_node - w wxgtk nie
+			dziala dobrze IsOk
 		'''
 		node = evt.GetItem()
 		if node.IsOk():

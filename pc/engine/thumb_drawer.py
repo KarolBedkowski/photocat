@@ -63,31 +63,39 @@ class ThumbDrawer(object):
 		self._group_bars 	= []
 		self._items			= []
 
-		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.NORMAL, False)
+		self._caption_font	= wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, 
+				wx.NORMAL, False)
 		self._pen			= wx.Pen(wx.BLUE, 1, wx.DOT)
 		self._pen_header	= wx.Pen(wx.Colour(160, 160, 160), 1, wx.SOLID)
 		self._brush			= wx.Brush(parent.GetBackgroundColour(), wx.SOLID)
-		self._header_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
+		self._header_font = wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, 
+				wx.FONTWEIGHT_BOLD, False)
 		self._caption_color = wx.Colour(127, 127, 127)
 		self._caption_raw_color	= wx.Colour(70, 70, 255)
 		self._header_color = wx.Colour(127, 127, 127)
 
 
 	def set_captions_font(self, fontdata):
-		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek i odświerzenie
+		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek 
+			i odświerzenie
 
 			@param fontdata - słownik z informacją o fontach
 		'''
 		self._caption_font = fonttools.data2font(fontdata, 'thumb',
-				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
-		self._caption_color = fonttools.str2color(fontdata.get('thumb_font_color', '127;127;127'))
+				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL, 
+				wx.FONTWEIGHT_NORMAL, False))
+		self._caption_color = fonttools.str2color(
+				fontdata.get('thumb_font_color', '127;127;127'))
 
 		self._header_font = fonttools.data2font(fontdata, 'header',
-				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
-		self._header_color = fonttools.str2color(fontdata.get('header_font_color', '127;127;127'))
+				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,
+				False))
+		self._header_color = fonttools.str2color(
+				fontdata.get('header_font_color', '127;127;127'))
 		self._pen_header	= wx.Pen(self._header_color, 1, wx.SOLID)
 
-		color = fonttools.str2color(fontdata.get('thumb_raw_color'), wx.Colour(70, 70, 255))
+		color = fonttools.str2color(fontdata.get('thumb_raw_color'), 
+				wx.Colour(70, 70, 255))
 		if fontdata.get('thumb_raw_custom_color', True):
 			self._caption_raw_color = color
 
@@ -96,7 +104,8 @@ class ThumbDrawer(object):
 
 
 	def get_item_idx_on_xy(self, x, y):
-		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu elementu o danej współrzędnych
+		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu 
+			elementu o danej współrzędnych
 
 			@param x	- pozycja x
 			@param y	- pozycja y
@@ -109,11 +118,12 @@ class ThumbDrawer(object):
 		return -1
 
 
-	###################################################################################################################
+	############################################################################
 
 
 	def draw(self, dc, paint_rect, selected=None):
-		''' thumbctrl.draw(dc, paint_rect, selected) -- narysowanie miniaturek na wskazanym dc i we wskazanym obszarze.
+		''' thumbctrl.draw(dc, paint_rect, selected) -- narysowanie miniaturek 
+			na wskazanym dc i we wskazanym obszarze.
 
 			@param dc		- dc po którym będzie rysowanie
 			@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
@@ -169,7 +179,8 @@ class ThumbDrawer(object):
 
 			# caption
 			if show_captions:
-				dc_SetTextForeground(caption_raw_color if item.is_raw else caption_color)
+				dc_SetTextForeground(
+						caption_raw_color if item.is_raw else caption_color)
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
 				dc_DrawText(caption, txc, ty + th + 2)
@@ -192,7 +203,8 @@ class ThumbDrawer(object):
 
 
 	def update(self, items, width, height=sys.maxint, dc=None):
-		''' thumbctrl.update(items, width, [height]) -> tuple() -- aktualizacja rozmiarów i pozycji miniaturek
+		''' thumbctrl.update(items, width, [height]) -> tuple() -- aktualizacja
+			rozmiarów i pozycji miniaturek
 
 			@param items	- elementy do wyświetlenia
 			@param width	- szerokość
@@ -247,11 +259,12 @@ class ThumbDrawer(object):
 		)
 
 
-	###################################################################################################################
+	############################################################################
 
 
 	def __compute_thumbs_pos_normal(self, height):
-		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji poszczególnych miniaturek - normalne
+		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji 
+			poszczególnych miniaturek - normalne
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -285,19 +298,21 @@ class ThumbDrawer(object):
 			tx = col * twm + padding
 			ty = row * thm + 5
 
-			items_pos_append((ii, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+			items_pos_append((ii, item, tx, ty, tx+tw, ty+thm, 
+					wx.Rect(tx, ty, twm, thm)))
 
 		return row, ty+thm, len(items_pos)
 
 
 	_GROUP_TIMELINE_FUNC = (
-			lambda item:	time.localtime(item.image.date_to_check)[:3],
-			lambda item:	time.strftime('%x', time.localtime(item.image.date_to_check))
+			lambda item: time.localtime(item.image.date_to_check)[:3],
+			lambda item: time.strftime('%x', time.localtime(item.image.date_to_check))
 	)
 
 
 	def __compute_thumbs_pos_timeline(self, height):
-		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji 
+			poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -307,7 +322,8 @@ class ThumbDrawer(object):
 		'''
 
 		item_value_func, group_label_func = self._GROUP_TIMELINE_FUNC
-		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
+		return self.__compute_thumbs_pos_group_by(height, item_value_func, 
+				group_label_func)
 
 
 	_GROUP_PATH_FUNC = (
@@ -317,7 +333,8 @@ class ThumbDrawer(object):
 
 
 	def __compute_thumbs_pos_path(self, height, level=86400):
-		''' thumbctrl.__compute_thumbs_pos_path() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+		''' thumbctrl.__compute_thumbs_pos_path() -- wyznaczenie pozycji 
+			poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -328,11 +345,14 @@ class ThumbDrawer(object):
 		'''
 
 		item_value_func, group_label_func = self._GROUP_PATH_FUNC
-		return self.__compute_thumbs_pos_group_by(height, item_value_func, group_label_func)
+		return self.__compute_thumbs_pos_group_by(height, item_value_func, 
+				group_label_func)
 
 
-	def __compute_thumbs_pos_group_by(self, height, item_value_func, group_label_func):
-		''' thumbctrl.__compute_thumbs_pos_group_by() -- wyznaczenie pozycji poszczególnych miniaturek dla grupowania wg dnia
+	def __compute_thumbs_pos_group_by(self, height, item_value_func, 
+				group_label_func):
+		''' thumbctrl.__compute_thumbs_pos_group_by() -- wyznaczenie pozycji 
+			poszczególnych miniaturek dla grupowania wg dnia
 
 			Pozycje miniaturek zapisywane są w self._item_pos jako
 			(index, item, x1, y1, x2, y2, wxRect())
@@ -388,13 +408,15 @@ class ThumbDrawer(object):
 			tx = col * twm + padding
 			ty = int(row * thm + 5)
 
-			items_pos_append((index, item, tx, ty, tx+tw, ty+thm, wx.Rect(tx, ty, twm, thm)))
+			items_pos_append((index, item, tx, ty, tx+tw, ty+thm, 
+					wx.Rect(tx, ty, twm, thm)))
 
 		return row, ty+thm, len(items_pos)
 
 
 	def _compute_captions_height(self, fonts, dest_dc):
-		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie wysokości napisów dla podanych fontów
+		''' thumbctrl._compute_captions_height(fonts) -> [int] -- obliczenie 
+			wysokości napisów dla podanych fontów
 
 			@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
 			@return lista wysokości w px podanych fontów

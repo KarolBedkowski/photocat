@@ -38,20 +38,26 @@ _SETTINGS_KEYS = (
 		('view_preload', True), ('view_show_captions', True)
 )
 
-_FONT_STYLES = {'wxNORMAL': wx.FONTSTYLE_NORMAL, 'wxSLANT': wx.FONTSTYLE_SLANT , 'wxITALIC': wx.FONTSTYLE_ITALIC}			
-_FONT_WEIGHTS = {'wxNORMAL': wx.FONTWEIGHT_NORMAL, 'wxLIGHT': wx.FONTWEIGHT_LIGHT, 'wxBOLD': wx.FONTWEIGHT_BOLD}
-_FONT_FAMILIES = {'wxDEFAULT': wx.FONTFAMILY_DEFAULT, 'wxDECORATIVE': wx.FONTFAMILY_DECORATIVE,
-		'wxROMAN': wx.FONTFAMILY_ROMAN, 'wxSCRIPT': wx.FONTFAMILY_SCRIPT, 'wxSWISS': wx.FONTFAMILY_SWISS, 
+_FONT_STYLES = {'wxNORMAL': wx.FONTSTYLE_NORMAL, 'wxSLANT': wx.FONTSTYLE_SLANT,
+		'wxITALIC': wx.FONTSTYLE_ITALIC}			
+_FONT_WEIGHTS = {'wxNORMAL': wx.FONTWEIGHT_NORMAL, 
+		'wxLIGHT': wx.FONTWEIGHT_LIGHT, 'wxBOLD': wx.FONTWEIGHT_BOLD}
+_FONT_FAMILIES = {'wxDEFAULT': wx.FONTFAMILY_DEFAULT, 
+		'wxDECORATIVE': wx.FONTFAMILY_DECORATIVE, 'wxROMAN': wx.FONTFAMILY_ROMAN,
+		'wxSCRIPT': wx.FONTFAMILY_SCRIPT, 'wxSWISS': wx.FONTFAMILY_SWISS, 
 		'wxMODERN': wx.FONTFAMILY_MODERN, 'wxTELETYPE': wx.FONTFAMILY_TELETYPE}
 
 
 
 def data2font(data, prefix, default=None):
 	if data.get(prefix + '_font_face') is not None:
-		family		= _FONT_FAMILIES.get(data[prefix + "_font_family"], wx.FONTFAMILY_DEFAULT)
+		family		= _FONT_FAMILIES.get(data[prefix + "_font_family"],
+				wx.FONTFAMILY_DEFAULT)
 		pointsize	= int(data.get(prefix + "_font_size", 12))
-		style		= _FONT_STYLES.get(data[prefix + "_font_style"], wx.FONTSTYLE_NORMAL)
-		weight		= _FONT_WEIGHTS.get(data[prefix + "_font_weight"], wx.FONTWEIGHT_NORMAL)
+		style		= _FONT_STYLES.get(data[prefix + "_font_style"],
+				wx.FONTSTYLE_NORMAL)
+		weight		= _FONT_WEIGHTS.get(data[prefix + "_font_weight"],
+				wx.FONTWEIGHT_NORMAL)
 		underline	= data[prefix + "_font_underline"] == 'true'
 		face		= data[prefix + "_font_face"]
 		

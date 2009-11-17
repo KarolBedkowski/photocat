@@ -54,14 +54,16 @@ _ = wx.GetTranslation
 
 
 def _count_files(path, parent_wnd, title):
-	''' _count_files(path, parent_wnd, title) -> int -- polieczenie plików w podanej ścieżce
+	''' _count_files(path, parent_wnd, title) -> int -- polieczenie plików 
+		w podanej ścieżce
 
 		@param path			-- ścieżka
 		@param parent_wnd	-- okno nadrzędne
 		@param title		-- tytuł okien
 		@return liczba plików do dodania/aktualizacji
 	'''
-	dlg_progress = wx.ProgressDialog(title, _("Counting files..."), parent=parent_wnd, maximum=1,
+	dlg_progress = wx.ProgressDialog(title, _("Counting files..."), 
+			parent=parent_wnd, maximum=1, 
 			style=wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME)
 
 	allfiles = fast_count_files_dirs(path) + 1
@@ -77,7 +79,8 @@ def _count_files(path, parent_wnd, title):
 
 
 def _add_or_update_catalog(catalog, title, data, parent_wnd):
-	''' _add_or_update_catalog(catalog, title, data, parent_wnd) -> Disk -- dodanie lub aktualizacja dysku
+	''' _add_or_update_catalog(catalog, title, data, parent_wnd) -> Disk 
+		-- dodanie lub aktualizacja dysku
 
 		@param catalog		-- katalog do którego jest dodawany dysk
 		@param title		-- tytuł okien
@@ -108,8 +111,10 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	allfiles = _count_files(data['path'], parent_wnd, title)/10240
 
 	if allfiles > 0:
-		dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, maximum=allfiles+100,
-				style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+		dlg_progress = wx.ProgressDialog(title, "\n", parent=parent_wnd, 
+				maximum=allfiles+100,
+				style=(wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME \
+						|wx.PD_CAN_ABORT))
 		dlg_progress.SetSize((600, -1))
 		dlg_progress.SetMinSize((600, -1))
 		dlg_progress.Center()
@@ -120,17 +125,19 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 			cntr[0] = cntr[0] + os.path.getsize(msg)/10240
 			if cntr[0] > allfiles: # zabezpieczenie na dziwne sytuacje
 				cntr[0] = max(0, cntr[0]-10)
-			return dlg_progress.Update(cntr[0], _("Loading file:\n%s") % msg[path_len:])[0]
+			return dlg_progress.Update(cntr[0], 
+					_("Loading file:\n%s") % msg[path_len:])[0]
 
 		try:
 			parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
 			if data['update']:
-				catalog.update_disk(disk, data['path'], descr=data['descr'], options=data,
-						on_update=update_progress, name=data['name'])
+				catalog.update_disk(disk, data['path'], descr=data['descr'], 
+						options=data, on_update=update_progress, 
+						name=data['name'])
 
 			else:
-				disk = catalog.add_disk(data['path'], data['name'], data['descr'], options=data,
-						on_update=update_progress)
+				disk = catalog.add_disk(data['path'], data['name'], 
+						data['descr'], options=data, on_update=update_progress)
 
 			dlg_progress.Update(allfiles+100, _('Done!'))
 
@@ -160,7 +167,8 @@ def add_disk_to_catalog(catalog, parent_wnd):
 
 
 def update_disk_in_catalog(catalog, disk, parent_wnd):
-	''' update_disk_in_catalog(catalog, disk, parent_wnd) -> Disk -- aktualizacja dysku
+	''' update_disk_in_catalog(catalog, disk, parent_wnd) -> Disk 
+		-- aktualizacja dysku
 
 		@param catalog		-- katalog w którym jest aktualizowany dysk
 		@param disk			-- dysk do aktualizacji
@@ -184,8 +192,11 @@ def rebuild(catalog, parent_wnd):
 	objects_count = catalog.object_in_files
 	result = False
 
-	dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), _("Rebuilding...\nPlease wait."), parent=parent_wnd,
-			maximum=objects_count + 2, style=wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME|wx.PD_CAN_ABORT)
+	dlg_progress = wx.ProgressDialog(_("Rebuild catalog"), 
+			_("Rebuilding...\nPlease wait."), parent=parent_wnd,
+			maximum=objects_count + 2, 
+			style=(wx.PD_APP_MODAL|wx.PD_REMAINING_TIME|wx.PD_ELAPSED_TIME \
+					|wx.PD_CAN_ABORT))
 
 	def update_progress(count):
 		return dlg_progress.Update(count)[0]
@@ -200,7 +211,8 @@ def rebuild(catalog, parent_wnd):
 
 		else:
 			dlg_progress.Update(objects_count + 2,
-					_('Rebuild catalog finished\nSaved space: %sB') % format_human_size(saved_space),
+					_('Rebuild catalog finished\nSaved space: %sB') \
+					% format_human_size(saved_space),
 			)
 
 		result = True
@@ -263,8 +275,8 @@ def open_catalog(filename):
 		_LOG.debug("dir with file %s not writable", filename)
 
 	writable = file_writable and path_writable and data_writable
-	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)", filename, writable, file_writable,
-			path_writable, data_writable)
+	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)", filename,
+			writable, file_writable, path_writable, data_writable)
 
 	try:
 		catalog = Storage.load(filename)
@@ -337,10 +349,12 @@ def new_catalog(filename):
 
 
 def check_new_file_exists(filename):
-	''' check_new_file_exists(filename) -> (bool, bool, bool) -- sprawdzenie czy plik indeksu i danych istnieją
+	''' check_new_file_exists(filename) -> (bool, bool, bool) -- sprawdzenie 
+		czy plik indeksu i danych istnieją
 
 		@param filename - scieżka do pliku indeksu
-		@return (istnieje plik indeksu lub danych, istnieje plik indeksu, istnieje plik danych)
+		@return (istnieje plik indeksu lub danych, istnieje plik indeksu, 
+				istnieje plik danych)
 	'''
 	data_file = os.path.splitext(filename)[0] + '.data'
 	index_exists = os.path.exists(filename)
@@ -361,24 +375,31 @@ SORT_BY_PATH = 2
 
 # sorting functions
 _SORTING_FUNCTIONS = {
-		SORT_BY_NAME: (lambda x: x.image.name, 										lambda x: x.name),
-		SORT_BY_PATH: (lambda x: x.image.disk.name + ": " + x.image.parent.path,	lambda x: x.disk.name + ": " + x.parent.path),
-		SORT_BY_DATE: (lambda x: x.image.date_to_check, 							lambda x: x.date_to_check)
+		SORT_BY_NAME: (lambda x: x.image.name, lambda x: x.name),
+		SORT_BY_PATH: (lambda x: x.image.disk.name + ": " + x.image.parent.path,
+				lambda x: x.disk.name + ": " + x.parent.path),
+		SORT_BY_DATE: (lambda x: x.image.date_to_check,  
+				lambda x: x.date_to_check)
 }
 
-def get_sorting_function(sort_by=SORT_BY_NAME, reverse=False, items_as_list=False):
-	''' get_sorting_function(sort_by, [reverse], [items_as_list]) -> (function, reverse) -- zwraca funkcję klucza do sortowania
+def get_sorting_function(sort_by=SORT_BY_NAME, reverse=False, 
+		items_as_list=False):
+	''' get_sorting_function(sort_by, [reverse], [items_as_list]) 
+		-> (function, reverse) -- zwraca funkcję klucza do sortowania
 
-		@param sort_by - pole po którym będzie sortowanie (SORT_BY_NAME, SORT_BY_DATE, SORT_BY_PATH)
+		@param sort_by - pole po którym będzie sortowanie (SORT_BY_NAME, 
+				SORT_BY_DATE, SORT_BY_PATH)
 		@param reverse - (bool) czy sortowanie w odwrotnej kolejności
-		@param items_as_list - (bool) czy elementy są podane jako lista czy jako lista elementów Thumb
+		@param items_as_list - (bool) czy elementy są podane jako lista czy 
+				jako lista elementów Thumb
 	'''
 	return _SORTING_FUNCTIONS[sort_by][1 if items_as_list else 0], reverse
 
 
 
 def fast_count_files_dirs(path):
-	""" Szybkie liczenie ile jest plikow i katalogow w ścieżce (i w podkatalogach) """
+	""" Szybkie liczenie ile jest plikow i katalogow w ścieżce 
+		(i w podkatalogach) """
 
 	_image_files_extension = FileImage.IMAGE_FILES_EXTENSION
 
@@ -398,7 +419,8 @@ def fast_count_files_dirs(path):
 				)
 		))
 
-		content_size += sum( ( count_folder(item) for item in content if os.path.isdir(item) ) )
+		content_size += sum( ( count_folder(item) for item in content 
+				if os.path.isdir(item) ) )
 		return content_size
 
 	return count_folder(path)

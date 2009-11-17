@@ -33,7 +33,6 @@ __revision__	= '$Id$'
 import logging
 _LOG = logging.getLogger(__name__)
 
-import time
 import re
 
 import wx
@@ -44,7 +43,8 @@ from kabes.tools.appconfig		import AppConfig
 
 
 def get_catalogs_to_search(catalogs, options, selected_item):
-	""" get_catalogs_to_search(catalogs, options, selected_item) -> [] -- zwraca liste obiektów do przeszukania
+	""" get_catalogs_to_search(catalogs, options, selected_item) -> [] 
+		-- zwraca liste obiektów do przeszukania
 
 		Na podstawie opcji określa co przeszukiwać.
 
@@ -73,7 +73,8 @@ def get_catalogs_to_search(catalogs, options, selected_item):
 		else:
 			# wyszukiwanie w konkretnym katalogu
 			search_in_catalog = search_in_catalog.split(": ", 1)[1]
-			catalogs_to_search = [cat for cat in catalogs if cat.name == search_in_catalog ]
+			catalogs_to_search = [cat for cat in catalogs 
+					if cat.name == search_in_catalog ]
 
 	subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
 
@@ -82,7 +83,8 @@ def get_catalogs_to_search(catalogs, options, selected_item):
 
 
 def find(what, options, catalogs, insert_func, progress_funct):
-	""" find(what, options, catalogs, insert_func, progress_funct) -> string  -- wyszukanie informacji
+	""" find(what, options, catalogs, insert_func, progress_funct) -> string  
+		-- wyszukanie informacji
 
 		@param what			- string do wyszukania
 		@param options		- opcje wyszukania
@@ -125,7 +127,8 @@ def find(what, options, catalogs, insert_func, progress_funct):
 
 
 def update_last_search(text):
-	''' update_last_search(text) -> [string] -- aktualzacja listy poptrzednich wyszukiwań
+	''' update_last_search(text) -> [string] -- aktualzacja listy poptrzednich 
+		wyszukiwań
 
 		@return lista ostatnich wyszukiwań
 

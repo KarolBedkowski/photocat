@@ -154,7 +154,8 @@ class StorageObject(object):
 		eval_data = eval(data)
 
 		if type(eval_data) != DictType:
-			raise Exception('unknow data: "%s" type=%s' % (eval_data, type(eval_data)))
+			raise Exception('unknow data: "%s" type=%s' % (eval_data, 
+					type(eval_data)))
 
 		return eval_data
 

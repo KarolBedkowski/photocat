@@ -29,8 +29,6 @@ __revision__	= '$Id$'
 import logging
 _LOG = logging.getLogger(__name__)
 
-import wx
-
 from pc.engine.image		import load_bitmap_from_item_with_size
 
 
@@ -58,21 +56,25 @@ class Thumb:
 
 
 	def get_bitmap(self, width, height):
-		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy obrazka
+		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy 
+			obrazka
 
 			@param width	- max szerokość
 			@param height	- max wysokość
 			@return wxBitmap - zmienjszony ewentualnie obrazek
 
-			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się nie zmienił)
+			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się 
+			nie zmienił)
 		'''
 
-		self._bitmap, self.imgwidth, self.imgheight = load_bitmap_from_item_with_size(self.image, width, height)
+		(self._bitmap, self.imgwidth, self.imgheight) = \
+				load_bitmap_from_item_with_size(self.image, width, height)
 		return self._bitmap
 
 
 	def get_caption(self, width, dc):
-		''' thumb.get_caption(width, dc) -> (caption, caption_width) -- wyznaczenie rozmiaru podpisu
+		''' thumb.get_caption(width, dc) -> (caption, caption_width) 
+			-- wyznaczenie rozmiaru podpisu
 
 			@param width		- maksymalna szerokość napisu
 			@param dc			- context
