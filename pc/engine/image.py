@@ -30,7 +30,6 @@ __revision__	= '$Id$'
 
 
 
-from collections import deque
 import logging
 import cStringIO
 import re
@@ -55,8 +54,7 @@ from pc.lib					import EXIF
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
 
-_CACHE = {}
-_CACHE_LIST = deque()
+_CACHE = dict()
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
 		'EXIF UserComment']
@@ -70,7 +68,6 @@ _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized',
 def clear_cache():
 	_LOG.info('clear_cache count=%d', len(_CACHE))
 	_CACHE.clear()
-	_CACHE_LIST.clear()
 
 
 
@@ -102,7 +99,6 @@ def load_bitmap_from_item(item):
 	return img.ConvertToBitmap() if img is not None else None
 
 
-
 def load_bitmap_from_item_with_size(item, width, height):
 	''' load_bitmap_from_item_with_size(item, width, height) -> wx.Bitmap 
 		-- załadowanie i ewentualne przeskalowanie obrazka
@@ -113,8 +109,9 @@ def load_bitmap_from_item_with_size(item, width, height):
 		@return wxBitmap
 	'''
 	item_id = (id(item), width, height)
-	if item_id in _CACHE:
-		return _CACHE[item_id]
+	citem = _CACHE.get(item_id)
+	if citem:
+		return citem
 
 	img = load_image_from_item(item)
 	img_width	= img.GetWidth()
@@ -127,16 +124,9 @@ def load_bitmap_from_item_with_size(item, width, height):
 		img = img.Scale(img_width, img_height)
 
 	bitmap = img.ConvertToBitmap()
-
 	result = bitmap, img_width, img_height
-
-	if len(_CACHE_LIST) > 2000:
-		del _CACHE[_CACHE_LIST.popleft()]
-
 	_CACHE[item_id] = result
-
 	return result
-
 
 
 def load_thumb_from_file(path, options, data_provider):
