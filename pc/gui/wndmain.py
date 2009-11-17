@@ -198,7 +198,7 @@ class WndMain(wx.Frame):
 			('-'),
 			(_('Program settings'),	None,		_('Program settings'),		self._on_file_settings),
 			('-'),
-			(None,	'Alt-F4',	_('Close application'),		self._on_close,			wx.ID_EXIT,		wx.ART_QUIT)
+			(None,	'Alt-F4',	_('Close application'),		self._on_menu_close,			wx.ID_EXIT,		wx.ART_QUIT)
 		))
 
 		self._main_menu_file_recent = wx.Menu()
@@ -314,6 +314,9 @@ class WndMain(wx.Frame):
 
 
 	############################################################################
+
+	def _on_menu_close(self, evt):
+		self.Close()
 
 
 	def _on_close(self, evt):
