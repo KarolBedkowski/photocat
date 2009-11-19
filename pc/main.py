@@ -52,8 +52,11 @@ def _is_frozen():
 			or imp.is_frozen("__main__"))	# tools/freeze
 
 if not _is_frozen():
-	import wxversion
-	wxversion.select('2.8')
+	try:
+		import wxversion
+		wxversion.select('2.8')
+	except ImportError, err:
+		print err
 
 
 ##########################################################################
