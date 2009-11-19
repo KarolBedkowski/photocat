@@ -111,7 +111,7 @@ class StorageV3:
 
 	__HEADER_HEAD = 'XYZ'
 	__HEADER_HEAD_TUPLE = tuple(__HEADER_HEAD)
-	__HEADER_LEN = struct.calcsize("cccLLLL")
+	__HEADER_LEN = struct.calcsize("cccIIII")
 
 
 	@staticmethod
@@ -196,7 +196,7 @@ class StorageV3:
 
 	@staticmethod
 	def __pack_header(oid, o_type_id, data_len, extra_len=0):
-		return struct.pack('cccLLLL', StorageV3.__HEADER_HEAD[0],
+		return struct.pack('cccIIII', StorageV3.__HEADER_HEAD[0],
 				StorageV3.__HEADER_HEAD[1], StorageV3.__HEADER_HEAD[2], oid,
 				o_type_id, data_len, extra_len)
 
@@ -212,7 +212,8 @@ class StorageV3:
 					StorageV3.__HEADER_LEN, len(data))
 			raise InvalidFileError()
 
-		h1, h2, h3, oid, o_type_id, data_len, extra_len = struct.unpack('cccLLLL', data)
+		h1, h2, h3, oid, o_type_id, data_len, extra_len = struct.unpack(
+				'cccIIII', data)
 		if (h1, h2, h3) != StorageV3.__HEADER_HEAD_TUPLE:
 			_LOG.warn('header error: %r' % data)
 			raise InvalidFileError()

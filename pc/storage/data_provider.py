@@ -44,7 +44,7 @@ class DataProvider:
 	_DATA_FILE_HEADER_ID	= 'PhotoCatalog_DataFile'
 	_DATA_FILE_VERSION_MIN	= 2
 	_DATA_FILE_VERSION_MAX	= 2
-	_DATA_BLOCK_HEADER_SIZE	= calcsize('LLL')
+	_DATA_BLOCK_HEADER_SIZE	= calcsize('III')
 	_DATA_BLOCK_HEADER_PREFIX = 0x01010101
 
 
@@ -79,7 +79,7 @@ class DataProvider:
 		src_file.seek(offset)
 
 		# naglowek
-		h_prefix, h_offset, h_length = unpack('LLL', src_file.read(
+		h_prefix, h_offset, h_length = unpack('III', src_file.read(
 				self._DATA_BLOCK_HEADER_SIZE))
 		prefix_dont_match = h_prefix != self._DATA_BLOCK_HEADER_PREFIX
 		offset_dont_match = h_offset != offset
@@ -296,16 +296,16 @@ class DataProvider:
 			)
 
 		# ostatni offset
-		next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
+		next_offset = unpack("I", dest_file.read(calcsize("I")))[0]
 		_LOG.debug('DataProvider._check_file: next_offset=%d', next_offset)
 
 		# liczba plikow
-		self.objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
+		self.objects_count = unpack("I", dest_file.read(calcsize("I")))[0]
 		_LOG.debug('DataProvider._check_file: objects_count=%d', 
 				self.objects_count)
 
 		# liczba plikow
-		self.saved_next_offset = unpack("L", dest_file.read(calcsize("L")))[0]
+		self.saved_next_offset = unpack("I", dest_file.read(calcsize("I")))[0]
 		_LOG.debug('DataProvider._check_file: saved_next_offset=%d',
 				self.saved_next_offset)
 
@@ -316,7 +316,7 @@ class DataProvider:
 			next_offset = self.saved_next_offset
 
 		# liczba plikow
-		self.saved_objects_count = unpack("L", dest_file.read(calcsize("L")))[0]
+		self.saved_objects_count = unpack("I", dest_file.read(calcsize("I")))[0]
 		_LOG.debug('DataProvider._check_file: saved_objects_count=%d',
 				self.saved_objects_count)
 
@@ -363,7 +363,7 @@ class DataProvider:
 			@param next_offset	koniec danych
 		'''
 		dest_file.seek(self._last_offset_file_pos)
-		dest_file.write(pack("LLLL", next_offset, self.objects_count,
+		dest_file.write(pack("IIII", next_offset, self.objects_count,
 				self.saved_next_offset, self.saved_objects_count))
 
 
@@ -379,7 +379,7 @@ class DataProvider:
 		_LOG.debug('DataProvider._write_block(%d, %d)', offset, size)
 		dest_file.seek(offset)
 		# nagłówek bloku
-		dest_file.write(pack('LLL', self._DATA_BLOCK_HEADER_PREFIX, offset, size))
+		dest_file.write(pack('III', self._DATA_BLOCK_HEADER_PREFIX, offset, size))
 		# dane
 		dest_file.write(data)
 		# kolejny offset
