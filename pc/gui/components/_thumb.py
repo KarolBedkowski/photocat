@@ -33,8 +33,10 @@ from pc.engine.image		import load_bitmap_from_item_with_size
 
 
 
-class Thumb:
+class Thumb(object):
 	''' Klasa obiektu miniaturki wyświtlanej w thumbctrl '''
+	__slots__ = ('_caption', 'image', 'is_raw', '_bitmap', 'imgwidth', 'imgheight',
+			'_last_caption_width', '_caption_width', '_caption_prepared')
 	
 	def __init__(self, image):
 		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
@@ -50,6 +52,7 @@ class Thumb:
 		self.imgheight = None
 		self._last_caption_width = -1
 		self._caption_width = -1
+		self._caption_prepared = False
 
 
 	#########################################################################
