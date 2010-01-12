@@ -35,7 +35,6 @@ import cStringIO
 import re
 import time
 import os.path
-import weakref
 
 try:
 	import cPickle as pickle
@@ -54,7 +53,7 @@ from pc.lib import EXIF
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
 
-_CACHE = weakref.WeakValueDictionary()
+_CACHE = dict()
 
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
@@ -65,15 +64,12 @@ _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized',
 		'EXIF DateTime')
 
 
-class Tuple(object):
-	__slots__ = ('data', '__weakref__')
-	def __init__(self, *argv):
-		self.data = argv
-
-
 def clear_cache():
+	global _CACHE
 	_LOG.info('clear_cache count=%d', len(_CACHE))
 	_CACHE.clear()
+	del _CACHE
+	_CACHE = {}
 
 
 def load_bitmap_from_item_with_size(item, width, height):
@@ -88,7 +84,7 @@ def load_bitmap_from_item_with_size(item, width, height):
 	item_id = (id(item), width, height)
 	citem = _CACHE.get(item_id)
 	if citem:
-		return citem.data
+		return citem
 
 	try:
 		img = wx.ImageFromStream(cStringIO.StringIO(item.image))
@@ -108,8 +104,8 @@ def load_bitmap_from_item_with_size(item, width, height):
 			img = img.Scale(img_width, img_height)
 
 	bitmap = img.ConvertToBitmap()
-	_CACHE[item_id] = result = Tuple(bitmap, img_width, img_height)
-	return result.data
+	_CACHE[item_id] = result = (bitmap, img_width, img_height)
+	return result
 
 
 def load_thumb_from_file(path, options, data_provider):
