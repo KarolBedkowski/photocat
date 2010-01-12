@@ -52,7 +52,6 @@ _ = wx.GetTranslation
 
 
 
-
 def _count_files(path, parent_wnd, title):
 	''' _count_files(path, parent_wnd, title) -> int -- polieczenie plików 
 		w podanej ścieżce
@@ -223,9 +222,8 @@ def rebuild(catalog, parent_wnd):
 				_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
 				'PC')
 
-	finally:
-		dlg_progress.Destroy()
-		parent_wnd.SetCursor(wx.STANDARD_CURSOR)
+	dlg_progress.Destroy()
+	parent_wnd.SetCursor(wx.STANDARD_CURSOR)
 
 	return result
 
@@ -368,7 +366,6 @@ def catalog_close(catalog):
 
 
 
-
 SORT_BY_NAME = 0
 SORT_BY_DATE = 1
 SORT_BY_PATH = 2
@@ -413,10 +410,9 @@ def fast_count_files_dirs(path):
 		content_size = sum((
 			os.path.getsize(item)
 			for item in content
-			if os.path.isdir(item)
-				or (os.path.isfile(item)
+			if os.path.isdir(item) or (os.path.isfile(item)
 					and os.path.splitext(item)[1].lower() in _image_files_extension
-				)
+			)
 		))
 
 		content_size += sum( ( count_folder(item) for item in content 

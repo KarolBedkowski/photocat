@@ -63,6 +63,7 @@ _ID_PROVIDER = _IdProvider()
 
 
 class StorageObject(object):
+	__slots__ = ('_invalid', '_id')
 	FV3_CLASS_NAME = 0
 
 	def __init__(self, oid, *args, **kwargs):

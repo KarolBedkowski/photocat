@@ -25,12 +25,15 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2007'
 __revision__	= '$Id$'
 
 
+import weakref
 
 from pc.model.file_image	import FileImage
 
 
 
 class Tag(object):
+	__slots__ = ('name', 'files', 'dirs', 'catalog', 'tree_node')
+
 	def __init__(self, name=None, catalog=None):
 		self.name		= name
 		self.files		= []
@@ -72,10 +75,10 @@ class Tag(object):
 
 	def add_item(self, item):
 		if isinstance(item, FileImage):
-			self.files.append(item)
+			self.files.append(weakref.proxy(item))
 
 		else:
-			self.dirs.append(item)
+			self.dirs.append(weakref.proxy(item))
 
 	def update_items_on_delete(self):
 		name = self.name
@@ -93,9 +96,11 @@ class Tag(object):
 class Tags(object):
 	FV3_CLASS_NAME = 1048576 + 4
 
+	__slots__ = ('_tags', 'catalog', 'current_tags_nodes', 'tree_node')
+
 	def __init__(self, catalog):
 		self._tags = {}
-		self.catalog = catalog
+		self.catalog = catalog if isinstance(catalog, weakref.ProxyType) else weakref.proxy(catalog)
 		self.current_tags_nodes = []
 		self.tree_node = None
 

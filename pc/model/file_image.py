@@ -67,10 +67,11 @@ class FileImage(CatalogFile):
 		'.erf'						# epson raw
 	))
 
+	__slots__ = ('thumb', 'dimensions', 'exif', 'shot_date', '_exif_data', 
+			'is_raw', '__weakref__')
 
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
-
 		self.thumb		= kwargs.get('thumb')
 		self.dimensions	= kwargs.get('dimensions')
 		self.exif		= kwargs.get('exif')

@@ -25,18 +25,15 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2006'
 __revision__	= '$Id$'
 
 
-
 import logging
-_LOG = logging.getLogger(__name__)
-
 
 import wx
 import wx.lib.newevent
 
 from pc.engine.thumb_drawer import ThumbDrawer
-
 from pc.gui.components._thumb import Thumb
 
+_LOG = logging.getLogger(__name__)
 
 (ThumbSelectionChangeEvent,	EVT_THUMB_SELECTION_CHANGE)	= wx.lib.newevent.NewEvent()
 (ThumbDblClickEvent,		EVT_THUMB_DBCLICK)			= wx.lib.newevent.NewEvent()
@@ -79,6 +76,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_LEFT_DCLICK,	self.__on_mouse_dbclick)
 		self.Bind(wx.EVT_RIGHT_DOWN,	self.__on_mouse_right_down)
 		self.Bind(wx.EVT_IDLE,			self.__on_idle)
+
+
+	def __del__(self):
+		del self._thumb_drawer
+		self._thumb_drawer = None
+		del self._items
+		self._items = None
 
 
 	def _reset(self):

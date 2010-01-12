@@ -30,8 +30,8 @@ __revision__	= '$Id$'
 
 
 
+import weakref
 import logging
-_LOG = logging.getLogger(__name__)
 
 import sys
 import time
@@ -40,6 +40,7 @@ import wx
 
 from pc.lib	import fonttools
 
+_LOG = logging.getLogger(__name__)
 
 
 class ThumbDrawer(object):
@@ -50,7 +51,7 @@ class ThumbDrawer(object):
 
 	def __init__(self, parent):
 
-		self._parent		= parent
+		self._parent		= weakref.proxy(parent)
 		self._cols			= 0
 		self._width			= 0
 		self.thumb_width	= 200
@@ -73,6 +74,12 @@ class ThumbDrawer(object):
 		self._caption_color = wx.Colour(127, 127, 127)
 		self._caption_raw_color	= wx.Colour(70, 70, 255)
 		self._header_color = wx.Colour(127, 127, 127)
+
+	def __del__(self):
+		del self._item_pos
+		self._item_pos = None
+		del self._items
+		self._items= None
 
 
 	def set_captions_font(self, fontdata):

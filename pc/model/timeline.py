@@ -30,11 +30,14 @@ __all__ = ["Timeline"]
 
 import time
 import operator
-
+import weakref
 
 
 class Timeline(object):
 	''' Obiekt przechowywujący linię czasu - zdjęcia pogrupowane wg daty '''
+
+	__slots__ = ('date', 'catalog', 'tree_node', 'parent', 'level',
+			'dirs', '_files', '__weakref__')
 
 	def __init__(self, date=None, catalog=None, parent=None, level=0):
 		''' Timeline(data, [catalog], [parent], [level]) -- konstruktor
@@ -45,13 +48,19 @@ class Timeline(object):
 			@param level	-- poziom zagnieżdzenia timeline (0=root)
 		'''
 		self.date		= date
-		self.catalog	= catalog
+		self.catalog	= catalog if isinstance(catalog, weakref.ProxyType) else weakref.proxy(catalog)
 		self.tree_node	= None
 
-		self.parent		= parent
+		self.parent		= weakref.proxy(parent) if parent else None
 		self.level		= level
 
 		self.reset()
+
+
+	def __del__(self):
+		del self.parent
+		del self.tree_node
+		del self.catalog
 
 
 	def reset(self):
@@ -128,7 +137,7 @@ class Timeline(object):
 			return
 
 		if self.level > 0:
-			self._files.append(item)
+			self._files.append(weakref.proxy(item))
 
 			if self.level == 3:
 				return

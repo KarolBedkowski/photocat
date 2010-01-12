@@ -31,6 +31,10 @@ class TreeItem(object):
 		self.tree_node		= None
 
 
+	def __del__(self):
+		del self.tree_node
+
+
 	@property
 	def caption(self):
 		return ''

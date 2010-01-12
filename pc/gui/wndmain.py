@@ -341,6 +341,9 @@ class WndMain(wx.Frame):
 		for catalog in self._catalogs:
 			ecatalog.catalog_close(catalog)
 
+		del self._catalogs
+		self._catalogs = None
+
 		appconfig = AppConfig()
 		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
 		appconfig.set('main_wnd', 'position',	self.GetPositionTuple())

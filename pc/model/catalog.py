@@ -28,6 +28,7 @@ __revision__	= '$Id$'
 
 import os
 import operator
+import weakref
 
 from pc.storage.data_provider import DataProvider
 
@@ -51,7 +52,7 @@ class Catalog(TreeItem):
 		self.readonly 			= readonly
 
 		self.disks				= []
-		self.catalog			= self
+		self.catalog			= weakref.proxy(self)
 
 		self.data_provider		= DataProvider(filename)
 		self.tags_provider		= Tags(self)

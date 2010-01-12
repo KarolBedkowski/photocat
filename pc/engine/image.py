@@ -34,6 +34,8 @@ import logging
 import cStringIO
 import re
 import time
+import os.path
+import weakref
 
 try:
 	import cPickle as pickle
@@ -41,20 +43,19 @@ except ImportError:
 	import pickle
 
 import wx
-
 import Image as PILImage
 import PngImagePlugin, JpegImagePlugin, GifImagePlugin, TiffImagePlugin
 import PpmImagePlugin, PcxImagePlugin, PsdImagePlugin, BmpImagePlugin
 import IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
-from pc.lib					import EXIF
-
+from pc.lib import EXIF
 
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
 
-_CACHE = dict()
+_CACHE = weakref.WeakValueDictionary()
+
 
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
 		'EXIF UserComment']
@@ -64,39 +65,15 @@ _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized',
 		'EXIF DateTime')
 
 
+class Tuple(object):
+	__slots__ = ('data', '__weakref__')
+	def __init__(self, *argv):
+		self.data = argv
+
 
 def clear_cache():
 	_LOG.info('clear_cache count=%d', len(_CACHE))
 	_CACHE.clear()
-
-
-
-def load_image_from_item(item):
-	''' load_image_from_item(item) -> wx.Image -- załadowanie obrazka
-		z katalogu.
-
-		@return wxImage()
-	'''
-
-	img = None
-	try:
-		img		= wx.ImageFromStream(cStringIO.StringIO(item.image))
-
-	except Exception, err:
-		_LOG.exception('load_image_from_item %s error', item.name)
-
-	return img or wx.EmptyImage(1, 1)
-
-
-
-def load_bitmap_from_item(item):
-	''' load_bitmap_from_item(item) -> wx.Bitmap -- załadowanie obrazka
-		z katalogu.
-
-		@return wxImage()
-	'''
-	img = load_image_from_item(item)
-	return img.ConvertToBitmap() if img is not None else None
 
 
 def load_bitmap_from_item_with_size(item, width, height):
@@ -111,22 +88,28 @@ def load_bitmap_from_item_with_size(item, width, height):
 	item_id = (id(item), width, height)
 	citem = _CACHE.get(item_id)
 	if citem:
-		return citem
+		return citem.data
 
-	img = load_image_from_item(item)
-	img_width	= img.GetWidth()
-	img_height	= img.GetHeight()
+	try:
+		img = wx.ImageFromStream(cStringIO.StringIO(item.image))
 
-	scale = min(float(width) / img_width, float(height) / img_height, 1)
-	if scale != 1:
-		img_width	= int(img_width * scale)
-		img_height	= int(img_height * scale)
-		img = img.Scale(img_width, img_height)
+	except Exception, err:
+		_LOG.exception('load_bitmap_from_item_with_size %s error', item.name)
+		img = wx.EmptyImage(1, 1)
+		img_width = img_height = 1
+
+	else:
+		img_width	= img.GetWidth()
+		img_height	= img.GetHeight()
+		scale = min(float(width) / img_width, float(height) / img_height, 1)
+		if scale != 1:
+			img_width	= int(img_width * scale)
+			img_height	= int(img_height * scale)
+			img = img.Scale(img_width, img_height)
 
 	bitmap = img.ConvertToBitmap()
-	result = bitmap, img_width, img_height
-	_CACHE[item_id] = result
-	return result
+	_CACHE[item_id] = result = Tuple(bitmap, img_width, img_height)
+	return result.data
 
 
 def load_thumb_from_file(path, options, data_provider):
@@ -144,24 +127,22 @@ def load_thumb_from_file(path, options, data_provider):
 	try:
 		try:
 			image = PILImage.open(path)
-
 		except:
 			image =  PILImage.new('RGB', (1, 1))
+		else:
+			if image.mode != 'RGB':
+				image = image.convert('RGB')
 
-		if image.mode != 'RGB':
-			image = image.convert('RGB')
+			dimensions = image.size
+			thumbsize = (options.get('thumb_width', 200), 
+					options.get('thumb_height', 200))
 
-		dimensions = image.size
-
-		thumbsize = (options.get('thumb_width', 200), 
-				options.get('thumb_height', 200))
-		thumb_compression = options.get('thumb_compression', 50)
-
-		if dimensions[0] > thumbsize[0] or dimensions[1] > thumbsize[1]:
-			image.thumbnail(thumbsize, PILImage.ANTIALIAS)
+			if dimensions[0] > thumbsize[0] or dimensions[1] > thumbsize[1]:
+				image.thumbnail(thumbsize, PILImage.ANTIALIAS)
 
 		# zapisanie miniaturki przez StringIO
 		output = cStringIO.StringIO()
+		thumb_compression = options.get('thumb_compression', 50)
 		image.save(output, "JPEG", quality=thumb_compression)
 		thumb = data_provider.append(output.getvalue())
 		output.close()
@@ -184,7 +165,6 @@ def load_exif_from_file(path, data_provider):
 	_LOG.debug('load_exif_from_file(%s)', path)
 	self_exif = None
 	exif_data = {}
-
 	jpeg_file = None
 	try:
 		jpeg_file = open(path, 'rb')
@@ -220,10 +200,8 @@ def load_exif_from_storage(exifidx, data_provider):
 	if data[0] == '\x80':
 		try:
 			return pickle.loads(data)
-		
 		except pickle.UnpicklingError:
 			pass
-
 	return dict(eval(data))
 
 
@@ -235,11 +213,9 @@ def get_exit_shot_date_value(exif):
 				value = exif[exif_key]
 				return (time.strptime(value, '%Y:%m:%d %H:%M:%S') 
 						if value != '0000:00:00 00:00:00' else None)
-
 			except:
 				_LOG.exception('_get_info key=%s val="%s"', exif_key, 
 						exif[exif_key])
-
 	return 0
 
 
@@ -289,7 +265,7 @@ _IMAGE_FILES_EXTENSION_RAW = dict( (key, None) for key in ('nef', 'arw', 'srf',
 
 
 def is_file_raw(name):
-	return name and (name.split('.')[-1].lower() in _IMAGE_FILES_EXTENSION_RAW)
+	return '.' in name and os.path.splitext(name)[-1].lower() in _IMAGE_FILES_EXTENSION_RAW
 
 
 

@@ -41,6 +41,8 @@ _ = wx.GetTranslation
 class Disk(Directory):
 	FV3_CLASS_NAME = 1048576 + 1
 
+	__slots__ = ('catalog', 'add_date', 'update_date', 'last_path')
+
 	def __init__(self, oid, name, parent, catalog, *args, **kwargs):
 		self.catalog		= catalog
 		self.add_date		= kwargs.get('add_date')

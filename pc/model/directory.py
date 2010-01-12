@@ -39,14 +39,20 @@ from pc.model.file_image	import FileImage
 
 
 class Directory(CatalogFile, TreeItem):
-	FV3_CLASS_NAME = 1048576 + 2
+	__slots__ = ('tree_node', 'files', 'subdirs', '__weakref__')
 
+	FV3_CLASS_NAME = 1048576 + 2
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
 		TreeItem.__init__(self)
 
 		self.files		= []
 		self.subdirs	= []
+
+
+	def __del__(self):
+		del self.files
+		del self.subdirs
 
 
 	@property

@@ -56,7 +56,7 @@ if not _is_frozen():
 		import wxversion
 		wxversion.select('2.8')
 	except ImportError, err:
-		print err
+		print 'No wxversion.... (%s)' % str(err)
 
 
 ##########################################################################
@@ -69,7 +69,6 @@ from kabes.wxtools.logging_wx	import logging_setup_wx
 debug = sys.argv.count('-d') > 0
 if debug:
 	sys.argv.remove('-d')
-debug =  debug or __debug__
 logging_setup('pc.log', debug)
 
 _LOG = logging.getLogger(__name__)
