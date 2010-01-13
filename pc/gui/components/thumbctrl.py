@@ -100,18 +100,13 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
-		a=[0,0]
 		def get_thumb(img):
 			thumb = self._THUMB_CACHE.get(id(img))
 			if not thumb:
 				thumb = self._THUMB_CACHE[id(img)] = Thumb(image)
-				a[1] = a[1] + 1
-			else:
-				a[0] = a[0] + 1
 			return thumb
 
 		self._items			= [ get_thumb(image) for image in images ]
-		_LOG.debug('hit/miss' + str(a))
 
 		if sort_function:
 			key_func, reverse = sort_function
@@ -325,7 +320,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		else:
 			if self._selected == -1:
-				update = len(self._selected_list) > 0
 				self._selected_list = []
 
 			else:
@@ -344,7 +338,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		x, y = self.CalcUnscrolledPosition(evt.GetX(), evt.GetY())
 
-		lastselected = self._selected
 		selected = self._thumb_drawer.get_item_idx_on_xy(x, y)
 		if self._selected != selected:
 			self.__on_mouse_down(evt)
