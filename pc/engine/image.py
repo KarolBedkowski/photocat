@@ -53,9 +53,6 @@ from pc.lib import EXIF
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
 
-_CACHE = dict()
-
-
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
 		'EXIF UserComment']
 _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
@@ -63,13 +60,6 @@ _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
 _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized', 
 		'EXIF DateTime')
 
-
-def clear_cache():
-	global _CACHE
-	_LOG.info('clear_cache count=%d', len(_CACHE))
-	_CACHE.clear()
-	del _CACHE
-	_CACHE = {}
 
 
 def load_bitmap_from_item_with_size(item, width, height):
@@ -82,10 +72,6 @@ def load_bitmap_from_item_with_size(item, width, height):
 		@return wxBitmap
 	'''
 	item_id = (id(item), width, height)
-	citem = _CACHE.get(item_id)
-	if citem:
-		return citem
-
 	try:
 		img = wx.ImageFromStream(cStringIO.StringIO(item.image))
 
@@ -104,7 +90,7 @@ def load_bitmap_from_item_with_size(item, width, height):
 			img = img.Scale(img_width, img_height)
 
 	bitmap = img.ConvertToBitmap()
-	_CACHE[item_id] = result = (bitmap, img_width, img_height)
+	result = (bitmap, img_width, img_height)
 	return result
 
 

@@ -137,7 +137,6 @@ class Storage:
 		return "|".join((header, str(version), date))
 
 
-
 	@staticmethod
 	def __save_v2(catalog):
 		output_file = None

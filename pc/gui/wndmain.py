@@ -446,6 +446,7 @@ class WndMain(wx.Frame):
 		del self._catalogs[idx[0]]
 		self.__update_menus_toolbars()
 		DlgSearchProvider().close_all()
+		self._photo_list.clear_cache()
 
 
 	def _on_file_rebuild(self, evt):
@@ -1145,7 +1146,7 @@ class WndMain(wx.Frame):
 		show_info = appconfig.get('settings', 'view_show_info', True)
 		self._menu_view_show_info.Check(show_info)
 		self._toggle_info_panel(show_info)
-		eimage.clear_cache()
+		self._photo_list.clear_cache()
 
 
 	def _toggle_info_panel(self, show=None):

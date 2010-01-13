@@ -43,6 +43,8 @@ _LOG = logging.getLogger(__name__)
 class ThumbCtrl(wx.ScrolledWindow):
 	''' Kontrolka wyświetlająca miniaturki obrazków '''
 
+	_THUMB_CACHE = {}
+
 	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, 
 				thumbs_preload=True, show_captions=True):
 		''' ThumbCtrl(parent, [wxid], [status_wnd], [thumbs_preload]) -> 
@@ -98,7 +100,19 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
-		self._items			= [ Thumb(image) for image in images ]
+		a=[0,0]
+		def get_thumb(img):
+			thumb = self._THUMB_CACHE.get(id(img))
+			if not thumb:
+				thumb = self._THUMB_CACHE[id(img)] = Thumb(image)
+				a[1] = a[1] + 1
+			else:
+				a[0] = a[0] + 1
+			return thumb
+
+		self._items			= [ get_thumb(image) for image in images ]
+		_LOG.debug('hit/miss' + str(a))
+
 		if sort_function:
 			key_func, reverse = sort_function
 			self._items.sort(key=key_func, reverse=reverse)
@@ -140,6 +154,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		for item in self._items:
 			item.reset()
 
+		self.clear_cache()
 		self._update()
 
 
@@ -163,6 +178,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param fontdata - słownik z informacją o fontach
 		'''
 		self._thumb_drawer.set_captions_font(fontdata)
+		self.clear_cache()
 		self._update()
 
 
@@ -228,6 +244,9 @@ class ThumbCtrl(wx.ScrolledWindow):
 				self._selected = idx
 				self._selected_list = [idx]
 				break
+
+	def clear_cache(self):
+		self._THUMB_CACHE.clear()
 
 
 	############################################################################

@@ -362,7 +362,7 @@ def check_new_file_exists(filename):
 
 def catalog_close(catalog):
 	catalog.close()
-	image.clear_cache()
+#	image.clear_cache()
 
 
 
