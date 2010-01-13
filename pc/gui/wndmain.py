@@ -362,38 +362,37 @@ class WndMain(wx.Frame):
 
 
 	def _on_file_new(self, evt):
-		if dialogs.message_box_question_yesno(self, _('Create new catalog?'), 'PC'):
-			filename = dialogs.dialog_file_save(self, _('Catalog file name'), 
-					'*.index', default_dir=self._last_used_dir)
-			if filename is not None:
-				if not filename.endswith('.index'):
-					filename = filename + '.index'
+		filename = dialogs.dialog_file_save(self, _('Catalog file name'), 
+				'*.index', default_dir=self._last_used_dir)
+		if filename is not None:
+			if not filename.endswith('.index'):
+				filename = filename + '.index'
 
-				if ecatalog.check_new_file_exists(filename)[0]:
-					if not dialogs.message_box_question_yesno(self, 
-							_('File exists!\nOverwrite?'), 'PC'):
-						return
+			if ecatalog.check_new_file_exists(filename)[0]:
+				if not dialogs.message_box_question_yesno(self, 
+						_('File exists!\nOverwrite?'), 'PC'):
+					return
 
-				try:
-					self.SetCursor(wx.HOURGLASS_CURSOR)
-					catalog = ecatalog.new_catalog(filename)
-					self._catalogs.append(catalog)
-					self._dirs_tree.add_catalog(catalog)
+			try:
+				self.SetCursor(wx.HOURGLASS_CURSOR)
+				catalog = ecatalog.new_catalog(filename)
+				self._catalogs.append(catalog)
+				self._dirs_tree.add_catalog(catalog)
 
-				except Exception, err:
-					_LOG.exception('WndMain._on_file_new(%s)', filename)
-					dialogs.message_box_error(self, 
-							(_('Error opening file %s:\n') % filename) + err.message,
-							_('New file'))
-					self.SetStatusText(_('Error: %s') % err.message)
+			except Exception, err:
+				_LOG.exception('WndMain._on_file_new(%s)', filename)
+				dialogs.message_box_error(self, 
+						(_('Error opening file %s:\n') % filename) + err.message,
+						_('New file'))
+				self.SetStatusText(_('Error: %s') % err.message)
 
-				else:
-					self.__update_last_open_files(filename)
-					self.__update_menus_toolbars()
-					self._last_used_dir = os.path.dirname(filename)
+			else:
+				self.__update_last_open_files(filename)
+				self.__update_menus_toolbars()
+				self._last_used_dir = os.path.dirname(filename)
 
-				finally:
-					self.SetCursor(wx.STANDARD_CURSOR)
+			finally:
+				self.SetCursor(wx.STANDARD_CURSOR)
 
 
 	def _on_file_open(self, evt):
@@ -861,8 +860,6 @@ class WndMain(wx.Frame):
 
 			else:
 				break
-
-
 
 
 	def _on_file_history(self, evt):
