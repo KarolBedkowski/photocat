@@ -187,7 +187,7 @@ class ThumbDrawer(object):
 			# caption
 			if show_captions:
 				dc_SetTextForeground(
-						caption_raw_color if item.is_raw else caption_color)
+						caption_raw_color if item.image.is_raw else caption_color)
 				caption, caption_width = item.get_caption(twc, dc)
 				txc = tx + (tw - caption_width) / 2
 				dc_DrawText(caption, txc, ty + th + 2)

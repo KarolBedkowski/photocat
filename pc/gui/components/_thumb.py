@@ -35,19 +35,20 @@ from pc.engine.image		import load_bitmap_from_item_with_size
 
 class Thumb(object):
 	''' Klasa obiektu miniaturki wyświtlanej w thumbctrl '''
-	__slots__ = ('_caption', 'image', 'is_raw', '_bitmap', 'imgwidth', 'imgheight',
+	__slots__ = ('_caption', 'image', 'imgwidth', 'imgheight',
 			'_last_caption_width', '_caption_width', '_caption_prepared')
-	
+
 	def __init__(self, image):
 		self._caption = image.name[:-4] if len(image.name) > 4 else image.name
 		self.image = image
-		self.is_raw = image.is_raw
 		self.reset()
 
+	@property
+	def is_raw(self):
+		return self.image.is_raw
 
 	def reset(self):
 		''' thumb.reset() -- reset wartości '''
-		self._bitmap = None
 		self.imgwidth = None
 		self.imgheight = None
 		self._last_caption_width = -1
@@ -70,9 +71,9 @@ class Thumb(object):
 			nie zmienił)
 		'''
 
-		(self._bitmap, self.imgwidth, self.imgheight) = \
+		(bitmap, self.imgwidth, self.imgheight) = \
 				load_bitmap_from_item_with_size(self.image, width, height)
-		return self._bitmap
+		return bitmap
 
 
 	def get_caption(self, width, dc):
