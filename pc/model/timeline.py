@@ -30,7 +30,8 @@ __all__ = ["Timeline"]
 
 import time
 import operator
-import weakref
+
+from pc.lib.hlpweakref			import create_weakref_proxy
 
 
 class Timeline(object):
@@ -48,10 +49,10 @@ class Timeline(object):
 			@param level	-- poziom zagnieżdzenia timeline (0=root)
 		'''
 		self.date		= date
-		self.catalog	= catalog if isinstance(catalog, weakref.ProxyType) else weakref.proxy(catalog)
+		self.catalog	= create_weakref_proxy(catalog)
 		self.tree_node	= None
 
-		self.parent		= weakref.proxy(parent) if parent else None
+		self.parent		= create_weakref_proxy(parent)
 		self.level		= level
 
 		self.reset()
@@ -137,7 +138,7 @@ class Timeline(object):
 			return
 
 		if self.level > 0:
-			self._files.append(weakref.proxy(item))
+			self._files.append(create_weakref_proxy(item))
 
 			if self.level == 3:
 				return

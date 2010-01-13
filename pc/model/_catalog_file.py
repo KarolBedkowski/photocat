@@ -30,12 +30,12 @@ import os
 import time
 import types
 import logging
-import weakref
 
 import wx
 
 from pc.engine.efile			import get_file_date_size
 from pc.storage.storage_object	import StorageObject
+from pc.lib.hlpweakref			import create_weakref_proxy
 
 _LOG = logging.getLogger(__name__)
 _ = wx.GetTranslation
@@ -57,27 +57,19 @@ class CatalogFile(StorageObject):
 		StorageObject.__init__(self, oid, *args, **kwargs)
 
 		self.name		= name
-		self._parent	= weakref.proxy(parent) if parent else None
-		self._disk		= weakref.proxy(disk) if disk else None
-		self.catalog	= weakref.proxy(kwargs.get('catalog') or disk.catalog)
+		self._parent	= create_weakref_proxy(parent)
+		self._disk		= create_weakref_proxy(disk)
+		self.catalog	= create_weakref_proxy(kwargs.get('catalog') or disk.catalog)
 
 		self._cached_path = None
 
-
-	def _get_parent(self):
+	@property
+	def parent(self):
 		return self._parent
-	def _set_parent(self, value):
-		print '_set_parent'
-		self._parent = weakref.proxy(value)
-	parent = property(_get_parent, _set_parent)
 
-	def _get_disk(self):
+	@property
+	def disk(self):
 		return self._disk
-	def _set_disk(self, value):
-		print '_set_disk'
-		self._disk = weakref.proxy(value)
-	disk = property(_get_disk, _set_disk)
-
 
 	@property
 	def caption(self):

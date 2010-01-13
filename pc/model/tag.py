@@ -25,9 +25,9 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2007'
 __revision__	= '$Id$'
 
 
-import weakref
 
 from pc.model.file_image	import FileImage
+from pc.lib.hlpweakref		import create_weakref_proxy
 
 
 
@@ -75,10 +75,10 @@ class Tag(object):
 
 	def add_item(self, item):
 		if isinstance(item, FileImage):
-			self.files.append(weakref.proxy(item))
+			self.files.append(create_weakref_proxy(item))
 
 		else:
-			self.dirs.append(weakref.proxy(item))
+			self.dirs.append(create_weakref_proxy(item))
 
 	def update_items_on_delete(self):
 		name = self.name
@@ -100,7 +100,7 @@ class Tags(object):
 
 	def __init__(self, catalog):
 		self._tags = {}
-		self.catalog = catalog if isinstance(catalog, weakref.ProxyType) else weakref.proxy(catalog)
+		self.catalog = create_weakref_proxy(catalog)
 		self.current_tags_nodes = []
 		self.tree_node = None
 
