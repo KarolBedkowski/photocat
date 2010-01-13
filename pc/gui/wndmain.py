@@ -441,7 +441,9 @@ class WndMain(wx.Frame):
 
 		self._dirs_tree.delete_item(catalog)
 		ecatalog.catalog_close(catalog)
-		self._catalogs.remove(catalog)
+		idx = [ idx for idx, cat in enumerate(self._catalogs) 
+				if cat.name == catalog.name ]
+		del self._catalogs[idx[0]]
 		self.__update_menus_toolbars()
 		DlgSearchProvider().close_all()
 
