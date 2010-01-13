@@ -357,7 +357,7 @@ def check_new_file_exists(filename):
 	data_file = os.path.splitext(filename)[0] + '.data'
 	index_exists = os.path.exists(filename)
 	data_exists = os.path.exists(data_file)
-	return (index_exists or data_file), index_exists, data_exists
+	return (index_exists or data_exists), index_exists, data_exists
 
 
 def catalog_close(catalog):
