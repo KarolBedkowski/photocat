@@ -55,6 +55,19 @@ if '--profile' in sys.argv:
 
 		s.sort_stats('time').print_stats('pc', 50)
 
+elif '--memprofile' in sys.argv:
+	sys.argv.remove('--memprofile')
+	run()
+	import gc
+	while gc.collect() > 0:
+		pass
+
+	import objgraph
+	objgraph.show_most_common_types(20)
+
+	import ipdb
+	ipdb.set_trace()
+
 else:
 	run()
 
