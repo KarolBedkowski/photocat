@@ -1,3 +1,12 @@
+2010-01.12 (v1.6.3)
+
+Karol Będkowski:
+	fix problemy na środowiskach 64bit
+	gui: fix problem z podwojnym potwierdzaniem zamniecia okna
+	fix problem z pythonem 2.5
+	optymalizacja użycia pamięci
+
+
 2009-11.12 (v1.6.2)
 
 Karol Będkowski:
