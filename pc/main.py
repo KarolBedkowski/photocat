@@ -31,9 +31,10 @@ __revision__	= '$Id$'
 
 try:
 	import psyco
-	psyco.full()
-except Exception, err:
+except ImportError, err:
 	print 'No psyco........ (%s)' % str(err)
+else:
+	psyco.full()
 
 
 import sys
@@ -42,7 +43,7 @@ import imp
 reload(sys)
 try:
 	sys.setappdefaultencoding("utf-8")
-except Exception, _:
+except:
 	sys.setdefaultencoding("utf-8")
 
 
@@ -66,10 +67,10 @@ from kabes.tools.logging_setup	import logging_setup
 from kabes.wxtools.logging_wx	import logging_setup_wx
 
 
-debug = sys.argv.count('-d') > 0
-if debug:
+DEBUG = sys.argv.count('-d') > 0
+if DEBUG:
 	sys.argv.remove('-d')
-logging_setup('pc.log', debug)
+logging_setup('pc.log', DEBUG)
 
 _LOG = logging.getLogger(__name__)
 
@@ -92,7 +93,6 @@ class App(wx.App):
 		""" OnInit """
 
 		_LOG.info('App.OnInit')
-		self.debug = debug
 
 		app_config = AppConfig()
 		locales_dir = app_config.locales_dir
@@ -112,7 +112,7 @@ class App(wx.App):
 		icon_provider = IconProvider(icons)
 
 		from pc.gui.wndmain	import WndMain
-		wnd = WndMain(self, self.debug)
+		wnd = WndMain(self, DEBUG)
 		wnd.Show(True)
 		self.SetTopWindow(wnd)
 
