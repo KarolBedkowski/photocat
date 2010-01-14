@@ -32,6 +32,7 @@ import wx.lib.newevent
 
 from pc.engine.thumb_drawer import ThumbDrawer
 from pc.gui.components._thumb import Thumb
+from pc.lib.cache import Cache
 
 _LOG = logging.getLogger(__name__)
 
@@ -39,11 +40,10 @@ _LOG = logging.getLogger(__name__)
 (ThumbDblClickEvent,		EVT_THUMB_DBCLICK)			= wx.lib.newevent.NewEvent()
 
 
-
 class ThumbCtrl(wx.ScrolledWindow):
 	''' Kontrolka wyświetlająca miniaturki obrazków '''
 
-	_THUMB_CACHE = {}
+	_THUMB_CACHE = Cache(1000)
 
 	def __init__(self, parent, wxid=wx.ID_ANY, status_wnd=None, 
 				thumbs_preload=True, show_captions=True):
@@ -100,20 +100,31 @@ class ThumbCtrl(wx.ScrolledWindow):
 			@param images - lista obiektów do wyświetlenia
 			@param sort_function - funkcja sortująca [opcja]
 		'''
+#		a=[0,0]
 		def get_thumb(img):
-			thumb = self._THUMB_CACHE.get(id(img))
+			imgid=img.id
+			thumb = self._THUMB_CACHE.get(imgid)
 			if not thumb:
-				thumb = self._THUMB_CACHE[id(img)] = Thumb(image)
+				thumb = self._THUMB_CACHE[imgid] = Thumb(image)
+#				a[0]=a[0]+1
+#			else:
+#				a[1]=a[1]+1
 			return thumb
 
-		self._items			= [ get_thumb(image) for image in images ]
+		if len(images) > self._THUMB_CACHE.size:
+			# don't cache too large collections
+			self._items = [ Thumb(image) for image in images ]
+		else:
+			self._items = [ get_thumb(image) for image in images ]
+
+#		print 'miss/hit', a, len(self._THUMB_CACHE)
 
 		if sort_function:
 			key_func, reverse = sort_function
 			self._items.sort(key=key_func, reverse=reverse)
 
 		self._reset()
-		self._last_preloaded	= -1 if self.thumbs_preload else len(self._items)
+		self._last_preloaded = -1 if self.thumbs_preload else len(self._items)
 
 		self.Scroll(0, 0)
 		self._update()
