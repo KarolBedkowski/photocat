@@ -344,6 +344,8 @@ class WndMain(wx.Frame):
 		del self._catalogs
 		self._catalogs = None
 
+		self._photo_list.clear_cache()
+
 		appconfig = AppConfig()
 		appconfig.set('main_wnd', 'size',		self.GetSizeTuple())
 		appconfig.set('main_wnd', 'position',	self.GetPositionTuple())

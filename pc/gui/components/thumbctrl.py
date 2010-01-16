@@ -80,13 +80,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_IDLE,			self.__on_idle)
 
 
-	def __del__(self):
-		del self._thumb_drawer
-		self._thumb_drawer = None
-		del self._items
-		self._items = None
-
-
 	def _reset(self):
 		self._selected_list		= []
 		self._selected			= -1

@@ -36,7 +36,6 @@ from pc.model.gui		import TreeItem
 from pc.model.disk		import Disk
 from pc.model.tag		import Tags
 from pc.model.timeline	import Timeline
-from pc.model.file_image	import FileImage
 
 
 
@@ -64,7 +63,7 @@ class Catalog(TreeItem):
 	@property
 	def caption(self):
 		return (self.name + (self.dirty and ' *' or '') 
-			+ (self.readonly and ' [ReadOnly]' or ''))
+			+ (self.readonly and ' [-]' or ''))
 
 
 	@property
@@ -107,6 +106,9 @@ class Catalog(TreeItem):
 
 	def close(self):
 		self.data_provider.close()
+		del self.data_provider
+		del self.tags_provider
+		del self.timeline
 
 
 	def add_disk(self, path, name, descr, options, on_update):

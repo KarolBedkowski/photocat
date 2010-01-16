@@ -155,12 +155,8 @@ def get_last_search():
 
 		@return lista ostatnich wyszukiwań
 	'''
-	last = AppConfig().get_items('last_search')
-	if last is None:
-		last = []
-
-	else:
-		last = [l[1] for l in last]
+	last = AppConfig().get_items('last_search') or []
+	last = [ l[1] for l in last ]
 
 	return last
 

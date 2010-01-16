@@ -76,9 +76,7 @@ class ThumbDrawer(object):
 		self._header_color = wx.Colour(127, 127, 127)
 
 	def __del__(self):
-		del self._item_pos
 		self._item_pos = None
-		del self._items
 		self._items= None
 
 
