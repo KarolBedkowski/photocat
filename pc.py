@@ -59,14 +59,16 @@ elif '--memprofile' in sys.argv:
 	sys.argv.remove('--memprofile')
 	run()
 	import gc
+	gc.collect()
 	while gc.collect() > 0:
+		print 'collect'
 		pass
 
 	import objgraph
 	objgraph.show_most_common_types(20)
 
-	import ipdb
-	ipdb.set_trace()
+	import pdb
+	pdb.set_trace()
 
 else:
 	run()
