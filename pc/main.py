@@ -116,9 +116,9 @@ class App(wx.App):
 		wnd.Show(True)
 		self.SetTopWindow(wnd)
 
-		argv = sys.argv
-		if len(argv) > 1:
-			wnd._open_file(argv[-1])
+		for arg in sys.argv[1:]:
+			if not arg.startswith('-'):
+				wnd._open_file(arg)
 
 		return True
 
