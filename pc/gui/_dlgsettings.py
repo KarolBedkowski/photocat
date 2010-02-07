@@ -37,7 +37,6 @@ from pc.lib				import fonttools
 from pc.lib.appconfig	import AppConfig
 from pc.lib.wxtools.validators	import MyValidator, validators
 
-_ = wx.GetTranslation
 
 _SETTINGS_KEYS = (
 		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),

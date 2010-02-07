@@ -41,8 +41,6 @@ import wx.lib.mixins.listctrl  as  listmix
 
 from pc.lib.formaters		import format_human_size
 
-_ = wx.GetTranslation
-
 
 
 class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):

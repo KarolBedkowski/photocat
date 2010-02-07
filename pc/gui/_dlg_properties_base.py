@@ -37,8 +37,6 @@ from pc.gui.components.tags_list_box import TagsListBox
 from pc.lib.appconfig			import AppConfig
 from pc.lib.wxtools.guitools	import create_button
 
-_ = wx.GetTranslation
-
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 

@@ -34,8 +34,6 @@ import wx
 
 from pc.model.directory	import Directory
 
-_ = wx.GetTranslation
-
 
 
 class Disk(Directory):

@@ -39,8 +39,6 @@ from pc.gui.components._thumb import Thumb
 
 from thumb_drawer import ThumbDrawer
 
-_ = wx.GetTranslation
-
 
 
 class _Printout(wx.Printout):

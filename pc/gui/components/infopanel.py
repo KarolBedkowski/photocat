@@ -30,8 +30,6 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 
-_ = wx.GetTranslation
-
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 

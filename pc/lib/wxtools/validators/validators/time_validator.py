@@ -20,7 +20,6 @@ import wx
 from _simple_validator	import SimpleValidator
 from errors				import ValidateError
 
-_ = wx.GetTranslation
 _RE_CHECK_TIME		= re.compile(r'^(\d+):(\d\d)$')
 _RE_CHECK_TIME_SEC	= re.compile(r'^(\d+):(\d\d):(\d\d)$')
 

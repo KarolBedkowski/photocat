@@ -18,7 +18,6 @@ import wx
 from pc.lib.wxtools.iconprovider	import IconProvider
 from pc.model import Disk, Timeline
 
-_ = wx.GetTranslation
 _LOG = logging.getLogger(__name__)
 
 

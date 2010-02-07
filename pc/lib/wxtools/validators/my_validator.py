@@ -23,9 +23,6 @@ import wx.lib.masked
 
 from validators.errors	import ValidateError
 
-_ = wx.GetTranslation
-
-
 
 ##############################################################################
 

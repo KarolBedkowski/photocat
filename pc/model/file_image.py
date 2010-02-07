@@ -35,8 +35,6 @@ from pc.engine				import image as eimage
 from pc.model._catalog_file	import CatalogFile
 from pc.lib.formaters		import format_human_size
 
-_ = wx.GetTranslation
-
 
 
 class FileImage(CatalogFile):

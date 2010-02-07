@@ -45,8 +45,6 @@ from pc.lib.appconfig	import AppConfig
 from pc.lib.wxtools.dialogs		import message_box_error
 from pc.lib.wxtools.validators	import MyValidator, validators
 
-_ = wx.GetTranslation
-
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 

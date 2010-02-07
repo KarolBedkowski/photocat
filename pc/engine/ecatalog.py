@@ -46,7 +46,6 @@ import errors
 
 
 _LOG = logging.getLogger(__name__)
-_ = wx.GetTranslation
 
 
 

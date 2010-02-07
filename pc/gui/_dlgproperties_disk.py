@@ -33,8 +33,6 @@ import wx
 from pc.gui._dlg_properties_base	import DlgPropertiesBase
 from pc.lib.wxtools.dialogs	import message_box_error
 
-_ = wx.GetTranslation
-
 
 
 class DlgPropertiesDisk(DlgPropertiesBase):

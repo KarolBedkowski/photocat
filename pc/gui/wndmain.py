@@ -60,8 +60,6 @@ from pc.gui._dlgsearch				import DlgSearchProvider
 from pc.gui._dlgsettings			import DlgSettings
 from pc.gui._dlg_edit_tags			import show_dlg_edit_tags
 
-_ = wx.GetTranslation
-
 _DEFAULT_ADD_OPTIONS = {
 		'filter_folder_names': None,
 		'include_empty': 0

@@ -51,8 +51,6 @@ import IcoImagePlugin, TgaImagePlugin
 from pc.lib import EXIF
 
 _LOG = logging.getLogger(__name__)
-_ = wx.GetTranslation
-
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote', 
 		'EXIF UserComment']
 _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)

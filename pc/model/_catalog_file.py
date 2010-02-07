@@ -38,8 +38,6 @@ from pc.storage.storage_object	import StorageObject
 from pc.lib.hlpweakref			import create_weakref_proxy
 
 _LOG = logging.getLogger(__name__)
-_ = wx.GetTranslation
-
 
 
 class CatalogFile(StorageObject):

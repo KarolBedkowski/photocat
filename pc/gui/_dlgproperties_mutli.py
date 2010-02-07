@@ -35,8 +35,6 @@ from components.tags_list_box import TagsListBox
 
 from pc.gui._dlg_properties_base	import DlgPropertiesBase
 
-_ = wx.GetTranslation
-
 
 
 class DlgPropertiesMulti(DlgPropertiesBase):

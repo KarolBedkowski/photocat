@@ -27,7 +27,6 @@ from pc.lib.appconfig		import AppConfig
 from pc.lib.wxtools			import dialogs
 
 _LOG = logging.getLogger(__name__)
-_ = wx.GetTranslation
 
 
 # próba załadowania reportlab

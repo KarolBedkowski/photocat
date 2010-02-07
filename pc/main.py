@@ -39,13 +39,7 @@ else:
 
 import sys
 import imp
-
-reload(sys)
-try:
-	sys.setappdefaultencoding("utf-8")
-except:
-	sys.setdefaultencoding("utf-8")
-
+import gettext, locale
 
 def _is_frozen():
 	return (hasattr(sys, "frozen")		# new py2exe
@@ -94,13 +88,15 @@ class App(wx.App):
 
 		app_config = AppConfig()
 		locales_dir = app_config.locales_dir
+		package_name = 'pc'
 		_LOG.info('run: locale dir: %s' % locales_dir)
-		self.locale = locale = wx.Locale(wx.LANGUAGE_DEFAULT)
-		locale.AddCatalogLookupPathPrefix(locales_dir)
-		locale.AddCatalog('wxstd')
-		locale.AddCatalog('pc')
+		gettext.install(package_name, localedir=locales_dir, unicode=True,
+				names=("ngettext",))
+		locale.bindtextdomain(package_name, locales_dir)
+		locale.bind_textdomain_codeset(package_name, "UTF-8")
+		locale.setlocale(locale.LC_ALL, "")
 
-		_LOG.info('locale: %s' % locale.GetName())
+		_LOG.info('locale: %s' % str(locale.getlocale()))
 
 		from pc.lib.wxtools.iconprovider	import IconProvider
 

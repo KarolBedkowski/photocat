@@ -50,8 +50,6 @@ from components.searchresultlistctrl	import SearchResultListCtrl
 
 from pc.gui._dlgproperties	import DlgProperties
 
-_ = wx.GetTranslation
-
 
 
 ###############################################################################

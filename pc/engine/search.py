@@ -36,7 +36,6 @@ _LOG = logging.getLogger(__name__)
 import re
 
 import wx
-_ = wx.GetTranslation
 
 from pc.lib.appconfig		import AppConfig
 

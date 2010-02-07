@@ -31,8 +31,6 @@ __all__			= ['data2font', 'font2data', 'str2color', 'color2str']
 
 import wx
 
-_ = wx.GetTranslation
-
 _SETTINGS_KEYS = (
 		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),
 		('view_preload', True), ('view_show_captions', True)

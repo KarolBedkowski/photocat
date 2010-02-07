@@ -43,7 +43,6 @@ import wx.gizmos   as  gizmos
 if __name__ == '__main__':
 	APP = wx.PySimpleApp()
 
-_ = wx.GetTranslation
 
 
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)

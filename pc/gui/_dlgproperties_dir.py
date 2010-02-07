@@ -32,8 +32,6 @@ import wx
 
 from pc.gui._dlg_properties_base import DlgPropertiesBase
 
-_ = wx.GetTranslation
-
 
 
 class DlgPropertiesDir(DlgPropertiesBase):

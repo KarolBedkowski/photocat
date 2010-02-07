@@ -33,8 +33,6 @@ import sys
 import wx
 from wx.lib.wordwrap import wordwrap
 
-_ = wx.GetTranslation
-
 
 
 def show_about_box(parent):

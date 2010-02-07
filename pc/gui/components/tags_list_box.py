@@ -36,8 +36,6 @@ if __name__ == '__main__':
 
 import wx
 
-_ = wx.GetTranslation
-
 
 
 class TagsListBox(wx.CheckListBox):
