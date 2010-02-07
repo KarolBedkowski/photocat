@@ -116,7 +116,7 @@ setup(
 	#	cmdclass = {'install_data': smart_install_data},
 	include_package_data=True,
 	scripts=['pc.py'],
-	install_requires=['wxPython>=2.6.0', 'kabes.model>=3.0.0', 'kabes.storage>=3.0.0', 'kabes.tools>=3.0.0', 'kabes.wxtools>=3.0.0'],
+	install_requires=['wxPython>=2.6.0'],
 	options = {"py2exe": {
 						"compressed":	1,
 						"optimize":		2,

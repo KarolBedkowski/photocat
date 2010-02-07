@@ -38,8 +38,7 @@ import re
 import wx
 _ = wx.GetTranslation
 
-from kabes.tools.appconfig		import AppConfig
-
+from pc.lib.appconfig		import AppConfig
 
 
 def get_catalogs_to_search(catalogs, options, selected_item):

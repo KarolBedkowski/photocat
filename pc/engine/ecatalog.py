@@ -35,16 +35,14 @@ import fnmatch
 
 import wx
 
-from kabes.wxtools			import dialogs
-from kabes.tools.appconfig	import AppConfig
-from kabes.tools.formaters	import format_human_size
-
 from pc.model				import Catalog, FileImage
 from pc.storage.storage		import Storage
 from pc.gui.dlgadddisk		import DlgAddDisk
+from pc.lib.formaters		import format_human_size
+from pc.lib.appconfig		import AppConfig
+from pc.lib.wxtools			import dialogs
 
 import errors
-import image
 
 
 _LOG = logging.getLogger(__name__)

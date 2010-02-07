@@ -33,10 +33,9 @@ import wx
 from wx.lib import masked
 import  wx.lib.colourselect as  csel
 
-from kabes.tools.appconfig		import AppConfig
-from kabes.wxtools.validators	import MyValidator, validators
-
 from pc.lib				import fonttools
+from pc.lib.appconfig	import AppConfig
+from pc.lib.wxtools.validators	import MyValidator, validators
 
 _ = wx.GetTranslation
 

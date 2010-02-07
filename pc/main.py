@@ -63,8 +63,8 @@ if not _is_frozen():
 ##########################################################################
 # logowanie
 import logging
-from kabes.tools.logging_setup	import logging_setup
-from kabes.wxtools.logging_wx	import logging_setup_wx
+from pc.lib.wxtools.logging_wx	import logging_setup_wx
+from pc.lib.logging_setup	import logging_setup
 
 
 DEBUG = sys.argv.count('-d') > 0
@@ -79,10 +79,8 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kabes.tools.appconfig	import AppConfig
-from kabes.wxtools			import setup_locale
-
 from pc.icons				import icons
+from pc.lib.appconfig		import AppConfig
 
 
 
@@ -102,14 +100,12 @@ class App(wx.App):
 		locale.AddCatalog('wxstd')
 		locale.AddCatalog('pc')
 
-		setup_locale(locale)
-		
 		_LOG.info('locale: %s' % locale.GetName())
 
-		from kabes.wxtools.iconprovider	import IconProvider
+		from pc.lib.wxtools.iconprovider	import IconProvider
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
-		icon_provider = IconProvider(icons)
+		IconProvider(icons)
 
 		from pc.gui.wndmain	import WndMain
 		wnd = WndMain(self, DEBUG)

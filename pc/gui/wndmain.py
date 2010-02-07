@@ -37,18 +37,15 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kabes.tools.appconfig		import AppConfig
-from kabes.wxtools				import dialogs
-from kabes.wxtools.iconprovider	import IconProvider
-from kabes.wxtools.guitools		import create_menu, create_toolbar_button, create_menu_item
-from kabes.wxtools.wnd_shell	import WndShell
-
 import pc
-
 from pc.model				import Catalog, Directory, Disk, FileImage, Tag, Timeline
 from pc.storage.storage		import Storage
 from pc.engine				import ecatalog, eprint, epdf
-from pc.engine				import image as eimage
+from pc.lib.appconfig		import AppConfig
+from pc.lib.wxtools				import dialogs
+from pc.lib.wxtools.iconprovider	import IconProvider
+from pc.lib.wxtools.guitools	import create_menu, create_toolbar_button, create_menu_item
+from pc.lib.wxtools.wnd_shell	import WndShell
 
 from pc.gui.components.dirstree	import DirsTree
 from pc.gui.components.infopanel	import InfoPanel

@@ -27,12 +27,12 @@ __revision__	= '$Id$'
 
 from types	import DictType
 
-from kabes.model.singleton	import Singleton
+from pc.lib.singleton	import Singleton
 
 
 
 class _IdProvider(Singleton):
-	def init(self, *_args, **_kwds):
+	def _init(self, *_args, **_kwds):
 		self.last_id = 0
 
 

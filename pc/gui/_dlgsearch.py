@@ -37,14 +37,13 @@ import wx
 import wx.lib.buttons			as buttons
 import wx.lib.foldpanelbar		as fpb
 
-from kabes.tools.appconfig		import AppConfig
-from kabes.model.singleton		import Singleton
-from kabes.wxtools				import dialogs
-from kabes.wxtools.guitools		import create_button
-from kabes.wxtools.iconprovider	import IconProvider
-
 from pc.model				import Catalog, Directory, Disk, FileImage
 from pc.engine				import search, image
+from pc.lib.singleton		import Singleton
+from pc.lib.appconfig		import AppConfig
+from pc.lib.wxtools			import dialogs
+from pc.lib.wxtools.guitools		import create_button
+from pc.lib.wxtools.iconprovider	import IconProvider
 
 from components.thumbctrl	import ThumbCtrl, EVT_THUMB_DBCLICK, EVT_THUMB_SELECTION_CHANGE
 from components.searchresultlistctrl	import SearchResultListCtrl
@@ -683,7 +682,7 @@ class _DlgSearch(wx.Frame):
 class DlgSearchProvider(Singleton):
 	''' DlgSearchProvider() -- tworzy i zarządza dlg wyszukiwania '''
 
-	def init(self):
+	def _init(self):
 		self._dialogs = []
 
 

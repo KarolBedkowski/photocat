@@ -31,11 +31,9 @@ _LOG = logging.getLogger(__name__)
 
 import wx
 
-from kabes.tools.formaters	import format_human_size
-
-from pc.engine	import image	as eimage
-
-from pc.model._catalog_file		import CatalogFile
+from pc.engine				import image as eimage
+from pc.model._catalog_file	import CatalogFile
+from pc.lib.formaters		import format_human_size
 
 _ = wx.GetTranslation
 

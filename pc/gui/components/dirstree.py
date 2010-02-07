@@ -12,15 +12,14 @@ __all__			= ['DirsTree']
 
 
 import logging
-_LOG = logging.getLogger(__name__)
 
 import wx
 
-from kabes.wxtools.iconprovider	import IconProvider
-
+from pc.lib.wxtools.iconprovider	import IconProvider
 from pc.model import Disk, Timeline
 
 _ = wx.GetTranslation
+_LOG = logging.getLogger(__name__)
 
 
 

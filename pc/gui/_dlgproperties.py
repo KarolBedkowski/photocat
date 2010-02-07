@@ -31,11 +31,10 @@ __all__			= ['DlgProperties']
 
 import wx
 
-from kabes.tools.appconfig		import AppConfig
-
 from pc.engine			import image
 
 from pc.gui._dlg_properties_base	import DlgPropertiesBase
+from pc.lib.appconfig	import AppConfig
 
 _ = wx.GetTranslation
 
