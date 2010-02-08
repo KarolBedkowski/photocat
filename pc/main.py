@@ -40,6 +40,51 @@ else:
 import sys
 import imp
 import gettext, locale
+import logging
+
+from pc.lib.appconfig		import AppConfig
+from pc.lib.logging_setup	import logging_setup
+
+
+##########################################################################
+
+reload(sys)
+try:
+	sys.setappdefaultencoding("utf-8")
+except:
+	sys.setdefaultencoding("utf-8")
+
+# logowanie
+DEBUG = sys.argv.count('-d') > 0
+if DEBUG:
+	sys.argv.remove('-d')
+logging_setup('pc.log', DEBUG)
+
+_LOG = logging.getLogger(__name__)
+
+
+def setup_locale():
+	use_home_dir = sys.platform != 'winnt'
+	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir,
+			app_name='pc')
+	locales_dir = app_config.locales_dir
+	package_name = 'pc'
+	_LOG.info('run: locale dir: %s' % locales_dir)
+	gettext.install('wxstd', localedir=locales_dir)
+	gettext.install(package_name, localedir=locales_dir, unicode=True, 
+			names=("ngettext",))
+	locale.bindtextdomain(package_name, locales_dir)
+	locale.bind_textdomain_codeset(package_name, "UTF-8")
+	locale.setlocale(locale.LC_ALL)
+
+	_LOG.info('locale: %s' % str(locale.getlocale()))
+
+
+setup_locale()
+
+
+##########################################################################
+
 
 def _is_frozen():
 	return (hasattr(sys, "frozen")		# new py2exe
@@ -53,51 +98,20 @@ if not _is_frozen():
 	except ImportError, err:
 		print 'No wxversion.... (%s)' % str(err)
 
-
-##########################################################################
-# logowanie
-import logging
-from pc.lib.wxtools.logging_wx	import logging_setup_wx
-from pc.lib.logging_setup	import logging_setup
-
-
-DEBUG = sys.argv.count('-d') > 0
-if DEBUG:
-	sys.argv.remove('-d')
-logging_setup('pc.log', DEBUG)
-
-_LOG = logging.getLogger(__name__)
-
-
-##########################################################################
-
 import wx
 
 from pc.icons				import icons
-from pc.lib.appconfig		import AppConfig
+from pc.lib.wxtools.logging_wx	import logging_setup_wx
 
+##########################################################################
 
 
 class App(wx.App):
 	""" wx App class """
-
 	def OnInit(self):
 		""" OnInit """
 
 		_LOG.info('App.OnInit')
-
-		app_config = AppConfig()
-		locales_dir = app_config.locales_dir
-		package_name = 'pc'
-		_LOG.info('run: locale dir: %s' % locales_dir)
-		gettext.install(package_name, localedir=locales_dir, unicode=True,
-				names=("ngettext",))
-		locale.bindtextdomain(package_name, locales_dir)
-		locale.bind_textdomain_codeset(package_name, "UTF-8")
-		locale.setlocale(locale.LC_ALL, "")
-
-		_LOG.info('locale: %s' % str(locale.getlocale()))
-
 		from pc.lib.wxtools.iconprovider	import IconProvider
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
@@ -131,13 +145,10 @@ class App(wx.App):
 
 
 def run():
-
 	logging_setup_wx()
 
 	_LOG.info('run')
-	use_home_dir = wx.Platform != '__WXMSW__'
-	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir, 
-			app_name='pc')
+	app_config = AppConfig()
 	app_config.load()
 
 	_LOG.info('run: starting app...')
@@ -151,8 +162,6 @@ def run():
 	del app
 
 	_LOG.info('run: end')
-
-
 
 
 # vim: ff=unix: encoding=utf8:
