@@ -5,31 +5,32 @@
 Main class App
 
 
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
+This file is part of Photo Catalog
 
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
+PC is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2.
 
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
+PC is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 try:
+	# pylint: disable-msg=F0401
 	import psyco
 except ImportError, err:
 	print 'No psyco........ (%s)' % str(err)
@@ -39,7 +40,8 @@ else:
 
 import sys
 import imp
-import gettext, locale
+import gettext
+import locale
 import logging
 
 from pc.lib.appconfig		import AppConfig
@@ -50,9 +52,9 @@ from pc.lib.logging_setup	import logging_setup
 
 reload(sys)
 try:
-	sys.setappdefaultencoding("utf-8")
-except:
-	sys.setdefaultencoding("utf-8")
+	sys.setappdefaultencoding("utf-8")	# pylint: disable-msg=E1101
+except AttributeError:
+	sys.setdefaultencoding("utf-8")	# pylint: disable-msg=E1101
 
 # logowanie
 DEBUG = sys.argv.count('-d') > 0
@@ -63,7 +65,8 @@ logging_setup('pc.log', DEBUG)
 _LOG = logging.getLogger(__name__)
 
 
-def setup_locale():
+def _setup_locale():
+	''' setup locales and gettext '''
 	use_home_dir = sys.platform != 'winnt'
 	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir,
 			app_name='pc')
@@ -71,7 +74,7 @@ def setup_locale():
 	package_name = 'pc'
 	_LOG.info('run: locale dir: %s' % locales_dir)
 	gettext.install('wxstd', localedir=locales_dir)
-	gettext.install(package_name, localedir=locales_dir, unicode=True, 
+	gettext.install(package_name, localedir=locales_dir, unicode=True,
 			names=("ngettext",))
 	locale.bindtextdomain(package_name, locales_dir)
 	locale.bind_textdomain_codeset(package_name, "UTF-8")
@@ -79,14 +82,14 @@ def setup_locale():
 
 	_LOG.info('locale: %s' % str(locale.getlocale()))
 
-
-setup_locale()
+_setup_locale()
 
 
 ##########################################################################
 
 
 def _is_frozen():
+	''' check is app frozen '''
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe
 			or imp.is_frozen("__main__"))	# tools/freeze
@@ -108,7 +111,8 @@ from pc.lib.wxtools.logging_wx	import logging_setup_wx
 
 class App(wx.App):
 	""" wx App class """
-	def OnInit(self):
+
+	def OnInit(self):	# pylint: disable-msg=C0103
 		""" OnInit """
 
 		_LOG.info('App.OnInit')
@@ -124,27 +128,31 @@ class App(wx.App):
 
 		for arg in sys.argv[1:]:
 			if not arg.startswith('-'):
-				wnd._open_file(arg)
+				wnd.open_file(arg)
 
 		return True
 
-	def OnExceptionInMainLoop(self):
+	def OnExceptionInMainLoop(self):	# pylint: disable-msg=C0103
+		''' OnExceptionInMainLoop '''
 		_LOG.warn('OnExceptionInMainLoop')
-		wx.App.OnExceptionInMainLoop(self)
+		super(App, self).OnExceptionInMainLoop()
 
-	def OnUnhandledException(self):
+	def OnUnhandledException(self):	# pylint: disable-msg=C0103
+		'''OnUnhandledException '''
 		_LOG.warn('OnUnhandledException')
-		wx.App.OnUnhandledException(self)
+		super(App, self).OnUnhandledException()
 
-	def OnFatalException(self):
+	def OnFatalException(self):	# pylint: disable-msg=C0103
+		''' OnFatalException '''
 		_LOG.warn('OnFatalException')
-		wx.App.OnFatalException(self)
+		super(App, self).OnFatalException()
 
 
 ##########################################################################
 
 
 def run():
+	''' Run application '''
 	logging_setup_wx()
 
 	_LOG.info('run')

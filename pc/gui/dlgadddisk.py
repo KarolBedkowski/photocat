@@ -2,30 +2,16 @@
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
-__all__			= ['DlgAddDisk']
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
+__all__ = ['DlgAddDisk']
 
 
 if __name__ == '__main__':
@@ -41,9 +27,9 @@ import os
 
 import wx
 
-from pc.lib.appconfig	import AppConfig
-from pc.lib.wxtools.dialogs		import message_box_error
-from pc.lib.wxtools.validators	import MyValidator, validators
+from pc.lib.appconfig import AppConfig
+from pc.lib.wxtools.dialogs import message_box_error
+from pc.lib.wxtools.validators import MyValidator, validators
 
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
@@ -64,12 +50,11 @@ def _create_small_label(parent, title):
 	return ctr
 
 
-
 class DlgAddDisk(wx.Dialog):
 	''' Dialog dodania/uaktualnienia dysku '''
 
 	def __init__(self, parent, data, update=False, catalog=None):
-		caption =  _('Update disk') if update else _('Add disk')
+		caption = _('Update disk') if update else _('Add disk')
 		wx.Dialog.__init__(self, parent, -1, caption)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
@@ -77,9 +62,9 @@ class DlgAddDisk(wx.Dialog):
 		self.__load_disk_names(catalog, update)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_notebook(), 1, wx.EXPAND|wx.ALL, 12)
-		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
-				wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(self._create_notebook(), 1, wx.EXPAND | wx.ALL, 12)
+		main_grid.Add(self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL), 0,
+				wx.EXPAND | wx.ALL, 12)
 
 		self.SetSizerAndFit(main_grid)
 		self.SetSize((500, -1))
@@ -88,13 +73,11 @@ class DlgAddDisk(wx.Dialog):
 
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 
-
 	def _create_notebook(self):
 		notebook = wx.Notebook(self, -1)
-		notebook.AddPage(self._create_page_main(notebook),		_('Main'))
-		notebook.AddPage(self._create_page_options(notebook),	_('Options'))
+		notebook.AddPage(self._create_page_main(notebook), _('Main'))
+		notebook.AddPage(self._create_page_options(notebook), _('Options'))
 		return notebook
-
 
 	def _create_page_main(self, parent):
 		data = self._data
@@ -108,15 +91,14 @@ class DlgAddDisk(wx.Dialog):
 
 		grid.Add(wx.StaticText(panel, -1, _('Disk name:')))
 		self._disk_name = wx.TextCtrl(panel, -1,
-				validator=MyValidator(data_key=(data, 'name'), 
-						validators=validators.NotEmptyValidator(), 
-						field=_('name'))
-		)
+				validator=MyValidator(data_key=(data, 'name'),
+						validators=validators.NotEmptyValidator(),
+						field=_('name')))
 		grid.Add(self._disk_name, 1, wx.EXPAND)
 
 		grid.Add(wx.StaticText(panel, -1, _('Disk description:')))
-		self._disk_descr = wx.TextCtrl(panel, -1, 
-				validator=MyValidator(data_key=(data, 'descr')), 
+		self._disk_descr = wx.TextCtrl(panel, -1,
+				validator=MyValidator(data_key=(data, 'descr')),
 						style=wx.TE_MULTILINE)
 		grid.Add(self._disk_descr, 1, wx.EXPAND)
 
@@ -124,7 +106,7 @@ class DlgAddDisk(wx.Dialog):
 
 		grid.Add(wx.StaticText(panel, -1, _('Folder:')))
 		self._path = wx.ComboBox(panel, -1, last_dir,
-				validator=MyValidator(data_key=(data, 'path'), 
+				validator=MyValidator(data_key=(data, 'path'),
 						validators=validators.NotEmptyValidator(),
 						field=_('path')),
 				choices=last_dirs)
@@ -138,14 +120,13 @@ class DlgAddDisk(wx.Dialog):
 		grid2.Add(btn_sel_dir)
 		grid.Add(grid2, 1, wx.EXPAND)
 
-		main_grid.Add(grid, 1, wx.EXPAND|wx.ALL, 12)
+		main_grid.Add(grid, 1, wx.EXPAND | wx.ALL, 12)
 
 		panel.SetSizerAndFit(main_grid)
 
 		self.Bind(wx.EVT_BUTTON, self._on_btn_sel_dir, btn_sel_dir)
 
 		return panel
-
 
 	def _create_page_options(self, parent):
 		data = self._data
@@ -162,7 +143,7 @@ class DlgAddDisk(wx.Dialog):
 
 		main_grid.Add((5, 5))
 
-		main_grid.Add(wx.CheckBox(panel, -1, _('Force load files'), 
+		main_grid.Add(wx.CheckBox(panel, -1, _('Force load files'),
 				validator=MyValidator(data_key=(data, 'force'))))
 
 		main_grid.Add((5, 5))
@@ -182,15 +163,13 @@ class DlgAddDisk(wx.Dialog):
 		grid.Add((1, 1))
 		grid.Add(_create_small_label(panel, _('(Separate dirs by ";")')))
 
-		main_grid.Add(grid, 1, wx.EXPAND|wx.LEFT, 12)
+		main_grid.Add(grid, 1, wx.EXPAND | wx.LEFT, 12)
 
-		panel_grid.Add(main_grid, 1, wx.EXPAND|wx.ALL, 12)
+		panel_grid.Add(main_grid, 1, wx.EXPAND | wx.ALL, 12)
 		panel.SetSizerAndFit(panel_grid)
 		return panel
 
-
 	#########################################################################
-
 
 	def _on_btn_sel_dir(self, evt):
 		curr_dir = self._path.GetValue()
@@ -199,14 +178,13 @@ class DlgAddDisk(wx.Dialog):
 			curr_dir = os.path.abspath(os.curdir)
 
 		dialog = wx.DirDialog(self, _('Select directory'), defaultPath=curr_dir,
-				style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
+				style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
 
 		if dialog.ShowModal() == wx.ID_OK:
 			directory = dialog.GetPath()
 			self._path.SetValue(directory)
 
 		dialog.Destroy()
-
 
 	def _on_ok(self, evt):
 		if not self.Validate():
@@ -218,32 +196,29 @@ class DlgAddDisk(wx.Dialog):
 		name = self._data['name']
 
 		if self._catalog_disk_names is not None and name in self._catalog_disk_names:
-			message_box_error(self, _('Name already exists in catalog!'), 
+			message_box_error(self, _('Name already exists in catalog!'),
 					_('Add disk'))
 			return
 
-		current_path  = self._data['path']
+		current_path = self._data['path']
 
 		if not os.path.exists(current_path):
 			message_box_error(self, _("Selected dir don't exists!"), _('Add disk'))
 			return
 
-		last_dirs = [ current_path ] + [ path
-				for path in ( self._path.GetString(idx)
-					for idx in xrange(min(self._path.GetCount(), 9)) )
-				if path != current_path
-		]
+		last_dirs = [current_path] + [path
+				for path in (self._path.GetString(idx)
+					for idx in xrange(min(self._path.GetCount(), 9)))
+				if path != current_path]
 
 		if __name__ != '__main__':
 			AppConfig().set_items('add_disk-last_dir', 'last_dir', last_dirs)
 
-		self._data['skip_dirs_list'] = [ dirname.strip() for dirname in 
-				self._data['skip_subdirs'].split(';') ]
+		self._data['skip_dirs_list'] = [dirname.strip() \
+				for dirname in self._data['skip_subdirs'].split(';')]
 		self.EndModal(wx.ID_OK)
 
-
 	#########################################################################
-
 
 	def __get_last_dirs(self):
 		last_dir = ''
@@ -253,34 +228,29 @@ class DlgAddDisk(wx.Dialog):
 		else:
 			last_dirs = AppConfig().get_items('add_disk-last_dir') or []
 			if len(last_dirs) > 0:
-				last_dirs = [ val for _key, val in sorted(last_dirs) ]
+				last_dirs = [val for _key, val in sorted(last_dirs)]
 				last_dir = last_dirs[0]
 
 		return (last_dirs, last_dir)
-
 
 	def __load_disk_names(self, catalog, update):
 		self._catalog_disk_names = None
 		if catalog is not None:
 			if update:
 				name = self._data['name']
-				self._catalog_disk_names = tuple((disk.name 
-						for disk in catalog.disks if disk.name != name) )
+				self._catalog_disk_names = tuple((disk.name
+						for disk in catalog.disks if disk.name != name))
 
 			else:
-				self._catalog_disk_names = tuple((disk.name 
+				self._catalog_disk_names = tuple((disk.name
 						for disk in catalog.disks))
 
 
-
-
 if __name__ == '__main__':
+
 	def _test():
 		app = wx.PySimpleApp()
-		data = {
-				'name' : '__name__',
-				'descr': '__descr__'
-		}
+		data = {'name': '__name__', 'descr': '__descr__'}
 		wnd = DlgAddDisk(None, data)
 		if wnd.ShowModal() == wx.ID_OK:
 			print 'OK', data
@@ -289,7 +259,7 @@ if __name__ == '__main__':
 		wnd.Destroy()
 
 		del app
-	
+
 	_test()
 
 

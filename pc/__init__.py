@@ -20,14 +20,14 @@
  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
-__all__			= ['run']
+__all__ = ['run']
 
-__version__		= '1.6.4'
-__release__		= '2010-01-14'
+__version__ = '1.6.4'
+__release__ = '2010-01-14'
 
 
 from pc.main import run

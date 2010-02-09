@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable-all
 # Library to extract EXIF information in digital camera image files
 #
 # To use this library call with:

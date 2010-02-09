@@ -1,68 +1,48 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2007'
-__revision__	= '$Id$'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2007'
+__revision__ = '$Id$'
 
 
-
-from pc.model.file_image	import FileImage
-from pc.lib.hlpweakref		import create_weakref_proxy
-
+from pc.model.file_image import FileImage
+from pc.lib.hlpweakref import create_weakref_proxy
 
 
 class Tag(object):
 	__slots__ = ('name', 'files', 'dirs', 'catalog', 'tree_node')
 
 	def __init__(self, name=None, catalog=None):
-		self.name		= name
-		self.files		= []
-		self.dirs		= []
-		self.catalog	= catalog
-		self.tree_node	= None
-
+		self.name = name
+		self.files = []
+		self.dirs = []
+		self.catalog = catalog
+		self.tree_node = None
 
 	@property
 	def files_count(self):
 		return len(self.files)
 
-
 	@property
 	def dirs_count(self):
 		return len(self.dirs)
 
-
 	@property
 	def count(self):
 		return len(self.dirs) + len(self.files)
-
 
 	@property
 	def caption(self):
 		return '%s (%d/%d)' % (self.name, len(self.files), len(self.dirs))
 
 	##########################################################################
-
 
 	def remove_item(self, item):
 		if isinstance(item, FileImage):
@@ -71,7 +51,6 @@ class Tag(object):
 
 		elif item in self.dirs:
 			self.dirs.remove(item)
-
 
 	def add_item(self, item):
 		if isinstance(item, FileImage):
@@ -88,9 +67,7 @@ class Tag(object):
 		for directory in self.dirs:
 			directory.tags.remove(name)
 
-
 ###############################################################################
-
 
 
 class Tags(object):
@@ -104,16 +81,13 @@ class Tags(object):
 		self.current_tags_nodes = []
 		self.tree_node = None
 
-
 	def __getitem__(self, key, default=None):
 		return self._tags.get(key, default)
 
 	def __settem__(self, key, value):
 		self._tags[key] = value
 
-
 	##########################################################################
-
 
 	def _get_tags(self):
 		return self._tags.keys()
@@ -136,7 +110,6 @@ class Tags(object):
 
 	tags = property(_get_tags, _set_tags)
 
-
 	@property
 	def tags_items(self):
 		return self._tags.iteritems()
@@ -146,26 +119,21 @@ class Tags(object):
 	def encode3(self):
 		return 0, self.FV3_CLASS_NAME, self.tags
 
-
 	##########################################################################
-
 
 	def add_item(self, item):
 		if item.tags is not None and item.name is not None:
 			for tag in item.tags:
 				self._get_tag_list(tag).add_item(item)
 
-
 	def update_item(self, item):
 		self.remove_item(item)
 		self.add_item(item)
-
 
 	def remove_item(self, item):
 		if item.name is not None:
 			for tag in self._tags.itervalues():
 				tag.remove_item(item)
-
 
 	##########################################################################
 

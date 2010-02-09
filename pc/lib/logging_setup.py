@@ -3,13 +3,14 @@
 """
 Logging setup.
 
-2008-04-17 [k]: umieszczanie loga w tempie jeżeli jest frozen lub wybrany katalog jest ro.
+2008-04-17 [k]: umieszczanie loga w tempie jeżeli jest frozen lub wybrany
+katalog jest ro.
 """
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 __all__ = ['logging_setup']
+
 
 import os.path
 import sys
@@ -48,25 +49,27 @@ def logging_setup(filename, debug=False):
 	print 'Logging to %s' % log_fullpath
 
 	if debug:
-		level_console	= logging.DEBUG
-		level_file		= logging.DEBUG
+		level_console = logging.DEBUG
+		level_file = logging.DEBUG
 	else:
-		level_console	= logging.INFO
-		level_file		= logging.ERROR
+		level_console = logging.INFO
+		level_file = logging.ERROR
 
-	logging.basicConfig(level=level_file, format='%(asctime)s %(levelname)-8s %(name)s - %(message)s',
+	logging.basicConfig(level=level_file,
+			format='%(asctime)s %(levelname)-8s %(name)s - %(message)s',
 			filename=log_fullpath, filemode='w')
 	console = logging.StreamHandler()
 	console.setLevel(level_console)
 
-	console.setFormatter(logging.Formatter('%(levelname)-8s %(name)s - %(message)s'))
+	console.setFormatter(logging.Formatter(
+			'%(levelname)-8s %(name)s - %(message)s'))
 	logging.getLogger('').addHandler(console)
 
 	logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 	logging.getLogger('sqlalchemy.orm.unitofwork').setLevel(logging.WARN)
 
-	_LOG = logging.getLogger(__name__)
-	_LOG.debug('logging_setup() finished')
+	log = logging.getLogger(__name__)
+	log.debug('logging_setup() finished')
 
 
 # vim: ff=unix: encoding=utf8:

@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
+This file is part of Photo Catalog
 
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
+PC is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2.
 
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
+PC is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 if __name__ == '__main__':
@@ -37,8 +37,8 @@ if __name__ == '__main__':
 import wx
 
 
-
 class TagsListBox(wx.CheckListBox):
+
 	def __init__(self, *args, **kwargs):
 		wx.CheckListBox.__init__(self, *args, **kwargs)
 
@@ -47,14 +47,12 @@ class TagsListBox(wx.CheckListBox):
 
 	#########################################################################
 
-
 	@property
 	def selected(self):
-		return [ tag for idx, tag in enumerate(self._all_tags) 
-				if self.IsChecked(idx) ]
+		return [tag for idx, tag in enumerate(self._all_tags)
+				if self.IsChecked(idx)]
 
 	#########################################################################
-
 
 	def show(self, all_tags, item_tags):
 		self._all_tags = all_tags or []
@@ -68,14 +66,13 @@ class TagsListBox(wx.CheckListBox):
 			if tag in self._item_tags:
 				self.Check(idx)
 
-
 	#########################################################################
-
 
 if __name__ == '__main__':
 	app = wx.PySimpleApp()
 
 	class TestDialog(wx.Dialog):
+
 		def __init__(self, *argv, **kwarg):
 			wx.Dialog.__init__(self, *argv, **kwarg)
 			sizer = wx.BoxSizer(wx.VERTICAL)
@@ -87,8 +84,8 @@ if __name__ == '__main__':
 			item_tags = ['b', 'd']
 			tlp.show(all_tags, item_tags)
 
-			sizer.Add(self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 0, 
-					wx.EXPAND|wx.ALL, 5)
+			sizer.Add(self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL), 0,
+					wx.EXPAND | wx.ALL, 5)
 
 			self.SetSizer(sizer)
 			sizer.Fit(self)

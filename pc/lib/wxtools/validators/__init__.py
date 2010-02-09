@@ -6,9 +6,8 @@ $Id$
 __revision__ = '0.1'
 
 
-from my_validator		import MyValidator
-from my_validator_dv	import MyValidatorDv
-from validators			import *
+from pc.lib.wxtools.validators.my_validator import MyValidator
+from pc.lib.wxtools.validators.validators import *
 
 
-# vim: encoding=utf8:
+# vim: encoding=utf8:ff=unix:

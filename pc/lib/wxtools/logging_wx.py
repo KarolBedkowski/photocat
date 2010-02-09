@@ -4,17 +4,16 @@
 Logging setup.
 
 """
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id: logging_setup.py 5 2007-06-05 20:27:47Z k $'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id: logging_setup.py 5 2007-06-05 20:27:47Z k $'
 
-__all__ = ['logging_setup']
+__all__ = ['logging_setup_wx']
 
 
 import logging
 
 import wx
-
 
 
 class MyLog(wx.PyLog):
@@ -28,8 +27,6 @@ class MyLog(wx.PyLog):
 			self._logger.debug(message)
 		else:
 			self._logger.info(message)
-
-
 
 
 def logging_setup_wx(header='wx'):

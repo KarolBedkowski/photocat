@@ -1,36 +1,35 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
+This file is part of Photo Catalog
 
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
+PC is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2.
 
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
+PC is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 import logging
+
+from pc.engine.image import load_bitmap_from_item_with_size
+
 _LOG = logging.getLogger(__name__)
-
-from pc.engine.image		import load_bitmap_from_item_with_size
-
 
 
 class Thumb(object):
@@ -56,19 +55,17 @@ class Thumb(object):
 		self._caption_prepared = False
 		self._bitmap = None
 
-
 	#########################################################################
 
-
 	def get_bitmap(self, width, height):
-		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy 
+		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy
 			obrazka
 
 			@param width	- max szerokość
 			@param height	- max wysokość
 			@return wxBitmap - zmienjszony ewentualnie obrazek
 
-			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się 
+			Bitmapa jest cachowana po 1 użyciu (o ile żądany rozmiar się
 			nie zmienił)
 		'''
 		if self._bitmap:
@@ -78,9 +75,8 @@ class Thumb(object):
 				load_bitmap_from_item_with_size(self.image, width, height)
 		return self._bitmap
 
-
 	def get_caption(self, width, dc):
-		''' thumb.get_caption(width, dc) -> (caption, caption_width) 
+		''' thumb.get_caption(width, dc) -> (caption, caption_width)
 			-- wyznaczenie rozmiaru podpisu
 
 			@param width		- maksymalna szerokość napisu

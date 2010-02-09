@@ -1,31 +1,16 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2007'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2007'
+__revision__ = '$Id$'
 __all__ = ["Timeline"]
-
 
 
 import time
@@ -48,48 +33,41 @@ class Timeline(object):
 			@param parent	-- nadrzędny obiekt Timeline
 			@param level	-- poziom zagnieżdzenia timeline (0=root)
 		'''
-		self.date		= date
-		self.catalog	= create_weakref_proxy(catalog)
-		self.tree_node	= None
+		self.date = date
+		self.catalog = create_weakref_proxy(catalog)
+		self.tree_node = None
 
-		self.parent		= create_weakref_proxy(parent)
-		self.level		= level
+		self.parent = create_weakref_proxy(parent)
+		self.level = level
 
 		self.reset()
-
 
 	def __del__(self):
 		del self.parent
 		del self.tree_node
 		del self.catalog
 
-
 	def reset(self):
 		''' timeline.reset() -- wyczyszczenie obiektu '''
-		self.dirs		= {}
-		self._files		= []
-
+		self.dirs = {}
+		self._files = []
 
 	############################################################################
-
 
 	@property
 	def files_count(self):
 		''' timeline.files_count -> int -- liczba plików w obiekcie '''
 		return len(self._files)
 
-
 	@property
 	def dirs_count(self):
 		''' timeline.dirs_count -> int -- liczba pod-obiektów Timeline '''
 		return len(self.dirs)
 
-
 	@property
 	def count(self):
 		''' timeline.count -> int -- liczba podobiektów '''
 		return len(self.dirs) + len(self._files)
-
 
 	@property
 	def _date(self):
@@ -97,12 +75,10 @@ class Timeline(object):
 			return '%02d' % self.date
 		return '%s-%02d' % (self.parent._date, self.date)
 
-
 	@property
 	def caption(self):
 		''' timeline.caption -> str -- etykieta dla drzewa '''
 		return '%s (%d)' % (self._date, len(self._files))
-
 
 	@property
 	def subdirs(self):
@@ -110,20 +86,17 @@ class Timeline(object):
 			wg daty '''
 		return sorted(self.dirs.values(), key=operator.attrgetter('date'))
 
-
 	@property
 	def files(self):
 		""" timeline.files -> [] -- lista ob FileImage
 
 			Lista  jest filtrowana - tylko poprawne obiekty są zwracane
 		"""
-		files = filter(lambda x: x.is_valid, self._files)
+		files = [fil for fil in self._files if fil.is_valid]
 		self._files = files
 		return files
 
-
 	############################################################################
-
 
 	def __add_item(self, item):
 		''' timeline.__add_item(item) -- dodanie obiektu '''
@@ -150,13 +123,11 @@ class Timeline(object):
 
 		else:
 			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog,
-					self, self.level+1)
+					self, self.level + 1)
 
 		subdir.__add_item(item)
 
-
 	############################################################################
-
 
 	def load(self):
 		""" timeline.load() -- załadowanie obiektów do timeline """

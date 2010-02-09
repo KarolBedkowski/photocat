@@ -1,44 +1,29 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 import gzip
 import time
 import operator
-
 import logging
-_LOG = logging.getLogger(__name__)
-
 
 from pc.model import Disk, Catalog, FileImage, Directory
 
-from storage_errors	import LoadFileError, InvalidFileError, SaveFileError
-from _storage_v3	import StorageV3
+from pc.storage.storage_errors import LoadFileError, InvalidFileError, \
+	SaveFileError
+from pc.storage._storage_v3 import StorageV3
 
+_LOG = logging.getLogger(__name__)
 
 
 class Storage:
@@ -50,14 +35,13 @@ class Storage:
 	def __init__(self):
 		raise Exception('Static class')
 
-
 	@staticmethod
 	def load(filename):
 		_LOG.info('Storage.load catalog=%s', filename)
 
-		input_file	= None
-		catalog		= Catalog(filename)
-		objects		= {}
+		input_file = None
+		catalog = Catalog(filename)
+		objects = {}
 
 		time_start = time.time()
 
@@ -95,9 +79,8 @@ class Storage:
 			if input_file is not None:
 				input_file.close()
 
-		_LOG.info('Storage.load finished in %0.2f sec', (time.time()-time_start))
+		_LOG.info('Storage.load finished in %0.2f sec', (time.time() - time_start))
 		return catalog
-
 
 	@staticmethod
 	def save(catalog):
@@ -107,19 +90,16 @@ class Storage:
 		StorageV3.save(catalog, Storage.__get_header())
 
 		_LOG.info('Storage.save catalog finished in %0.2f sec',
-				(time.time()-time_start))
-
+				(time.time() - time_start))
 
 	######################################################
-
 
 	@staticmethod
 	def __check_header(line):
 		try:
 			header, version, _date = line.split('|')
 			version = int(version)
-			return (
-					header == 'PhotoCatalog_IndexFile'
+			return (header == 'PhotoCatalog_IndexFile'
 					and version >= Storage.SUPPORTED_FILE_VERSION_MIN
 					and version <= Storage.SUPPORTED_FILE_VERSION_MAX), version
 
@@ -128,14 +108,12 @@ class Storage:
 
 		return False, None
 
-
 	@staticmethod
 	def __get_header():
-		header	= 'PhotoCatalog_IndexFile'
-		version	= Storage.SUPPORTED_FILE_VERSION_MAX
-		date	= time.asctime()
+		header = 'PhotoCatalog_IndexFile'
+		version = Storage.SUPPORTED_FILE_VERSION_MAX
+		date = time.asctime()
 		return "|".join((header, str(version), date))
-
 
 	@staticmethod
 	def __save_v2(catalog):
@@ -149,10 +127,10 @@ class Storage:
 
 			def write_item(item):
 				output_file.write(item.encode() + "\n")
-				map(write_item, item.childs_to_store)
+				for child in item.childs_to_store:
+					write_item(child)
 
 			write_item(catalog)
-
 			catalog.data_provider.save()
 			catalog.dirty = False
 
@@ -164,17 +142,15 @@ class Storage:
 			if output_file is not None:
 				output_file.close()
 
-
 	@staticmethod
 	def __load_v2(input_file, catalog, objects, filename):
-		class_names	= {'Directory': Directory, 'Disk': Disk,
+		class_names = {'Directory': Directory, 'Disk': Disk,
 				'FileImage': FileImage}
 
 		while True:
 			line = input_file.readline()
 			if line == '':
 				break
-
 			line = line.strip()
 			if line == '' or line.startswith('#'):
 				continue
@@ -186,25 +162,23 @@ class Storage:
 				if class_name == 'TAGS':
 					catalog.tags_provider.tags = eval(data)
 					continue
-
 				if not class_name in class_names:
 					_LOG.warn('invalid class name: "%s"', line)
 					continue
 
-				klass	= class_names[class_name]
-				data	= klass.decode(data)
-
-				data['parent']	= None
+				klass = class_names[class_name]
+				data = klass.decode(data)
+				data['parent'] = None
 				data['catalog'] = catalog
 
 				# wstawienie obiektow nadrzędnych
 				if 'parent_id' in data:
-					data['parent']	= objects.get(data['parent_id'])
+					data['parent'] = objects.get(data['parent_id'])
 
 				if 'disk_id' in data:
 					disk_id = data['disk_id']
 					if disk_id in objects:
-						data['disk']	= objects.get(disk_id)
+						data['disk'] = objects.get(disk_id)
 
 					elif class_name != 'Disk':
 						_LOG.warn("no disk id=%d line='%s'", disk_id, line)
@@ -215,10 +189,8 @@ class Storage:
 				if data.get('parent') is None:
 					if class_name == 'Disk':
 						catalog.disks.append(new_object)
-
 					else:
 						_LOG.warn('id without parent "%s"', line)
-
 				else:
 					data['parent'].add_child(new_object)
 
@@ -228,8 +200,5 @@ class Storage:
 			except:
 				_LOG.exception('Storage.load(%s) line="%s"', filename, line)
 				raise InvalidFileError()
-
-
-
 
 # vim: encoding=utf8: ff=unix:

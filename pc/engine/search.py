@@ -3,45 +3,30 @@
 # pylint: disable-msg=R0901, R0904
 """
 pc.engine.search
- -- engine do wyszukiwnania danych w katalogu
+-- engine do wyszukiwnania danych w katalogu
 
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004, 2005, 2006
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004, 2005, 2006
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 import logging
-_LOG = logging.getLogger(__name__)
-
 import re
 
-import wx
+from pc.lib.appconfig import AppConfig
 
-from pc.lib.appconfig		import AppConfig
+
+_LOG = logging.getLogger(__name__)
 
 
 def get_catalogs_to_search(catalogs, options, selected_item):
-	""" get_catalogs_to_search(catalogs, options, selected_item) -> [] 
+	""" get_catalogs_to_search(catalogs, options, selected_item) -> []
 		-- zwraca liste obiektów do przeszukania
 
 		Na podstawie opcji określa co przeszukiwać.
@@ -60,43 +45,42 @@ def get_catalogs_to_search(catalogs, options, selected_item):
 			pass
 
 		elif search_in_catalog == _("<current catalog>"):
-			catalogs_to_search = [ selected_item.catalog ]
+			catalogs_to_search = [selected_item.catalog]
 
 		elif search_in_catalog == _("<current disk>"):
-			catalogs_to_search = [ selected_item.disk ]
+			catalogs_to_search = [selected_item.disk]
 
 		elif search_in_catalog == _("<current dir>"):
-			catalogs_to_search = [ selected_item ]
+			catalogs_to_search = [selected_item]
 
 		else:
 			# wyszukiwanie w konkretnym katalogu
 			search_in_catalog = search_in_catalog.split(": ", 1)[1]
-			catalogs_to_search = [cat for cat in catalogs 
-					if cat.name == search_in_catalog ]
+			catalogs_to_search = [cat for cat in catalogs
+					if cat.name == search_in_catalog]
 
-	subdirs_count = sum(( cat.subdirs_count for cat in catalogs_to_search ))
+	subdirs_count = sum((cat.subdirs_count for cat in catalogs_to_search))
 
 	return catalogs_to_search, subdirs_count
 
 
-
 def find(what, options, catalogs, insert_func, progress_funct):
-	""" find(what, options, catalogs, insert_func, progress_funct) -> string  
-		-- wyszukanie informacji
+	""" find(what, options, catalogs, insert_func, progress_funct) -> string
+	-- wyszukanie informacji
 
-		@param what			- string do wyszukania
-		@param options		- opcje wyszukania
-		@param insert_func	- callback do wstawiania rezultatów
-		@param progress_funct	- callback do pokazywania postępów / przerywania
-		@return szukany string
+	@param what			- string do wyszukania
+	@param options		- opcje wyszukania
+	@param insert_func	- callback do wstawiania rezultatów
+	@param progress_funct	- callback do pokazywania postępów / przerywania
+	@return szukany string
 
-		Opcje:
-			- opt_match_case	- dopasowanie wielkości liter (def=False)
-			- opt_regex			- wyszukiwanie po regex (def=False)
+	Opcje:
+		- opt_match_case	- dopasowanie wielkości liter (def=False)
+		- opt_regex			- wyszukiwanie po regex (def=False)
 	"""
 	options = options or {}
-	match_case	= options.get('opt_match_case', False)
-	regex		= options.get('opt_regex', False)
+	match_case = options.get('opt_match_case', False)
+	regex = options.get('opt_regex', False)
 
 	if not match_case:
 		what = what.lower()
@@ -106,7 +90,7 @@ def find(what, options, catalogs, insert_func, progress_funct):
 	if regex:
 		# wyszukiwanie po regex
 		textre = re.compile(what, (0 if match_case else re.I))
-		cmpfunc = lambda x: textre.search(x)
+		cmpfunc = textre.search
 
 	else:
 		if match_case:
@@ -123,9 +107,8 @@ def find(what, options, catalogs, insert_func, progress_funct):
 	return what
 
 
-
 def update_last_search(text):
-	''' update_last_search(text) -> [string] -- aktualzacja listy poptrzednich 
+	''' update_last_search(text) -> [string] -- aktualzacja listy poptrzednich
 		wyszukiwań
 
 		@return lista ostatnich wyszukiwań
@@ -154,7 +137,7 @@ def get_last_search():
 		@return lista ostatnich wyszukiwań
 	'''
 	last = AppConfig().get_items('last_search') or []
-	last = [ l[1] for l in last ]
+	last = [l[1] for l in last]
 
 	return last
 

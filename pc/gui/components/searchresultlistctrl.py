@@ -3,44 +3,44 @@
 # pylint: disable-msg=R0901, R0904
 """
 SearchResultListCtrl
- -- listctrl z sortowaniem dla wyników wyszukiwania
+-- listctrl z sortowaniem dla wyników wyszukiwania
 
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004, 2005, 2006
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004, 2005, 2006
 
- This file is part of Photo Catalog
+This file is part of Photo Catalog
 
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
+PC is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2.
 
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
+PC is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
 
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
-__all__			= ['SearchResultListCtrl']
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
+__all__ = ['SearchResultListCtrl']
 
 
 import sys
 import time
 import logging
-_LOG = logging.getLogger(__name__)
 
 import wx
-import wx.lib.mixins.listctrl  as  listmix
+import wx.lib.mixins.listctrl as listmix
 
-from pc.lib.formaters		import format_human_size
+from pc.lib.formaters import format_human_size
 
+
+_LOG = logging.getLogger(__name__)
 
 
 class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
@@ -60,14 +60,11 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.InsertColumn(4, _('File date'))
 		self.InsertColumn(5, _('File size'))
 
-
 	def clear(self):
 		self.itemDataMap = []
 		self.DeleteAllItems()
 
-
 	############################################################################
-
 
 	def _get_result(self):
 		return self.itemDataMap
@@ -77,15 +74,12 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 
 	result = property(_get_result, _set_result)
 
-
 	############################################################################
 
-
 	def set_sort_icons(self, up, down):
-		''' srlc.set_sort_icons(up, down) -- ustawienie ikon dla pokazania 
+		''' srlc.set_sort_icons(up, down) -- ustawienie ikon dla pokazania
 			sortowania '''
 		self._icons = (down, up)
-
 
 	def insert(self, item, index, show_size, ico):
 		''' srlc.index(item, index, show_size, ico) -- wstawienie elementu '''
@@ -100,7 +94,6 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 
 		self.SetItemData(idx, index)
 
-
 	def autosize_cols(self):
 		''' srlc.autosize_cols() -- autosize kolumn '''
 		self.SetColumnWidth(0, wx.LIST_AUTOSIZE)
@@ -108,28 +101,30 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		self.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
-
 	############################################################################
 
 	def GetListCtrl(self):
 		return self
-
 
 	def GetColumnSorter(self):
 		col = self._col
 		ascending = 1 if self._colSortFlag[col] else -1
 
 		sortfnc = {
-			0: lambda x,y: cmp(self.itemDataMap[x].name.lower(), self.itemDataMap[y].name.lower()) * ascending,
-			1: lambda x,y: cmp(self.itemDataMap[x].catalog.name.lower(), self.itemDataMap[y].catalog.name.lower()) * ascending,
-			2: lambda x,y: cmp(self.itemDataMap[x].disk.name.lower(), self.itemDataMap[y].disk.name.lower()) * ascending,
-			3: lambda x,y: cmp(self.itemDataMap[x].path.lower(), self.itemDataMap[y].path.lower()) * ascending,
-			4: lambda x,y: cmp(self.itemDataMap[x].date, self.itemDataMap[y].date) * ascending,
-			5: lambda x,y: cmp(self.itemDataMap[x].size, self.itemDataMap[y].size) * ascending
-		}.get(col)
+			0: lambda x, y: cmp(self.itemDataMap[x].name.lower(),
+					self.itemDataMap[y].name.lower()) * ascending,
+			1: lambda x, y: cmp(self.itemDataMap[x].catalog.name.lower(),
+					self.itemDataMap[y].catalog.name.lower()) * ascending,
+			2: lambda x, y: cmp(self.itemDataMap[x].disk.name.lower(),
+					self.itemDataMap[y].disk.name.lower()) * ascending,
+			3: lambda x, y: cmp(self.itemDataMap[x].path.lower(),
+					self.itemDataMap[y].path.lower()) * ascending,
+			4: lambda x, y: cmp(self.itemDataMap[x].date,
+					self.itemDataMap[y].date) * ascending,
+			5: lambda x, y: cmp(self.itemDataMap[x].size,
+					self.itemDataMap[y].size) * ascending}.get(col)
 
 		return sortfnc
-
 
 	def GetSortImages(self):
 		return self._icons

@@ -1,37 +1,21 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (pc)
- Copyright (c) Karol Będkowski, 2004-2007
+Photo Catalog v 1.0  (pc)
+Copyright (c) Karol Będkowski, 2004-2007
 
- This file is part of Photo Catalog
-
- PC is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- PC is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of Photo Catalog
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 
 
 import os
 import time
 import types
 import logging
-
-import wx
 
 from pc.engine.efile			import get_file_date_size
 from pc.storage.storage_object	import StorageObject
@@ -41,6 +25,8 @@ _LOG = logging.getLogger(__name__)
 
 
 class CatalogFile(StorageObject):
+	''' Klasa bazowa dla wszystkich plików i katalogów  w katalogu '''
+
 	__slots__ = ('size', 'date', 'tags', 'desc', 'name', '_parent', '_disk',
 			'catalog', '_cached_path')
 
@@ -54,26 +40,27 @@ class CatalogFile(StorageObject):
 
 		StorageObject.__init__(self, oid, *args, **kwargs)
 
-		self.name		= name
-		self._parent	= create_weakref_proxy(parent)
-		self._disk		= create_weakref_proxy(disk)
-		self.catalog	= create_weakref_proxy(kwargs.get('catalog') or disk.catalog)
+		self.name = name
+		self._parent = create_weakref_proxy(parent)
+		self._disk = create_weakref_proxy(disk)
+		self.catalog = create_weakref_proxy(kwargs.get('catalog') or disk.catalog)
 
 		self._cached_path = None
 
 	@property
 	def parent(self):
+		''' katalog nadrzędny '''
 		return self._parent
 
 	@property
 	def disk(self):
+		''' dysk do którego należy element '''
 		return self._disk
 
 	@property
 	def caption(self):
 		""" etykieta obiektu """
 		return str(self.name or id(self))
-
 
 	def _get_info(self):
 		result = []
@@ -88,41 +75,38 @@ class CatalogFile(StorageObject):
 
 		result.append((199, '', ''))
 		if self.date is not None:
-			result.append((200, _('File date'), 
+			result.append((200, _('File date'),
 					time.strftime('%c', time.localtime(self.date))))
 
 		return result
 
 	info = property(_get_info)
 
-
 	@property
 	def parent_id(self):
+		''' id obiektu nadrzędnego '''
 		return None if self.parent is None else self.parent.id
-
 
 	@property
 	def disk_id(self):
+		''' id dysku do którego należy obiekt '''
 		return None if self.disk is None else self.disk.id
-
 
 	@property
 	def path(self):
+		''' ścieżka do pliku '''
 		if self._cached_path is None:
-			self._cached_path = (self.name if self.parent is None 
+			self._cached_path = (self.name if self.parent is None
 					else os.path.join(self.parent.path, self.name))
 
 		return self._cached_path
-
 
 	@property
 	def date_to_check(self):
 		''' data do sprawdzenia przy wyszukiwaniu '''
 		return self.date
 
-
 	##########################################################################
-
 
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
@@ -131,12 +115,10 @@ class CatalogFile(StorageObject):
 			_LOG.debug('delete tags from %s', self.name)
 			self.catalog.tags_provider.remove_item(self)
 
-
 	def load(self, path, _options, on_update):
 		""" załadowanie danych o obiekcie """
 		self.size, self.date = get_file_date_size(path)
 		return on_update(path)
-
 
 	def update(self, path, _options, on_update):
 		''' aktualizacja eleentu
@@ -146,7 +128,6 @@ class CatalogFile(StorageObject):
 		old_date = self.date
 		self.size, self.date = get_file_date_size(path)
 		return (old_size != self.size or old_date != self.date), on_update(path)
-
 
 	def set_tags(self, tags):
 		""" ustawienie tagów dla obiektu """
@@ -158,18 +139,17 @@ class CatalogFile(StorageObject):
 			updated_tags = self.tags
 
 		else:
-			updated_tags = [ tag for tag in tags if tag not in self.tags] + [
-					tag for tag in self.tags if tag not in tags ]
+			updated_tags = [tag for tag in tags if tag not in self.tags] \
+					+ [tag for tag in self.tags if tag not in tags]
 
 		self.tags = tuple(tags) if len(tags) > 0 else None
 		self.catalog.tags_provider.update_item(self)
 		return updated_tags
 
-
-	def check_on_find(self, cmpfunc, add_callback, options, 
+	def check_on_find(self, cmpfunc, add_callback, options,
 			_progress_callback=None):
-		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów 
-			wyszukiwania '''
+		''' obj.check_on_find(text, [options]) -- sprawdzenie kryteriów
+		wyszukiwania '''
 
 		if options.get('search_in_names', True) and self.name \
 				and cmpfunc(self.name) and self._check_on_find_date(options):
@@ -188,9 +168,7 @@ class CatalogFile(StorageObject):
 					add_callback(self)
 					return
 
-
 	##########################################################################
-
 
 	def _check_on_find_date(self, options):
 		''' sprawdznie czy obiekt zawiera sie w danym zakresie  dat. '''
@@ -201,20 +179,17 @@ class CatalogFile(StorageObject):
 		if not options.get('search_date', False):
 			return True
 
-		return (date >= options.get('search_date_start') 
+		return (date >= options.get('search_date_start') \
 				and date <= options.get('search_date_end'))
 
-
 	##########################################################################
-
 
 	@classmethod
 	def _attrlist(cls):
 		attribs = StorageObject._attrlist()
 		attribs.extend((
 				('name', str), ('size', int), ('date', int), ('tags', tuple),
-				('desc', str), ('parent_id', int), ('disk_id', int)
-		))
+				('desc', str), ('parent_id', int), ('disk_id', int)))
 		return attribs
 
 

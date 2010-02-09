@@ -4,39 +4,25 @@
 """
 Icon provider for windows
 
- Copyright (c) Karol Będkowski, 2007
+Copyright (c) Karol Będkowski, 2007
 
- This file is part of kPyLibs
-
- kPyLibs is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- S7AG is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+This file is part of kPyLibs
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
 __all__ = ['IconProvider']
 
 
 import logging
-_LOG = logging.getLogger(__name__)
-
-import types
 
 import wx
 
 from pc.lib.singleton import Singleton
+
+_LOG = logging.getLogger(__name__)
+
 
 class _IconProviderCache(Singleton):
 	''' cache ikon '''
@@ -45,9 +31,9 @@ class _IconProviderCache(Singleton):
 		self.__icon_cache = {}
 		self.__icons = icons
 
-
 	def __load_icon(self, name):
-		''' ipc.__load_icon(name) -> bitmap -- Zaladowanie podanej grafiki do cache '''
+		''' ipc.__load_icon(name) -> bitmap -- Zaladowanie podanej grafiki do
+		cache '''
 
 		try:
 			bitmap = wx.ArtProvider_GetBitmap(name)
@@ -63,7 +49,6 @@ class _IconProviderCache(Singleton):
 
 		return bitmap
 
-
 	def __getitem__(self, name):
 		icon = self.__icon_cache.get(name)
 		if not icon:
@@ -71,10 +56,8 @@ class _IconProviderCache(Singleton):
 
 		return icon
 
-
 	def __contains__(self, key):
 		return key in self.__icon_cache
-
 
 
 class IconProvider:
@@ -83,14 +66,11 @@ class IconProvider:
 	def __init__(self, icons=None):
 		self.__image_list = wx.ImageList(16, 16)
 		self.__image_dict = {}
-
 		self._icon_provider_cache = _IconProviderCache(icons)
-
 
 	def get_image_list(self):
 		""" ip.get_image_list() -> list -- pobranie listy ikon """
 		return self.__image_list
-
 
 	def load_icon(self, name):
 		''' ip.load_icon(name) -> image -- zaladowanie podanej ikonki '''
@@ -119,21 +99,17 @@ class IconProvider:
 
 		return image
 
-
 	def load_icons(self, names):
 		''' ip.load_icons(names list) -> [images] -- zaladowanie listy ikon '''
-		return [ self.load_icon(name) for name in names ]
-
+		return [self.load_icon(name) for name in names]
 
 	def get_image_index(self, name):
 		''' ip.get_image_index(name) -> index -- pobranie indexu obrazka '''
 		return self.__image_dict.get(name)
 
-
 	def get_image(self, name):
 		''' ip.get_image(name) -> image -- pobranie obrazka '''
 		return self.load_icon(name)
-
 
 	def get_icon(self, name):
 		''' ip.get_icon(name) -> icon -- pobranie ikonku '''

@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 
+
 class Singleton(object):
+
 	def __new__(cls, *args, **kwarg):
 		instance = cls.__dict__.get('__instance__')
 		if instance is None:
@@ -11,4 +13,3 @@ class Singleton(object):
 
 	def _init(self, *args, **kwarg):
 		pass
-

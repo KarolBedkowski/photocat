@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
+# pylint: disable-all
 # 
 #   PYTHON MODULE:     MKI18N.PY
 #                      =========
