@@ -27,6 +27,7 @@
 ./gui/components/thumbctrl.py
 ./gui/dlgadddisk.py
 ./gui/wndmain.py
+./gui/wndmain_view.py
 ./icons/__init__.py
 ./icons/icons.py
 ./lib/EXIF.py

@@ -139,6 +139,42 @@ def create_menu(wnd, items):
 	return menu
 
 
+def create_menu2(wnd, items):
+	''' create_menu(wnd, items) -> wxMenu -- stworzenie menu na podstawie listy'''
+	menu = wx.Menu()
+	menu_elements = {}
+
+	for item in items:
+		if item.get('separator'):
+			menu.AppendSeparator()
+		else:
+			label = item.get('label')
+			accel = item.get('accel')
+			description = item.get('desc')
+			name = item.get('name')
+			wxid = item.get('wxid')
+			img = item.get('img')
+			if img is not None:
+				if type(img) in types.StringTypes:
+					img = wx.ArtProvider_GetBitmap(img, wx.ART_MENU, (16, 16))
+				wxid, menu_item = create_menu_item(wnd, menu, label, None, description,
+						accel, wxid, img)
+			else:
+				wxid, menu_item = create_menu_item(wnd, menu, label, None, description,
+						accel, wxid)
+
+			if name and menu_item:
+				for iname in name.split(';'):
+					if iname in menu_elements:
+						old_value = menu_elements[iname]
+						if not hasattr(old_value, '__iter__'):
+							old_value = menu_elements[iname] = [old_value]
+						old_value.append(menu_item)
+					else:
+						menu_elements[iname] = menu_item
+
+	return menu, menu_elements
+
 def combobox_select_item(control, data):
 	for i in xrange(control.GetCount()):
 		if control.GetClientData(i) == data:
