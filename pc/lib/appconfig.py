@@ -145,18 +145,12 @@ class AppConfig(Singleton):
 
 	@property
 	def locales_dir(self):
+		locales_dir = None
 		if self.main_is_frozen:
 			locales_dir = os.path.join(self.main_dir, 'locale')
-
 		else:
-			if self.main_file_path is None:
-				path = os.path.join(os.path.dirname(__file__), '..')
-
-			else:
-				path = os.path.dirname(self.main_file_path)
-
-			locales_dir = os.path.join(path, 'locale')
-
+			if os.path.isdir('./locale'):
+				locales_dir = './locale'
 		return locales_dir
 
 	def _main_is_frozen(self):

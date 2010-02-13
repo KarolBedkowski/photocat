@@ -1,0 +1,1014 @@
+# PhotoCatalog Polish Translation
+# Copyright (C) 2007-2010, Karol Będkowski
+# This file is distributed under the same license as the PC package.
+# Karol Będkowski <karol.bedkowski@gmail.com>, 2007, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: PhotoCatalog (PC)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-13 22:57+0100\n"
+"PO-Revision-Date: 2010-02-08 12:06+0100\n"
+"Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
+"Language-Team: Polish <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2); \n"
+
+#: ../pc/engine/ecatalog.py:45
+msgid "Counting files..."
+msgstr "Liczenie plików..."
+
+#: ../pc/engine/ecatalog.py:53
+msgid "No files found!"
+msgstr "Nic znaleziono plików!"
+
+#: ../pc/engine/ecatalog.py:71 ../pc/engine/ecatalog.py:166
+msgid "Catalog is read-only."
+msgstr "Katalog jest tylko do odczytu/"
+
+#: ../pc/engine/ecatalog.py:107
+#, python-format
+msgid ""
+"Loading file:\n"
+"%s"
+msgstr ""
+"Wczytywanie pliku:\n"
+"%s"
+
+#: ../pc/engine/ecatalog.py:120 ../pc/engine/epdf.py:129
+msgid "Done!"
+msgstr "Zrobione!"
+
+#: ../pc/engine/ecatalog.py:124 ../pc/engine/epdf.py:125
+#, python-format
+msgid ""
+"Error:\n"
+"%s"
+msgstr ""
+"Błąd:\n"
+"%s"
+
+#: ../pc/engine/ecatalog.py:142
+msgid "Adding disk"
+msgstr "Dodawanie dysku"
+
+#: ../pc/engine/ecatalog.py:155
+msgid "Updating disk"
+msgstr "Aktualizacja dysku"
+
+#: ../pc/engine/ecatalog.py:171 ../pc/gui/wndmain_view.py:142
+msgid "Rebuild catalog"
+msgstr "Przebuduj katalog"
+
+#: ../pc/engine/ecatalog.py:172
+msgid ""
+"Rebuilding...\n"
+"Please wait."
+msgstr ""
+"Przebudowywanie...\n"
+"Proszę czekać..."
+
+#: ../pc/engine/ecatalog.py:184
+msgid "Saving..."
+msgstr "Zapisywanie..."
+
+#: ../pc/engine/ecatalog.py:187
+msgid "Rebuild catalog aborted"
+msgstr "Przebudowa katalogu przerwana"
+
+#: ../pc/engine/ecatalog.py:191
+#, python-format
+msgid ""
+"Rebuild catalog finished\n"
+"Saved space: %sB"
+msgstr ""
+"Zakończono przebudowę katalogu\n"
+"Zaoszczędzono: %sB"
+
+#: ../pc/engine/ecatalog.py:200
+#, python-format
+msgid ""
+"Rebuild catalog error!\n"
+"%(msg)s"
+msgstr ""
+"Wystąpił błąd podczas przebudowywania katalogu!\n"
+"%(msg)s"
+
+#: ../pc/engine/ecatalog.py:221
+msgid "File not exists!"
+msgstr "Plik nie istnieje"
+
+#: ../pc/engine/ecatalog.py:225 ../pc/engine/ecatalog.py:293
+#: ../pc/engine/ecatalog.py:309
+msgid "File not readable"
+msgstr "Nie można odczytać pliku"
+
+#: ../pc/engine/ecatalog.py:236
+msgid "Data file not exists!"
+msgstr "Plik danych nie istnieje!"
+
+#: ../pc/engine/ecatalog.py:240
+msgid "Data file not readable"
+msgstr "Nie można odczytać pliku danych"
+
+#: ../pc/engine/ecatalog.py:280 ../pc/engine/ecatalog.py:301
+msgid "Invalid path"
+msgstr "Niewłaściwa ścieżka"
+
+#: ../pc/engine/ecatalog.py:284
+msgid "Path is not writable!"
+msgstr "Ścieżka nie jest zapisywalna"
+
+#: ../pc/engine/ecatalog.py:297 ../pc/engine/ecatalog.py:313
+msgid "File is not writable!"
+msgstr "Plik nie jest zapisywalny!"
+
+#: ../pc/engine/epdf.py:64 ../pc/engine/epdf.py:126 ../pc/engine/epdf.py:129
+#: ../pc/engine/epdf.py:241
+msgid "Export to PDF"
+msgstr "Eksportuj do PDF"
+
+#: ../pc/engine/eprint.py:140
+msgid "Print preview"
+msgstr "Podgląd wydruku"
+
+#: ../pc/engine/image.py:196
+msgid "t"
+msgstr "t"
+
+#: ../pc/engine/image.py:207
+msgid "f"
+msgstr "f"
+
+#: ../pc/engine/image.py:210 ../pc/engine/image.py:219
+msgid "iso"
+msgstr "iso"
+
+#: ../pc/engine/image.py:221
+msgid "flash"
+msgstr "flesz"
+
+#: ../pc/engine/image.py:222
+msgid "focal len."
+msgstr "ogniskowa"
+
+#: ../pc/engine/search.py:43 ../pc/engine/search.py:44
+#: ../pc/gui/_dlgsearch.py:187 ../pc/gui/_dlgsearch.py:188
+msgid "<all>"
+msgstr "<wszystkie>"
+
+#: ../pc/engine/search.py:47 ../pc/gui/_dlgsearch.py:193
+#: ../pc/gui/_dlgsearch.py:196 ../pc/gui/_dlgsearch.py:200
+msgid "<current catalog>"
+msgstr "<aktualny katalog>"
+
+#: ../pc/engine/search.py:50 ../pc/gui/_dlgsearch.py:193
+#: ../pc/gui/_dlgsearch.py:196 ../pc/gui/_dlgsearch.py:200
+msgid "<current disk>"
+msgstr "<aktualny dysk>"
+
+#: ../pc/engine/search.py:53 ../pc/gui/_dlgsearch.py:197
+msgid "<current dir>"
+msgstr "<aktualny folder>"
+
+#: ../pc/gui/_dlg_edit_tags.py:61 ../pc/gui/_dlg_properties_base.py:37
+#: ../pc/gui/wndmain_view.py:286 ../pc/gui/wndmain_view.py:310
+msgid "Properties"
+msgstr "Własności"
+
+#: ../pc/gui/_dlg_edit_tags.py:67 ../pc/gui/_dlg_properties_base.py:107
+#: ../pc/gui/_dlg_properties_base.py:186 ../pc/gui/_dlgproperties.py:37
+#: ../pc/gui/_dlgproperties_dir.py:37 ../pc/gui/_dlgproperties_disk.py:36
+#: ../pc/gui/_dlgproperties_mutli.py:38 ../pc/gui/_dlgproperties_mutli.py:73
+#: ../pc/gui/components/dirstree.py:215 ../pc/gui/wndmain_view.py:180
+#: ../pc/model/_catalog_file.py:67
+msgid "Tags"
+msgstr "Tagi"
+
+#: ../pc/gui/_dlg_properties_base.py:104 ../pc/gui/_dlgproperties.py:34
+#: ../pc/gui/_dlgproperties_dir.py:35 ../pc/gui/_dlgproperties_disk.py:34
+#: ../pc/gui/dlgadddisk.py:78
+msgid "Main"
+msgstr "Główne"
+
+#: ../pc/gui/_dlg_properties_base.py:105 ../pc/gui/_dlg_properties_base.py:138
+#: ../pc/gui/_dlgproperties.py:35 ../pc/gui/_dlgproperties_dir.py:36
+#: ../pc/gui/_dlgproperties_disk.py:35 ../pc/gui/_dlgproperties_mutli.py:37
+#: ../pc/gui/_dlgproperties_mutli.py:48
+msgid "Comment"
+msgstr "Komentarz"
+
+#: ../pc/gui/_dlg_properties_base.py:106 ../pc/gui/_dlg_properties_base.py:158
+#: ../pc/gui/_dlgproperties.py:36 ../pc/gui/components/infopanel.py:117
+msgid "Exif"
+msgstr "Exif"
+
+#: ../pc/gui/_dlg_properties_base.py:108 ../pc/gui/_dlgproperties.py:38
+#: ../pc/gui/_dlgproperties_mutli.py:39
+msgid "Other"
+msgstr "Inne"
+
+#: ../pc/gui/_dlg_properties_base.py:164
+msgid "Tag"
+msgstr "Tag"
+
+#: ../pc/gui/_dlg_properties_base.py:165
+msgid "Value"
+msgstr "Wartość"
+
+#: ../pc/gui/_dlg_properties_base.py:209 ../pc/gui/_dlgproperties_mutli.py:97
+msgid "Shot date"
+msgstr "Data wykonania"
+
+#: ../pc/gui/_dlg_properties_base.py:216 ../pc/gui/_dlgproperties_mutli.py:101
+msgid "Set shot date"
+msgstr "Ustaw datę wykonania"
+
+#: ../pc/gui/_dlg_properties_base.py:224 ../pc/gui/_dlgproperties_mutli.py:110
+msgid "Shot date:"
+msgstr "Data wykonania:"
+
+#: ../pc/gui/_dlgproperties_disk.py:46 ../pc/gui/_dlgproperties_disk.py:51
+#: ../pc/gui/components/searchresultlistctrl.py:56
+#: ../pc/model/_catalog_file.py:65
+msgid "Name"
+msgstr "Nazwa"
+
+#: ../pc/gui/_dlgproperties_disk.py:77
+msgid "You must provide name for disk"
+msgstr "Musisz podać nazwę dla dysku"
+
+#: ../pc/gui/_dlgproperties_disk.py:78
+#: ../pc/gui/components/searchresultlistctrl.py:58
+#: ../pc/model/_catalog_file.py:72
+msgid "Disk"
+msgstr "Dysk"
+
+#: ../pc/gui/_dlgproperties_mutli.py:50
+msgid "Set comment"
+msgstr "Ustaw komentarz"
+
+#: ../pc/gui/_dlgproperties_mutli.py:75
+msgid "Set tags"
+msgstr "Ustaw tagi"
+
+#: ../pc/gui/_dlgsearch.py:56 ../pc/gui/wndmain_view.py:243
+msgid "Find"
+msgstr "Znajdź"
+
+#: ../pc/gui/_dlgsearch.py:132
+msgid "Search"
+msgstr "Szukaj"
+
+#: ../pc/gui/_dlgsearch.py:148
+msgid "Advanced"
+msgstr "Zaawansowane"
+
+#: ../pc/gui/_dlgsearch.py:151
+msgid "Search in fields:"
+msgstr "Szukaj w polach:"
+
+#: ../pc/gui/_dlgsearch.py:159
+msgid "names"
+msgstr "nazwach"
+
+#: ../pc/gui/_dlgsearch.py:160
+msgid "descriptions"
+msgstr "opisach"
+
+#: ../pc/gui/_dlgsearch.py:161
+msgid "tags"
+msgstr "tagach"
+
+#: ../pc/gui/_dlgsearch.py:167
+msgid "Search for:"
+msgstr "Szukaj:"
+
+#: ../pc/gui/_dlgsearch.py:171
+msgid "files"
+msgstr "pliki"
+
+#: ../pc/gui/_dlgsearch.py:175
+msgid "dirs"
+msgstr "katalogi"
+
+#: ../pc/gui/_dlgsearch.py:186
+msgid "Search in disks/catalogs:"
+msgstr "Szukaj w dyskach/katalogach:"
+
+#: ../pc/gui/_dlgsearch.py:203
+#, python-format
+msgid "catalog: %s"
+msgstr "katalog: %s"
+
+#. szukanie wg dat
+#: ../pc/gui/_dlgsearch.py:208
+msgid "Search by date"
+msgstr "Szukaj wg daty"
+
+#: ../pc/gui/_dlgsearch.py:213
+msgid "begin:"
+msgstr "początek:"
+
+#: ../pc/gui/_dlgsearch.py:219
+msgid "end:"
+msgstr "koniec:"
+
+#: ../pc/gui/_dlgsearch.py:232 ../pc/gui/dlgadddisk.py:79
+msgid "Options"
+msgstr "Opcje"
+
+#: ../pc/gui/_dlgsearch.py:234
+msgid "Regular expression"
+msgstr "Wyrażenie regularne"
+
+#: ../pc/gui/_dlgsearch.py:237
+msgid "Match case"
+msgstr "Dopasuj wielkość znaków"
+
+#: ../pc/gui/_dlgsearch.py:253
+msgid "Icons"
+msgstr "Ikonki"
+
+#: ../pc/gui/_dlgsearch.py:267
+msgid "Go to..."
+msgstr "Idź do..."
+
+#: ../pc/gui/_dlgsearch.py:284
+msgid "Preview"
+msgstr "Podgląd"
+
+#: ../pc/gui/_dlgsearch.py:297 ../pc/gui/wndmain_view.py:178
+msgid "Info"
+msgstr "Info"
+
+#: ../pc/gui/_dlgsearch.py:363
+msgid "Wrong date range!"
+msgstr "Zły zakres dat!"
+
+#: ../pc/gui/_dlgsearch.py:392
+#, python-format
+msgid ""
+"Bad options:\n"
+"%s"
+msgstr ""
+"Złe parametry: \n"
+"%s"
+
+#: ../pc/gui/_dlgsearch.py:424
+msgid "Searching..."
+msgstr "Szukanie..."
+
+#: ../pc/gui/_dlgsearch.py:435
+#, python-format
+msgid ""
+"%(msg)s\n"
+"Found: %(found)d"
+msgstr ""
+"%(msg)s\n"
+"Znaleziono: %(found)d"
+
+#: ../pc/gui/_dlgsearch.py:439
+msgid ""
+"Found more than 1000 items.\n"
+"Continue?"
+msgstr ""
+"Znaleziono ponad 1000 elementów.\n"
+"Kontynuować?"
+
+#: ../pc/gui/_dlgsearch.py:459
+msgid "Not found"
+msgstr "Nic nie znaleziono"
+
+#: ../pc/gui/_dlgsearch.py:466
+#, python-format
+msgid "Found %(folders)d folders and %(files)d files"
+msgstr "Znaleziono %(folders)d katalogów i %(files)d plików"
+
+#: ../pc/gui/_dlgsearch.py:596 ../pc/gui/wndmain.py:500
+#, python-format
+msgid ""
+"Number of files exceed 1000!\n"
+"Show %d files?"
+msgstr ""
+"Liczba plików przekracza 1000!\n"
+"Pokazać %d plików?"
+
+#: ../pc/gui/_dlgsettings.py:38 ../pc/gui/wndmain_view.py:149
+msgid "Program settings"
+msgstr "Ustawienia programu"
+
+#: ../pc/gui/_dlgsettings.py:57
+msgid "Thumbs"
+msgstr "Miniaturki"
+
+#: ../pc/gui/_dlgsettings.py:58
+msgid "View"
+msgstr "Widok"
+
+#: ../pc/gui/_dlgsettings.py:74
+msgid "Thumb width:"
+msgstr "Szerokość miniaturki:"
+
+#: ../pc/gui/_dlgsettings.py:78
+msgid "thumb width"
+msgstr "szerokość miniaturki"
+
+#: ../pc/gui/_dlgsettings.py:83
+msgid "Thumb height:"
+msgstr "Wysokość miniaturki:"
+
+#: ../pc/gui/_dlgsettings.py:87
+msgid "thumb height"
+msgstr "wysokość miniaturki"
+
+#: ../pc/gui/_dlgsettings.py:92
+msgid "Compression:"
+msgstr "Kompresja:"
+
+#: ../pc/gui/_dlgsettings.py:97
+msgid "compression"
+msgstr "kompresja"
+
+#: ../pc/gui/_dlgsettings.py:114
+msgid "Thumb preload"
+msgstr "Ładuj miniaturki w tle"
+
+#: ../pc/gui/_dlgsettings.py:118
+msgid "Show captions"
+msgstr "Pokaż podpisy"
+
+#: ../pc/gui/_dlgsettings.py:140
+msgid "default"
+msgstr "domyślna"
+
+#: ../pc/gui/_dlgsettings.py:152
+msgid "Caption font:"
+msgstr "Czcionka podpisów:"
+
+#: ../pc/gui/_dlgsettings.py:155
+msgid "Header font:"
+msgstr "Czcionka nagłówka:"
+
+#: ../pc/gui/_dlgsettings.py:160
+msgid "Use custom color"
+msgstr "Użyj innego koloru"
+
+#: ../pc/gui/components/dirstree.py:304
+msgid "Timeline"
+msgstr "Linia czasu"
+
+#: ../pc/gui/components/infopanel.py:98
+msgid "Description"
+msgstr "Opis"
+
+#: ../pc/gui/components/infopanel.py:137
+msgid "File"
+msgstr "Plik"
+
+#: ../pc/gui/components/infopanel.py:144
+msgid "Directory"
+msgstr "Katalog"
+
+#: ../pc/gui/components/searchresultlistctrl.py:57
+#: ../pc/model/_catalog_file.py:70
+msgid "Catalog"
+msgstr "Katalog"
+
+#: ../pc/gui/components/searchresultlistctrl.py:59
+msgid "Path"
+msgstr "Ścieżka"
+
+#: ../pc/gui/components/searchresultlistctrl.py:60
+#: ../pc/model/_catalog_file.py:76
+msgid "File date"
+msgstr "Data pliku"
+
+#: ../pc/gui/components/searchresultlistctrl.py:61
+#: ../pc/model/file_image.py:120
+msgid "File size"
+msgstr "Rozmiar pliku"
+
+#: ../pc/gui/dlgadddisk.py:57
+msgid "Update disk"
+msgstr "Aktualizuj dysk"
+
+#: ../pc/gui/dlgadddisk.py:57 ../pc/gui/dlgadddisk.py:200
+#: ../pc/gui/dlgadddisk.py:206
+msgid "Add disk"
+msgstr "Dodaj dysk"
+
+#: ../pc/gui/dlgadddisk.py:92
+msgid "Disk name:"
+msgstr "Nazwa dysku:"
+
+#: ../pc/gui/dlgadddisk.py:96
+msgid "name"
+msgstr "nazwa"
+
+#: ../pc/gui/dlgadddisk.py:99
+msgid "Disk description:"
+msgstr "Opis dysku:"
+
+#: ../pc/gui/dlgadddisk.py:107
+msgid "Folder:"
+msgstr "Katalog:"
+
+#: ../pc/gui/dlgadddisk.py:111
+msgid "path"
+msgstr "ścieżka"
+
+#: ../pc/gui/dlgadddisk.py:141
+msgid "Include empty directories"
+msgstr "Dołącz puste katalogi"
+
+#: ../pc/gui/dlgadddisk.py:146
+msgid "Force load files"
+msgstr "Wymuś wczytywanie plików"
+
+#: ../pc/gui/dlgadddisk.py:151
+msgid "Load info from captions.txt"
+msgstr "Ładuj informacje z captions.txt"
+
+#: ../pc/gui/dlgadddisk.py:155
+msgid "Skipped directories"
+msgstr "Pomijane katalogi"
+
+#: ../pc/gui/dlgadddisk.py:160
+msgid "Don't load:"
+msgstr "Nie ładuj:"
+
+#: ../pc/gui/dlgadddisk.py:164
+msgid "(Separate dirs by \";\")"
+msgstr "(Oddziel katalogi przez \";\")"
+
+#: ../pc/gui/dlgadddisk.py:180
+msgid "Select directory"
+msgstr "Wybierz katalog"
+
+#: ../pc/gui/dlgadddisk.py:199
+msgid "Name already exists in catalog!"
+msgstr "Nazwa już istnieje w katalogu!"
+
+#: ../pc/gui/dlgadddisk.py:206
+msgid "Selected dir don't exists!"
+msgstr "Wybrany katalog nie istnieje"
+
+#: ../pc/gui/wndmain.py:117
+#, python-format
+msgid ""
+"Catalog %s isn't saved\n"
+"Save it?"
+msgstr ""
+"Katalog %s nie jest zapisany!\n"
+"Zapisać?"
+
+#: ../pc/gui/wndmain.py:126
+msgid "Close program?"
+msgstr "Zakończyć program?"
+
+#: ../pc/gui/wndmain.py:156
+msgid "Catalog file name"
+msgstr "Nazwa pliku katalogu"
+
+#: ../pc/gui/wndmain.py:164
+msgid ""
+"File exists!\n"
+"Overwrite?"
+msgstr ""
+"Plik istnieje!\n"
+"Nadpisać?"
+
+#: ../pc/gui/wndmain.py:175 ../pc/gui/wndmain.py:686
+#, python-format
+msgid "Error opening file %s:\n"
+msgstr "Błąd otwierania pliku %s:\n"
+
+#: ../pc/gui/wndmain.py:176
+msgid "New file"
+msgstr "Nowy plik"
+
+#: ../pc/gui/wndmain.py:177 ../pc/gui/wndmain.py:688
+#, python-format
+msgid "Error: %s"
+msgstr "Błąd: %s"
+
+#: ../pc/gui/wndmain.py:187 ../pc/gui/wndmain.py:687
+msgid "Open file"
+msgstr "Otwórz plik"
+
+#: ../pc/gui/wndmain.py:216
+#, python-format
+msgid ""
+"Catalog %s has unsaved changes!\n"
+"Save before close??"
+msgstr ""
+"Katalog %s zawiera niezapisane zmiany!\n"
+"Zapisać przed wyjściem?"
+
+#: ../pc/gui/wndmain.py:226
+#, python-format
+msgid "Close catalog %s?"
+msgstr "Zamknąć katalog %s?"
+
+#: ../pc/gui/wndmain.py:245
+#, python-format
+msgid "Rebuild catalog %s?"
+msgstr "Przebudować katalog  %s?"
+
+#: ../pc/gui/wndmain.py:365
+msgid "No disk selected"
+msgstr "Nie wybrano dysku"
+
+#: ../pc/gui/wndmain.py:366
+msgid "Delete disk"
+msgstr "Usuń dysk"
+
+#: ../pc/gui/wndmain.py:370
+#, python-format
+msgid "Delete disk %s?"
+msgstr "Usunąć dysk %s?"
+
+#: ../pc/gui/wndmain.py:384
+msgid "No directory selected"
+msgstr "Nie wybrano katalogu"
+
+#: ../pc/gui/wndmain.py:385
+msgid "Delete directory"
+msgstr "Usuń katalog"
+
+#: ../pc/gui/wndmain.py:389
+#, python-format
+msgid "Delete directory %s?"
+msgstr "Usunąć katalog %s?"
+
+#: ../pc/gui/wndmain.py:409
+#, python-format
+msgid "Delete %d images?"
+msgstr "Usunąć %d plików?"
+
+#: ../pc/gui/wndmain.py:443
+#, python-format
+msgid ""
+"Disks: %(disks)d\n"
+"Dirs: %(dirs)d\n"
+"Files: %(files)d\n"
+"Dirty entries: %(dirty)d (%(dirtyp)d%%)"
+msgstr ""
+"Dyski: %(disks)d\n"
+"Katalogi: %(dirs)d\n"
+"Pliki: %(files)d\n"
+"Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
+
+#: ../pc/gui/wndmain.py:503 ../pc/gui/wndmain.py:913
+#, python-format
+msgid "Files: %d"
+msgstr "Plików: %d"
+
+#: ../pc/gui/wndmain.py:675
+#, python-format
+msgid "Opening %s....  Please wait..."
+msgstr "Otwieranie %s.... Proszę czekać..."
+
+#: ../pc/gui/wndmain.py:694
+#, python-format
+msgid "Opened %s readonly"
+msgstr "Otwarto %s tylko do odczytu."
+
+#: ../pc/gui/wndmain.py:697
+#, python-format
+msgid "Opened %s"
+msgstr "Otwarto %s"
+
+#: ../pc/gui/wndmain.py:704
+#, python-format
+msgid ""
+"Catalog file contain %d%% unused entries.\n"
+"Rebuild catalog?"
+msgstr ""
+"Plik katalog zawiera %d%% zbędnych wpisów.\n"
+"Przebudować katalog?"
+
+#: ../pc/gui/wndmain.py:730
+#, python-format
+msgid "Open %s"
+msgstr "Otwórz %s"
+
+#: ../pc/gui/wndmain.py:747
+#, python-format
+msgid "Error saving catalog %s"
+msgstr "Błąd zapisywania katalogu %s"
+
+#: ../pc/gui/wndmain.py:748 ../pc/gui/wndmain_view.py:239
+msgid "Save catalog"
+msgstr "Zapisz katalog"
+
+#: ../pc/gui/wndmain.py:909
+#, python-format
+msgid "Directories %(dirs)d;  files: %(files)d"
+msgstr "Katalogów %(dirs)d;  plików: %(files)d"
+
+#: ../pc/gui/wndmain_view.py:122
+msgid "&File"
+msgstr "&Plik"
+
+#: ../pc/gui/wndmain_view.py:123
+msgid "&View"
+msgstr "&Widok"
+
+#: ../pc/gui/wndmain_view.py:124
+msgid "&Catalog"
+msgstr "&Katalog"
+
+#: ../pc/gui/wndmain_view.py:125
+msgid "Help"
+msgstr "Pomoc"
+
+#: ../pc/gui/wndmain_view.py:133 ../pc/gui/wndmain_view.py:236
+msgid "New"
+msgstr "Nowy"
+
+#: ../pc/gui/wndmain_view.py:133 ../pc/gui/wndmain_view.py:236
+msgid "Create new catalog"
+msgstr "Utwórz nowy katalog"
+
+#: ../pc/gui/wndmain_view.py:135 ../pc/gui/wndmain_view.py:237
+msgid "Open"
+msgstr "Otwórz"
+
+#: ../pc/gui/wndmain_view.py:135 ../pc/gui/wndmain_view.py:237
+msgid "Load catalog"
+msgstr "Wczytaj katalog"
+
+#: ../pc/gui/wndmain_view.py:137 ../pc/gui/wndmain_view.py:238
+msgid "Save"
+msgstr "Zapisz"
+
+#: ../pc/gui/wndmain_view.py:137
+msgid "Save current catalog"
+msgstr "Zapisz aktualny katalog"
+
+#: ../pc/gui/wndmain_view.py:139 ../pc/gui/wndmain_view.py:299
+msgid "Close catalog"
+msgstr "Zamknij katalog"
+
+#: ../pc/gui/wndmain_view.py:139
+msgid "Close current catalog"
+msgstr "Zamknij aktualny katalog"
+
+#: ../pc/gui/wndmain_view.py:145
+msgid "Print"
+msgstr "Drukuj"
+
+#: ../pc/gui/wndmain_view.py:147
+msgid "Export to PDF..."
+msgstr "Eksportuj do PDF..."
+
+#: ../pc/gui/wndmain_view.py:152
+msgid "Quit"
+msgstr "Zakończ"
+
+#: ../pc/gui/wndmain_view.py:152
+msgid "Close application"
+msgstr "Zamknij program"
+
+#: ../pc/gui/wndmain_view.py:157
+msgid "Recent files"
+msgstr "Ostatnie pliki"
+
+#: ../pc/gui/wndmain_view.py:163
+msgid "&Add disk..."
+msgstr "&Dodaj dysk"
+
+#: ../pc/gui/wndmain_view.py:163 ../pc/gui/wndmain_view.py:249
+msgid "Add disk to catalog"
+msgstr "Dodaj dysk do katalogu"
+
+#. isinstance(item, Disk):
+#: ../pc/gui/wndmain_view.py:165 ../pc/gui/wndmain_view.py:291
+msgid "&Update disk..."
+msgstr "&Aktualizuj dysk..."
+
+#: ../pc/gui/wndmain_view.py:165
+msgid "Update selected disk"
+msgstr "Aktualizuj wybrany dysk"
+
+#: ../pc/gui/wndmain_view.py:167 ../pc/gui/wndmain_view.py:292
+msgid "&Delete disk..."
+msgstr "&Usuń dysk"
+
+#: ../pc/gui/wndmain_view.py:167
+msgid "Delete selected disk from catalog"
+msgstr "Usuń wybrany dysk z katalogu"
+
+#: ../pc/gui/wndmain_view.py:170 ../pc/gui/wndmain_view.py:295
+msgid "Delete selected &dir..."
+msgstr "Usuń wybrany &katalog..."
+
+#: ../pc/gui/wndmain_view.py:171
+msgid "Delete selected &image..."
+msgstr "Usuń wybrane &pliki..."
+
+#: ../pc/gui/wndmain_view.py:174
+msgid "&Edit selected files..."
+msgstr "&Edytuj wybrane pliki..."
+
+#: ../pc/gui/wndmain_view.py:176
+msgid "Find..."
+msgstr "Znajdź..."
+
+#: ../pc/gui/wndmain_view.py:176 ../pc/gui/wndmain_view.py:244
+msgid "Search in calalogs"
+msgstr "Szukaj w katalogach"
+
+#: ../pc/gui/wndmain_view.py:178
+msgid "About selected calalog..."
+msgstr "O wybranym katalogu..."
+
+#: ../pc/gui/wndmain_view.py:180
+msgid "Manage taglist..."
+msgstr "Zarządzaj listą tagów..."
+
+#: ../pc/gui/wndmain_view.py:189
+msgid "[x]Show &info"
+msgstr "[x]Pokaż &info"
+
+#: ../pc/gui/wndmain_view.py:191
+msgid "[x]Show &captions"
+msgstr "[x]Pokaż &podpisy"
+
+#: ../pc/gui/wndmain_view.py:196
+msgid "[o]Sort by &name "
+msgstr "[o]Sortuj wg &nazwy"
+
+#: ../pc/gui/wndmain_view.py:198
+msgid "[o]Sort by &date "
+msgstr "[o]Sortuj wg &daty"
+
+#: ../pc/gui/wndmain_view.py:200
+msgid "[o]&Group by date "
+msgstr "[o]&Grupuj wg daty"
+
+#: ../pc/gui/wndmain_view.py:202
+msgid "[o]&Group by path "
+msgstr "[o]&Grupuj wg ścieżki"
+
+#: ../pc/gui/wndmain_view.py:207
+msgid "[x]Sort descend"
+msgstr "[x]Sortuj malejąco"
+
+#: ../pc/gui/wndmain_view.py:209
+msgid "[x]With subdirs"
+msgstr "[x]Z podkatalogami"
+
+#: ../pc/gui/wndmain_view.py:215
+msgid "&About..."
+msgstr "&O programie..."
+
+#: ../pc/gui/wndmain_view.py:248
+msgid "Add disk..."
+msgstr "Dodaj dysk"
+
+#: ../pc/gui/wndmain_view.py:315
+msgid "&Delete file..."
+msgstr "&Usuń plik..."
+
+#: ../pc/lib/wxtools/validators/my_validator.py:66
+#, python-format
+msgid ""
+"Validate field \"%(field)s\" failed:\n"
+"%(msg)s"
+msgstr ""
+"Błąd walidacji pola \"%(field)s\":\n"
+"%(msg)s"
+
+#: ../pc/lib/wxtools/validators/my_validator.py:69
+msgid "Validate error"
+msgstr "Błąd walidacji"
+
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:27
+msgid "Field must by not empty"
+msgstr "Pole nie może być puste"
+
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:52
+msgid "Too few characters"
+msgstr "Za mało znaków"
+
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:72
+msgid "Too many characters"
+msgstr "Za dużo znaków"
+
+#: ../pc/lib/wxtools/validators/validators/regex_validator.py:27
+msgid "Incorrect value"
+msgstr "Niewłaściwa wartość"
+
+#: ../pc/lib/wxtools/validators/validators/time_validator.py:36
+msgid "Time isn't in correct format - HH:MM:SS format required"
+msgstr "Czas jest w niewłaściwym formacjie - wymaganay format GG:MM:SS"
+
+#: ../pc/lib/wxtools/validators/validators/time_validator.py:39
+msgid "Time isn't in correct format - HH:MM format required"
+msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
+
+#: ../pc/lib/wxtools/validators/validators/time_validator.py:109
+msgid "Date isn't in correct format - YYYY-MM-DD format required"
+msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
+
+#: ../pc/lib/wxtools/validators/validators/type_validator.py:27
+msgid "Integer value required"
+msgstr "Wymagana wartość całkowita"
+
+#: ../pc/lib/wxtools/validators/validators/type_validator.py:51
+msgid "Float value required"
+msgstr "Wymagana wartość rzeczywista"
+
+#: ../pc/lib/wxtools/validators/validators/value_validator.py:24
+#, python-format
+msgid "Value too low (min=%d)"
+msgstr "Wartość za mała (min=%d)"
+
+#: ../pc/lib/wxtools/validators/validators/value_validator.py:43
+#, python-format
+msgid "Value too high (max=%d)"
+msgstr "Wartość za duża (max=%d)"
+
+#: ../pc/model/disk.py:42
+msgid "Disk added"
+msgstr "Dysk dodano:"
+
+#: ../pc/model/disk.py:44
+msgid "Disk updated"
+msgstr "Dysk zaktualizowano"
+
+#: ../pc/model/file_image.py:88
+msgid "Dimensions"
+msgstr "Wymiary"
+
+#: ../pc/model/file_image.py:100 ../pc/model/file_image.py:107
+msgid "Date"
+msgstr "Data"
+
+#: ../pc/model/file_image.py:110
+msgid "Camera"
+msgstr "Aparat"
+
+#: ../pc/model/file_image.py:116
+msgid "Settings"
+msgstr "Ustawienia"
+
+#~ msgid "About"
+#~ msgstr "O programie"
+
+#~ msgid "Add"
+#~ msgstr "Dodaj"
+
+#~ msgid "Create new catalog?"
+#~ msgstr "Utworzyć nowy katalog?"
+
+#~ msgid "Date isn't in correct format"
+#~ msgstr "Data jest w niewłaściwym formacie"
+
+#~ msgid "Del"
+#~ msgstr "Usuń"
+
+#~ msgid ""
+#~ "Error opening file %s!\n"
+#~ "File don't exists."
+#~ msgstr ""
+#~ "Błąd otwierania pliku %s!\n"
+#~ "Plik nie istnieje."
+
+#~ msgid "Export to pdf..."
+#~ msgstr "Eksportuj do pdf.."
+
+#~ msgid "Folder"
+#~ msgstr "Katalog"
+
+#~ msgid "Name:"
+#~ msgstr "Nazwa:"
+
+#~ msgid "No Exif"
+#~ msgstr "Brak Exif"
+
+#~ msgid "Regex"
+#~ msgstr "Wyr.Reg."
+
+#~ msgid "Set description"
+#~ msgstr "Ustaw opis"
+
+#~ msgid "Show/hide &captions"
+#~ msgstr "Pokaż/ukryj &podpisy"
+
+#~ msgid "Skip dirs (\";\" - separated):"
+#~ msgstr "Pomiń katalogi (oddzielone znakiem \";\"):"
+
+#~ msgid "Text"
+#~ msgstr "Tekst"
+
+#~ msgid "Too few characters in fields"
+#~ msgstr "Za mało znaków w polu"
+
+#~ msgid "Too many characters in fields"
+#~ msgstr "Za dużo znaków w polu"

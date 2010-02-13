@@ -49,6 +49,8 @@ install: build
 	cp -r pc.py $(CURDIR)/debian/pc/usr/share/pc/src/
 	cp dist.linux/pc.desktop $(CURDIR)/debian/pc/usr/share/applications/
 	cp dist.linux/pc $(CURDIR)/debian/pc/usr/bin/
+	mkdir -p $(CURDIR)/debian/pc/usr/share/locale
+	cp -r locale/* $(CURDIR)/debian/pc/usr/share/locale
 
 
 # Build architecture-independent files here.

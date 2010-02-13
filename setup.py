@@ -3,6 +3,7 @@
 
 import os
 import time
+import sys
 
 try:
 	from setuptools import setup
@@ -11,10 +12,11 @@ except:
 
 from distutils.command.install_data import install_data
 
-try:
-	import py2exe
-except:
-	pass
+if sys.platform == 'win32':
+	try:
+		import py2exe
+	except:
+		pass
 
 import pc
 

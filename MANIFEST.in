@@ -4,6 +4,8 @@ include LICENCE.txt
 include LICENCE_EXIFpy.txt
 include LICENCE_python.txt
 include LICENCE_wxPython.txt
-recursive-include pc *.mo *.po *.pot
+recursive-include pc *
+recursive-include po *.in *.po *.pot
+recursive-include locale *
 recursive-include debian *
 recursive-include dist.linux *
