@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -OO
 # -*- coding: utf-8 -*-
 """
 Photo Catalog v 1.0  (pc)
@@ -27,53 +27,10 @@ __revision__ = '$Id$'
 __all__ = []
 
 
-import os
 import sys
-try:
-	os.chdir(os.path.dirname(__file__))
-except OSError:
-	pass
 
 from pc import run
 
-
-def _profile():
-	''' profile app '''
-	import cProfile
-	print 'Profiling....'
-	cProfile.run('run()', 'profile.tmp')
-	import pstats
-	import time
-	with open('profile_result_%d.txt' % int(time.time()), 'w') as out:
-		stat = pstats.Stats('profile.tmp', stream=out)
-		#s.strip_dirs()
-		stat.sort_stats('cumulative').print_stats('pc', 50)
-		out.write('\n\n----------------------------\n\n')
-		stat.sort_stats('time').print_stats('pc', 50)
-
-
-def _memprofile():
-	''' mem profile app '''
-	run()
-	import gc
-	gc.collect()
-	while gc.collect() > 0:
-		print 'collect'
-
-	import objgraph
-	objgraph.show_most_common_types(20)
-
-	import pdb
-	pdb.set_trace()
-
-
-if '--profile' in sys.argv:
-	sys.argv.remove('--profile')
-	_profile()
-elif '--memprofile' in sys.argv:
-	sys.argv.remove('--memprofile')
-	_memprofile()
-else:
-	run()
+run()
 
 # vim: encoding=utf8: ff=unix:
