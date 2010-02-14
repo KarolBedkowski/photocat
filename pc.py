@@ -31,7 +31,7 @@ import os
 import sys
 try:
 	os.chdir(os.path.dirname(__file__))
-except IOError:
+except OSError:
 	pass
 
 from pc import run

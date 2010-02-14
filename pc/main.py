@@ -38,6 +38,7 @@ else:
 	psyco.full()
 
 
+import os
 import sys
 import imp
 import gettext
@@ -73,14 +74,21 @@ def _setup_locale():
 	locales_dir = app_config.locales_dir
 	package_name = 'pc'
 	_LOG.info('run: locale dir: %s' % locales_dir)
-	gettext.install('wxstd', localedir=locales_dir)
+	try:
+		locale.bindtextdomain(package_name, locales_dir)
+		locale.bind_textdomain_codeset(package_name, "UTF-8")
+	except:
+		pass
+	default_locale = locale.getdefaultlocale()
+	locale.setlocale(locale.LC_ALL, '')
+	os.environ['LC_ALL'] = os.environ.get('LC_ALL') or default_locale[0]
 	gettext.install(package_name, localedir=locales_dir, unicode=True,
 			names=("ngettext",))
-	locale.bindtextdomain(package_name, locales_dir)
-	locale.bind_textdomain_codeset(package_name, "UTF-8")
-	locale.setlocale(locale.LC_ALL)
+	gettext.bindtextdomain(package_name, locales_dir)
+	gettext.bind_textdomain_codeset(package_name, "UTF-8")
 
 	_LOG.info('locale: %s' % str(locale.getlocale()))
+
 
 _setup_locale()
 
@@ -97,7 +105,10 @@ def _is_frozen():
 if not _is_frozen():
 	try:
 		import wxversion
-		wxversion.select('2.8')
+		try:
+			wxversion.select('2.8')
+		except wxversion.AlreadyImportedError:
+			pass
 	except ImportError, err:
 		print 'No wxversion.... (%s)' % str(err)
 
@@ -116,9 +127,9 @@ class App(wx.App):
 		""" OnInit """
 
 		_LOG.info('App.OnInit')
-		from pc.lib.wxtools.iconprovider	import IconProvider
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
+		from pc.lib.wxtools.iconprovider import IconProvider
 		IconProvider(icons)
 
 		from pc.gui.wndmain	import WndMain
