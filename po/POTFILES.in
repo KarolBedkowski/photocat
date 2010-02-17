@@ -34,7 +34,6 @@ pc/lib/EXIF.py
 pc/lib/__init__.py
 pc/lib/appconfig.py
 pc/lib/cache.py
-pc/lib/embeddedimage.py
 pc/lib/fonttools.py
 pc/lib/formaters.py
 pc/lib/hlpweakref.py

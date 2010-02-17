@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 22:57+0100\n"
+"POT-Creation-Date: 2010-02-15 18:01+0100\n"
 "PO-Revision-Date: 2010-02-08 12:06+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
@@ -183,7 +183,7 @@ msgstr "Własności"
 #: ../pc/gui/_dlgproperties_dir.py:37 ../pc/gui/_dlgproperties_disk.py:36
 #: ../pc/gui/_dlgproperties_mutli.py:38 ../pc/gui/_dlgproperties_mutli.py:73
 #: ../pc/gui/components/dirstree.py:215 ../pc/gui/wndmain_view.py:180
-#: ../pc/model/_catalog_file.py:67
+#: ../pc/model/_catalog_file.py:69
 msgid "Tags"
 msgstr "Tagi"
 
@@ -232,7 +232,7 @@ msgstr "Data wykonania:"
 
 #: ../pc/gui/_dlgproperties_disk.py:46 ../pc/gui/_dlgproperties_disk.py:51
 #: ../pc/gui/components/searchresultlistctrl.py:56
-#: ../pc/model/_catalog_file.py:65
+#: ../pc/model/_catalog_file.py:67
 msgid "Name"
 msgstr "Nazwa"
 
@@ -242,7 +242,7 @@ msgstr "Musisz podać nazwę dla dysku"
 
 #: ../pc/gui/_dlgproperties_disk.py:78
 #: ../pc/gui/components/searchresultlistctrl.py:58
-#: ../pc/model/_catalog_file.py:72
+#: ../pc/model/_catalog_file.py:74
 msgid "Disk"
 msgstr "Dysk"
 
@@ -473,7 +473,7 @@ msgid "Directory"
 msgstr "Katalog"
 
 #: ../pc/gui/components/searchresultlistctrl.py:57
-#: ../pc/model/_catalog_file.py:70
+#: ../pc/model/_catalog_file.py:72
 msgid "Catalog"
 msgstr "Katalog"
 
@@ -482,12 +482,12 @@ msgid "Path"
 msgstr "Ścieżka"
 
 #: ../pc/gui/components/searchresultlistctrl.py:60
-#: ../pc/model/_catalog_file.py:76
+#: ../pc/model/_catalog_file.py:78
 msgid "File date"
 msgstr "Data pliku"
 
 #: ../pc/gui/components/searchresultlistctrl.py:61
-#: ../pc/model/file_image.py:120
+#: ../pc/model/file_image.py:121
 msgid "File size"
 msgstr "Rozmiar pliku"
 
@@ -888,15 +888,15 @@ msgstr ""
 msgid "Validate error"
 msgstr "Błąd walidacji"
 
-#: ../pc/lib/wxtools/validators/validators/length_validator.py:27
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:25
 msgid "Field must by not empty"
 msgstr "Pole nie może być puste"
 
-#: ../pc/lib/wxtools/validators/validators/length_validator.py:52
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:49
 msgid "Too few characters"
 msgstr "Za mało znaków"
 
-#: ../pc/lib/wxtools/validators/validators/length_validator.py:72
+#: ../pc/lib/wxtools/validators/validators/length_validator.py:69
 msgid "Too many characters"
 msgstr "Za dużo znaków"
 
@@ -908,11 +908,11 @@ msgstr "Niewłaściwa wartość"
 msgid "Time isn't in correct format - HH:MM:SS format required"
 msgstr "Czas jest w niewłaściwym formacjie - wymaganay format GG:MM:SS"
 
-#: ../pc/lib/wxtools/validators/validators/time_validator.py:39
+#: ../pc/lib/wxtools/validators/validators/time_validator.py:38
 msgid "Time isn't in correct format - HH:MM format required"
 msgstr "Czas jest w niewłaściwym formacie - wymagany formag GG:MM"
 
-#: ../pc/lib/wxtools/validators/validators/time_validator.py:109
+#: ../pc/lib/wxtools/validators/validators/time_validator.py:104
 msgid "Date isn't in correct format - YYYY-MM-DD format required"
 msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 
@@ -920,7 +920,7 @@ msgstr "Data jest w niewłaściwym formacie - wymagany format RRRR-MM-DD"
 msgid "Integer value required"
 msgstr "Wymagana wartość całkowita"
 
-#: ../pc/lib/wxtools/validators/validators/type_validator.py:51
+#: ../pc/lib/wxtools/validators/validators/type_validator.py:50
 msgid "Float value required"
 msgstr "Wymagana wartość rzeczywista"
 
@@ -934,27 +934,27 @@ msgstr "Wartość za mała (min=%d)"
 msgid "Value too high (max=%d)"
 msgstr "Wartość za duża (max=%d)"
 
-#: ../pc/model/disk.py:42
+#: ../pc/model/disk.py:41
 msgid "Disk added"
 msgstr "Dysk dodano:"
 
-#: ../pc/model/disk.py:44
+#: ../pc/model/disk.py:43
 msgid "Disk updated"
 msgstr "Dysk zaktualizowano"
 
-#: ../pc/model/file_image.py:88
+#: ../pc/model/file_image.py:89
 msgid "Dimensions"
 msgstr "Wymiary"
 
-#: ../pc/model/file_image.py:100 ../pc/model/file_image.py:107
+#: ../pc/model/file_image.py:101 ../pc/model/file_image.py:108
 msgid "Date"
 msgstr "Data"
 
-#: ../pc/model/file_image.py:110
+#: ../pc/model/file_image.py:111
 msgid "Camera"
 msgstr "Aparat"
 
-#: ../pc/model/file_image.py:116
+#: ../pc/model/file_image.py:117
 msgid "Settings"
 msgstr "Ustawienia"
 
