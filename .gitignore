@@ -8,3 +8,5 @@ doc.dev
 pc.egg-info
 profile.tmp
 profile_result_*.txt
+*-stamp
+

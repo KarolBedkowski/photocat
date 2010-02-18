@@ -1,5 +1,5 @@
 This package was debianized by Karol Będkowski 
-<karol.bedkowski@gmail.com> on Sat, 15 Nov 2008 16:43:26 +0100.
+<karol.bedkowski@gmail.com> on Thu, 18 Feb 2010 20:27:26 +0100
 
 Upstream Author(s):
 
@@ -7,7 +7,7 @@ Upstream Author(s):
 
 Copyright:
 
-	Copyright (C) 2006-2008 Karol Będkowski
+	Copyright (C) 2006-2010 Karol Będkowski
 
 License:
     
@@ -15,7 +15,7 @@ License:
 	the terms of the GNU General Public License as published by the Free 
 	Software Foundation, version 2.
 
-The Debian packaging is (C) 2008, Karol Będkowski
+The Debian packaging is (C) 2010, Karol Będkowski
 <karol.bedkowski@gmail.com> and is licensed under the GPL, 
 see `/usr/share/common-licenses/GPL'.
 

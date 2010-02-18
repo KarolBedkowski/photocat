@@ -11,14 +11,13 @@
 
 
 
-
-
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 
 	touch configure-stamp
+	cd debian && sed "2s/on .*$$/on `date -R`/" copyright > copyright.tmp && mv copyright.tmp copyright
 
 
 build: build-stamp
@@ -32,7 +31,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 
-	python ./_clean.py
+	find . -type f \( -name '*.pyc' -or -name '*.pyo' -or -name '*~' \) -exec rm {} ';'
 
 	dh_clean 
 
@@ -46,7 +45,8 @@ install: build
 	mkdir -p $(CURDIR)/debian/pc
 	mkdir -p $(CURDIR)/debian/pc/usr/share/pc/src/
 	cp -r pc $(CURDIR)/debian/pc/usr/share/pc/src/
-	cp -r pc.py $(CURDIR)/debian/pc/usr/share/pc/src/
+	cp -r pc.pyw $(CURDIR)/debian/pc/usr/share/pc/src/
+	cp -r pc_console.py $(CURDIR)/debian/pc/usr/share/pc/src/
 	cp dist.linux/pc.desktop $(CURDIR)/debian/pc/usr/share/applications/
 	cp dist.linux/pc $(CURDIR)/debian/pc/usr/bin/
 	mkdir -p $(CURDIR)/debian/pc/usr/share/locale
@@ -63,25 +63,13 @@ binary-arch: build install
 	dh_testroot
 	dh_installchangelogs CHANGELOG
 	dh_installdocs
-#	dh_installexamples
-#	dh_install
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
+	dh_install
+	dh_pysupport
 	dh_installman
 	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
