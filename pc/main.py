@@ -40,13 +40,12 @@ else:
 
 import os
 import sys
-import imp
 import gettext
 import locale
 import logging
 
-from pc.lib.appconfig		import AppConfig
-from pc.lib.logging_setup	import logging_setup
+from pc.lib import appconfig
+from pc.lib.logging_setup import logging_setup
 
 
 ##########################################################################
@@ -69,7 +68,7 @@ _LOG = logging.getLogger(__name__)
 def _setup_locale():
 	''' setup locales and gettext '''
 	use_home_dir = sys.platform != 'win32'
-	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir,
+	app_config = appconfig.AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir,
 			app_name='pc')
 	locales_dir = app_config.locales_dir
 	package_name = 'pc'
@@ -96,16 +95,7 @@ _setup_locale()
 
 ##########################################################################
 
-
-def _is_frozen():
-	''' check is app frozen '''
-	if __file__.startswith('/usr/share/'):
-		return True
-	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")	# old py2exe
-			or imp.is_frozen("__main__"))	# tools/freeze
-
-if not _is_frozen():
+if not appconfig.is_frozen():
 	try:
 		import wxversion
 		try:
@@ -170,7 +160,7 @@ def run():
 	logging_setup_wx()
 
 	_LOG.info('run')
-	app_config = AppConfig()
+	app_config = appconfig.AppConfig()
 	app_config.load()
 
 	_LOG.info('run: starting app...')

@@ -13,19 +13,11 @@ __all__ = ['logging_setup']
 
 
 import os.path
-import sys
 import logging
-import imp
 import tempfile
 import time
 
-
-def _is_frozen():
-	if __file__.startswith('/usr/share/'):
-		return True
-	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")	# old py2exe
-			or imp.is_frozen("__main__"))	# tools/freeze
+from . import appconfig
 
 
 def logging_setup(filename, debug=False):
@@ -39,7 +31,7 @@ def logging_setup(filename, debug=False):
 		if not log_dir_access:
 			create_temp = True
 	else:
-		if _is_frozen() or not log_dir_access:
+		if appconfig.is_frozen() or not log_dir_access:
 			create_temp = True
 
 	if create_temp:
