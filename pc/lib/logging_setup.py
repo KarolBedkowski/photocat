@@ -21,6 +21,8 @@ import time
 
 
 def _is_frozen():
+	if __file__.startswith('/usr/share/'):
+		return True
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe
 			or imp.is_frozen("__main__"))	# tools/freeze

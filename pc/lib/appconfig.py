@@ -151,9 +151,15 @@ class AppConfig(Singleton):
 		else:
 			if os.path.isdir('./locale'):
 				locales_dir = './locale'
+	
+		if not locales_dir or not os.path.isdir(locales_dir):
+			if os.path.isdir('/usr/share/locale/'):
+				locales_dir = '/usr/share/locale'
 		return locales_dir
 
 	def _main_is_frozen(self):
+		if __file__.startswith('/usr/share/'):
+			return True
 		return (hasattr(sys, "frozen")		# new py2exe
 				or hasattr(sys, "importers")	# old py2exe
 				or imp.is_frozen("__main__"))	# tools/freeze

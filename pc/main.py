@@ -68,7 +68,7 @@ _LOG = logging.getLogger(__name__)
 
 def _setup_locale():
 	''' setup locales and gettext '''
-	use_home_dir = sys.platform != 'winnt'
+	use_home_dir = sys.platform != 'win32'
 	app_config = AppConfig('pc.cfg', __file__, use_home_dir=use_home_dir,
 			app_name='pc')
 	locales_dir = app_config.locales_dir
@@ -81,7 +81,8 @@ def _setup_locale():
 		pass
 	default_locale = locale.getdefaultlocale()
 	locale.setlocale(locale.LC_ALL, '')
-	os.environ['LC_ALL'] = os.environ.get('LC_ALL') or default_locale[0]
+	if sys.platform == 'win32':
+		os.environ['LC_ALL'] = os.environ.get('LC_ALL') or default_locale[0]
 	gettext.install(package_name, localedir=locales_dir, unicode=True,
 			names=("ngettext",))
 	gettext.bindtextdomain(package_name, locales_dir)
@@ -98,6 +99,8 @@ _setup_locale()
 
 def _is_frozen():
 	''' check is app frozen '''
+	if __file__.startswith('/usr/share/'):
+		return True
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe
 			or imp.is_frozen("__main__"))	# tools/freeze
