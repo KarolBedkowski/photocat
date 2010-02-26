@@ -13,3 +13,4 @@ recursive-include po *.in *.po *.pot
 recursive-include locale *
 recursive-include debian *
 recursive-include dist.linux *
+recursive-include data *

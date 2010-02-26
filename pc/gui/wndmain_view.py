@@ -56,7 +56,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._last_used_dir = os.path.expanduser('~')
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['folder_image'])
+		self._icon_provider.load_icons(['icon'])
 
 		self._menu_view_show_captions = None
 		self._layout_splitter_h = None
@@ -81,7 +81,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._main_menu_catalog = None
 		self._tb_find = None
 
-		self.SetIcon(self._icon_provider.get_icon('folder_image'))
+		self.SetIcon(self._icon_provider.get_icon('icon'))
 
 		self.SetMenuBar(self._create_main_menu())
 		self._create_toolbar()

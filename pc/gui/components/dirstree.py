@@ -29,7 +29,7 @@ class DirsTree(wx.TreeCtrl):
 		wx.TreeCtrl.__init__(self, parent, wxid, style=style)
 
 		self.__icon_provider = IconProvider()
-		self.__icon_provider.load_icons(['folder_image', 'tags', 'tag',
+		self.__icon_provider.load_icons(['catalog', 'tags', 'tag',
 				'calendar', 'date', 'calendar_view_month', 'calendar_view_day',
 				'calendar_view_week',
 				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
@@ -38,7 +38,7 @@ class DirsTree(wx.TreeCtrl):
 		self._icon_idx = self.__icon_provider.get_image_index(wx.ART_FOLDER)
 		self._icon2_idx = self.__icon_provider.get_image_index(wx.ART_FOLDER_OPEN)
 		self._icon_folderimg_idx = self.__icon_provider.get_image_index(
-				'folder_image')
+				'catalog')
 		self._icon_disk_idx = self.__icon_provider.get_image_index(wx.ART_CDROM)
 		self._icon_tags_idx = self.__icon_provider.get_image_index('tags')
 		self._icon_tag_idx = self.__icon_provider.get_image_index('tag')

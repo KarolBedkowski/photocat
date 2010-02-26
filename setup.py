@@ -55,14 +55,18 @@ packages = packages_for(".")
 
 def get_data_files():
 	if sys.platform == 'win32':
-		doc_dir = locales_dir = '.'
+		doc_dir = locales_dir = data_dir = '.'
 	else:
 		doc_dir = '/usr/share/doc/pc'
 		locales_dir = '/usr/share/locale'
+		data_dir = '/usr/share/doc/data'
 
 	yield (doc_dir, ['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt",
 			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'CHANGELOG'])
 
+	for x in find_files('data', data_dir):
+		yield x
+	
 	for x in find_files('locale', locales_dir):
 		yield x
 

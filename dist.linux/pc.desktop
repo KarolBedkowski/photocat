@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=/usr/share/pc/src/pc/icons/folder_image.png
+Icon=/usr/share/pc/data/icon.svg
 Name=Photo Catalog
 Exec=/usr/bin/pc
 Terminal=false

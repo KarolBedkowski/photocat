@@ -51,6 +51,8 @@ install: build
 	cp dist.linux/pc $(CURDIR)/debian/pc/usr/bin/
 	mkdir -p $(CURDIR)/debian/pc/usr/share/locale
 	cp -r locale/* $(CURDIR)/debian/pc/usr/share/locale
+	mkdir -p $(CURDIR)/debian/pc/usr/share/pc/data
+	cp data/icon.svg $(CURDIR)/debian/pc/usr/share/pc/data/
 
 
 # Build architecture-independent files here.
