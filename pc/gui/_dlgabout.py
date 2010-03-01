@@ -15,44 +15,20 @@ __revision__ = '$Id$'
 __all__ = ['show_about_box']
 
 
-import sys
-
 import wx
-from wx.lib.wordwrap import wordwrap
 
 
 def show_about_box(parent):
-	import pc
-	params = {
-		'version': pc.__version__,
-		'wxversion': wx.VERSION_STRING,
-		'pyversion': sys.version,
-	}
+	from pc import version
 
 	info = wx.AboutDialogInfo()
-	info.Name = "PhotoCatalog"
-	info.Version = pc.__version__
-	info.Copyright = "(C) Karol Będkowski 2007,2008"
-	info.Developers = ["Karol Będkowski"]
-	info.License = wordwrap('''
-PC is free software; you can redistribute it and/or modify it under the terms \
-of the GNU General Public License as published by the Free Software \
-Foundation, version 2.
-
-PC is distributed in the hope that it will be useful, but WITHOUT ANY \
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR \
-A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-
-Python %(pyversion)s
-Copyright (c) 2001-2007 Python Software Foundation.
-
-wxPython %(wxversion)s
-Copyright (c) 1998 Julian Smart, Robert Roebling et al
-
-EXIF.py (15-02-2004)
-Copyright 2002 Gene Cash All rights reserved.
-''' % params, 500, wx.ClientDC(parent))
+	info.SetName(version.NAME)
+	info.SetVersion(version.VERSION)
+	info.SetCopyright(version.COPYRIGHT)
+	info.SetDevelopers(version.DEVELOPERS.splitlines())
+	info.SetTranslators(version.TRANSLATORS.splitlines())
+	info.SetLicense(version.LICENSE)
+	info.SetDescription(version.DESCRIPTION + "\n" + version.RELEASE)
 	wx.AboutBox(info)
 
 

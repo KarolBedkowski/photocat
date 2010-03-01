@@ -22,7 +22,7 @@ import logging
 
 import wx
 
-import pc
+from pc import version
 from pc.lib.appconfig import AppConfig
 from pc.lib.wxtools.iconprovider import IconProvider
 from pc.lib.wxtools.guitools import create_menu, create_toolbar_button, \
@@ -46,18 +46,16 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		appconfig = AppConfig()
 		size = appconfig.get('main_wnd', 'size', (800, 600))
 
-		wx.Frame.__init__(self, None, -1, "PC %s" % pc.__version__, size=size)
+		wx.Frame.__init__(self, None, -1, "%s %s" % (version.NAME, version.VERSION),
+				size=size)
 
 		self._debug = debug
 		self._app = app
-
 		self._layout_splitter = None
 		self._info_panel_size = None
 		self._last_used_dir = os.path.expanduser('~')
-
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['icon'])
-
 		self._menu_view_show_captions = None
 		self._layout_splitter_h = None
 		self._layout_splitter_v = None

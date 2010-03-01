@@ -17,10 +17,8 @@ if sys.platform == 'win32':
 	except:
 		pass
 
-import pc
+from pc import version
 
-version = pc.__version__
-release = pc.__release__
 build = time.asctime()
 
 
@@ -62,7 +60,8 @@ def get_data_files():
 		data_dir = '/usr/share/doc/data'
 
 	yield (doc_dir, ['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt",
-			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'CHANGELOG'])
+			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'CHANGELOG',
+			'LICENCE_ICONS.txt'])
 
 	for x in find_files('data', data_dir):
 		yield x
@@ -74,11 +73,11 @@ def get_data_files():
 pctarget = {
 	'script': "pc_console.py",
 	'name': "pc_console",
-	'version': version,
-	'description': "pc - PhotoCatalog %s (%s) (build: %s)" \
-			% (version, release, build),
+	'version': version.VERSION,
+	'description': "%s - %s (%s, build: %s)" \
+			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
 	'company_name': "Karol Będkowski",
-	'copyright': "Copyright (C) Karol Będkowski 2007-2010",
+	'copyright': version.COPYRIGHT,
 	'icon_resources': [(0, "pc/icons/icon.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
@@ -89,7 +88,7 @@ pctarget_win.update({'script': "pc.pyw",'name': "pc"})
 
 setup(
 	name='pc',
-	version=version,
+	version=version.VERSION,
 	author=pctarget['company_name'],
 	author_email='karol.bedkowski@gmail.com',
 	description=pctarget['description'],

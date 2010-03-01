@@ -23,10 +23,26 @@
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2006'
 __revision__ = '$Id$'
-__all__ = ['run']
+
+NAME = "PhotoCatalog"
+VERSION = '1.6.4'
+RELEASE = '2010-01-14'
+DESCRIPTION = _('''Photo collection manager.''')
+DEVELOPERS = '''Karol Będkowski'''
+TRANSLATORS = '''Karol Będkowski'''
+COPYRIGHT = 'Copyright (C) Karol Będkowski, 2004-2010'
+LICENSE = _('''\
+PC is free software; you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Foundation,
+version 2.
+
+PC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.  See the GNU General Public License for more details.
 
 
-from pc.main import run
+Also please check LICENCE files from distribution.''')
+
 
 
 # vim: encoding=utf8: ff=unix:

@@ -116,10 +116,8 @@ class WndMain(WndMainView):
 				res = dialogs.message_box_warning_yesnocancel(self,
 						_("Catalog %s isn't saved\nSave it?") % catalog.caption,
 						'PC')
-
 				if res == wx.ID_CANCEL:
 					return
-
 				elif res == wx.ID_YES:
 					self._save_catalog(catalog)
 
@@ -253,7 +251,6 @@ class WndMain(WndMainView):
 		dlg = DlgSettings(self)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._update_settings()
-
 		dlg.Destroy()
 
 	def _on_file_export_pdf(self, evt):
@@ -514,7 +511,6 @@ class WndMain(WndMainView):
 
 		if item is not None:
 			self._show_item(item, show_info, images_count)
-
 		if self._info_panel is not None:
 			if isinstance(item, Directory):
 				self._info_panel.show_folder(item)
@@ -528,7 +524,6 @@ class WndMain(WndMainView):
 
 		if isinstance(item, Catalog):
 			return
-
 		if isinstance(item, Timeline):
 			if item.level == 0:
 				if not self._dirs_tree.IsExpanded(item.tree_node):
@@ -596,7 +591,6 @@ class WndMain(WndMainView):
 				self._dirs_tree.update_catalog_node(selected.catalog)
 				self._update_changed_tags(selected.catalog.tags_provider,
 						dlg.changed_tags)
-
 				break
 
 			elif result == wx.ID_BACKWARD:
@@ -640,13 +634,11 @@ class WndMain(WndMainView):
 		item, _flags = self._dirs_tree.HitTest(pos)
 		if item:
 			self._dirs_tree.SelectItem(item)
-
 		evt.Skip()
 
 	def _on_photolist_key_down(self, evt):
 		if evt.m_keyCode == wx.WXK_DELETE:
 			self._on_catalog_del_image(None)
-
 		evt.Skip()
 
 	def _on_photolist_popupmenu(self, evt):
@@ -830,7 +822,6 @@ class WndMain(WndMainView):
 					'images_recursive'):
 				images = list(images.images_recursive)
 				force_sort = True
-
 			elif hasattr(images, 'files'):
 				images = images.files
 
@@ -841,7 +832,6 @@ class WndMain(WndMainView):
 
 			if self._menu_view_group_path.IsChecked(): # group_by_path
 				group_by = 2
-
 			elif self._menu_view_group_date.IsChecked(): #group_by_date
 				group_by = 1
 
@@ -853,7 +843,6 @@ class WndMain(WndMainView):
 			if images is None:
 				# odświeżenie widoku
 				self._photo_list.sort_current_dir(cmp_func)
-
 			else:
 				self._photo_list.show_dir(images, cmp_func)
 				self._current_show_images = images
@@ -908,7 +897,6 @@ class WndMain(WndMainView):
 				files_count, subdirs_count, dummy, dummy = item.directory_size
 				self.SetStatusText(_('Directories %(dirs)d;  files: %(files)d') %
 						dict(dirs=subdirs_count, files=files_count))
-
 			else:
 				self.SetStatusText(_('Files: %d') % images_count)
 
