@@ -78,7 +78,7 @@ pctarget = {
 			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
 	'company_name': "Karol Będkowski",
 	'copyright': version.COPYRIGHT,
-	'icon_resources': [(0, "pc/icons/icon.ico")],
+	'icon_resources': [(0, "data/icon.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
 
