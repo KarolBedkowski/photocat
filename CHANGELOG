@@ -1,4 +1,14 @@
-2010-01.14 (v1.6.4)
+2010-03-02 (v1.6.5)
+
+Karol Będkowski:
+	fix: mniejsze błędy
+	dev: przeczyszczenie, optymalizacje
+	dev: usunięcie zależności od kabes.*
+	nowe ikony
+	upd: licencje
+
+
+2010-01-14 (v1.6.4)
 
 Karol Będkowski:
 	fix problem z wykrywaniem istnienia pliku (problem z tworzeniem
@@ -7,7 +17,7 @@ Karol Będkowski:
 	poprawki w cachowaniu miniaturek
 
 
-2010-01.12 (v1.6.3)
+2010-01-12 (v1.6.3)
 
 Karol Będkowski:
 	fix problemy na środowiskach 64bit
@@ -16,7 +26,7 @@ Karol Będkowski:
 	optymalizacja użycia pamięci
 
 
-2009-11.12 (v1.6.2)
+2009-11-12 (v1.6.2)
 
 Karol Będkowski:
 	wymuszanie ładowania wx 2.8 (poza exe)

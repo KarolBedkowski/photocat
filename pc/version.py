@@ -25,8 +25,8 @@ __copyright__ = 'Copyright (C) Karol Będkowski 2006'
 __revision__ = '$Id$'
 
 NAME = "PhotoCatalog"
-VERSION = '1.6.4'
-RELEASE = '2010-01-14'
+VERSION = '1.6.5'
+RELEASE = '2010-03-02'
 DESCRIPTION = _('''Photo collection manager.''')
 DEVELOPERS = '''Karol Będkowski'''
 TRANSLATORS = '''Karol Będkowski'''
