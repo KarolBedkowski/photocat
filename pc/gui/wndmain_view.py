@@ -46,8 +46,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		appconfig = AppConfig()
 		size = appconfig.get('main_wnd', 'size', (800, 600))
 
-		wx.Frame.__init__(self, None, -1, "%s %s" % (version.NAME, version.VERSION),
-				size=size)
+		wx.Frame.__init__(self, None, -1, version.NAME, size=size)
 
 		self._debug = debug
 		self._app = app

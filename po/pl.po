@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-02 18:22+0100\n"
-"PO-Revision-Date: 2010-03-02 18:21+0100\n"
+"POT-Creation-Date: 2010-03-02 18:31+0100\n"
+"PO-Revision-Date: 2010-03-02 18:32+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -16,31 +16,36 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2); \n"
 
-#: ../pc/version.py:30
-msgid "Photo collection manager."
-msgstr "Menadżer kolekcji zdjęć."
+#: ../pc/version.py:25
+msgid "Photo Catalog"
+msgstr "Katalog zdjęć"
 
-#: ../pc/version.py:34
+#: ../pc/version.py:28
+msgid "Photo collection manager"
+msgstr "Menadżer kolekcji zdjęć"
+
+#: ../pc/version.py:32
 msgid ""
 "This program is free software: you can redistribute it and/or modify\"\n"
 "it under the terms of the GNU General Public License as published by\"\n"
-"the Free Software Foundation, either version 3 of the License, or\"\n"
+"the Free Software Foundation, either version 2 of the License, or\"\n"
 "(at your option) any later version.\"\n"
 "\n"
 "This program is distributed in the hope that it will be useful,\"\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\"\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\"\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\"\n"
 "GNU General Public License for more details.\"\n"
 "\n"
 "You should have received a copy of the GNU General Public License\"\n"
-"along with this program.  If not, see <http://www.gnu.org/licenses/>.\"\n"
+"along with this program. If not, see <http://www.gnu.org/licenses/>.\"\n"
+"\n"
 "\n"
 "Also please check LICENCE files from distribution."
 msgstr ""
 "Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
 "rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
 "Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
-"Oprogramowania - według wersji 3 tej Licencji lub (według twojego\n"
+"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\n"
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on\n"
@@ -52,6 +57,7 @@ msgstr ""
 "Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz\n"
 "Powszechnej Licencji Publicznej GNU (GNU General Public License);\n"
 "jeśli nie - wejdź na <http://www.gnu.org/licenses/>.\n"
+"\n"
 "\n"
 "Proszę także sprawdzić pliki LICENCE dostarczone wraz z tym programem."
 
@@ -97,7 +103,7 @@ msgstr "Dodawanie dysku"
 msgid "Updating disk"
 msgstr "Aktualizacja dysku"
 
-#: ../pc/engine/ecatalog.py:171 ../pc/gui/wndmain_view.py:140
+#: ../pc/engine/ecatalog.py:171 ../pc/gui/wndmain_view.py:139
 msgid "Rebuild catalog"
 msgstr "Przebuduj katalog"
 
@@ -213,7 +219,7 @@ msgid "<current dir>"
 msgstr "<aktualny folder>"
 
 #: ../pc/gui/_dlg_edit_tags.py:61 ../pc/gui/_dlg_properties_base.py:37
-#: ../pc/gui/wndmain_view.py:284 ../pc/gui/wndmain_view.py:308
+#: ../pc/gui/wndmain_view.py:283 ../pc/gui/wndmain_view.py:307
 msgid "Properties"
 msgstr "Własności"
 
@@ -221,7 +227,7 @@ msgstr "Własności"
 #: ../pc/gui/_dlg_properties_base.py:186 ../pc/gui/_dlgproperties.py:37
 #: ../pc/gui/_dlgproperties_dir.py:37 ../pc/gui/_dlgproperties_disk.py:36
 #: ../pc/gui/_dlgproperties_mutli.py:38 ../pc/gui/_dlgproperties_mutli.py:73
-#: ../pc/gui/components/dirstree.py:215 ../pc/gui/wndmain_view.py:178
+#: ../pc/gui/components/dirstree.py:215 ../pc/gui/wndmain_view.py:177
 #: ../pc/model/_catalog_file.py:69
 msgid "Tags"
 msgstr "Tagi"
@@ -293,7 +299,7 @@ msgstr "Ustaw komentarz"
 msgid "Set tags"
 msgstr "Ustaw tagi"
 
-#: ../pc/gui/_dlgsearch.py:56 ../pc/gui/wndmain_view.py:241
+#: ../pc/gui/_dlgsearch.py:56 ../pc/gui/wndmain_view.py:240
 msgid "Find"
 msgstr "Znajdź"
 
@@ -379,7 +385,7 @@ msgstr "Idź do..."
 msgid "Preview"
 msgstr "Podgląd"
 
-#: ../pc/gui/_dlgsearch.py:297 ../pc/gui/wndmain_view.py:176
+#: ../pc/gui/_dlgsearch.py:297 ../pc/gui/wndmain_view.py:175
 msgid "Info"
 msgstr "Info"
 
@@ -435,7 +441,7 @@ msgstr ""
 "Liczba plików przekracza 1000!\n"
 "Pokazać %d plików?"
 
-#: ../pc/gui/_dlgsettings.py:38 ../pc/gui/wndmain_view.py:147
+#: ../pc/gui/_dlgsettings.py:38 ../pc/gui/wndmain_view.py:146
 msgid "Program settings"
 msgstr "Ustawienia programu"
 
@@ -740,7 +746,7 @@ msgstr "Otwórz %s"
 msgid "Error saving catalog %s"
 msgstr "Błąd zapisywania katalogu %s"
 
-#: ../pc/gui/wndmain.py:740 ../pc/gui/wndmain_view.py:237
+#: ../pc/gui/wndmain.py:740 ../pc/gui/wndmain_view.py:236
 msgid "Save catalog"
 msgstr "Zapisz katalog"
 
@@ -749,168 +755,168 @@ msgstr "Zapisz katalog"
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr "Katalogów %(dirs)d;  plików: %(files)d"
 
-#: ../pc/gui/wndmain_view.py:120
+#: ../pc/gui/wndmain_view.py:119
 msgid "&File"
 msgstr "&Plik"
 
-#: ../pc/gui/wndmain_view.py:121
+#: ../pc/gui/wndmain_view.py:120
 msgid "&View"
 msgstr "&Widok"
 
-#: ../pc/gui/wndmain_view.py:122
+#: ../pc/gui/wndmain_view.py:121
 msgid "&Catalog"
 msgstr "&Katalog"
 
-#: ../pc/gui/wndmain_view.py:123
+#: ../pc/gui/wndmain_view.py:122
 msgid "Help"
 msgstr "Pomoc"
 
-#: ../pc/gui/wndmain_view.py:131 ../pc/gui/wndmain_view.py:234
+#: ../pc/gui/wndmain_view.py:130 ../pc/gui/wndmain_view.py:233
 msgid "New"
 msgstr "Nowy"
 
-#: ../pc/gui/wndmain_view.py:131 ../pc/gui/wndmain_view.py:234
+#: ../pc/gui/wndmain_view.py:130 ../pc/gui/wndmain_view.py:233
 msgid "Create new catalog"
 msgstr "Utwórz nowy katalog"
 
-#: ../pc/gui/wndmain_view.py:133 ../pc/gui/wndmain_view.py:235
+#: ../pc/gui/wndmain_view.py:132 ../pc/gui/wndmain_view.py:234
 msgid "Open"
 msgstr "Otwórz"
 
-#: ../pc/gui/wndmain_view.py:133 ../pc/gui/wndmain_view.py:235
+#: ../pc/gui/wndmain_view.py:132 ../pc/gui/wndmain_view.py:234
 msgid "Load catalog"
 msgstr "Wczytaj katalog"
 
-#: ../pc/gui/wndmain_view.py:135 ../pc/gui/wndmain_view.py:236
+#: ../pc/gui/wndmain_view.py:134 ../pc/gui/wndmain_view.py:235
 msgid "Save"
 msgstr "Zapisz"
 
-#: ../pc/gui/wndmain_view.py:135
+#: ../pc/gui/wndmain_view.py:134
 msgid "Save current catalog"
 msgstr "Zapisz aktualny katalog"
 
-#: ../pc/gui/wndmain_view.py:137 ../pc/gui/wndmain_view.py:297
+#: ../pc/gui/wndmain_view.py:136 ../pc/gui/wndmain_view.py:296
 msgid "Close catalog"
 msgstr "Zamknij katalog"
 
-#: ../pc/gui/wndmain_view.py:137
+#: ../pc/gui/wndmain_view.py:136
 msgid "Close current catalog"
 msgstr "Zamknij aktualny katalog"
 
-#: ../pc/gui/wndmain_view.py:143
+#: ../pc/gui/wndmain_view.py:142
 msgid "Print"
 msgstr "Drukuj"
 
-#: ../pc/gui/wndmain_view.py:145
+#: ../pc/gui/wndmain_view.py:144
 msgid "Export to PDF..."
 msgstr "Eksportuj do PDF..."
 
-#: ../pc/gui/wndmain_view.py:150
+#: ../pc/gui/wndmain_view.py:149
 msgid "Quit"
 msgstr "Zakończ"
 
-#: ../pc/gui/wndmain_view.py:150
+#: ../pc/gui/wndmain_view.py:149
 msgid "Close application"
 msgstr "Zamknij program"
 
-#: ../pc/gui/wndmain_view.py:155
+#: ../pc/gui/wndmain_view.py:154
 msgid "Recent files"
 msgstr "Ostatnie pliki"
 
-#: ../pc/gui/wndmain_view.py:161
+#: ../pc/gui/wndmain_view.py:160
 msgid "&Add disk..."
 msgstr "&Dodaj dysk"
 
-#: ../pc/gui/wndmain_view.py:161 ../pc/gui/wndmain_view.py:247
+#: ../pc/gui/wndmain_view.py:160 ../pc/gui/wndmain_view.py:246
 msgid "Add disk to catalog"
 msgstr "Dodaj dysk do katalogu"
 
 #. isinstance(item, Disk):
-#: ../pc/gui/wndmain_view.py:163 ../pc/gui/wndmain_view.py:289
+#: ../pc/gui/wndmain_view.py:162 ../pc/gui/wndmain_view.py:288
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
 
-#: ../pc/gui/wndmain_view.py:163
+#: ../pc/gui/wndmain_view.py:162
 msgid "Update selected disk"
 msgstr "Aktualizuj wybrany dysk"
 
-#: ../pc/gui/wndmain_view.py:165 ../pc/gui/wndmain_view.py:290
+#: ../pc/gui/wndmain_view.py:164 ../pc/gui/wndmain_view.py:289
 msgid "&Delete disk..."
 msgstr "&Usuń dysk"
 
-#: ../pc/gui/wndmain_view.py:165
+#: ../pc/gui/wndmain_view.py:164
 msgid "Delete selected disk from catalog"
 msgstr "Usuń wybrany dysk z katalogu"
 
-#: ../pc/gui/wndmain_view.py:168 ../pc/gui/wndmain_view.py:293
+#: ../pc/gui/wndmain_view.py:167 ../pc/gui/wndmain_view.py:292
 msgid "Delete selected &dir..."
 msgstr "Usuń wybrany &katalog..."
 
-#: ../pc/gui/wndmain_view.py:169
+#: ../pc/gui/wndmain_view.py:168
 msgid "Delete selected &image..."
 msgstr "Usuń wybrane &pliki..."
 
-#: ../pc/gui/wndmain_view.py:172
+#: ../pc/gui/wndmain_view.py:171
 msgid "&Edit selected files..."
 msgstr "&Edytuj wybrane pliki..."
 
-#: ../pc/gui/wndmain_view.py:174
+#: ../pc/gui/wndmain_view.py:173
 msgid "Find..."
 msgstr "Znajdź..."
 
-#: ../pc/gui/wndmain_view.py:174 ../pc/gui/wndmain_view.py:242
+#: ../pc/gui/wndmain_view.py:173 ../pc/gui/wndmain_view.py:241
 msgid "Search in calalogs"
 msgstr "Szukaj w katalogach"
 
-#: ../pc/gui/wndmain_view.py:176
+#: ../pc/gui/wndmain_view.py:175
 msgid "About selected calalog..."
 msgstr "O wybranym katalogu..."
 
-#: ../pc/gui/wndmain_view.py:178
+#: ../pc/gui/wndmain_view.py:177
 msgid "Manage taglist..."
 msgstr "Zarządzaj listą tagów..."
 
-#: ../pc/gui/wndmain_view.py:187
+#: ../pc/gui/wndmain_view.py:186
 msgid "[x]Show &info"
 msgstr "[x]Pokaż &info"
 
-#: ../pc/gui/wndmain_view.py:189
+#: ../pc/gui/wndmain_view.py:188
 msgid "[x]Show &captions"
 msgstr "[x]Pokaż &podpisy"
 
-#: ../pc/gui/wndmain_view.py:194
+#: ../pc/gui/wndmain_view.py:193
 msgid "[o]Sort by &name "
 msgstr "[o]Sortuj wg &nazwy"
 
-#: ../pc/gui/wndmain_view.py:196
+#: ../pc/gui/wndmain_view.py:195
 msgid "[o]Sort by &date "
 msgstr "[o]Sortuj wg &daty"
 
-#: ../pc/gui/wndmain_view.py:198
+#: ../pc/gui/wndmain_view.py:197
 msgid "[o]&Group by date "
 msgstr "[o]&Grupuj wg daty"
 
-#: ../pc/gui/wndmain_view.py:200
+#: ../pc/gui/wndmain_view.py:199
 msgid "[o]&Group by path "
 msgstr "[o]&Grupuj wg ścieżki"
 
-#: ../pc/gui/wndmain_view.py:205
+#: ../pc/gui/wndmain_view.py:204
 msgid "[x]Sort descend"
 msgstr "[x]Sortuj malejąco"
 
-#: ../pc/gui/wndmain_view.py:207
+#: ../pc/gui/wndmain_view.py:206
 msgid "[x]With subdirs"
 msgstr "[x]Z podkatalogami"
 
-#: ../pc/gui/wndmain_view.py:213
+#: ../pc/gui/wndmain_view.py:212
 msgid "&About..."
 msgstr "&O programie..."
 
-#: ../pc/gui/wndmain_view.py:246
+#: ../pc/gui/wndmain_view.py:245
 msgid "Add disk..."
 msgstr "Dodaj dysk"
 
-#: ../pc/gui/wndmain_view.py:313
+#: ../pc/gui/wndmain_view.py:312
 msgid "&Delete file..."
 msgstr "&Usuń plik..."
 
