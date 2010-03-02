@@ -1,4 +1,5 @@
 pc/__init__.py
+pc/version.py
 pc/engine/__init__.py
 pc/engine/ecatalog.py
 pc/engine/efile.py
