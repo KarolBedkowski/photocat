@@ -17,7 +17,7 @@ if sys.platform == 'win32':
 	except:
 		pass
 
-from pc import version
+from photocat import version
 
 build = time.asctime()
 
@@ -55,7 +55,7 @@ def get_data_files():
 	if sys.platform == 'win32':
 		doc_dir = locales_dir = data_dir = '.'
 	else:
-		doc_dir = '/usr/share/doc/pc'
+		doc_dir = '/usr/share/doc/photocat'
 		locales_dir = '/usr/share/locale'
 		data_dir = '/usr/share/doc/data'
 
@@ -83,11 +83,11 @@ pctarget = {
 
 
 pctarget_win = pctarget.copy()
-pctarget_win.update({'script': "pc.pyw",'name': "pc"})
+pctarget_win.update({'script': "photocat.pyw",'name': "photocat"})
 
 
 setup(
-	name='pc',
+	name='photocat',
 	version=version.VERSION,
 	author=pctarget['company_name'],
 	author_email='karol.bedkowski@gmail.com',
@@ -109,7 +109,7 @@ setup(
 	package_dir=packages,
 	data_files=list(get_data_files()),
 	include_package_data=True,
-	scripts=['pc.pyw'],
+	scripts=['photocat.pyw'],
 	install_requires=['wxPython>=2.6.0', 'reportlab>=2', 'Image>=1.1.0'],
 	options={"py2exe": {
 		"compressed": 1,

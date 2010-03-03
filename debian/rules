@@ -41,18 +41,18 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
-	# Add here commands to install the package into debian/pc.
-	mkdir -p $(CURDIR)/debian/pc
-	mkdir -p $(CURDIR)/debian/pc/usr/share/pc/src/
-	cp -r pc $(CURDIR)/debian/pc/usr/share/pc/src/
-	cp -r pc.pyw $(CURDIR)/debian/pc/usr/share/pc/src/
-	cp -r pc_console.py $(CURDIR)/debian/pc/usr/share/pc/src/
-	cp dist.linux/pc.desktop $(CURDIR)/debian/pc/usr/share/applications/
-	cp dist.linux/pc $(CURDIR)/debian/pc/usr/bin/
-	mkdir -p $(CURDIR)/debian/pc/usr/share/locale
-	cp -r locale/* $(CURDIR)/debian/pc/usr/share/locale
-	mkdir -p $(CURDIR)/debian/pc/usr/share/pc/data
-	cp data/icon.svg $(CURDIR)/debian/pc/usr/share/pc/data/
+	# Add here commands to install the package into debian/photocat.
+	mkdir -p $(CURDIR)/debian/photocat
+	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/src/
+	cp -r photocat $(CURDIR)/debian/photocat/usr/share/photocat/src/
+	cp -r photocat.pyw $(CURDIR)/debian/photocat/usr/share/photocat/src/
+	cp -r photocat_console.py $(CURDIR)/debian/photocat/usr/share/photocat/src/
+	cp dist.linux/photocat.desktop $(CURDIR)/debian/photocat/usr/share/applications/
+	cp dist.linux/photocat $(CURDIR)/debian/photocat/usr/bin/
+	mkdir -p $(CURDIR)/debian/photocat/usr/share/locale
+	cp -r locale/* $(CURDIR)/debian/photocat/usr/share/locale
+	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/data
+	cp data/icon.svg $(CURDIR)/debian/photocat/usr/share/photocat/data/
 
 
 # Build architecture-independent files here.

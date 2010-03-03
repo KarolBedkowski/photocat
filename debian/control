@@ -1,11 +1,11 @@
-Source: pc
+Source: photocat
 Section: graphics
 Priority: extra
 Maintainer: Karol Będkowski <karol.bedkowski@gmail.com>
 Build-Depends: debhelper (>= 7)
 Standards-Version: 3.7.3
 
-Package: pc
+Package: photocat
 Architecture: any
 Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8)
 Suggests: python-reportlab (>=2.0), python-psyco, 

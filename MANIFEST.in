@@ -6,7 +6,7 @@ include LICENCE_EXIFpy.txt
 include LICENCE_python.txt
 include LICENCE_wxPython.txt
 include MANIFEST*
-include pc*
+include photocat*
 include setup.*
 recursive-include pc *
 recursive-include po *.in *.po *.pot
