@@ -45,7 +45,7 @@ class DlgEditTags(wx.Dialog):
 	''' Dialog o programie '''
 
 	def __init__(self, parent):
-		wx.Dialog.__init__(self, parent, -1, _('Properties'),
+		wx.Dialog.__init__(self, parent, -1, _('Tags'),
 				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
 
 		dlg_grid = wx.BoxSizer(wx.VERTICAL)

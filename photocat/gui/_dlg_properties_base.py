@@ -34,7 +34,7 @@ class DlgPropertiesBase(wx.Dialog):
 
 	def __init__(self, parent, item, readonly=False, title=None,
 			show_next_prev=False):
-		wx.Dialog.__init__(self, parent, -1, title or _('Properties'),
+		wx.Dialog.__init__(self, parent, -1, title or _('%s Properties') % item.name,
 				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
 
 		self._item = item

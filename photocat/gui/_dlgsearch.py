@@ -53,7 +53,7 @@ class _DlgSearch(wx.Frame):
 	''' Dialog wyszukiwania '''
 
 	def __init__(self, parent, catalogs, selected_item=None):
-		wx.Frame.__init__(self, parent, -1, _('Find'),
+		wx.Frame.__init__(self, parent, -1, _('Search'),
 				style=wx.DEFAULT_FRAME_STYLE | wx.FULL_REPAINT_ON_RESIZE)
 
 		self._catalogs = catalogs
@@ -63,10 +63,7 @@ class _DlgSearch(wx.Frame):
 		self._sort_order = None
 
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up',
-				'sm_down'])
-
-		self._appconfig = AppConfig()
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 
 		self._create_layout()
 
@@ -86,7 +83,7 @@ class _DlgSearch(wx.Frame):
 		self._statusbar.SetStatusWidths([-1, 50])
 		self.SetStatusBar(self._statusbar)
 
-		appconfig = self._appconfig
+		appconfig = AppConfig()
 		size = appconfig.get('search_wnd', 'size', (640, 480))
 		self.SetMinSize((640, 480))
 		self.SetSize(size)
@@ -98,7 +95,7 @@ class _DlgSearch(wx.Frame):
 		else:
 			self.Move(position)
 
-		self._thumb_width, = appconfig.get('settings', 'thumb_width', 200)
+		self._thumb_width = appconfig.get('settings', 'thumb_width', 200)
 		self._thumb_height = appconfig.get('settings', 'thumb_height', 200)
 		self._thumbctrl.set_thumb_size(self._thumb_width, self._thumb_height)
 		self._thumbctrl.thumbs_preload = appconfig.get('settings',
@@ -284,8 +281,9 @@ class _DlgSearch(wx.Frame):
 		item = parent.AddFoldPanel(_('Preview'), collapsed=False, cbstyle=cbs)
 
 		self._bmp_preview = wx.StaticBitmap(item, -1)
-		size = (self._appconfig.get('settings', 'thumb_width', 200),
-				self._appconfig.get('settings', 'thumb_height', 200))
+		appconfig = AppConfig()
+		size = (appconfig.get('settings', 'thumb_width', 200),
+				appconfig.get('settings', 'thumb_height', 200))
 		self._bmp_preview.SetSize(size)
 		self._bmp_preview.SetMinSize(size)
 
@@ -389,7 +387,7 @@ class _DlgSearch(wx.Frame):
 			_LOG.debug('DlgSearch._on_btn_find options: %r', options)
 
 		except _OptionsError, err:
-			dialogs.message_box_info(self, _("Bad options:\n%s") % err, 'photocat')
+			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('Find'))
 			return
 
 		listctrl = self._result_list
@@ -436,7 +434,7 @@ class _DlgSearch(wx.Frame):
 
 			if cont and cntr[1] and found > 1000:
 				if not dialogs.message_box_warning_yesno(self,
-						_("Found more than 1000 items.\nContinue?"), "photocat"):
+						_("Found more than 1000 items.\nContinue?"), _('Find')):
 					cntr[2] = False
 
 				cntr[1] = False
@@ -456,7 +454,7 @@ class _DlgSearch(wx.Frame):
 			self.Layout()
 
 		else:
-			dialogs.message_box_info(self, _('Not found'), 'photocat')
+			dialogs.message_box_info(self, _('Not found'), _('Find'))
 
 		self._btn_icons.Enable(found)
 
@@ -522,8 +520,9 @@ class _DlgSearch(wx.Frame):
 		self._btn_goto.Enable(False)
 
 	def _on_close(self, evt):
-		self._appconfig.set('search_wnd', 'size', self.GetSizeTuple())
-		self._appconfig.set('search_wnd', 'position', self.GetPositionTuple())
+		appconfig = AppConfig()
+		appconfig.set('search_wnd', 'size', self.GetSizeTuple())
+		appconfig.set('search_wnd', 'position', self.GetPositionTuple())
 		evt.Skip()
 
 	def _on_panel_advsearch_changed(self, evt):
@@ -594,7 +593,7 @@ class _DlgSearch(wx.Frame):
 			# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
 			if not dialogs.message_box_warning_yesno(self,
 					_('Number of files exceed 1000!\nShow %d files?')
-					% len(self._result), 'photocat'):
+					% len(self._result), _('Find')):
 				self._btn_icons.SetToggle(False)
 				return
 
@@ -604,8 +603,9 @@ class _DlgSearch(wx.Frame):
 		if icons:
 			size = (1, 1)
 		else:
-			size = (self._appconfig.get('settings', 'thumb_width', 200),
-					self._appconfig.get('settings', 'thumb_height', 200))
+			appconfig = AppConfig()
+			size = (appconfig.get('settings', 'thumb_width', 200),
+					appconfig.get('settings', 'thumb_height', 200))
 
 		self._image_info.DeleteAllItems()
 

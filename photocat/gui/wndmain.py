@@ -114,15 +114,15 @@ class WndMain(WndMainView):
 		if len(dirty_catalogs) > 0:
 			for catalog in dirty_catalogs:
 				res = dialogs.message_box_warning_yesnocancel(self,
-						_("Catalog %s isn't saved\nSave it?") % catalog.caption,
-						'photocat')
+						_("Catalog %s was changed.\nSave it?") % catalog.caption,
+						_('Catalog'))
 				if res == wx.ID_CANCEL:
 					return
 				elif res == wx.ID_YES:
 					self._save_catalog(catalog)
 
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'),
-				'photocat'):
+				_('Exit')):
 			return
 
 		for catalog in self._catalogs:
@@ -159,7 +159,7 @@ class WndMain(WndMainView):
 
 			if ecatalog.check_new_file_exists(filename)[0]:
 				if not dialogs.message_box_question_yesno(self,
-						_('File exists!\nOverwrite?'), 'photocat'):
+						_('File exists!\nOverwrite?'), _('Error')):
 					return
 
 			try:
@@ -213,7 +213,7 @@ class WndMain(WndMainView):
 			res = dialogs.message_box_warning_yesnocancel(self,
 					_('Catalog %s has unsaved changes!\nSave before close??') \
 					% catalog.caption,
-					'photocat')
+					_('Catalog'))
 
 			if res == wx.ID_YES:
 				self._save_catalog(catalog)
@@ -221,7 +221,7 @@ class WndMain(WndMainView):
 				return
 
 		elif not dialogs.message_box_question_yesno(self,
-				_('Close catalog %s?') % catalog.caption, 'photocat'):
+				_('Close catalog %s?') % catalog.caption, _('Close')):
 			return
 
 		self._dirs_tree.delete_item(catalog)
@@ -383,7 +383,7 @@ class WndMain(WndMainView):
 			return
 
 		if dialogs.message_box_warning_yesno(self,
-				_('Delete directory %s?') % tree_selected.name, 'photocat'):
+				_('Delete directory %s?') % tree_selected.name, _('Delete directory')):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._update_tags_timeline(tree_selected.catalog)
@@ -403,7 +403,7 @@ class WndMain(WndMainView):
 			return
 
 		if dialogs.message_box_warning_yesno(self,
-				_('Delete %d images?') % selected_count, 'photocat'):
+				_('Delete %d images?') % selected_count, _('Delete image')):
 			for image in self._photo_list.selected_items:
 				folder.remove_file(image)
 
@@ -439,7 +439,7 @@ class WndMain(WndMainView):
 				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
 		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty '
 				'entries: %(dirty)d (%(dirtyp)d%%)') % data
-		dialogs.message_box_info(self, info, 'photocat')
+		dialogs.message_box_info(self, info, version.NAME)
 
 	def _on_catalog_edit_multi(self, evt):
 		''' _on_catalog_edit_multi'''
@@ -495,7 +495,7 @@ class WndMain(WndMainView):
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
 				if not dialogs.message_box_warning_yesno(self,
 						_('Number of files exceed 1000!\nShow %d files?') %\
-						len(item.files), 'photocat'):
+						len(item.files), version.NAME):
 					self._show_dir([])
 					self.SetStatusText(_('Files: %d') % len(item.files))
 					self._dirs_tree.Expand(self._dirs_tree.selected_node)
@@ -694,7 +694,7 @@ class WndMain(WndMainView):
 				if dirtyp > 10:
 					if dialogs.message_box_warning_yesno(self,
 							_('Catalog file contain %d%% unused entries.\n' \
-							'Rebuild catalog?') % dirtyp, 'photocat'):
+							'Rebuild catalog?') % dirtyp, _('Catalog')):
 						if ecatalog.rebuild(catalog, self):
 							self._save_catalog(catalog)
 

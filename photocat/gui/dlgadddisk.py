@@ -54,7 +54,7 @@ class DlgAddDisk(wx.Dialog):
 	''' Dialog dodania/uaktualnienia dysku '''
 
 	def __init__(self, parent, data, update=False, catalog=None):
-		caption = _('Update disk') if update else _('Add disk')
+		caption = _('Update disk') if update else _('Add disk to catalog')
 		wx.Dialog.__init__(self, parent, -1, caption)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 

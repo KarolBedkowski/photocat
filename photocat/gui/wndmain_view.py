@@ -127,54 +127,54 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 	def _create_main_menu_file(self):
 		self._main_menu_file = create_menu(self, (
-			(_('New'), 'Ctrl-N', _('Create new catalog'), self._on_file_new,
+			(_('&New'), 'Ctrl-N', _('Create new catalog'), self._on_file_new,
 					wx.ID_NEW, wx.ART_NEW),
-			(_('Open'), 'Ctrl+O', _('Load catalog'), self._on_file_open,
+			(_('&Open'), 'Ctrl+O', _('Open catalog'), self._on_file_open,
 					wx.ID_OPEN, wx.ART_FILE_OPEN),
-			(_('Save'), 'Ctrl+S', _('Save current catalog'), self._on_file_save,
+			(_('&Save'), 'Ctrl+S', _('Save the current catalog'), self._on_file_save,
 					wx.ID_SAVE, wx.ART_FILE_SAVE),
-			(_('Close catalog'), 'Ctrl+W', _('Close current catalog'),
-					self._on_file_close),
 			('-'),
-			(_('Rebuild catalog'), None, _('Rebuild catalog'),
+			(_('&Export to PDF...'), None, '', self._on_file_export_pdf),
+			(_('&Rebuild Catalog'), None, _('Rebuild catalog'),
 					self._on_file_rebuild),
-			('-'),
-			(_('Print'), 'Ctrl+P', '', self._on_file_print_prv, wx.ID_PRINT,
+			(_('&Print'), 'Ctrl+P', '', self._on_file_print_prv, wx.ID_PRINT,
 					wx.ART_PRINT),
-			(_('Export to PDF...'), None, '', self._on_file_export_pdf),
 			('-'),
-			(_('Program settings'), None, _('Program settings'),
+			(_('Pre&ferences'), None, _('Change Photo Catalog preferences'),
 					self._on_file_settings),
 			('-'),
-			(_('Quit'), 'Alt-F4', _('Close application'), self._on_menu_close,
+			('-'),
+			(_('&Close'), 'Ctrl+W', _('Close the current catalog'),
+					self._on_file_close),
+			(_('&Quit'), 'Alt-F4', _('Quit the application'), self._on_menu_close,
 					wx.ID_EXIT, wx.ART_QUIT)))
 
 		self._main_menu_file_recent = wx.Menu()
-		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(3,
+		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(10,
 				-1, _('Recent files'), self._main_menu_file_recent)
 
 		return self._main_menu_file
 
 	def _create_main_menu_catalog(self):
 		menu = create_menu(self, (
-			(_('&Add disk...'), None, _('Add disk to catalog'),
+			(_('&Add Disk...'), None, _('Add disk to catalog'),
 					self._on_catalog_add, None, wx.ART_NEW_DIR),
-			(_('&Update disk...'), None, _('Update selected disk'),
+			(_('&Update Disk...'), None, _('Update selected disk'),
 					self._on_catalog_update_disk),
-			(_('&Delete disk...'), None, _('Delete selected disk from catalog'),
+			(_('&Delete Disk...'), None, _('Delete selected disk from catalog'),
 					self._on_catalog_del_disk, None, wx.ART_DELETE),
 			('-'),
-			(_('Delete selected &dir...'), None, '', self._on_catalog_del_dir),
-			(_('Delete selected &image...'), None, '',
+			(_('Delete Selected &Dir...'), None, '', self._on_catalog_del_dir),
+			(_('Delete Selected &Image...'), None, '',
 					self._on_catalog_del_image),
 			('-'),
-			(_('&Edit selected files...'), None, '', self._on_catalog_edit_multi),
+			(_('&Edit Selected Files...'), None, '', self._on_catalog_edit_multi),
 			('-'),
-			(_('Find...'), 'Ctrl+F', _('Search in calalogs'),
+			(_('Search...'), 'Ctrl+F', _('Search for something in calalogs'),
 					self._on_catalog_search, wx.ID_FIND, wx.ART_FIND),
-			(_('Info'), None, _('About selected calalog...'),
-					self._on_catalog_info),
-			(_('Tags'), None, _('Manage taglist...'), self._on_catalog_edit_tags),
+			(_('Show Catalog Informations'), None, 
+					_('Show informations about selected calalog...'), self._on_catalog_info),
+			(_('Tags'), None, _('Manage catalog tags...'), self._on_catalog_edit_tags),
 		))
 		self._main_menu_catalog = menu
 		return menu
@@ -183,33 +183,33 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		menu = wx.Menu()
 
 		self._menu_view_show_info = create_menu_item(self, menu,
-				_('[x]Show &info'), self._on_view_show_hide_info, accel='F4')[1]
+				_('[x]Show &Informations'), self._on_view_show_hide_info, accel='F4')[1]
 		self._menu_view_show_captions = create_menu_item(self, menu,
-				_('[x]Show &captions'), self._on_view_show_hide_captions)[1]
+				_('[x]Show &Captions'), self._on_view_show_hide_captions)[1]
 
 		menu.AppendSeparator()
 
 		self._menu_view_sort_name = create_menu_item(self, menu,
-				_('[o]Sort by &name '), self._on_view_sort)[1]
+				_('[o]Sort by &Name '), self._on_view_sort)[1]
 		self._menu_view_sort_date = create_menu_item(self, menu,
-				_('[o]Sort by &date '), self._on_view_sort)[1]
+				_('[o]Sort by &Date '), self._on_view_sort)[1]
 		self._menu_view_group_date = create_menu_item(self, menu,
-				_('[o]&Group by date '), self._on_view_sort)[1]
+				_('[o]&Sort and Group by Date '), self._on_view_sort)[1]
 		self._menu_view_group_path = create_menu_item(self, menu,
-				_('[o]&Group by path '), self._on_view_sort)[1]
+				_('[o]Sort and Group by Pa&th '), self._on_view_sort)[1]
 
 		menu.AppendSeparator()
 
 		self._menu_view_sort_desc = create_menu_item(self, menu,
-				_('[x]Sort descend'), self._on_view_sort)[1]
+				_('[x]Sort Descend'), self._on_view_sort)[1]
 		self._menu_view_show_recur = create_menu_item(self, menu,
-				_('[x]With subdirs'), self._on_view_sort)[1]
+				_('[x]Show All Files in Subtree'), self._on_view_sort)[1]
 
 		return menu
 
 	def _create_main_menu_help(self):
 		menu = create_menu(self, (
-			(_('&About...'), None, '', self._on_help_about, wx.ID_ABOUT,
+			(_('&About'), None, '', self._on_help_about, wx.ID_ABOUT, 
 				wx.ART_INFORMATION),
 		))
 		return menu
@@ -231,14 +231,14 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 					imgid=iconname, description=description)
 
 		__cbtna(_('New'), self._on_file_new, wx.ART_NEW, _('Create new catalog'))
-		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN, _('Load catalog'))
+		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN, _('Open catalog'))
 		self._tb_save = __cbtna(_('Save'), self._on_file_save, wx.ART_FILE_SAVE,
-				_('Save catalog'))
+				_('Save the current catalog'))
 
 		toolbar.AddSeparator()
 
-		self._tb_find = __cbtna(_('Find'), self._on_catalog_search, wx.ART_FIND,
-				_('Search in calalogs'))
+		self._tb_find = __cbtna(_('Search'), self._on_catalog_search, wx.ART_FIND,
+				_('Search for something in calalogs'))
 
 		toolbar.AddSeparator()
 

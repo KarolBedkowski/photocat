@@ -232,7 +232,7 @@ _IMAGE_FILES_EXTENSION_RAW = dict((key, None) for key in ('nef', 'arw', 'srf',
 
 def is_file_raw(name):
 	''' check is file is raw '''
-	return ('.' in name \
+	return (name and '.' in name \
 		and os.path.splitext(name)[-1].lower() in _IMAGE_FILES_EXTENSION_RAW)
 
 

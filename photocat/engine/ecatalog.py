@@ -197,8 +197,8 @@ def rebuild(catalog, parent_wnd):
 	except RuntimeError, err:
 		_LOG.exception('rebuild error')
 		dialogs.message_box_error(parent_wnd,
-				_('Rebuild catalog error!\n%(msg)s') % dict(msg=err.message),
-				'photocat')
+				_('Error occurred when rebuilding catalog:\n%(msg)s') \
+				% dict(msg=err.message), _('Rebuild catalog'))
 
 	dlg_progress.Destroy()
 	parent_wnd.SetCursor(wx.STANDARD_CURSOR)

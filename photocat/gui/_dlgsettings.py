@@ -35,7 +35,7 @@ class DlgSettings(wx.Dialog):
 	''' Dialog ustawień programu '''
 
 	def __init__(self, parent):
-		wx.Dialog.__init__(self, parent, -1, _('Program settings'),
+		wx.Dialog.__init__(self, parent, -1, _('Photo Catalog Preferences'),
 				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
