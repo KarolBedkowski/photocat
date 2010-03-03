@@ -2,9 +2,12 @@
 Encoding=UTF-8
 Icon=/usr/share/photocat/data/icon.svg
 Name=Photo Catalog
-Exec=/usr/bin/photocat
+Name[pl]=Katalog zdjęć
+Comment=Photo collections manager
+Comment[pl]=Menadżer kolekcji zdjęć
+Exec=photocat
 Terminal=false
 Type=Application
 Categories=GNOME;GTK;Graphics;
-StartupNotify=false
+StartupNotify=true
 
