@@ -70,7 +70,9 @@ Section "GrupaGlowna" SEC01
   File "dist\LICENCE*.*"
   File "dist\README"
   File "dist\TODO"
-  File "dist\CHANGELOG"
+  File "dist\ChangeLog"
+  File "dist\COPYING"
+  File "dist\AUTHORS"
   File "dist\*.dll"
 
   CreateDirectory "$INSTDIR\locale"

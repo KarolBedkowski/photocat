@@ -9,5 +9,6 @@ Package: photocat
 Architecture: any
 Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8)
 Suggests: python-reportlab (>=2.0), python-psyco, 
-Description: Photo Catalog
- Program to catalog pictures on cds.
+Description: digital photo management application
+ Aplication allow to index, browse and search photo collections
+ stored on dvd/cd.

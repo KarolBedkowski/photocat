@@ -1,16 +1,14 @@
-global-exclude *~ *.swp .*
 include TODO
-include CHANGELOG
-include LICENCE.txt
-include LICENCE_EXIFpy.txt
-include LICENCE_python.txt
-include LICENCE_wxPython.txt
+include ChangeLog
+include LICENCE*
+include COPYING
 include MANIFEST*
 include photocat*
 include setup.*
-recursive-include pc *
+recursive-include photocat *
 recursive-include po *.in *.po *.pot
 recursive-include locale *
 recursive-include debian *
 recursive-include dist.linux *
 recursive-include data *
+global-exclude *~ *.swp \.* *.pyc *.pyo
