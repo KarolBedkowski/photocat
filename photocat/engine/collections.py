@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-photocat.engine.catalog
+photocat.engine.collections
 -- obsługa katalogów
 
 Photo Catalog v 1.0  (photocat)
@@ -22,7 +22,7 @@ import fnmatch
 
 import wx
 
-from photocat.model import Catalog, FileImage
+from photocat.model import Collection, FileImage
 from photocat.storage.storage import Storage
 from photocat.gui.dlgadddisk import DlgAddDisk
 from photocat.lib.formaters import format_human_size
@@ -56,23 +56,23 @@ def _count_files(path, parent_wnd, title):
 	return allfiles
 
 
-def _add_or_update_catalog(catalog, title, data, parent_wnd):
-	''' _add_or_update_catalog(catalog, title, data, parent_wnd) -> Disk
+def _add_or_update_collection(collection, title, data, parent_wnd):
+	''' _add_or_update_collection(collection. title, data, parent_wnd) -> Disk
 		-- dodanie lub aktualizacja dysku
 
-		@param catalog		-- katalog do którego jest dodawany dysk
+		@param collection	-- katalog do którego jest dodawany dysk
 		@param title		-- tytuł okien
 		@param data			-- dane przebudowy/aktualizacji
 		@param parent_wnd	-- okno nadrzędne
 		@return zaktualizowany/dodany dysk
 	'''
 
-	if catalog.readonly:
-		raise errors.UpdateDiskError(_("Catalog is read-only."))
+	if collection.readonly:
+		raise errors.UpdateDiskError(_("Collection is read-only."))
 
 	data.update(dict(AppConfig().get_items('settings') or []))
 
-	dlg = DlgAddDisk(parent_wnd, data, update=data['update'], catalog=catalog)
+	dlg = DlgAddDisk(parent_wnd, data, update=data['update'], collection=collection)
 	result = dlg.ShowModal()
 	dlg.Destroy()
 
@@ -109,18 +109,18 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 		try:
 			parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
 			if data['update']:
-				catalog.update_disk(disk, data['path'], descr=data['descr'],
+				collection.update_disk(disk, data['path'], descr=data['descr'],
 						options=data, on_update=update_progress,
 						name=data['name'])
 
 			else:
-				disk = catalog.add_disk(data['path'], data['name'],
+				disk = collection.add_disk(data['path'], data['name'],
 						data['descr'], options=data, on_update=update_progress)
 
 			dlg_progress.Update(allfiles + 100, _('Done!'))
 
 		except Exception, err:
-			_LOG.exception('_add_or_update_catalog(%r)', data)
+			_LOG.exception('_add_or_update_collection(%r)', data)
 			dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
 			raise errors.UpdateDiskError(err)
 
@@ -131,44 +131,44 @@ def _add_or_update_catalog(catalog, title, data, parent_wnd):
 	return disk
 
 
-def add_disk_to_catalog(catalog, parent_wnd):
-	''' add_disk_to_catalog(catalog, parent_wnd) -> Disk -- dodanie dysku
+def add_disk_to_collection(collection, parent_wnd):
+	''' add_disk_to_collection(collection, parent_wnd) -> Disk -- dodanie dysku
 
-		@param catalog		-- katalog do którego jest dodawany dysk
+		@param collection		-- katalog do którego jest dodawany dysk
 		@param parent_wnd	-- okno nadrzędne
 		@return dodany dysk
 	'''
 	data = dict(disk=None, update=False)
-	return _add_or_update_catalog(catalog, _("Adding disk"), data, parent_wnd)
+	return _add_or_update_collection(collection, _("Adding disk"), data, parent_wnd)
 
 
-def update_disk_in_catalog(catalog, disk, parent_wnd):
-	''' update_disk_in_catalog(catalog, disk, parent_wnd) -> Disk
+def update_disk_in_collection(collection, disk, parent_wnd):
+	''' update_disk_in_collection(collection, disk, parent_wnd) -> Disk
 		-- aktualizacja dysku
 
-		@param catalog		-- katalog w którym jest aktualizowany dysk
+		@param collection		-- katalog w którym jest aktualizowany dysk
 		@param disk			-- dysk do aktualizacji
 		@param parent_wnd	-- okno nadrzędne
 		@return zaktualizowany dysk
 	'''
 	data = dict(name=disk.name, descr=disk.desc, disk=disk, update=True)
-	return _add_or_update_catalog(catalog, _("Updating disk"), data, parent_wnd)
+	return _add_or_update_collection(collection, _("Updating disk"), data, parent_wnd)
 
 
-def rebuild(catalog, parent_wnd):
-	''' rebuild(catalog, parent_wnd) -> bool -- przebudowa katalogu
+def rebuild(collection, parent_wnd):
+	''' rebuild(collection, parent_wnd) -> bool -- przebudowa katalogu
 
-		@param catalog		-- katalog do przebudowania
+		@param collection		-- katalog do przebudowania
 		@param parent_wnd	-- okno nadrzędne
 		@return True=sukces
 	'''
-	if catalog.readonly:
-		raise errors.UpdateDiskError(_("Catalog is read-only."))
+	if collection.readonly:
+		raise errors.UpdateDiskError(_("Collection is read-only."))
 
-	objects_count = catalog.object_in_files
+	objects_count = collection.object_in_files
 	result = False
 
-	dlg_progress = wx.ProgressDialog(_("Rebuild catalog"),
+	dlg_progress = wx.ProgressDialog(_("Rebuild collection"),
 			_("Rebuilding...\nPlease wait."), parent=parent_wnd,
 			maximum=objects_count + 2,
 			style=(wx.PD_APP_MODAL | wx.PD_REMAINING_TIME | wx.PD_ELAPSED_TIME \
@@ -180,15 +180,15 @@ def rebuild(catalog, parent_wnd):
 
 	try:
 		parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
-		saved_space = catalog.data_provider.rebuild(catalog, update_progress)
+		saved_space = collection.data_provider.rebuild(collection, update_progress)
 		dlg_progress.Update(objects_count + 1, _("Saving..."))
 
 		if saved_space < 0:
-			dlg_progress.Update(objects_count + 2, _('Rebuild catalog aborted'))
+			dlg_progress.Update(objects_count + 2, _('Rebuild collection aborted'))
 
 		else:
 			dlg_progress.Update(objects_count + 2,
-					_('Rebuild catalog finished\nSaved space: %sB') \
+					_('Rebuild collection finished\nSaved space: %sB') \
 					% format_human_size(saved_space),
 			)
 
@@ -197,8 +197,8 @@ def rebuild(catalog, parent_wnd):
 	except RuntimeError, err:
 		_LOG.exception('rebuild error')
 		dialogs.message_box_error(parent_wnd,
-				_('Error occurred when rebuilding catalog:\n%(msg)s') \
-				% dict(msg=err.message), _('Rebuild catalog'))
+				_('Error occurred when rebuilding collection:\n%(msg)s') \
+				% dict(msg=err.message), _('Rebuild collection file'))
 
 	dlg_progress.Destroy()
 	parent_wnd.SetCursor(wx.STANDARD_CURSOR)
@@ -206,23 +206,23 @@ def rebuild(catalog, parent_wnd):
 	return result
 
 
-def open_catalog(filename):
-	''' open_catalog(filename) -> Catalog -- otwarcie katalogu
+def open_collection(filename):
+	''' open_collection(filename) -> Collection -- otwarcie katalogu
 
 		@param filename - pełna ścieżka do pliku
-		@retuen obiekt Catalog
-		@exception OpenCatalogError
+		@retuen obiekt Collection
+		@exception OpencollectionError
 	'''
-	_LOG.debug("ecatalog.open_catalog(%s)", filename)
+	_LOG.debug("collections.open_collection(%s)", filename)
 
 	# plik indeksu
 	# istnienie
 	if not os.path.exists(filename) or not os.path.isfile(filename):
-		raise errors.OpenCatalogError(_("File not exists!"))
+		raise errors.OpencollectionError(_("File not exists!"))
 
 	# odczyt
 	if not os.access(filename, os.R_OK):
-		raise errors.OpenCatalogError(_("File not readable"))
+		raise errors.OpencollectionError(_("File not readable"))
 
 	# zapis
 	file_writable = os.access(filename, os.W_OK)
@@ -233,11 +233,11 @@ def open_catalog(filename):
 	data_file = os.path.splitext(filename)[0] + '.data'
 	# istnienie
 	if not os.path.exists(data_file) or not os.path.isfile(data_file):
-		raise errors.OpenCatalogError(_("Data file not exists!"))
+		raise errors.OpencollectionError(_("Data file not exists!"))
 
 	# odczyt
 	if not os.access(data_file, os.R_OK):
-		raise errors.OpenCatalogError(_("Data file not readable"))
+		raise errors.OpencollectionError(_("Data file not readable"))
 
 	# zapisywanie
 	data_writable = os.access(data_file, os.W_OK)
@@ -250,38 +250,38 @@ def open_catalog(filename):
 		_LOG.debug("dir with file %s not writable", filename)
 
 	writable = file_writable and path_writable and data_writable
-	_LOG.info("ecatalog.open_catalog: file %s writable=%r (%r,%r,%r)", filename,
+	_LOG.info("collections.open_collection: file %s writable=%r (%r,%r,%r)", filename,
 			writable, file_writable, path_writable, data_writable)
 
 	try:
-		catalog = Storage.load(filename)
-		catalog.readonly = not writable
-		catalog.data_provider.open(readonly=not writable)
+		collection = Storage.load(filename)
+		collection.readonly = not writable
+		collection.data_provider.open(readonly=not writable)
 
 	except Exception, err:
-		raise errors.OpenCatalogError(err)
+		raise errors.OpencollectionError(err)
 
-	return catalog
+	return collection
 
 
-def new_catalog(filename):
-	''' new_catalog(filename) -> Catalog -- otwarcie nowego katalogu
+def new_collection(filename):
+	''' new_collection(filename) -> Collection -- otwarcie nowego katalogu
 
 		@param filename - pełna ścieżka do pliku
-		@retuen obiekt Catalog
-		@exception OpenCatalogError
+		@retuen obiekt Collection
+		@exception OpencollectionError
 	'''
-	_LOG.debug("ecatalog.open_catalog(%s)", filename)
+	_LOG.debug("collections.open_collection(%s)", filename)
 
 	path = os.path.dirname(filename)
 
 	# ścieżka istnieje
 	if not os.path.exists(path):
-		raise errors.OpenCatalogError(_("Invalid path"))
+		raise errors.OpencollectionError(_("Invalid path"))
 
 	# ścieżka jest zapisywalna
 	if not os.access(path, os.W_OK):
-		raise errors.OpenCatalogError(_("Path is not writable!"))
+		raise errors.OpencollectionError(_("Path is not writable!"))
 
 	# plik indexu
 	# czy plik indeksu istnieje
@@ -290,15 +290,15 @@ def new_catalog(filename):
 		if os.path.isfile(filename):
 			# czy mozna go czytac
 			if not os.access(filename, os.R_OK):
-				raise errors.OpenCatalogError(_("File not readable"))
+				raise errors.OpencollectionError(_("File not readable"))
 
 			# czy mozna zapisywac
 			if not os.access(filename, os.W_OK):
-				raise errors.OpenCatalogError(_("File is not writable!"))
+				raise errors.OpencollectionError(_("File is not writable!"))
 
 		# plik jest katalogiem
 		else:
-			raise errors.OpenCatalogError(_("Invalid path"))
+			raise errors.OpencollectionError(_("Invalid path"))
 
 	# plik danych
 	data_file = os.path.splitext(filename)[0] + '.data'
@@ -306,20 +306,20 @@ def new_catalog(filename):
 	if os.path.exists(data_file):
 		# można czytać
 		if not os.access(data_file, os.R_OK):
-			raise errors.OpenCatalogError(_("File not readable"))
+			raise errors.OpencollectionError(_("File not readable"))
 
 		# można zapisywać
 		if not os.access(data_file, os.W_OK):
-			raise errors.OpenCatalogError(_("File is not writable!"))
+			raise errors.OpencollectionError(_("File is not writable!"))
 
 	try:
-		catalog = Catalog(filename)
-		catalog.data_provider.open(True)
+		collection = Collection(filename)
+		collection.data_provider.open(True)
 
 	except Exception, err:
-		raise errors.OpenCatalogError(err)
+		raise errors.OpencollectionError(err)
 
-	return catalog
+	return collection
 
 
 def check_new_file_exists(filename):
@@ -336,9 +336,9 @@ def check_new_file_exists(filename):
 	return (index_exists or data_exists), index_exists, data_exists
 
 
-def catalog_close(catalog):
-	''' Close @catalog '''
-	catalog.close()
+def collection_close(collection):
+	''' Close @collection '''
+	collection.close()
 #	image.clear_cache()
 
 

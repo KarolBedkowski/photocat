@@ -22,19 +22,19 @@ from photocat.lib.hlpweakref import create_weakref_proxy
 class Timeline(object):
 	''' Obiekt przechowywujący linię czasu - zdjęcia pogrupowane wg daty '''
 
-	__slots__ = ('date', 'catalog', 'tree_node', 'parent', 'level',
+	__slots__ = ('date', 'collection', 'tree_node', 'parent', 'level',
 			'dirs', '_files', '__weakref__')
 
-	def __init__(self, date=None, catalog=None, parent=None, level=0):
-		''' Timeline(data, [catalog], [parent], [level]) -- konstruktor
+	def __init__(self, date=None, collection=None, parent=None, level=0):
+		''' Timeline(data, [collection], [parent], [level]) -- konstruktor
 
 			@param date		-- data (str)
-			@param catalog	-- katalog do którego jest przypisany timeline
+			@param collection -- katalog do którego jest przypisany timeline
 			@param parent	-- nadrzędny obiekt Timeline
 			@param level	-- poziom zagnieżdzenia timeline (0=root)
 		'''
 		self.date = date
-		self.catalog = create_weakref_proxy(catalog)
+		self.collection = create_weakref_proxy(collection)
 		self.tree_node = None
 
 		self.parent = create_weakref_proxy(parent)
@@ -45,7 +45,7 @@ class Timeline(object):
 	def __del__(self):
 		del self.parent
 		del self.tree_node
-		del self.catalog
+		del self.collection
 
 	def reset(self):
 		''' timeline.reset() -- wyczyszczenie obiektu '''
@@ -122,7 +122,7 @@ class Timeline(object):
 			subdir = self.dirs[date_part]
 
 		else:
-			self.dirs[date_part] = subdir = Timeline(date_part, self.catalog,
+			self.dirs[date_part] = subdir = Timeline(date_part, self.collection,
 					self, self.level + 1)
 
 		subdir.__add_item(item)
@@ -145,7 +145,7 @@ class Timeline(object):
 				if subdir.is_valid:
 					add_dir(subdir)
 
-		for item in self.catalog.disks:
+		for item in self.collection.disks:
 			add_dir(item)
 
 		# sortowanie plikow wg daty wykonania zdjecia rekurencyjnie

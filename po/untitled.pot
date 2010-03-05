@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-03 21:37+0100\n"
+"POT-Creation-Date: 2010-03-05 21:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,103 +16,111 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .././photocat/engine/ecatalog.py:45
+#: .././photocat/engine/collections.py:45
 msgid "Counting files..."
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:53
+#: .././photocat/engine/collections.py:53
 msgid "No files found!"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:71 .././photocat/engine/ecatalog.py:166
-msgid "Catalog is read-only."
+#: .././photocat/engine/collections.py:71
+#: .././photocat/engine/collections.py:166
+msgid "Collection is read-only."
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:107
+#: .././photocat/engine/collections.py:107
 #, python-format
 msgid ""
 "Loading file:\n"
 "%s"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:120 .././photocat/engine/epdf.py:129
+#: .././photocat/engine/collections.py:120 .././photocat/engine/epdf.py:129
 msgid "Done!"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:124 .././photocat/engine/epdf.py:125
+#: .././photocat/engine/collections.py:124 .././photocat/engine/epdf.py:125
 #, python-format
 msgid ""
 "Error:\n"
 "%s"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:142
+#: .././photocat/engine/collections.py:142
 msgid "Adding disk"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:155
+#: .././photocat/engine/collections.py:155
 msgid "Updating disk"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:171 .././photocat/engine/ecatalog.py:201
+#: .././photocat/engine/collections.py:171
 #: .././photocat/gui/wndmain_view.py:138
-msgid "Rebuild catalog"
+msgid "Rebuild collection"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:172
+#: .././photocat/engine/collections.py:172
 msgid ""
 "Rebuilding...\n"
 "Please wait."
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:184
+#: .././photocat/engine/collections.py:184
 msgid "Saving..."
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:187
-msgid "Rebuild catalog aborted"
+#: .././photocat/engine/collections.py:187
+msgid "Rebuild collection aborted"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:191
+#: .././photocat/engine/collections.py:191
 #, python-format
 msgid ""
-"Rebuild catalog finished\n"
+"Rebuild collection finished\n"
 "Saved space: %sB"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:200
+#: .././photocat/engine/collections.py:200
 #, python-format
 msgid ""
-"Error occurred when rebuilding catalog:\n"
+"Error occurred when rebuilding collection:\n"
 "%(msg)s"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:221
+#: .././photocat/engine/collections.py:201
+msgid "Rebuild collection file"
+msgstr ""
+
+#: .././photocat/engine/collections.py:221
 msgid "File not exists!"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:225 .././photocat/engine/ecatalog.py:293
-#: .././photocat/engine/ecatalog.py:309
+#: .././photocat/engine/collections.py:225
+#: .././photocat/engine/collections.py:293
+#: .././photocat/engine/collections.py:309
 msgid "File not readable"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:236
+#: .././photocat/engine/collections.py:236
 msgid "Data file not exists!"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:240
+#: .././photocat/engine/collections.py:240
 msgid "Data file not readable"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:280 .././photocat/engine/ecatalog.py:301
+#: .././photocat/engine/collections.py:280
+#: .././photocat/engine/collections.py:301
 msgid "Invalid path"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:284
+#: .././photocat/engine/collections.py:284
 msgid "Path is not writable!"
 msgstr ""
 
-#: .././photocat/engine/ecatalog.py:297 .././photocat/engine/ecatalog.py:313
+#: .././photocat/engine/collections.py:297
+#: .././photocat/engine/collections.py:313
 msgid "File is not writable!"
 msgstr ""
 
@@ -152,7 +160,7 @@ msgstr ""
 
 #: .././photocat/engine/search.py:47 .././photocat/gui/_dlgsearch.py:190
 #: .././photocat/gui/_dlgsearch.py:193 .././photocat/gui/_dlgsearch.py:197
-msgid "<current catalog>"
+msgid "<current collection>"
 msgstr ""
 
 #: .././photocat/engine/search.py:50 .././photocat/gui/_dlgsearch.py:190
@@ -175,7 +183,7 @@ msgstr ""
 #: .././photocat/gui/_dlgproperties_mutli.py:73
 #: .././photocat/gui/components/dirstree.py:215
 #: .././photocat/gui/wndmain_view.py:177
-#: .././photocat/model/_catalog_file.py:69
+#: .././photocat/model/_collection_object.py:70
 msgid "Tags"
 msgstr ""
 
@@ -241,7 +249,7 @@ msgstr ""
 #: .././photocat/gui/_dlgproperties_disk.py:46
 #: .././photocat/gui/_dlgproperties_disk.py:51
 #: .././photocat/gui/components/searchresultlistctrl.py:43
-#: .././photocat/model/_catalog_file.py:67
+#: .././photocat/model/_collection_object.py:68
 msgid "Name"
 msgstr ""
 
@@ -251,7 +259,7 @@ msgstr ""
 
 #: .././photocat/gui/_dlgproperties_disk.py:78
 #: .././photocat/gui/components/searchresultlistctrl.py:45
-#: .././photocat/model/_catalog_file.py:74
+#: .././photocat/model/_collection_object.py:75
 msgid "Disk"
 msgstr ""
 
@@ -301,12 +309,12 @@ msgid "dirs"
 msgstr ""
 
 #: .././photocat/gui/_dlgsearch.py:183
-msgid "Search in disks/catalogs:"
+msgid "Search in disks/collections:"
 msgstr ""
 
 #: .././photocat/gui/_dlgsearch.py:200
 #, python-format
-msgid "catalog: %s"
+msgid "collection: %s"
 msgstr ""
 
 #. szukanie wg dat
@@ -392,7 +400,7 @@ msgstr ""
 msgid "Found %(folders)d folders and %(files)d files"
 msgstr ""
 
-#: .././photocat/gui/_dlgsearch.py:595 .././photocat/gui/wndmain.py:497
+#: .././photocat/gui/_dlgsearch.py:595 .././photocat/gui/wndmain.py:498
 #, python-format
 msgid ""
 "Number of files exceed 1000!\n"
@@ -476,9 +484,10 @@ msgid "Directory"
 msgstr ""
 
 #: .././photocat/gui/components/searchresultlistctrl.py:44
-#: .././photocat/gui/wndmain.py:118 .././photocat/gui/wndmain.py:216
-#: .././photocat/gui/wndmain.py:697 .././photocat/model/_catalog_file.py:72
-msgid "Catalog"
+#: .././photocat/gui/wndmain.py:119 .././photocat/gui/wndmain.py:217
+#: .././photocat/gui/wndmain.py:698
+#: .././photocat/model/_collection_object.py:73
+msgid "Collection"
 msgstr ""
 
 #: .././photocat/gui/components/searchresultlistctrl.py:46
@@ -486,7 +495,7 @@ msgid "Path"
 msgstr ""
 
 #: .././photocat/gui/components/searchresultlistctrl.py:47
-#: .././photocat/model/_catalog_file.py:78
+#: .././photocat/model/_collection_object.py:79
 msgid "File date"
 msgstr ""
 
@@ -501,7 +510,7 @@ msgstr ""
 
 #: .././photocat/gui/dlgadddisk.py:57 .././photocat/gui/wndmain_view.py:160
 #: .././photocat/gui/wndmain_view.py:246
-msgid "Add disk to catalog"
+msgid "Add disk to collection"
 msgstr ""
 
 #: .././photocat/gui/dlgadddisk.py:92
@@ -553,7 +562,7 @@ msgid "Select directory"
 msgstr ""
 
 #: .././photocat/gui/dlgadddisk.py:199
-msgid "Name already exists in catalog!"
+msgid "Name already exists in collection!"
 msgstr ""
 
 #: .././photocat/gui/dlgadddisk.py:200 .././photocat/gui/dlgadddisk.py:206
@@ -564,110 +573,110 @@ msgstr ""
 msgid "Selected dir don't exists!"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:117
+#: .././photocat/gui/wndmain.py:118
 #, python-format
 msgid ""
-"Catalog %s was changed.\n"
+"Collection %s was changed.\n"
 "Save it?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:124
+#: .././photocat/gui/wndmain.py:125
 msgid "Close program?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:125
+#: .././photocat/gui/wndmain.py:126
 msgid "Exit"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:154
-msgid "Catalog file name"
+#: .././photocat/gui/wndmain.py:155
+msgid "Collection file name"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:162
+#: .././photocat/gui/wndmain.py:163
 msgid ""
 "File exists!\n"
 "Overwrite?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:162
+#: .././photocat/gui/wndmain.py:163
 msgid "Error"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:173 .././photocat/gui/wndmain.py:678
+#: .././photocat/gui/wndmain.py:174 .././photocat/gui/wndmain.py:679
 #, python-format
 msgid "Error opening file %s:\n"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:174
+#: .././photocat/gui/wndmain.py:175
 msgid "New file"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:175 .././photocat/gui/wndmain.py:680
+#: .././photocat/gui/wndmain.py:176 .././photocat/gui/wndmain.py:681
 #, python-format
 msgid "Error: %s"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:185 .././photocat/gui/wndmain.py:679
+#: .././photocat/gui/wndmain.py:186 .././photocat/gui/wndmain.py:680
 msgid "Open file"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:214
+#: .././photocat/gui/wndmain.py:215
 #, python-format
 msgid ""
-"Catalog %s has unsaved changes!\n"
+"Collection %s has unsaved changes!\n"
 "Save before close??"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:224
+#: .././photocat/gui/wndmain.py:225
 #, python-format
-msgid "Close catalog %s?"
+msgid "Close collection %s?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:224
+#: .././photocat/gui/wndmain.py:225
 msgid "Close"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:243
+#: .././photocat/gui/wndmain.py:244
 #, python-format
-msgid "Rebuild catalog %s?"
-msgstr ""
-
-#: .././photocat/gui/wndmain.py:362
-msgid "No disk selected"
+msgid "Rebuild collection %s?"
 msgstr ""
 
 #: .././photocat/gui/wndmain.py:363
+msgid "No disk selected"
+msgstr ""
+
+#: .././photocat/gui/wndmain.py:364
 msgid "Delete disk"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:367
+#: .././photocat/gui/wndmain.py:368
 #, python-format
 msgid "Delete disk %s?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:381
+#: .././photocat/gui/wndmain.py:382
 msgid "No directory selected"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:382 .././photocat/gui/wndmain.py:386
+#: .././photocat/gui/wndmain.py:383 .././photocat/gui/wndmain.py:387
 msgid "Delete directory"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:386
+#: .././photocat/gui/wndmain.py:387
 #, python-format
 msgid "Delete directory %s?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:406
+#: .././photocat/gui/wndmain.py:407
 #, python-format
 msgid "Delete %d images?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:406
+#: .././photocat/gui/wndmain.py:407
 msgid "Delete image"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:440
+#: .././photocat/gui/wndmain.py:441
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
@@ -676,48 +685,48 @@ msgid ""
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:500 .././photocat/gui/wndmain.py:901
+#: .././photocat/gui/wndmain.py:501 .././photocat/gui/wndmain.py:902
 #, python-format
 msgid "Files: %d"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:667
+#: .././photocat/gui/wndmain.py:668
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:686
+#: .././photocat/gui/wndmain.py:687
 #, python-format
 msgid "Opened %s readonly"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:689
+#: .././photocat/gui/wndmain.py:690
 #, python-format
 msgid "Opened %s"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:696
+#: .././photocat/gui/wndmain.py:697
 #, python-format
 msgid ""
-"Catalog file contain %d%% unused entries.\n"
-"Rebuild catalog?"
+"Collection file contain %d%% unused entries.\n"
+"Rebuild collection?"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:722
+#: .././photocat/gui/wndmain.py:723
 #, python-format
 msgid "Open %s"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:739
-#, python-format
-msgid "Error saving catalog %s"
-msgstr ""
-
 #: .././photocat/gui/wndmain.py:740
-msgid "Save catalog"
+#, python-format
+msgid "Error saving collection %s"
 msgstr ""
 
-#: .././photocat/gui/wndmain.py:898
+#: .././photocat/gui/wndmain.py:741
+msgid "Save collection"
+msgstr ""
+
+#: .././photocat/gui/wndmain.py:899
 #, python-format
 msgid "Directories %(dirs)d;  files: %(files)d"
 msgstr ""
@@ -731,7 +740,7 @@ msgid "&View"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:121
-msgid "&Catalog"
+msgid "&Collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:122
@@ -743,7 +752,7 @@ msgid "&New"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:130 .././photocat/gui/wndmain_view.py:233
-msgid "Create new catalog"
+msgid "Create new collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:132
@@ -751,7 +760,7 @@ msgid "&Open"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:132 .././photocat/gui/wndmain_view.py:234
-msgid "Open catalog"
+msgid "Open collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:134
@@ -759,7 +768,7 @@ msgid "&Save"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:134 .././photocat/gui/wndmain_view.py:236
-msgid "Save the current catalog"
+msgid "Save the current collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:137
@@ -767,7 +776,7 @@ msgid "&Export to PDF..."
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:138
-msgid "&Rebuild Catalog"
+msgid "&Rebuild collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:140
@@ -787,7 +796,7 @@ msgid "&Close"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:147
-msgid "Close the current catalog"
+msgid "Close the current collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:149
@@ -819,7 +828,7 @@ msgid "&Delete Disk..."
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:164
-msgid "Delete selected disk from catalog"
+msgid "Delete selected disk from collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:167
@@ -843,7 +852,7 @@ msgid "Search for something in calalogs"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:175
-msgid "Show Catalog Informations"
+msgid "Show Collection Informations"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:176
@@ -851,7 +860,7 @@ msgid "Show informations about selected calalog..."
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:177
-msgid "Manage catalog tags..."
+msgid "Manage collection tags..."
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:186
@@ -924,7 +933,7 @@ msgid "Delete selected &dir..."
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:296
-msgid "Close catalog"
+msgid "Close collection"
 msgstr ""
 
 #: .././photocat/gui/wndmain_view.py:312

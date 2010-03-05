@@ -17,7 +17,7 @@ import time
 import operator
 import logging
 
-from photocat.model import Disk, Catalog, FileImage, Directory
+from photocat.model import Disk, Collection, FileImage, Directory
 
 from photocat.storage.storage_errors import LoadFileError, InvalidFileError, \
 	SaveFileError
@@ -37,10 +37,10 @@ class Storage:
 
 	@staticmethod
 	def load(filename):
-		_LOG.info('Storage.load catalog=%s', filename)
+		_LOG.info('Storage.load collection=%s', filename)
 
 		input_file = None
-		catalog = Catalog(filename)
+		collection = Collection(filename)
 		objects = {}
 
 		time_start = time.time()
@@ -55,16 +55,16 @@ class Storage:
 
 			_LOG.info('Storage.load fileversion: %d (%s)', version, line)
 			if version == 3:
-				StorageV3.load(input_file, catalog, objects, filename)
+				StorageV3.load(input_file, collection, objects, filename)
 
 			else:
-				Storage.__load_v2(input_file, catalog, objects, filename)
+				Storage.__load_v2(input_file, collection, objects, filename)
 
-			catalog.disks.sort(key=operator.attrgetter('name'))
-			catalog.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
+			collection.disks.sort(key=operator.attrgetter('name'))
+			collection.dirty = version != Storage.SUPPORTED_FILE_VERSION_MAX
 
-			_LOG.debug('Storage.load catalog=%s  objects_in_files=%d', filename,
-					catalog.object_in_files)
+			_LOG.debug('Storage.load collection=%s  objects_in_files=%d', filename,
+					collection.object_in_files)
 
 		except InvalidFileError, err:
 			_LOG.exception('Storage.load invalid file')
@@ -72,7 +72,7 @@ class Storage:
 
 		except Exception, err:
 			_LOG.exception('Storage.load error')
-			catalog = None
+			collection = None
 			raise LoadFileError(err)
 
 		finally:
@@ -80,16 +80,16 @@ class Storage:
 				input_file.close()
 
 		_LOG.info('Storage.load finished in %0.2f sec', (time.time() - time_start))
-		return catalog
+		return collection
 
 	@staticmethod
-	def save(catalog):
-		_LOG.info('Storage.save catalog=%s', catalog.catalog_filename)
+	def save(collection):
+		_LOG.info('Storage.save collection=%s', collection.filename)
 		time_start = time.time()
 
-		StorageV3.save(catalog, Storage.__get_header())
+		StorageV3.save(collection, Storage.__get_header())
 
-		_LOG.info('Storage.save catalog finished in %0.2f sec',
+		_LOG.info('Storage.save collection finished in %0.2f sec',
 				(time.time() - time_start))
 
 	######################################################
@@ -116,12 +116,12 @@ class Storage:
 		return "|".join((header, str(version), date))
 
 	@staticmethod
-	def __save_v2(catalog):
+	def __save_v2(collection):
 		output_file = None
 		try:
-			output_file = gzip.open(catalog.catalog_filename, 'w')
+			output_file = gzip.open(collection.filename, 'w')
 			output_file.write(Storage.__get_header() + '\n')
-			output_file.write('TAGS|0|%r' % catalog.tags_provider.tags)
+			output_file.write('TAGS|0|%r' % collection.tags_provider.tags)
 
 			_LOG.debug('Storage.save file opened, header written')
 
@@ -130,9 +130,9 @@ class Storage:
 				for child in item.childs_to_store:
 					write_item(child)
 
-			write_item(catalog)
-			catalog.data_provider.save()
-			catalog.dirty = False
+			write_item(collection)
+			collection.data_provider.save()
+			collection.dirty = False
 
 		except Exception, err:
 			_LOG.exception('Storage.save')
@@ -143,7 +143,7 @@ class Storage:
 				output_file.close()
 
 	@staticmethod
-	def __load_v2(input_file, catalog, objects, filename):
+	def __load_v2(input_file, collection, objects, filename):
 		class_names = {'Directory': Directory, 'Disk': Disk,
 				'FileImage': FileImage}
 
@@ -160,7 +160,7 @@ class Storage:
 				oid = int(oid)
 
 				if class_name == 'TAGS':
-					catalog.tags_provider.tags = eval(data)
+					collection.tags_provider.tags = eval(data)
 					continue
 				if not class_name in class_names:
 					_LOG.warn('invalid class name: "%s"', line)
@@ -169,7 +169,7 @@ class Storage:
 				klass = class_names[class_name]
 				data = klass.decode(data)
 				data['parent'] = None
-				data['catalog'] = catalog
+				data['collection'] = collection
 
 				# wstawienie obiektow nadrzędnych
 				if 'parent_id' in data:
@@ -188,14 +188,14 @@ class Storage:
 
 				if data.get('parent') is None:
 					if class_name == 'Disk':
-						catalog.disks.append(new_object)
+						collection.disks.append(new_object)
 					else:
 						_LOG.warn('id without parent "%s"', line)
 				else:
 					data['parent'].add_child(new_object)
 
 				# tagi
-				catalog.tags_provider.add_item(new_object)
+				collection.tags_provider.add_item(new_object)
 
 			except:
 				_LOG.exception('Storage.load(%s) line="%s"', filename, line)

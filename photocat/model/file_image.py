@@ -16,13 +16,13 @@ import time
 import logging
 
 from photocat.engine import image as eimage
-from photocat.model._catalog_file import CatalogFile
+from photocat.model._collection_object import CollectionObject
 from photocat.lib.formaters import format_human_size
 
 _LOG = logging.getLogger(__name__)
 
 
-class FileImage(CatalogFile):
+class FileImage(CollectionObject):
 	FV3_CLASS_NAME = 1048576 + 3
 
 	# lista rozszerzeń plików, które są ładowane (obsługiwane)
@@ -58,7 +58,7 @@ class FileImage(CatalogFile):
 
 		self._exif_data = None
 
-		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
+		CollectionObject.__init__(self, oid, name, parent, disk, *args, **kwargs)
 
 		# czy plik jest raw-em
 		self.is_raw = eimage.is_file_raw(self.name)
@@ -68,7 +68,7 @@ class FileImage(CatalogFile):
 		if self._exif_data is None and self.exif is not None:
 			try:
 				self._exif_data = eimage.load_exif_from_storage(self.exif,
-						self.catalog.data_provider)
+						self.collection.data_provider)
 
 			except:
 				_LOG.exception('FileImage.exif_data file=%s', self.name)
@@ -81,10 +81,10 @@ class FileImage(CatalogFile):
 		if self.thumb is None:
 			return None
 
-		return self.catalog.data_provider.get_data(self.thumb)
+		return self.collection.data_provider.get_data(self.thumb)
 
 	def _get_info(self):
-		result = CatalogFile._get_info(self)
+		result = super(FileImage, self)._get_info()
 		if self.dimensions is not None:
 			result.append((50, _('Dimensions'), "%d x %d" % self.dimensions))
 
@@ -145,31 +145,27 @@ class FileImage(CatalogFile):
 	##########################################################################
 
 	def load(self, path, options, on_update):
-		if CatalogFile.load(self, path, options, on_update):
+		if super(FileImage, self).load(path, options, on_update):
 			self.thumb, self.dimensions = eimage.load_thumb_from_file(path,
-					options, self.catalog.data_provider)
+					options, self.collection.data_provider)
 			self.exif, self._exif_data = eimage.load_exif_from_file(path,
-					self.catalog.data_provider)
+					self.collection.data_provider)
 			self.shot_date = None
 			self.__set_shot_date_from_exif(self._exif_data)
-
 			return True
-
 		return False
 
 	def update(self, path, options, on_update):
-		changes, process = CatalogFile.update(self, path, options, on_update)
+		changes, process = super(FileImage, self).update(path, options, on_update)
 		if process:
 			if changes or options.get('force', False):
 				self.thumb, self.dimensions = eimage.load_thumb_from_file(path,
-						options, self.catalog.data_provider)
+						options, self.collection.data_provider)
 				self.exif, self._exif_data = eimage.load_exif_from_file(path,
-						self.catalog.data_provider)
+						self.collection.data_provider)
 				self.shot_date = None
 				self.__set_shot_date_from_exif(self._exif_data)
-
 			return True
-
 		return False
 
 	def fill_shot_date(self):
@@ -193,7 +189,7 @@ class FileImage(CatalogFile):
 
 	@classmethod
 	def _attrlist(cls):
-		attribs = CatalogFile._attrlist()
+		attribs = super(FileImage, self)._attrlist()
 		attribs.extend((('shot_date', int), ('thumb', tuple),
 			('dimensions', tuple), ('exif', tuple)))
 		return attribs

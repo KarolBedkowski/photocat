@@ -41,7 +41,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		self.clear()
 
 		self.InsertColumn(0, _('Name'))
-		self.InsertColumn(1, _('Catalog'))
+		self.InsertColumn(1, _('Collection'))
 		self.InsertColumn(2, _('Disk'))
 		self.InsertColumn(3, _('Path'))
 		self.InsertColumn(4, _('File date'))
@@ -72,7 +72,7 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		''' srlc.index(item, index, show_size, ico) -- wstawienie elementu '''
 
 		idx = self.InsertImageStringItem(sys.maxint, str(item.name), ico)
-		self.SetStringItem(idx, 1, str(item.catalog.name))
+		self.SetStringItem(idx, 1, str(item.collection.name))
 		self.SetStringItem(idx, 2, str(item.disk.name))
 		self.SetStringItem(idx, 3, item.path)
 		self.SetStringItem(idx, 4, time.strftime('%c', time.localtime(item.date)))
@@ -100,8 +100,8 @@ class SearchResultListCtrl(wx.ListCtrl, listmix.ColumnSorterMixin):
 		sortfnc = {
 			0: lambda x, y: cmp(self.itemDataMap[x].name.lower(),
 					self.itemDataMap[y].name.lower()) * ascending,
-			1: lambda x, y: cmp(self.itemDataMap[x].catalog.name.lower(),
-					self.itemDataMap[y].catalog.name.lower()) * ascending,
+			1: lambda x, y: cmp(self.itemDataMap[x].collection.name.lower(),
+					self.itemDataMap[y].collection.name.lower()) * ascending,
 			2: lambda x, y: cmp(self.itemDataMap[x].disk.name.lower(),
 					self.itemDataMap[y].disk.name.lower()) * ascending,
 			3: lambda x, y: cmp(self.itemDataMap[x].path.lower(),

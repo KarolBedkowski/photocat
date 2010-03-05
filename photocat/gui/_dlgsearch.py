@@ -22,7 +22,7 @@ import wx
 import wx.lib.buttons as buttons
 import wx.lib.foldpanelbar as fpb
 
-from photocat.model import Catalog, Directory, Disk, FileImage
+from photocat.model import Collection, Directory, Disk, FileImage
 from photocat.engine import search, image
 from photocat.lib.singleton import Singleton
 from photocat.lib.appconfig import AppConfig
@@ -52,11 +52,11 @@ class _OptionsError(StandardError):
 class _DlgSearch(wx.Frame):
 	''' Dialog wyszukiwania '''
 
-	def __init__(self, parent, catalogs, selected_item=None):
+	def __init__(self, parent, collections, selected_item=None):
 		wx.Frame.__init__(self, parent, -1, _('Search'),
 				style=wx.DEFAULT_FRAME_STYLE | wx.FULL_REPAINT_ON_RESIZE)
 
-		self._catalogs = catalogs
+		self._collections = collections
 		self._parent = parent
 		self._result = []
 		self._selected_item = selected_item
@@ -180,24 +180,24 @@ class _DlgSearch(wx.Frame):
 
 		# szukanie w ...
 		parent.AddFoldPanelWindow(item, wx.StaticText(item, -1,
-				_('Search in disks/catalogs:')), fpb.FPB_ALIGN_WIDTH, 5)
-		cb = self._sb_search_in_catalog = wx.ComboBox(item, -1, _("<all>"),
+				_('Search in disks/collections:')), fpb.FPB_ALIGN_WIDTH, 5)
+		cb = self._sb_search_in_collection = wx.ComboBox(item, -1, _("<all>"),
 				choices=[_("<all>")], style=wx.CB_READONLY)
 		parent.AddFoldPanelWindow(item, cb, fpb.FPB_ALIGN_WIDTH, 5, 12)
 
 		if self._selected_item is not None:
 			if isinstance(self._selected_item, Disk):
-				map(cb.Append, (_("<current catalog>"), _("<current disk>")))
+				map(cb.Append, (_("<current collection>"), _("<current disk>")))
 
 			elif isinstance(self._selected_item, Directory):
-				map(cb.Append, (_("<current catalog>"), _("<current disk>"),
+				map(cb.Append, (_("<current collection>"), _("<current disk>"),
 						_("<current dir>")))
 
-			elif isinstance(self._selected_item, Catalog) and len(self._catalogs) > 1:
-				map(cb.Append, (_("<current catalog>"), _("<current disk>")))
+			elif isinstance(self._selected_item, Collection) and len(self._collections) > 1:
+				map(cb.Append, (_("<current collection>"), _("<current disk>")))
 
-		for cat in self._catalogs:
-			cb.Append(_("catalog: %s") % cat.name)
+		for cat in self._collections:
+			cb.Append(_("collection: %s") % cat.name)
 
 		parent.AddFoldPanelSeparator(item)
 
@@ -348,7 +348,7 @@ class _DlgSearch(wx.Frame):
 				options['search_for_files'] = files
 				options['search_for_dirs'] = dirs
 
-			options['search_in_catalog'] = self._sb_search_in_catalog.GetValue()
+			options['search_in_collection'] = self._sb_search_in_collection.GetValue()
 
 			search_date = options['search_date'] = self._cb_date.IsChecked()
 			if search_date:
@@ -416,8 +416,8 @@ class _DlgSearch(wx.Frame):
 					ico)
 			result.append(item)
 
-		catalogs, subdirs_count = search.get_catalogs_to_search(self._catalogs,
-				options, self._selected_item)
+		collections, subdirs_count = search.get_collections_to_search(
+				self._collections, options, self._selected_item)
 
 		dlg_progress = wx.ProgressDialog(_("Searching..."), "\n",
 				parent=self, maximum=subdirs_count + 1,
@@ -441,7 +441,7 @@ class _DlgSearch(wx.Frame):
 
 			return cont & cntr[2]
 
-		what = search.find(what, options, catalogs, insert, update_dlg_progress)
+		what = search.find(what, options, collections, insert, update_dlg_progress)
 
 		listctrl.result = result
 		listctrl.autosize_cols()
@@ -645,17 +645,17 @@ class DlgSearchProvider(Singleton):
 	def _init(self):
 		self._dialogs = []
 
-	def create(self, parent, catalogs, selected_item=None):
-		''' DlgSearchProvider().create(parent, catalogs, [selected_item])
+	def create(self, parent, collections, selected_item=None):
+		''' DlgSearchProvider().create(parent, collections, [selected_item])
 		-- tworzy nowy dlg
 
 		@param parent 	- okno nadrzędne
-		@param catalog	- katalog (katalogi)
+		@param collection	- katalog (katalogi)
 		@param selected_item - aktualnie wybrany element
 
 		Tworzony dlg jest dodawany do listy.
 		'''
-		dlg = _DlgSearch(parent, catalogs, selected_item)
+		dlg = _DlgSearch(parent, collections, selected_item)
 		dlg.Bind(wx.EVT_CLOSE, self._on_dialog_close)
 		self._dialogs.append(dlg)
 		return dlg

@@ -1,6 +1,5 @@
-./photocat/__init__.py
 ./photocat/engine/__init__.py
-./photocat/engine/ecatalog.py
+./photocat/engine/collections.py
 ./photocat/engine/efile.py
 ./photocat/engine/epdf.py
 ./photocat/engine/eprint.py
@@ -59,8 +58,8 @@
 ./photocat/lib/wxtools/wnd_shell.py
 ./photocat/main.py
 ./photocat/model/__init__.py
-./photocat/model/_catalog_file.py
-./photocat/model/catalog.py
+./photocat/model/_collection_object.py
+./photocat/model/collection.py
 ./photocat/model/directory.py
 ./photocat/model/disk.py
 ./photocat/model/file_image.py

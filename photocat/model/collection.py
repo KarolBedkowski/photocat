@@ -24,12 +24,12 @@ from photocat.model.tag import Tags
 from photocat.model.timeline import Timeline
 
 
-class Catalog(TreeItem):
+class Collection(TreeItem):
 
 	def __init__(self, filename, readonly=False):
 		TreeItem.__init__(self)
 
-		self.catalog_filename = filename
+		self.filename = filename
 		self.name = os.path.basename(filename)
 		self.last_id = None
 		self.last_offset = None
@@ -37,7 +37,7 @@ class Catalog(TreeItem):
 		self.readonly = readonly
 
 		self.disks = []
-		self.catalog = weakref.proxy(self)
+		self.collection = weakref.proxy(self)
 
 		self.data_provider = DataProvider(filename)
 		self.tags_provider = Tags(self)

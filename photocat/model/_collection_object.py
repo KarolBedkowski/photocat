@@ -24,11 +24,11 @@ from photocat.lib.hlpweakref import create_weakref_proxy
 _LOG = logging.getLogger(__name__)
 
 
-class CatalogFile(StorageObject):
+class CollectionObject(StorageObject):
 	''' Klasa bazowa dla wszystkich plików i katalogów  w katalogu '''
 
 	__slots__ = ('size', 'date', 'tags', 'desc', 'name', '_parent', '_disk',
-			'catalog', '_cached_path')
+			'collection', '_cached_path')
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		self.size = kwargs.get('size')
@@ -43,7 +43,8 @@ class CatalogFile(StorageObject):
 		self.name = name
 		self._parent = create_weakref_proxy(parent)
 		self._disk = create_weakref_proxy(disk)
-		self.catalog = create_weakref_proxy(kwargs.get('catalog') or disk.catalog)
+		self.collection = create_weakref_proxy(kwargs.get('collection') \
+				or disk.collection)
 
 		self._cached_path = None
 
@@ -69,7 +70,7 @@ class CatalogFile(StorageObject):
 			result.append((1, _('Tags'), ', '.join(self.tags)))
 
 		result.append((99, '', ''))
-		result.append((100, _('Catalog'), self.disk.catalog.name))
+		result.append((100, _('Collection'), self.disk.collection.name))
 		if self.disk is not None:
 			result.append((101, _('Disk'), self.disk.name))
 
@@ -113,7 +114,7 @@ class CatalogFile(StorageObject):
 		StorageObject.delete(self)
 		if self.tags is not None and len(self.tags) > 0:
 			_LOG.debug('delete tags from %s', self.name)
-			self.catalog.tags_provider.remove_item(self)
+			self.collection.tags_provider.remove_item(self)
 
 	def load(self, path, _options, on_update):
 		""" załadowanie danych o obiekcie """
@@ -143,7 +144,7 @@ class CatalogFile(StorageObject):
 					+ [tag for tag in self.tags if tag not in tags]
 
 		self.tags = tuple(tags) if len(tags) > 0 else None
-		self.catalog.tags_provider.update_item(self)
+		self.collection.tags_provider.update_item(self)
 		return updated_tags
 
 	def check_on_find(self, cmpfunc, add_callback, options,

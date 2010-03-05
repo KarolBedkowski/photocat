@@ -26,7 +26,7 @@ class UpdateDiskError(StandardError):
 	pass
 
 
-class OpenCatalogError(StandardError):
+class OpenCollectionError(StandardError):
 	''' OpenCatalogError '''
 	pass
 

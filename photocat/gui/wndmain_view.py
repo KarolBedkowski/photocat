@@ -75,7 +75,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._tb_add_disk = None
 		self._info_panel = None
 		self._menu_view_show_recur = None
-		self._main_menu_catalog = None
+		self._main_menu_collection = None
 		self._tb_find = None
 
 		self.SetIcon(self._icon_provider.get_icon('icon'))
@@ -118,7 +118,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._menu_bar = menu_bar = wx.MenuBar()
 		menu_bar.Append(self._create_main_menu_file(), _('&File'))
 		menu_bar.Append(self._create_main_menu_view(), _('&View'))
-		menu_bar.Append(self._create_main_menu_catalog(), _('&Catalog'))
+		menu_bar.Append(self._create_main_menu_collection(), _('&Collection'))
 		menu_bar.Append(self._create_main_menu_help(), _('Help'))
 		if self._debug:
 			menu_bar.Append(self._create_main_menu_debug(), '&Debug')
@@ -127,15 +127,15 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 	def _create_main_menu_file(self):
 		self._main_menu_file = create_menu(self, (
-			(_('&New'), 'Ctrl-N', _('Create new catalog'), self._on_file_new,
+			(_('&New'), 'Ctrl-N', _('Create new collection'), self._on_file_new,
 					wx.ID_NEW, wx.ART_NEW),
-			(_('&Open'), 'Ctrl+O', _('Open catalog'), self._on_file_open,
+			(_('&Open'), 'Ctrl+O', _('Open collection'), self._on_file_open,
 					wx.ID_OPEN, wx.ART_FILE_OPEN),
-			(_('&Save'), 'Ctrl+S', _('Save the current catalog'), self._on_file_save,
+			(_('&Save'), 'Ctrl+S', _('Save the current collection'), self._on_file_save,
 					wx.ID_SAVE, wx.ART_FILE_SAVE),
 			('-'),
 			(_('&Export to PDF...'), None, '', self._on_file_export_pdf),
-			(_('&Rebuild Catalog'), None, _('Rebuild catalog'),
+			(_('&Rebuild collection'), None, _('Rebuild collection'),
 					self._on_file_rebuild),
 			(_('&Print'), 'Ctrl+P', '', self._on_file_print_prv, wx.ID_PRINT,
 					wx.ART_PRINT),
@@ -144,7 +144,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 					self._on_file_settings),
 			('-'),
 			('-'),
-			(_('&Close'), 'Ctrl+W', _('Close the current catalog'),
+			(_('&Close'), 'Ctrl+W', _('Close the current collection'),
 					self._on_file_close),
 			(_('&Quit'), 'Alt-F4', _('Quit the application'), self._on_menu_close,
 					wx.ID_EXIT, wx.ART_QUIT)))
@@ -155,28 +155,28 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 		return self._main_menu_file
 
-	def _create_main_menu_catalog(self):
+	def _create_main_menu_collection(self):
 		menu = create_menu(self, (
-			(_('&Add Disk...'), None, _('Add disk to catalog'),
-					self._on_catalog_add, None, wx.ART_NEW_DIR),
+			(_('&Add Disk...'), None, _('Add disk to collection'),
+					self._on_collection_add, None, wx.ART_NEW_DIR),
 			(_('&Update Disk...'), None, _('Update selected disk'),
-					self._on_catalog_update_disk),
-			(_('&Delete Disk...'), None, _('Delete selected disk from catalog'),
-					self._on_catalog_del_disk, None, wx.ART_DELETE),
+					self._on_collection_update_disk),
+			(_('&Delete Disk...'), None, _('Delete selected disk from collection'),
+					self._on_collection_del_disk, None, wx.ART_DELETE),
 			('-'),
-			(_('Delete Selected &Dir...'), None, '', self._on_catalog_del_dir),
+			(_('Delete Selected &Dir...'), None, '', self._on_collection_del_dir),
 			(_('Delete Selected &Image...'), None, '',
-					self._on_catalog_del_image),
+					self._on_collection_del_image),
 			('-'),
-			(_('&Edit Selected Files...'), None, '', self._on_catalog_edit_multi),
+			(_('&Edit Selected Files...'), None, '', self._on_collection_edit_multi),
 			('-'),
 			(_('Search...'), 'Ctrl+F', _('Search for something in calalogs'),
-					self._on_catalog_search, wx.ID_FIND, wx.ART_FIND),
-			(_('Show Catalog Informations'), None, 
-					_('Show informations about selected calalog...'), self._on_catalog_info),
-			(_('Tags'), None, _('Manage catalog tags...'), self._on_catalog_edit_tags),
+					self._on_collection_search, wx.ID_FIND, wx.ART_FIND),
+			(_('Show Collection Informations'), None, 
+					_('Show informations about selected calalog...'), self._on_collection_info),
+			(_('Tags'), None, _('Manage collection tags...'), self._on_collection_edit_tags),
 		))
-		self._main_menu_catalog = menu
+		self._main_menu_collection = menu
 		return menu
 
 	def _create_main_menu_view(self):
@@ -230,20 +230,20 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 			return create_toolbar_button(toolbar, label, function,
 					imgid=iconname, description=description)
 
-		__cbtna(_('New'), self._on_file_new, wx.ART_NEW, _('Create new catalog'))
-		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN, _('Open catalog'))
+		__cbtna(_('New'), self._on_file_new, wx.ART_NEW, _('Create new collection'))
+		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN, _('Open collection'))
 		self._tb_save = __cbtna(_('Save'), self._on_file_save, wx.ART_FILE_SAVE,
-				_('Save the current catalog'))
+				_('Save the current collection'))
 
 		toolbar.AddSeparator()
 
-		self._tb_find = __cbtna(_('Search'), self._on_catalog_search, wx.ART_FIND,
+		self._tb_find = __cbtna(_('Search'), self._on_collection_search, wx.ART_FIND,
 				_('Search for something in calalogs'))
 
 		toolbar.AddSeparator()
 
-		self._tb_add_disk = __cbtna(_('Add disk...'), self._on_catalog_add,
-				wx.ART_NEW_DIR, _('Add disk to catalog'))
+		self._tb_add_disk = __cbtna(_('Add disk...'), self._on_collection_add,
+				wx.ART_NEW_DIR, _('Add disk to collection'))
 
 		toolbar.AddSeparator()
 		toolbar.Realize()
@@ -282,18 +282,18 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		if hasattr(item, 'subdirs'):
 			__append(_('Properties'), self._on_dirtree_item_activate)
 
-			if not item.catalog.readonly:
+			if not item.collection.readonly:
 				popup_menu.AppendSeparator()
 				if item.path == '': #isinstance(item, Disk):
-					__append(_('&Update disk...'), self._on_catalog_update_disk)
-					__append(_('&Delete disk...'), self._on_catalog_del_disk)
+					__append(_('&Update disk...'), self._on_collection_update_disk)
+					__append(_('&Delete disk...'), self._on_collection_del_disk)
 
 				else:
-					__append(_('Delete selected &dir...'), self._on_catalog_del_dir)
+					__append(_('Delete selected &dir...'), self._on_collection_del_dir)
 
 			popup_menu.AppendSeparator()
 
-		__append(_('Close catalog'), self._on_file_close)
+		__append(_('Close collection'), self._on_file_close)
 		return popup_menu
 
 	def _create_popup_menu_image(self):
@@ -306,10 +306,10 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 		__append(_('Properties'), self._on_photo_popoup_properties)
 
-		catalog = self._photo_list.selected_item.catalog
-		if not catalog.readonly:
+		collection = self._photo_list.selected_item.collection
+		if not collection.readonly:
 			popup_menu.AppendSeparator()
-			__append(_('&Delete file...'), self._on_catalog_del_image)
+			__append(_('&Delete file...'), self._on_collection_del_image)
 
 		return popup_menu
 
@@ -351,11 +351,11 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 						#isinstance(item, Directory):
 					self._info_panel.show_folder(item)
 
-	def _update_tags_timeline(self, catalog):
+	def _update_tags_timeline(self, collection):
 		'''odświerzenie dir tree:
 		tags, timeline '''
-		self._dirs_tree.update_node_tags(catalog.tags_provider, True)
-		self._dirs_tree.update_timeline_node(catalog.timeline)
+		self._dirs_tree.update_node_tags(collection.tags_provider, True)
+		self._dirs_tree.update_timeline_node(collection.timeline)
 
 	def _info_panel_clear(self):
 		''' wyczyszczenie info-panelu '''
@@ -391,31 +391,31 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 	def _on_menu_close(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_add(self, evt):
+	def _on_collection_add(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_update_disk(self, evt):
+	def _on_collection_update_disk(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_del_disk(self, evt):
+	def _on_collection_del_disk(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_del_dir(self, evt):
+	def _on_collection_del_dir(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_del_image(self, evt):
+	def _on_collection_del_image(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_edit_multi(self, evt):
+	def _on_collection_edit_multi(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_search(self, evt):
+	def _on_collection_search(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_info(self, evt):
+	def _on_collection_info(self, evt):
 		raise NotImplementedError()
 
-	def _on_catalog_edit_tags(self, evt):
+	def _on_collection_edit_tags(self, evt):
 		raise NotImplementedError()
 
 	def _on_view_show_hide_info(self, evt):

@@ -25,47 +25,47 @@ from photocat.lib.appconfig import AppConfig
 _LOG = logging.getLogger(__name__)
 
 
-def get_catalogs_to_search(catalogs, options, selected_item):
-	""" get_catalogs_to_search(catalogs, options, selected_item) -> []
+def get_collections_to_search(collections, options, selected_item):
+	""" get_collections_to_search(collections, options, selected_item) -> []
 		-- zwraca liste obiektów do przeszukania
 
 		Na podstawie opcji określa co przeszukiwać.
 
-		@param catalogs		- lista katalogow do przeszukania
+		@param collections		- lista katalogow do przeszukania
 		@param options		- opcje do wyszukania
 		@param selected_item - aktualnie wybrany element
 
 		Opcje:
-			- search_in_catalog - gdzie szukać
+			- search_in_collection - gdzie szukać
 	"""
-	catalogs_to_search = catalogs
+	collections_to_search = collections
 	if options is not None:
-		search_in_catalog = options.get('search_in_catalog', _("<all>"))
-		if search_in_catalog == _("<all>"):
+		search_in_collection = options.get('search_in_collection', _("<all>"))
+		if search_in_collection == _("<all>"):
 			pass
 
-		elif search_in_catalog == _("<current catalog>"):
-			catalogs_to_search = [selected_item.catalog]
+		elif search_in_collection == _("<current collection>"):
+			collections_to_search = [selected_item.collection]
 
-		elif search_in_catalog == _("<current disk>"):
-			catalogs_to_search = [selected_item.disk]
+		elif search_in_collection == _("<current disk>"):
+			collections_to_search = [selected_item.disk]
 
-		elif search_in_catalog == _("<current dir>"):
-			catalogs_to_search = [selected_item]
+		elif search_in_collection == _("<current dir>"):
+			collections_to_search = [selected_item]
 
 		else:
 			# wyszukiwanie w konkretnym katalogu
-			search_in_catalog = search_in_catalog.split(": ", 1)[1]
-			catalogs_to_search = [cat for cat in catalogs
-					if cat.name == search_in_catalog]
+			search_in_collection = search_in_collection.split(": ", 1)[1]
+			collections_to_search = [cat for cat in collections
+					if cat.name == search_in_collection]
 
-	subdirs_count = sum((cat.subdirs_count for cat in catalogs_to_search))
+	subdirs_count = sum((cat.subdirs_count for cat in collections_to_search))
 
-	return catalogs_to_search, subdirs_count
+	return collections_to_search, subdirs_count
 
 
-def find(what, options, catalogs, insert_func, progress_funct):
-	""" find(what, options, catalogs, insert_func, progress_funct) -> string
+def find(what, options, collections, insert_func, progress_funct):
+	""" find(what, options, collections, insert_func, progress_funct) -> string
 	-- wyszukanie informacji
 
 	@param what			- string do wyszukania
@@ -101,8 +101,8 @@ def find(what, options, catalogs, insert_func, progress_funct):
 			# bez dopasowania case
 			cmpfunc = lambda x: (x.lower().find(what) > -1)
 
-	for catalog in catalogs:
-		catalog.check_on_find(cmpfunc, insert_func, options, progress_funct)
+	for collection in collections:
+		collection.check_on_find(cmpfunc, insert_func, options, progress_funct)
 
 	return what
 

@@ -125,11 +125,11 @@ class DataProvider:
 			self._file.close()
 			self._file = None
 
-	def rebuild(self, catalog, progress_callback=None):
-		''' DataProvider.rebuild(catalog) -> int -- przebudowanie pliku danych.
+	def rebuild(self, collection, progress_callback=None):
+		''' DataProvider.rebuild(collection) -> int -- przebudowanie pliku danych.
 		Przebudowywuje plik danych i usuwa z niego śmieci.
 
-		@param catalog katalog do przebudowy
+		@param collection katalog do przebudowy
 		@return ilość zaoszczędzonego miejsca
 		'''
 		self.saved_next_offset = self.next_offset
@@ -180,7 +180,7 @@ class DataProvider:
 
 			# kopiowanie katalogu
 			next_offset = new_file_next_offset
-			for disk in catalog.disks:
+			for disk in collection.disks:
 				next_offset = copy_directory(disk, next_offset)
 
 			new_file.close()
@@ -226,7 +226,7 @@ class DataProvider:
 				self._file.close()
 				self._file = None
 			self.open()
-			catalog.dirty = True
+			collection.dirty = True
 
 		return saved_space
 

@@ -17,13 +17,13 @@ from photocat.lib.hlpweakref import create_weakref_proxy
 
 
 class Tag(object):
-	__slots__ = ('name', 'files', 'dirs', 'catalog', 'tree_node')
+	__slots__ = ('name', 'files', 'dirs', 'collection', 'tree_node')
 
-	def __init__(self, name=None, catalog=None):
+	def __init__(self, name=None, collection=None):
 		self.name = name
 		self.files = []
 		self.dirs = []
-		self.catalog = catalog
+		self.collection = collection
 		self.tree_node = None
 
 	@property
@@ -73,11 +73,11 @@ class Tag(object):
 class Tags(object):
 	FV3_CLASS_NAME = 1048576 + 4
 
-	__slots__ = ('_tags', 'catalog', 'current_tags_nodes', 'tree_node')
+	__slots__ = ('_tags', 'collection', 'current_tags_nodes', 'tree_node')
 
-	def __init__(self, catalog):
+	def __init__(self, collection):
 		self._tags = {}
-		self.catalog = create_weakref_proxy(catalog)
+		self.collection = create_weakref_proxy(collection)
 		self.current_tags_nodes = []
 		self.tree_node = None
 
@@ -106,7 +106,7 @@ class Tags(object):
 		# dodanie nowych
 		for tag in tags:
 			if tag not in self._tags:
-				self._tags[tag] = Tag(tag, self.catalog)
+				self._tags[tag] = Tag(tag, self.collection)
 
 	tags = property(_get_tags, _set_tags)
 
@@ -141,7 +141,7 @@ class Tags(object):
 		if tag in self._tags:
 			return self._tags[tag]
 
-		tag_obj = Tag(tag, self.catalog)
+		tag_obj = Tag(tag, self.collection)
 		self._tags[tag] = tag_obj
 		return tag_obj
 

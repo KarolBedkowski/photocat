@@ -7,7 +7,7 @@ MainWnd
 Photo Catalog v 1.0  (photocat)
 Copyright (c) Karol Będkowski, 2004-2007
 
-This file is part of Photo Catalog
+	This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
@@ -22,9 +22,9 @@ import logging
 
 import wx
 
-from photocat.model import Catalog, Directory, Disk, FileImage, Tag, Timeline
+from photocat.model import Collection, Directory, Disk, FileImage, Tag, Timeline
 from photocat.storage.storage import Storage
-from photocat.engine import ecatalog, eprint, epdf
+from photocat.engine import collections, eprint, epdf
 from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools import dialogs
 from photocat.lib.wxtools.wnd_shell import WndShell
@@ -54,7 +54,7 @@ class WndMain(WndMainView):
 		WndMainView.__init__(self, app, debug)
 		_LOG.debug('MainWnd.__init__')
 
-		self._catalogs = []
+		self._collections = []
 		self._info_panel_size = None
 		self._last_used_dir = os.path.expanduser('~')
 		self._current_show_images = []
@@ -85,21 +85,21 @@ class WndMain(WndMainView):
 	############################################################################
 
 	@property
-	def catalogs_not_loaded(self):
-		''' Check is no catalog loaded '''
-		return not self._catalogs
+	def collections_not_loaded(self):
+		''' Check is no collection loaded '''
+		return not self._collections
 
 	@property
-	def selected_catalog(self):
-		''' get selected or first catalog '''
-		if self.catalogs_not_loaded:
+	def selected_collection(self):
+		''' get selected or first collection '''
+		if self.collections_not_loaded:
 			return None
 
 		tree_selected = self._dirs_tree.selected_item
-		catalog = (self._catalogs[0] if tree_selected is None
-				else tree_selected.catalog)
+		collection = (self._collections[0] if tree_selected is None
+				else tree_selected.collection)
 
-		return catalog
+		return collection
 
 	############################################################################
 
@@ -109,27 +109,28 @@ class WndMain(WndMainView):
 
 	def _on_close(self, evt):
 		'''_on_close'''
-		dirty_catalogs = [catalog for catalog in self._catalogs if catalog.dirty]
+		dirty_collections = [collection for collection in self._collections 
+				if collection.dirty]
 
-		if len(dirty_catalogs) > 0:
-			for catalog in dirty_catalogs:
+		if len(dirty_collections) > 0:
+			for collection in dirty_collections:
 				res = dialogs.message_box_warning_yesnocancel(self,
-						_("Catalog %s was changed.\nSave it?") % catalog.caption,
-						_('Catalog'))
+						_("Collection %s was changed.\nSave it?") % collection.caption,
+						_('Collection'))
 				if res == wx.ID_CANCEL:
 					return
 				elif res == wx.ID_YES:
-					self._save_catalog(catalog)
+					self._save_collection(collection)
 
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'),
 				_('Exit')):
 			return
 
-		for catalog in self._catalogs:
-			ecatalog.catalog_close(catalog)
+		for collection in self._collections:
+			collections.collection_close(collection)
 
-		del self._catalogs
-		self._catalogs = None
+		del self._collections
+		self._collections = None
 
 		self._photo_list.clear_cache()
 
@@ -151,22 +152,22 @@ class WndMain(WndMainView):
 
 	def _on_file_new(self, evt):
 		'''_on_file_new '''
-		filename = dialogs.dialog_file_save(self, _('Catalog file name'),
+		filename = dialogs.dialog_file_save(self, _('Collection file name'),
 				'*.index', default_dir=self._last_used_dir)
 		if filename is not None:
 			if not filename.endswith('.index'):
 				filename = filename + '.index'
 
-			if ecatalog.check_new_file_exists(filename)[0]:
+			if collections.check_new_file_exists(filename)[0]:
 				if not dialogs.message_box_question_yesno(self,
 						_('File exists!\nOverwrite?'), _('Error')):
 					return
 
 			try:
 				self.SetCursor(wx.HOURGLASS_CURSOR)
-				catalog = ecatalog.new_catalog(filename)
-				self._catalogs.append(catalog)
-				self._dirs_tree.add_catalog(catalog)
+				collection = collections.new_collection(filename)
+				self._collections.append(collection)
+				self._dirs_tree.add_collection(collection)
 			except StandardError, err:
 				_LOG.exception('WndMain._on_file_new(%s)', filename)
 				dialogs.message_box_error(self,
@@ -196,55 +197,55 @@ class WndMain(WndMainView):
 		'''_on_file_save '''
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None:
-			for cat in self._catalogs:
-				self._save_catalog(cat)
-				self._dirs_tree.update_catalog_node(cat)
+			for cat in self._collections:
+				self._save_collection(cat)
+				self._dirs_tree.update_collection_node(cat)
 		else:
-			self._save_catalog(tree_selected.catalog)
-			self._dirs_tree.update_catalog_node(tree_selected.catalog)
+			self._save_collection(tree_selected.collection)
+			self._dirs_tree.update_collection_node(tree_selected.collection)
 
 	def _on_file_close(self, evt):
 		''' _on_file_close '''
-		catalog = self.selected_catalog
-		if catalog is None:
+		collection = self.selected_collection
+		if collection is None:
 			return
 
-		if catalog.dirty:
+		if collection.dirty:
 			res = dialogs.message_box_warning_yesnocancel(self,
-					_('Catalog %s has unsaved changes!\nSave before close??') \
-					% catalog.caption,
-					_('Catalog'))
+					_('Collection %s has unsaved changes!\nSave before close??') \
+					% collection.caption,
+					_('Collection'))
 
 			if res == wx.ID_YES:
-				self._save_catalog(catalog)
+				self._save_collection(collection)
 			elif res == wx.ID_CANCEL:
 				return
 
 		elif not dialogs.message_box_question_yesno(self,
-				_('Close catalog %s?') % catalog.caption, _('Close')):
+				_('Close collection %s?') % collection.caption, _('Close')):
 			return
 
-		self._dirs_tree.delete_item(catalog)
-		ecatalog.catalog_close(catalog)
-		idx = [idx for idx, cat in enumerate(self._catalogs)
-				if cat.name == catalog.name]
-		del self._catalogs[idx[0]]
+		self._dirs_tree.delete_item(collection)
+		collections.collection_close(collection)
+		idx = [idx for idx, cat in enumerate(self._collections)
+				if cat.name == collection.name]
+		del self._collections[idx[0]]
 		self._update_menus_toolbars()
 		DlgSearchProvider().close_all()
 		self._photo_list.clear_cache()
 
 	def _on_file_rebuild(self, evt):
 		''' _on_file_rebuild '''
-		catalog = self.selected_catalog
-		if catalog is None:
+		collection = self.selected_collection
+		if collection is None:
 			return
 
 		if not dialogs.message_box_question_yesno(self,
-				_('Rebuild catalog %s?') % catalog.caption, 'photocat'):
+				_('Rebuild collection %s?') % collection.caption, 'photocat'):
 			return
 
-		if ecatalog.rebuild(catalog, self):
-			self._save_catalog(catalog)
+		if collections.rebuild(collection, self):
+			self._save_collection(collection)
 
 	def _on_file_settings(self, evt):
 		''' _on_file_settings '''
@@ -307,30 +308,30 @@ class WndMain(WndMainView):
 		WndShell(self, locals()).Show()
 
 	def _on_debug_fill_shot_date(self, evt):
-		catalog = self.selected_catalog
-		if catalog is not None:
-			catalog.fill_shot_date()
+		collection = self.selected_collection
+		if collection is not None:
+			collection.fill_shot_date()
 
-	def _on_catalog_add(self, evt):
-		catalog = self.selected_catalog
-		if catalog is not None:
+	def _on_collection_add(self, evt):
+		collection = self.selected_collection
+		if collection is not None:
 			disk = None
 			try:
-				disk = ecatalog.add_disk_to_catalog(catalog, self)
+				disk = collections.add_disk_to_collection(collection, self)
 			except StandardError:
-				_LOG.exception('WndMain._on_catalog_add()')
+				_LOG.exception('WndMain._on_collection_add()')
 
 			else:
 				if disk is not None:
-					#self._save_catalog(catalog, True)
+					#self._save_collection(collection, True)
 					self._dirs_tree.update_node_disk(disk)
-					self._update_tags_timeline(catalog)
-					self._dirs_tree.update_catalog_node(catalog)
+					self._update_tags_timeline(collection)
+					self._dirs_tree.update_collection_node(collection)
 
 			self._update_menus_toolbars()
 
-	def _on_catalog_update_disk(self, evt):
-		if self.catalogs_not_loaded:
+	def _on_collection_update_disk(self, evt):
+		if self.collections_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -339,22 +340,22 @@ class WndMain(WndMainView):
 
 		disk = tree_selected.disk
 		try:
-			ecatalog.update_disk_in_catalog(disk.catalog, disk, self)
+			collections.update_disk_in_collection(disk.collection, disk, self)
 		except StandardError:
-			_LOG.exception('WndMain._on_catalog_update_disk()')
+			_LOG.exception('WndMain._on_collection_update_disk()')
 
 		else:
 			if disk is not None:
-				catalog = disk.catalog
-				#self._save_catalog(catalog, True)
+				collection = disk.collection
+				#self._save_collection(collection, True)
 				self._dirs_tree.update_node_disk(disk)
-				self._update_tags_timeline(catalog)
-				self._dirs_tree.update_catalog_node(catalog)
+				self._update_tags_timeline(collection)
+				self._dirs_tree.update_collection_node(collection)
 
 			self._update_menus_toolbars()
 
-	def _on_catalog_del_disk(self, evt):
-		if self.catalogs_not_loaded:
+	def _on_collection_del_disk(self, evt):
+		if self.collections_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -366,14 +367,14 @@ class WndMain(WndMainView):
 		if dialogs.message_box_warning_yesno(self,
 				_('Delete disk %s?') % tree_selected.name, 'photocat'):
 			self._dirs_tree.delete_item(tree_selected)
-			catalog = tree_selected.catalog
-			catalog.remove_disk(tree_selected)
-			self._dirs_tree.update_catalog_node(catalog)
-			self._update_tags_timeline(tree_selected.catalog)
+			collection = tree_selected.collection
+			collection.remove_disk(tree_selected)
+			self._dirs_tree.update_collection_node(collection)
+			self._update_tags_timeline(tree_selected.collection)
 			self._update_menus_toolbars()
 
-	def _on_catalog_del_dir(self, evt):
-		if self.catalogs_not_loaded:
+	def _on_collection_del_dir(self, evt):
+		if self.collections_not_loaded:
 			return
 
 		tree_selected = self._dirs_tree.selected_item
@@ -386,16 +387,16 @@ class WndMain(WndMainView):
 				_('Delete directory %s?') % tree_selected.name, _('Delete directory')):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
-			self._update_tags_timeline(tree_selected.catalog)
+			self._update_tags_timeline(tree_selected.collection)
 			self._update_menus_toolbars()
 
-	def _on_catalog_del_image(self, evt):
-		''' _on_catalog_del_image '''
-		if self.catalogs_not_loaded:
+	def _on_collection_del_image(self, evt):
+		''' _on_collection_del_image '''
+		if self.collections_not_loaded:
 			return
 
 		folder = self._dirs_tree.selected_item
-		if folder is None or isinstance(folder, Catalog):
+		if folder is None or isinstance(folder, Collection):
 			return
 
 		selected_count = self._photo_list.selected_count
@@ -411,65 +412,65 @@ class WndMain(WndMainView):
 			if self._info_panel is not None:
 				self._info_panel.show_folder(folder)
 
-			self._dirs_tree.update_catalog_node(folder.catalog)
+			self._dirs_tree.update_collection_node(folder.collection)
 
-	def _on_catalog_search(self, evt):
-		''' _on_catalog_search '''
-		if not self.catalogs_not_loaded:
-			DlgSearchProvider().create(self, self._catalogs,
+	def _on_collection_search(self, evt):
+		''' _on_collection_search '''
+		if not self.collections_not_loaded:
+			DlgSearchProvider().create(self, self._collections,
 					self._dirs_tree.selected_item).Show()
 
-	def _on_catalog_info(self, evt):
-		''' _on_catalog_info '''
-		if self.catalogs_not_loaded:
+	def _on_collection_info(self, evt):
+		''' _on_collection_info '''
+		if self.collections_not_loaded:
 			return
 
-		catalog = self.selected_catalog
+		collection = self.selected_collection
 
 		files_count, subdirs_count = 0, 0
-		for disk in catalog.disks:
+		for disk in collection.disks:
 			(disk_files_count, disk_subdirs_count, disk_files_count2,
 					disk_subdirs_count2) = disk.directory_size
 			files_count += disk_files_count + disk_files_count2
 			subdirs_count += disk_subdirs_count + disk_subdirs_count2
 
-		dirty, dirtyp = catalog.dirty_objects_count
+		dirty, dirtyp = collection.dirty_objects_count
 
-		data = dict(disks=len(catalog.disks), files=files_count,
+		data = dict(disks=len(collection.disks), files=files_count,
 				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
 		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty '
 				'entries: %(dirty)d (%(dirtyp)d%%)') % data
 		dialogs.message_box_info(self, info, version.NAME)
 
-	def _on_catalog_edit_multi(self, evt):
-		''' _on_catalog_edit_multi'''
+	def _on_collection_edit_multi(self, evt):
+		''' _on_collection_edit_multi'''
 		folder = self._dirs_tree.selected_item
-		if folder is None or isinstance(folder, Catalog) or len(folder.files) == 0:
+		if folder is None or isinstance(folder, Collection) or len(folder.files) == 0:
 			return
 
-		image = FileImage(None, None, None, None, catalog=folder.catalog)
+		image = FileImage(None, None, None, None, collection=folder.collection)
 
 		result = {}
 
 		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
-			changed_tags = ecatalog.update_images_from_dict(
+			changed_tags = collections.update_images_from_dict(
 					self._photo_list.selected_items, result)
-			folder.catalog.dirty = True
-			self._dirs_tree.update_catalog_node(folder.catalog)
-			self._update_changed_tags(folder.catalog.tags_provider, changed_tags)
+			folder.collection.dirty = True
+			self._dirs_tree.update_collection_node(folder.collection)
+			self._update_changed_tags(folder.collection.tags_provider, changed_tags)
 
 		dlg.Destroy()
 
-	def _on_catalog_edit_tags(self, evt):
-		if self.catalogs_not_loaded:
+	def _on_collection_edit_tags(self, evt):
+		if self.collections_not_loaded:
 			return
 
-		catalog = self.selected_catalog
-		if show_dlg_edit_tags(self, catalog.tags_provider):
-			catalog.dirty = True
-			self._dirs_tree.update_catalog_node(catalog)
-			self._update_tags_timeline(catalog)
+		collection = self.selected_collection
+		if show_dlg_edit_tags(self, collection.tags_provider):
+			collection.dirty = True
+			self._dirs_tree.update_collection_node(collection)
+			self._update_tags_timeline(collection)
 
 	def _on_dirtree_item_select(self, _evt):
 		item = self._dirs_tree.selected_item
@@ -522,7 +523,7 @@ class WndMain(WndMainView):
 		item = self._dirs_tree.selected_item
 		self.__info_panel_clear()
 
-		if isinstance(item, Catalog):
+		if isinstance(item, Collection):
 			return
 		if isinstance(item, Timeline):
 			if item.level == 0:
@@ -541,7 +542,7 @@ class WndMain(WndMainView):
 			return
 
 		if dlg.ShowModal() == wx.ID_OK:
-			item.catalog.dirty = True
+			item.collection.dirty = True
 			if self._info_panel is not None:
 				self._info_panel.show_folder(item)
 
@@ -550,8 +551,8 @@ class WndMain(WndMainView):
 			else:
 				self._dirs_tree.update_node_directory(item, False)
 
-			self._dirs_tree.update_catalog_node(item.catalog)
-			self._update_changed_tags(item.catalog.tags_provider, dlg.changed_tags)
+			self._dirs_tree.update_collection_node(item.collection)
+			self._update_changed_tags(item.collection.tags_provider, dlg.changed_tags)
 
 		dlg.Destroy()
 
@@ -587,9 +588,9 @@ class WndMain(WndMainView):
 				if self._info_panel is not None:
 					self._info_panel.show(selected)
 
-				selected.catalog.dirty = True
-				self._dirs_tree.update_catalog_node(selected.catalog)
-				self._update_changed_tags(selected.catalog.tags_provider,
+				selected.collection.dirty = True
+				self._dirs_tree.update_collection_node(selected.collection)
+				self._update_changed_tags(selected.collection.tags_provider,
 						dlg.changed_tags)
 				break
 
@@ -615,7 +616,7 @@ class WndMain(WndMainView):
 					self.PopupMenu(self._create_popup_menu(data))
 
 	def _on_dirtree_key_down(self, evt):
-		if self.catalogs_not_loaded:
+		if self.collections_not_loaded:
 			return
 
 		if evt.GetKeyCode() == wx.WXK_DELETE:
@@ -624,10 +625,10 @@ class WndMain(WndMainView):
 				return
 
 			if isinstance(tree_selected, Disk):
-				self._on_catalog_del_disk(None)
+				self._on_collection_del_disk(None)
 
 			elif isinstance(tree_selected, Directory):
-				self._on_catalog_del_dir(None)
+				self._on_collection_del_dir(None)
 
 	def _on_dirtree_right_down(self, evt):
 		pos = evt.GetPosition()
@@ -638,7 +639,7 @@ class WndMain(WndMainView):
 
 	def _on_photolist_key_down(self, evt):
 		if evt.m_keyCode == wx.WXK_DELETE:
-			self._on_catalog_del_image(None)
+			self._on_collection_del_image(None)
 		evt.Skip()
 
 	def _on_photolist_popupmenu(self, evt):
@@ -649,7 +650,7 @@ class WndMain(WndMainView):
 	def _on_photo_popoup_properties(self, evt):
 		selected_count = self._photo_list.selected_count
 		if selected_count > 1:
-			self._on_catalog_edit_multi(evt)
+			self._on_collection_edit_multi(evt)
 
 		elif selected_count == 1:
 			self._on_thumb_dclick(evt)
@@ -657,18 +658,18 @@ class WndMain(WndMainView):
 	############################################################################
 
 	def open_file(self, filename):
-		''' Open catalog
+		''' Open collection
 		@filename: full path to the index file
 		'''
-		if filename in (cat.catalog_filename for cat in self._catalogs):
+		if filename in (cat.filename for cat in self._collections):
 			return
 
 		try:
 			self.SetStatusText(_('Opening %s....  Please wait...') % filename)
 			self.SetCursor(wx.HOURGLASS_CURSOR)
-			catalog = ecatalog.open_catalog(filename)
-			self._catalogs.append(catalog)
-			self._dirs_tree.add_catalog(catalog)
+			collection = collections.open_collection(filename)
+			self._collections.append(collection)
+			self._dirs_tree.add_collection(collection)
 			self._update_last_open_files(filename)
 			self.SetStatusText(filename)
 
@@ -678,25 +679,25 @@ class WndMain(WndMainView):
 					(_('Error opening file %s:\n') % filename) + err.message,
 					_('Open file'))
 			self.SetStatusText(_('Error: %s') % err.message)
-			catalog = None
+			collection = None
 
 		else:
-			if catalog is not None:
-				if catalog.readonly:
+			if collection is not None:
+				if collection.readonly:
 					self.SetStatusText(_('Opened %s readonly') % filename)
 
 				else:
 					self.SetStatusText(_('Opened %s') % filename)
 
-				dirty, dirtyp = catalog.dirty_objects_count
+				dirty, dirtyp = collection.dirty_objects_count
 				_LOG.info('WndMain.open_file(%s) successfull dirty_object=%d/%d',
 						filename, dirty, dirtyp)
 				if dirtyp > 10:
 					if dialogs.message_box_warning_yesno(self,
-							_('Catalog file contain %d%% unused entries.\n' \
-							'Rebuild catalog?') % dirtyp, _('Catalog')):
-						if ecatalog.rebuild(catalog, self):
-							self._save_catalog(catalog)
+							_('Collection file contain %d%% unused entries.\n' \
+							'Rebuild collection?') % dirtyp, _('Collection')):
+						if collections.rebuild(collection, self):
+							self._save_collection(collection)
 
 		finally:
 			self.SetCursor(wx.STANDARD_CURSOR)
@@ -726,51 +727,51 @@ class WndMain(WndMainView):
 		else:
 			self._main_menu_file_recent_item.Enable(False)
 
-	def _save_catalog(self, catalog, force=False):
-		''' Save @catalog when it's dirtry or @force'''
+	def _save_collection(self, collection, force=False):
+		''' Save @collection when it's dirtry or @force'''
 		self.SetCursor(wx.HOURGLASS_CURSOR)
-		if catalog.dirty or force:
+		if collection.dirty or force:
 			try:
-				Storage.save(catalog)
+				Storage.save(collection)
 
 			except StandardError:
-				_LOG.exception('WndMain._on_file_save(%s)', catalog.caption)
+				_LOG.exception('WndMain._on_file_save(%s)', collection.caption)
 				dialogs.message_box_error(self,
-						_('Error saving catalog %s') % catalog.catalog_filename,
-						_('Save catalog'))
+						_('Error saving collection %s') % collection.filename,
+						_('Save collection'))
 
 		self.SetCursor(wx.STANDARD_CURSOR)
 
 	def _update_menus_toolbars(self):
 		""" włączanie/wyłączanie pozycji menu/toolbar """
-		catalog_loaded = not self.catalogs_not_loaded
+		collections_loaded = not self.collections_not_loaded
 
-		catalog_writable = False
-		if catalog_loaded:
+		collection_writable = False
+		if collections_loaded:
 			selected_tree_item = self._dirs_tree.selected_item
 			if selected_tree_item is None:
-				catalog_writable = (not self._catalogs[0].readonly
-						if len(self._catalogs) == 1 else False)
+				collection_writable = (not self._collections[0].readonly
+						if len(self._collections) == 1 else False)
 
 			else:
-				catalog_writable = not selected_tree_item.catalog.readonly
+				collection_writable = not selected_tree_item.collection.readonly
 
-		self._menu_bar.EnableTop(2, catalog_loaded)
+		self._menu_bar.EnableTop(2, collections_loaded)
 
 		mm_items = self._main_menu_file.GetMenuItems()
-		mm_items[2].Enable(catalog_loaded and catalog_writable)
-		mm_items[4].Enable(catalog_loaded)
-		mm_items[6].Enable(catalog_loaded and catalog_writable)
+		mm_items[2].Enable(collections_loaded and collection_writable)
+		mm_items[4].Enable(collections_loaded)
+		mm_items[6].Enable(collections_loaded and collection_writable)
 		mm_items[8].Enable(len(self._current_show_images) > 0)
 		mm_items[9].Enable(len(self._current_show_images) > 0 \
 				and epdf.EPDF_AVAILABLE)
 
-		self._toolbar.EnableTool(self._tb_find, catalog_loaded)
-		self._toolbar.EnableTool(self._tb_add_disk, catalog_loaded)
-		self._toolbar.EnableTool(self._tb_save, catalog_loaded \
-				and catalog_writable)
+		self._toolbar.EnableTool(self._tb_find, collections_loaded)
+		self._toolbar.EnableTool(self._tb_add_disk, collections_loaded)
+		self._toolbar.EnableTool(self._tb_save, collections_loaded \
+				and collection_writable)
 
-		if catalog_loaded:
+		if collections_loaded:
 			disk_selected = (isinstance(selected_tree_item, Disk)
 				if selected_tree_item is not None else False)
 			dir_selected = not disk_selected and selected_tree_item is not None \
@@ -778,13 +779,13 @@ class WndMain(WndMainView):
 
 			file_selected = self._photo_list.selected_count > 0
 
-			mm_items = self._main_menu_catalog.GetMenuItems()
-			mm_items[0].Enable(catalog_writable)
-			mm_items[1].Enable(disk_selected and catalog_writable)
-			mm_items[2].Enable(disk_selected and catalog_writable)
-			mm_items[4].Enable(dir_selected and catalog_writable)
-			mm_items[5].Enable(file_selected and catalog_writable)
-			mm_items[7].Enable(file_selected and catalog_writable)
+			mm_items = self._main_menu_collection.GetMenuItems()
+			mm_items[0].Enable(collection_writable)
+			mm_items[1].Enable(disk_selected and collection_writable)
+			mm_items[2].Enable(disk_selected and collection_writable)
+			mm_items[4].Enable(dir_selected and collection_writable)
+			mm_items[5].Enable(file_selected and collection_writable)
+			mm_items[7].Enable(file_selected and collection_writable)
 
 	def _update_settings(self):
 		""" aktualizacja wszystkiego na podstawie ustawien """
@@ -869,19 +870,19 @@ class WndMain(WndMainView):
 		@return (funkcja klucza, reverse)
 		'''
 		desc = self._menu_view_sort_desc.IsChecked()
-		sort_by = ecatalog.SORT_BY_DATE
+		sort_by = collections.SORT_BY_DATE
 
 		if self._menu_view_sort_name.IsChecked(): # sort by name
 			if desc or images_as_list or force:
-				sort_by = ecatalog.SORT_BY_NAME
+				sort_by = collections.SORT_BY_NAME
 
 			else:
 				return None
 
 		elif self._menu_view_group_path.IsChecked():
-			sort_by = ecatalog.SORT_BY_PATH
+			sort_by = collections.SORT_BY_PATH
 
-		return ecatalog.get_sorting_function(sort_by, desc, images_as_list)
+		return collections.get_sorting_function(sort_by, desc, images_as_list)
 
 
 	def _show_item(self, item, show_info, images_count):

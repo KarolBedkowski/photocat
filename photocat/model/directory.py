@@ -16,7 +16,7 @@ import os
 import logging
 import itertools
 
-from photocat.model._catalog_file import CatalogFile
+from photocat.model._collection_object import CollectionObject
 from photocat.model.gui import TreeItem
 from photocat.model.file_image import FileImage
 
@@ -24,12 +24,12 @@ from photocat.model.file_image import FileImage
 _LOG = logging.getLogger(__name__)
 
 
-class Directory(CatalogFile, TreeItem):
+class Directory(CollectionObject, TreeItem):
 	__slots__ = ('tree_node', 'files', 'subdirs', '__weakref__')
 	FV3_CLASS_NAME = 1048576 + 2
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
-		CatalogFile.__init__(self, oid, name, parent, disk, *args, **kwargs)
+		CollectionObject.__init__(self, oid, name, parent, disk, *args, **kwargs)
 		TreeItem.__init__(self)
 
 		self.files = []
@@ -76,10 +76,9 @@ class Directory(CatalogFile, TreeItem):
 
 	def delete(self):
 		''' metoda uruchamiana przy usuwaniu obiektu '''
-		CatalogFile.delete(self)
+		super(Directory, self).delete()
 		for sfile in self.files:
 			sfile.delete()
-
 		for subdir in self.subdirs:
 			subdir.delete()
 
@@ -92,7 +91,7 @@ class Directory(CatalogFile, TreeItem):
 
 	def load(self, path, options, on_update):
 		_LOG.debug('Directory.load(%s)', path)
-		if CatalogFile.load(self, path, options, on_update):
+		if super(Directory, self).load(path, options, on_update):
 			if not self._load_subdirs(path, options, on_update):
 				return False
 
@@ -108,29 +107,25 @@ class Directory(CatalogFile, TreeItem):
 
 	def update(self, path, options, on_update):
 		_LOG.debug('Directory.update(%s)', path)
-		if CatalogFile.update(self, path, options, on_update)[1]:
+		if super(Directory, self).update(path, options, on_update)[1]:
 			if not self._update_subdirs(path, options, on_update):
 				return False
-
 			if not self._update_files(path, options, on_update):
 				return False
-
 			if options.get('load_captions_txt', True):
 				self._load_caption_txt(path)
-
 			return True
-
 		return False
 
 	def remove_subdir(self, subdir):
 		subdir.delete()
 		self.subdirs.remove(subdir)
-		self.catalog.dirty = True
+		self.collection.dirty = True
 
 	def remove_file(self, fileitem):
 		fileitem.delete()
 		self.files.remove(fileitem)
-		self.catalog.dirty = True
+		self.collection.dirty = True
 
 	def check_on_find(self, cmpfunc, add_callback, options,
 			progress_callback=None):
@@ -139,7 +134,7 @@ class Directory(CatalogFile, TreeItem):
 				return
 
 		if options.get('search_for_dirs', True):
-			CatalogFile.check_on_find(self, cmpfunc, add_callback, options,
+			super(Directory, self).check_on_find(cmpfunc, add_callback, options,
 					progress_callback)
 
 		for subdir in self.subdirs:

@@ -26,7 +26,7 @@ class DlgPropertiesDir(DlgPropertiesBase):
 	_CONFIG_KEY = 'properties_dir_wnd'
 
 	def __init__(self, parent, item):
-		readonly = item.catalog.readonly
+		readonly = item.collection.readonly
 
 		DlgPropertiesBase.__init__(self, parent, item, readonly)
 

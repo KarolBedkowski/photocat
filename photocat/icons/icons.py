@@ -72,7 +72,7 @@ get_calendar_view_week_Image = _calendar_view_week_.GetImage
 get_calendar_view_week_Bitmap = _calendar_view_week_.GetBitmap
 
 #----------------------------------------------------------------------
-_catalog_ = PyEmbeddedImage(
+_collection_ = PyEmbeddedImage(
     "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlw"
     "SFlzAAAEzgAABM4BZ7gfbwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoA"
     "AAAUdEVYdEF1dGhvcgBKYWt1YiBTdGVpbmVy5vv3LwAAACF0RVh0U291cmNlAGh0dHA6Ly9q"
@@ -91,9 +91,9 @@ _catalog_ = PyEmbeddedImage(
     "ztHc0gJfuX3vARA7GRB0CNsxEwAYN022C0uyjHB4Grdv3YS/6wIyug4hWff5IBe3oGu6k4hK"
     "5dTm5geb3dYuETEXy+fI4ykdfPuO3G43FIeNJxZmFkaZvLpXgNE2j6cnAwAKtNtGIiIAUldP"
     "T2tZSdkLu6IkFyOz/aFQKH5AmKb4S6TD1vk3YkYvOBMTF70AAAAASUVORK5CYII=")
-get_catalog_Data = _catalog_.GetData
-get_catalog_Image = _catalog_.GetImage
-get_catalog_Bitmap = _catalog_.GetBitmap
+get_collection_Data = _collection_.GetData
+get_collection_Image = _collection_.GetImage
+get_collection_Bitmap = _collection_.GetBitmap
 
 #----------------------------------------------------------------------
 _date_ = PyEmbeddedImage(

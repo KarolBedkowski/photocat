@@ -35,10 +35,10 @@ _CLASS_NAMES_DISK = Disk.FV3_CLASS_NAME
 class _ObjectFactory:
 	''' Klasa generująca obiekty na podstawie wczytywanego pliku '''
 
-	def __init__(self, catalog, objects):
-		self.catalog = catalog
+	def __init__(self, collection, objects):
+		self.collection = collection
 		self.objects = objects
-		self.disks = catalog.disks
+		self.disks = collection.disks
 
 	def create_object(self, oid, o_type_id, data, *_argv, **_kwarg):
 		''' obj_factory.create_object(oid, o_type_id, data, ...) -> object
@@ -70,7 +70,7 @@ class _ObjectFactory:
 
 		# utworzenie klasy
 		self.objects[oid] = new_object = klass(oid, parent=parent,
-				catalog=self.catalog, **data)
+				collection=self.collection, **data)
 
 		if parent:
 			parent.add_child(new_object)
@@ -94,15 +94,15 @@ class StorageV3:
 		pass
 
 	@staticmethod
-	def save(catalog, header):
+	def save(collection, header):
 		output_file = None
 		try:
-			output_file = gzip.open(catalog.catalog_filename, 'w')
+			output_file = gzip.open(collection.filename, 'w')
 			output_file.write(header + '\n')
 
 			_LOG.debug('StorageV3.save file opened, header written')
 
-			oid, class_name, odata = catalog.tags_provider.encode3()
+			oid, class_name, odata = collection.tags_provider.encode3()
 			tags = pickle.dumps(odata, -1)
 			output_file.write(StorageV3.__pack_header(oid, class_name, len(tags)))
 			output_file.write(tags)
@@ -118,9 +118,9 @@ class StorageV3:
 				for child in item.childs_to_store:
 					write_item(child)
 
-			write_item(catalog)
-			catalog.data_provider.save()
-			catalog.dirty = False
+			write_item(collection)
+			collection.data_provider.save()
+			collection.dirty = False
 
 		except Exception, err:
 			_LOG.exception('StorageV3.save')
@@ -131,11 +131,11 @@ class StorageV3:
 				output_file.close()
 
 	@staticmethod
-	def load(input_file, catalog, objects, filename):
+	def load(input_file, collection, objects, filename):
 		oid = ''
-		tags_provider = catalog.tags_provider
+		tags_provider = collection.tags_provider
 
-		obj_factory = _ObjectFactory(catalog, objects)
+		obj_factory = _ObjectFactory(collection, objects)
 
 		while True:
 			try:

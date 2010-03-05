@@ -53,13 +53,13 @@ def _create_small_label(parent, title):
 class DlgAddDisk(wx.Dialog):
 	''' Dialog dodania/uaktualnienia dysku '''
 
-	def __init__(self, parent, data, update=False, catalog=None):
-		caption = _('Update disk') if update else _('Add disk to catalog')
+	def __init__(self, parent, data, update=False, collection=None):
+		caption = _('Update disk') if update else _('Add disk to collection')
 		wx.Dialog.__init__(self, parent, -1, caption)
 		self.SetExtraStyle(wx.WS_EX_VALIDATE_RECURSIVELY)
 
 		self._data = data
-		self.__load_disk_names(catalog, update)
+		self.__load_disk_names(collection, update)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_notebook(), 1, wx.EXPAND | wx.ALL, 12)
@@ -195,8 +195,8 @@ class DlgAddDisk(wx.Dialog):
 
 		name = self._data['name']
 
-		if self._catalog_disk_names is not None and name in self._catalog_disk_names:
-			message_box_error(self, _('Name already exists in catalog!'),
+		if self._collection_disk_names is not None and name in self._collection_disk_names:
+			message_box_error(self, _('Name already exists in collection!'),
 					_('Add disk'))
 			return
 
@@ -233,17 +233,17 @@ class DlgAddDisk(wx.Dialog):
 
 		return (last_dirs, last_dir)
 
-	def __load_disk_names(self, catalog, update):
-		self._catalog_disk_names = None
-		if catalog is not None:
+	def __load_disk_names(self, collection, update):
+		self._collection_disk_names = None
+		if collection is not None:
 			if update:
 				name = self._data['name']
-				self._catalog_disk_names = tuple((disk.name
-						for disk in catalog.disks if disk.name != name))
+				self._collection_disk_names = tuple((disk.name
+						for disk in collection.disks if disk.name != name))
 
 			else:
-				self._catalog_disk_names = tuple((disk.name
-						for disk in catalog.disks))
+				self._collection_disk_names = tuple((disk.name
+						for disk in collection.disks))
 
 
 if __name__ == '__main__':
