@@ -27,8 +27,6 @@
 ./photocat/gui/dlgadddisk.py
 ./photocat/gui/wndmain.py
 ./photocat/gui/wndmain_view.py
-./photocat/icons/__init__.py
-./photocat/icons/icons.py
 ./photocat/lib/EXIF.py
 ./photocat/lib/__init__.py
 ./photocat/lib/appconfig.py
