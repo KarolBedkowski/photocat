@@ -107,7 +107,7 @@ if not appconfig.is_frozen():
 
 import wx
 
-from photocat.icons import icons
+from photocat import icons
 from photocat.lib.wxtools.logging_wx import logging_setup_wx
 
 ##########################################################################
