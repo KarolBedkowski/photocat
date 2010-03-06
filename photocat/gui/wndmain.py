@@ -22,6 +22,7 @@ import logging
 
 import wx
 
+from photocat import version
 from photocat.model import Collection, Directory, Disk, FileImage, Tag, Timeline
 from photocat.storage.storage import Storage
 from photocat.engine import collections, eprint, epdf
