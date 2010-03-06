@@ -26,7 +26,8 @@ import wx
 
 class MyMessageDialog(wx.Dialog):
 	"""docstring for MyMessageDialog"""
-	def __init__(self, parent, primary_text, secondary_text, buttons, icon=None):
+	def __init__(self, parent, primary_text, secondary_text, buttons=None,
+			icon=None):
 		wx.Dialog.__init__(self, parent, -1, '')
 		sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -58,7 +59,7 @@ class MyMessageDialog(wx.Dialog):
 		sizer_inner.Add(sizer_text, 0)
 		sizer.Add(sizer_inner, 0, wx.EXPAND | wx.ALL, 12)
 
-		buttons_grid = self.CreateStdDialogButtonSizer(buttons)
+		buttons_grid = self._create_buttons(buttons)
 		sizer.Add(buttons_grid, 0, wx.EXPAND | wx.ALL, 12)
 		self.SetSizerAndFit(sizer)
 
@@ -67,6 +68,36 @@ class MyMessageDialog(wx.Dialog):
 	def _on_btn_no(self, evt):
 		self.EndModal(wx.ID_NO)
 
+	def _create_buttons(self, buttons):
+		return self.CreateStdDialogButtonSizer(buttons or wx.ID_OK)
+
+
+class DialogConfirmSave(MyMessageDialog):
+	"""docstring for DialogConfirmSave"""
+	def __init__(self, parent, doc_name, time_period=None, saveas=False):
+		primary_text = _("Save the changes to\n%(doc_name)s before closing?") \
+				% dict(doc_name=doc_name)
+		if time_period is None:
+			secondary_text = _('If you close without saving, changes will be discarded')
+		else:
+			secondary_text = _('If you close without saving, changes from the last\n'
+				'%(time)s will be discarded''') % dict(time=time_period)
+		self.saveas = saveas
+		MyMessageDialog.__init__(self, parent, primary_text, secondary_text, None,
+				wx.ART_WARNING)
+	
+	def _create_buttons(self, buttons):
+		grid = wx.StdDialogButtonSizer()
+		btn = wx.Button(self, wx.ID_NO, _('Close &without Saving'))
+		grid.AddButton(btn)
+		btn = wx.Button(self, wx.ID_CANCEL)
+		grid.AddButton(btn)
+		btn_save_text = _('Save &As') if self.saveas else _('Save')
+		btn = wx.Button(self, wx.ID_YES, btn_save_text)
+		btn.SetDefault()
+		grid.AddButton(btn)
+		grid.Realize()
+		return grid
 
 
 def message_box_error(parent, msg, title=''):
@@ -107,18 +138,9 @@ def message_box_warning_yesnocancel(parent, msg, title=''):
 	return res
 
 
-def message_box_not_save_confirm(parent, doc_name, time_period=None):
-	primary_text = _("Save the changes to\n%(doc_name)s before closing?") \
-			% dict(doc_name=doc_name)
-	if time_period is None:
-		secondary_text = _('If you close without saving, changes will be discarded')
-	else:
-		secondary_text = _(
-			'If you close without saving, changes from the last\n%(time)s will be discarded') \
-			% dict(time=time_period)
-	buttons = wx.YES_NO | wx.CANCEL | wx.YES_DEFAULT
-	dlg = MyMessageDialog(parent, primary_text, secondary_text, buttons,
-			wx.ART_WARNING)
+def message_box_not_save_confirm(parent, doc_name, time_period=None,
+		saveas=False):
+	dlg = DialogConfirmSave(parent, doc_name, time_period, saveas)
 	res = dlg.ShowModal()
 	dlg.Destroy()
 	return res

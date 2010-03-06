@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-06 13:36+0100\n"
-"PO-Revision-Date: 2010-03-05 21:41+0100\n"
+"POT-Creation-Date: 2010-03-06 18:18+0100\n"
+"PO-Revision-Date: 2010-03-06 18:21+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -420,14 +420,6 @@ msgstr "Dodaj dysk"
 msgid "Selected dir don't exists!"
 msgstr "Wybrany katalog nie istnieje"
 
-#, python-format
-msgid ""
-"Collection %s was changed.\n"
-"Save it?"
-msgstr ""
-"Kolekcja %s została zmieniona.\n"
-"Zapisać?"
-
 msgid "Close program?"
 msgstr "Zakończyć program?"
 
@@ -444,15 +436,13 @@ msgstr ""
 "Plik istnieje!\n"
 "Nadpisać?"
 
-msgid "Error"
-msgstr "Błąd"
-
 #, python-format
-msgid "Error opening file %s:\n"
-msgstr "Błąd otwierania pliku %s:\n"
-
-msgid "New file"
-msgstr "Nowy plik"
+msgid ""
+"Error creating new collection file %(filename)s:\n"
+"%(error)s"
+msgstr ""
+"Wystąpił błąd podczas tworzenia pliku kolekcji %(filename)s:\n"
+"%(error)s"
 
 #, python-format
 msgid "Error: %s"
@@ -526,6 +516,10 @@ msgstr "Plików: %d"
 #, python-format
 msgid "Opening %s....  Please wait..."
 msgstr "Otwieranie %s.... Proszę czekać..."
+
+#, python-format
+msgid "Error opening file %s:\n"
+msgstr "Błąd otwierania pliku %s:\n"
 
 #, python-format
 msgid "Opened %s readonly"
@@ -717,6 +711,31 @@ msgstr "&Usuń plik..."
 
 #, python-format
 msgid ""
+"Save the changes to\n"
+"%(doc_name)s before closing?"
+msgstr ""
+"Zapisać zmiany w\n"
+"%(doc_name)s przed zakończeniem?"
+
+msgid "If you close without saving, changes will be discarded"
+msgstr "Podczas zamykania bez zapisy, zmiany zostaną utracone."
+
+#, python-format
+msgid ""
+"If you close without saving, changes from the last\n"
+"%(time)s will be discarded"
+msgstr ""
+"Podczas zamykania bez zapisy, zmiany z ostatnich\n"
+"%(time)s zostaną utracone."
+
+msgid "Close &without Saving"
+msgstr "Za&kończ bez zapisywania"
+
+msgid "Save &As"
+msgstr "Z&apisz jako..."
+
+#, python-format
+msgid ""
 "Validate field \"%(field)s\" failed:\n"
 "%(msg)s"
 msgstr ""
@@ -820,6 +839,19 @@ msgstr ""
 "\n"
 "\n"
 "Proszę także sprawdzić pliki LICENCE dostarczone wraz z tym programem."
+
+#~ msgid ""
+#~ "Collection %s was changed.\n"
+#~ "Save it?"
+#~ msgstr ""
+#~ "Kolekcja %s została zmieniona.\n"
+#~ "Zapisać?"
+
+#~ msgid "Error"
+#~ msgstr "Błąd"
+
+#~ msgid "New file"
+#~ msgstr "Nowy plik"
 
 #~ msgid "collection"
 #~ msgstr "kolekcja"
