@@ -16,27 +16,74 @@ __revision__ = '$Id$'
 
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
-		'message_box_warning_yesnocancel']
+		'message_box_warning_yesnocancel', 'message_box_not_save_confirm']
 
 
 import wx
 
 
-def message_box_error(parent, msg, title):
+
+
+class MyMessageDialog(wx.Dialog):
+	"""docstring for MyMessageDialog"""
+	def __init__(self, parent, primary_text, secondary_text, buttons, icon=None):
+		wx.Dialog.__init__(self, parent, -1, '')
+		sizer = wx.BoxSizer(wx.VERTICAL)
+
+		sizer_inner = wx.BoxSizer(wx.HORIZONTAL)
+
+		if icon:
+			bmp = wx.ArtProvider.GetBitmap(icon, wx.ART_MESSAGE_BOX)
+			sizer_inner.Add(wx.StaticBitmap(self, -1, bmp), 0, wx.EXPAND)
+			sizer_inner.Add((12, 12))
+
+		sizer_text = wx.BoxSizer(wx.VERTICAL)
+
+		if primary_text and secondary_text:
+			fstyle = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
+			fstyle.SetWeight(wx.FONTWEIGHT_BOLD)
+			fstyle.SetPointSize(fstyle.GetPointSize() + 2)
+			ptext = wx.StaticText(self, -1, primary_text)
+			ptext.SetFont(fstyle)
+			sizer_text.Add(ptext, 0, wx.EXPAND)
+			sizer_text.Add((12, 12))
+		elif not secondary_text:
+			ptext = wx.StaticText(self, -1, primary_text)
+			sizer_text.Add(ptext, 0, wx.EXPAND)
+
+		if secondary_text:
+			ptext = wx.StaticText(self, -1, secondary_text)
+			sizer_text.Add(ptext, 0, wx.EXPAND)
+
+		sizer_inner.Add(sizer_text, 0)
+		sizer.Add(sizer_inner, 0, wx.EXPAND | wx.ALL, 12)
+
+		buttons_grid = self.CreateStdDialogButtonSizer(buttons)
+		sizer.Add(buttons_grid, 0, wx.EXPAND | wx.ALL, 12)
+		self.SetSizerAndFit(sizer)
+
+		self.Bind(wx.EVT_BUTTON, self._on_btn_no, id=wx.ID_NO)
+
+	def _on_btn_no(self, evt):
+		self.EndModal(wx.ID_NO)
+
+
+
+def message_box_error(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, str(msg), title,
 			wx.OK | wx.CENTRE | wx.ICON_ERROR)
 	dlg.ShowModal()
 	dlg.Destroy()
 
 
-def message_box_info(parent, msg, title):
+def message_box_info(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, str(msg), title,
 			wx.OK | wx.CENTRE | wx.ICON_INFORMATION)
 	dlg.ShowModal()
 	dlg.Destroy()
 
 
-def message_box_question_yesno(parent, msg, title):
+def message_box_question_yesno(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, msg, title,
 			wx.YES_NO | wx.NO_DEFAULT | wx.CENTRE | wx.ICON_QUESTION)
 	res = dlg.ShowModal()
@@ -44,7 +91,7 @@ def message_box_question_yesno(parent, msg, title):
 	return res == wx.ID_YES
 
 
-def message_box_warning_yesno(parent, msg, title):
+def message_box_warning_yesno(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, msg, title,
 			wx.YES_NO | wx.NO_DEFAULT | wx.CENTRE | wx.ICON_WARNING)
 	res = dlg.ShowModal()
@@ -52,9 +99,26 @@ def message_box_warning_yesno(parent, msg, title):
 	return res == wx.ID_YES
 
 
-def message_box_warning_yesnocancel(parent, msg, title):
+def message_box_warning_yesnocancel(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, msg, title,
 			wx.YES_NO | wx.CANCEL | wx.YES_DEFAULT | wx.CENTRE | wx.ICON_WARNING)
+	res = dlg.ShowModal()
+	dlg.Destroy()
+	return res
+
+
+def message_box_not_save_confirm(parent, doc_name, time_period=None):
+	primary_text = _("Save the changes to\n%(doc_name)s before closing?") \
+			% dict(doc_name=doc_name)
+	if time_period is None:
+		secondary_text = _('If you close without saving, changes will be discarded')
+	else:
+		secondary_text = _(
+			'If you close without saving, changes from the last\n%(time)s will be discarded') \
+			% dict(time=time_period)
+	buttons = wx.YES_NO | wx.CANCEL | wx.YES_DEFAULT
+	dlg = MyMessageDialog(parent, primary_text, secondary_text, buttons,
+			wx.ART_WARNING)
 	res = dlg.ShowModal()
 	dlg.Destroy()
 	return res

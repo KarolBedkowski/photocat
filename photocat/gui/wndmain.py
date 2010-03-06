@@ -115,9 +115,7 @@ class WndMain(WndMainView):
 
 		if len(dirty_collections) > 0:
 			for collection in dirty_collections:
-				res = dialogs.message_box_warning_yesnocancel(self,
-						_("Collection %s was changed.\nSave it?") % collection.caption,
-						_('Collection'))
+				res = dialogs.message_box_not_save_confirm(self, collection.name)
 				if res == wx.ID_CANCEL:
 					return
 				elif res == wx.ID_YES:
@@ -161,7 +159,7 @@ class WndMain(WndMainView):
 
 			if collections.check_new_file_exists(filename)[0]:
 				if not dialogs.message_box_question_yesno(self,
-						_('File exists!\nOverwrite?'), _('Error')):
+						_('File exists!\nOverwrite?')):
 					return
 
 			try:
@@ -172,8 +170,8 @@ class WndMain(WndMainView):
 			except StandardError, err:
 				_LOG.exception('WndMain._on_file_new(%s)', filename)
 				dialogs.message_box_error(self,
-						(_('Error opening file %s:\n') % filename) + err.message,
-						_('New file'))
+						_('Error creating new collection file %(filename)s:\n%(error)s') \
+						% dict(filename=filename, error=err.message))
 				self.SetStatusText(_('Error: %s') % err.message)
 			else:
 				self._update_last_open_files(filename)
