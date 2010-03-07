@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 
@@ -22,14 +22,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (c) Karol Będkowski 2006-2010'
 __revision__ = '$Id$'
 __all__ = []
 
 
 import sys
 
-from photocat import run
+from photocat.main import run
 
 
 def _profile():
@@ -68,6 +68,9 @@ if '--profile' in sys.argv:
 elif '--memprofile' in sys.argv:
 	sys.argv.remove('--memprofile')
 	_memprofile()
+elif '--version' in sys.argv:
+	from photocat import version
+	print version.INFO
 else:
 	run()
 
