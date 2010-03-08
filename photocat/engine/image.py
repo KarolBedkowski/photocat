@@ -6,13 +6,13 @@ photocat.engine.image
 -- engine do obsługi obrazów
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004, 2005, 2006
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 
 
@@ -45,7 +45,7 @@ _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized',
 		'EXIF DateTime')
 
 
-def load_bitmap_from_item_with_size(item, width, height):
+def load_bitmap_from_item_with_size(item, width, height, zoom):
 	''' load_bitmap_from_item_with_size(item, width, height) -> wx.Bitmap
 		-- załadowanie i ewentualne przeskalowanie obrazka
 
@@ -59,16 +59,14 @@ def load_bitmap_from_item_with_size(item, width, height):
 		if not img.IsOk():
 			img = wx.EmptyImage(1, 1)
 			img_width = img_height = 1
-
 	except IOError:
 		_LOG.exception('load_bitmap_from_item_with_size %s error', item.name)
 		img = wx.EmptyImage(1, 1)
 		img_width = img_height = 1
-
 	else:
 		img_width = img.GetWidth()
 		img_height = img.GetHeight()
-		scale = min(float(width) / img_width, float(height) / img_height, 1)
+		scale = min(float(width) / img_width, float(height) / img_height, zoom)
 		if scale != 1:
 			img_width = int(img_width * scale)
 			img_height = int(img_height * scale)
@@ -149,10 +147,8 @@ def load_exif_from_file(path, data_provider):
 			if len(exif_data) > 0:
 				str_exif = pickle.dumps(exif_data, -1)
 				self_exif = data_provider.append(str_exif)
-
 	except StandardError:
 		_LOG.exception('load_exif_from_file error file=%s', path)
-
 	finally:
 		if jpeg_file is not None:
 			jpeg_file.close()
@@ -212,7 +208,6 @@ def get_exif_shotinfo(exif):
 	elif 'MakerNote ISOSetting' in exif:
 		try:
 			iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()
-
 		except KeyError:
 			_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
 		else:

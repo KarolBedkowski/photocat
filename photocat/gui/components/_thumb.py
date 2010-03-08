@@ -2,7 +2,7 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 
@@ -57,7 +57,7 @@ class Thumb(object):
 
 	#########################################################################
 
-	def get_bitmap(self, width, height):
+	def get_bitmap(self, width, height, scale):
 		''' thumb.get_bitmap(width, height) -> wxBitmap -- pobranie bitmapy
 			obrazka
 
@@ -70,9 +70,8 @@ class Thumb(object):
 		'''
 		if self._bitmap:
 			return self._bitmap
-
 		(self._bitmap, self.imgwidth, self.imgheight) = \
-				load_bitmap_from_item_with_size(self.image, width, height)
+				load_bitmap_from_item_with_size(self.image, width, height, scale)
 		return self._bitmap
 
 	def get_caption(self, width, dc):

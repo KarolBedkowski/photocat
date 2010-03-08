@@ -3,13 +3,13 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 
 __all__ = ['DlgProperties']
@@ -49,7 +49,7 @@ class DlgProperties(DlgPropertiesBase):
 		thumbh = appconfig.get('settings', 'thumb_height', 200)
 
 		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(
-				self._item, thumbw, thumbh)[0])
+				self._item, thumbw, thumbh, 1)[0])
 		sizer.Add(self._bmp_preview, 0, wx.ALIGN_CENTER | wx.ALL, 12)
 
 		bsizer = wx.FlexGridSizer(2, 2, 5, 12)
@@ -59,7 +59,6 @@ class DlgProperties(DlgPropertiesBase):
 			if key == '':
 				bsizer.Add((1, 5))
 				bsizer.Add((1, 5))
-
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0,
 						wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
@@ -103,7 +102,6 @@ class DlgProperties(DlgPropertiesBase):
 			if item.shot_date is None or item.shot_date != sdate_val:
 				item.shot_date = sdate_val
 				changed = True
-
 		elif item.shot_date is not None:
 			item.shot_date = None
 			changed = True
@@ -112,7 +110,6 @@ class DlgProperties(DlgPropertiesBase):
 
 		if changed:
 			self.EndModal(wx.ID_OK)
-
 		else:
 			self.EndModal(wx.ID_CANCEL)
 

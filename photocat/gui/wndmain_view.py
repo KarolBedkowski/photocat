@@ -11,7 +11,7 @@ This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2010'
+__copyright__ = 'Copyright (C) Karol Będkowski, 2004-2010'
 __revision__ = '$Id$'
 
 __all__ = ['WndMainView']
@@ -172,7 +172,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 			('-'),
 			(_('Search...'), 'Ctrl+F', _('Search for something in calalogs'),
 					self._on_collection_search, wx.ID_FIND, wx.ART_FIND),
-			(_('Show Collection Informations'), None, 
+			(_('Show Collection Informations'), None,
 					_('Show informations about selected calalog...'), self._on_collection_info),
 			(_('Tags'), None, _('Manage collection tags...'), self._on_collection_edit_tags),
 		))
@@ -209,7 +209,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 	def _create_main_menu_help(self):
 		menu = create_menu(self, (
-			(_('&About'), None, '', self._on_help_about, wx.ID_ABOUT, 
+			(_('&About'), None, '', self._on_help_about, wx.ID_ABOUT,
 				wx.ART_INFORMATION),
 		))
 		return menu
@@ -246,6 +246,16 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				wx.ART_NEW_DIR, _('Add disk to collection'))
 
 		toolbar.AddSeparator()
+
+		toolbar.AddControl(wx.StaticText(toolbar, -1, _('Zoom: ')))
+		self._s_zoom = wx.Slider(toolbar, -1, 3, 0, 5, size=(100, -1),
+				style=wx.SL_HORIZONTAL | wx.SL_AUTOTICKS)
+		toolbar.AddControl(self._s_zoom)
+		self._s_zoom_label = wx.StaticText(toolbar, -1, ' 100%')
+		toolbar.AddControl(self._s_zoom_label)
+
+		self.Bind(wx.EVT_SCROLL, self._on_zoom_scroll, self._s_zoom)
+
 		toolbar.Realize()
 
 	def _create_layout_tree(self, parent):
@@ -347,7 +357,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				# odswierzenie danych w panelu
 				self._on_thumb_sel_changed(None)
 				item = self._dirs_tree.selected_item
-				if item is not None and hasattr(item, 'subdirs'): 
+				if item is not None and hasattr(item, 'subdirs'):
 						#isinstance(item, Directory):
 					self._info_panel.show_folder(item)
 
@@ -443,6 +453,9 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		raise NotImplementedError()
 
 	def _on_dirtree_item_activate(self, evt):
+		raise NotImplementedError()
+
+	def _on_zoom_scroll(self, evt):
 		raise NotImplementedError()
 
 # vim: encoding=utf8: ff=unix:

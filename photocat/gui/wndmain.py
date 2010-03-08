@@ -5,13 +5,13 @@
 MainWnd
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 	This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (C) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 
 __all__ = ['WndMain']
@@ -120,7 +120,6 @@ class WndMain(WndMainView):
 					return
 				elif res == wx.ID_YES:
 					self._save_collection(collection)
-
 		elif not dialogs.message_box_question_yesno(self, _('Close program?'),
 				_('Exit')):
 			return
@@ -214,12 +213,10 @@ class WndMain(WndMainView):
 					_('Collection %s has unsaved changes!\nSave before close??') \
 					% collection.caption,
 					_('Collection'))
-
 			if res == wx.ID_YES:
 				self._save_collection(collection)
 			elif res == wx.ID_CANCEL:
 				return
-
 		elif not dialogs.message_box_question_yesno(self,
 				_('Close collection %s?') % collection.caption, _('Close')):
 			return
@@ -238,11 +235,9 @@ class WndMain(WndMainView):
 		collection = self.selected_collection
 		if collection is None:
 			return
-
 		if not dialogs.message_box_question_yesno(self,
 				_('Rebuild collection %s?') % collection.caption, 'photocat'):
 			return
-
 		if collections.rebuild(collection, self):
 			self._save_collection(collection)
 
@@ -319,7 +314,6 @@ class WndMain(WndMainView):
 				disk = collections.add_disk_to_collection(collection, self)
 			except StandardError:
 				_LOG.exception('WndMain._on_collection_add()')
-
 			else:
 				if disk is not None:
 					#self._save_collection(collection, True)
@@ -425,7 +419,6 @@ class WndMain(WndMainView):
 			return
 
 		collection = self.selected_collection
-
 		files_count, subdirs_count = 0, 0
 		for disk in collection.disks:
 			(disk_files_count, disk_subdirs_count, disk_files_count2,
@@ -434,7 +427,6 @@ class WndMain(WndMainView):
 			subdirs_count += disk_subdirs_count + disk_subdirs_count2
 
 		dirty, dirtyp = collection.dirty_objects_count
-
 		data = dict(disks=len(collection.disks), files=files_count,
 				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
 		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty '
@@ -448,9 +440,7 @@ class WndMain(WndMainView):
 			return
 
 		image = FileImage(None, None, None, None, collection=folder.collection)
-
 		result = {}
-
 		dlg = DlgPropertiesMulti(self, image, result)
 		if dlg.ShowModal() == wx.ID_OK:
 			changed_tags = collections.update_images_from_dict(
@@ -529,7 +519,6 @@ class WndMain(WndMainView):
 				if not self._dirs_tree.IsExpanded(item.tree_node):
 					if item.dirs_count == 0:
 						self._dirs_tree.update_timeline_node(item)
-
 				self._dirs_tree.Toggle(item.tree_node)
 			return
 
@@ -586,13 +575,11 @@ class WndMain(WndMainView):
 			if result == wx.ID_OK:
 				if self._info_panel is not None:
 					self._info_panel.show(selected)
-
 				selected.collection.dirty = True
 				self._dirs_tree.update_collection_node(selected.collection)
 				self._update_changed_tags(selected.collection.tags_provider,
 						dlg.changed_tags)
 				break
-
 			elif result == wx.ID_BACKWARD:
 				selected_idx -= 1
 			elif result == wx.ID_FORWARD:
@@ -622,10 +609,8 @@ class WndMain(WndMainView):
 			tree_selected = self._dirs_tree.selected_item
 			if tree_selected is None:
 				return
-
 			if isinstance(tree_selected, Disk):
 				self._on_collection_del_disk(None)
-
 			elif isinstance(tree_selected, Directory):
 				self._on_collection_del_dir(None)
 
@@ -650,9 +635,11 @@ class WndMain(WndMainView):
 		selected_count = self._photo_list.selected_count
 		if selected_count > 1:
 			self._on_collection_edit_multi(evt)
-
 		elif selected_count == 1:
 			self._on_thumb_dclick(evt)
+
+	def _on_zoom_scroll(self, evt):
+		self._set_zoom()
 
 	############################################################################
 
@@ -671,7 +658,6 @@ class WndMain(WndMainView):
 			self._dirs_tree.add_collection(collection)
 			self._update_last_open_files(filename)
 			self.SetStatusText(filename)
-
 		except StandardError, err:
 			_LOG.exception('WndMain.open_file(%s)', filename)
 			dialogs.message_box_error(self,
@@ -679,12 +665,10 @@ class WndMain(WndMainView):
 					_('Open file'))
 			self.SetStatusText(_('Error: %s') % err.message)
 			collection = None
-
 		else:
 			if collection is not None:
 				if collection.readonly:
 					self.SetStatusText(_('Opened %s readonly') % filename)
-
 				else:
 					self.SetStatusText(_('Opened %s') % filename)
 
@@ -697,7 +681,6 @@ class WndMain(WndMainView):
 							'Rebuild collection?') % dirtyp, _('Collection')):
 						if collections.rebuild(collection, self):
 							self._save_collection(collection)
-
 		finally:
 			self.SetCursor(wx.STANDARD_CURSOR)
 
@@ -722,7 +705,6 @@ class WndMain(WndMainView):
 						_('Open %s') % filepath)
 
 			self._main_menu_file_recent_item.Enable(True)
-
 		else:
 			self._main_menu_file_recent_item.Enable(False)
 
@@ -788,11 +770,9 @@ class WndMain(WndMainView):
 
 	def _update_settings(self):
 		""" aktualizacja wszystkiego na podstawie ustawien """
-		appconfig = AppConfig()
-		self._photo_list.set_thumb_size(
-				appconfig.get('settings', 'thumb_width', 200),
-				appconfig.get('settings', 'thumb_height', 200))
+		self._set_zoom()
 
+		appconfig = AppConfig()
 		show_captions = appconfig.get('settings', 'view_show_captions', True)
 		self._photo_list.show_captions = show_captions
 		self._menu_view_show_captions.Check(show_captions)
@@ -809,6 +789,16 @@ class WndMain(WndMainView):
 		self._toggle_info_panel(show_info)
 		self._photo_list.clear_cache()
 
+	def _set_zoom(self):
+		zidx = self._s_zoom.GetValue()
+		zfac = (0.25, 0.5, 0.75, 1, 1.5, 2)[zidx]
+		appconfig = AppConfig()
+		self._photo_list.set_thumb_size(
+				int(appconfig.get('settings', 'thumb_width', 200) * zfac),
+				int(appconfig.get('settings', 'thumb_height', 200) * zfac),
+				zfac)
+		self._s_zoom_label.SetLabel(' %d%%' % (zfac*100))
+
 	def _show_dir(self, images):
 		'''  wyświetlenie zawartości katalogu lub listy
 
@@ -824,7 +814,6 @@ class WndMain(WndMainView):
 				force_sort = True
 			elif hasattr(images, 'files'):
 				images = images.files
-
 
 		if images is None or len(images) > 0:
 			# jak sortujemy
@@ -874,10 +863,8 @@ class WndMain(WndMainView):
 		if self._menu_view_sort_name.IsChecked(): # sort by name
 			if desc or images_as_list or force:
 				sort_by = collections.SORT_BY_NAME
-
 			else:
 				return None
-
 		elif self._menu_view_group_path.IsChecked():
 			sort_by = collections.SORT_BY_PATH
 

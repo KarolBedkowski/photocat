@@ -6,13 +6,13 @@ photocat.engine.thumb_drawer
 -- engine do obsługi rysowania miniaturek
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004, 2005, 2006
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006-2010'
 __revision__ = '$Id$'
 
 
@@ -42,6 +42,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		self._width = 0
 		self.thumb_width = 200
 		self.thumb_height = 200
+		self.scale = 0
 		self.show_captions = True
 		self.group_by = ThumbDrawer.GROUP_BY_NONE
 
@@ -134,7 +135,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		if paint_rect is None:
 			painty1 = -1
 			painty2 = sys.maxint
-
 		else:
 			painty1 = paint_rect.y
 			painty2 = paint_rect.height + painty1
@@ -147,6 +147,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		dc_DrawBitmap = dc.DrawBitmap
 		dc_SetTextForeground = dc.SetTextForeground
 		dc_DrawText = dc.DrawText
+		scale = self.scale
 
 		for idx, item, thumb_x, thumb_y, _txwm, _tyhm, rect in self._items_pos:
 			# czy rysowac
@@ -158,7 +159,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 				dc.DrawRectangle(thumb_x - 3, thumb_y - 3, thumb_w + 6,
 						thumb_h + selected_bottom)
 
-			img = item.get_bitmap(thumb_w, thumb_h)
+			img = item.get_bitmap(thumb_w, thumb_h, scale)
 
 			# centrowanie
 			txi = thumb_x + (thumb_w - item.imgwidth) / 2
@@ -204,7 +205,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		self._items = items
 		self._items_pos = []
 		self._group_bars = []
-
 		cols = max((width - 30) / self.thumb_width, 1)
 
 		# przesuniecie x aby ikonki byly na środku
@@ -225,13 +225,10 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		# wyznaczenie pozycji miniaturek
 		if len(self._items) == 0:
 			rows, height, last_index = 0, 0, 0
-
 		elif self.group_by == ThumbDrawer.GROUP_BY_DATE:
 			rows, height, last_index = self.__compute_thumbs_pos_timeline(height)
-
 		elif self.group_by == ThumbDrawer.GROUP_BY_PATH:
 			rows, height, last_index = self.__compute_thumbs_pos_path(height)
-
 		else:
 			rows, height, last_index = self.__compute_thumbs_pos_normal(height)
 
@@ -271,17 +268,14 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 		for idx, item  in enumerate(self._items):
 			col = idx % cols
-
 			if col == 0:
 				if row == max_rows:
 					break
-
 				row += 1
 
 			# pozycja
 			thumb_x = col * twm + padding
 			thumb_y = row * thm + 5
-
 			items_pos_append((idx, item, thumb_x, thumb_y, thumb_x + thumb_w, 
 				thumb_y + thm, wx.Rect(thumb_x, thumb_y, twm, thm)))
 
@@ -364,22 +358,17 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 				pos = int((row + 1) * thm + 20)
 				label = group_label_func(item)
 				col = 0
-
 				next_row = row + 1 + (header_height + 25) / float(thm)
-
 				if (next_row + 1) * thm + 5 > height:
 					break
-
 				row = next_row
 				last_date = item_date
 				group_bars_append((label, pos, pos + header_height + 2))
 
 			elif col >= cols:
 				col = 0
-
 				if (row + 2) * thm + 5 > height:
 					break
-
 				row += 1
 
 			# pozycja

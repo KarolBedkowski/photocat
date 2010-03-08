@@ -3,13 +3,13 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004, 2005, 2006
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 
 __all__ = ['DlgProperties']
@@ -91,7 +91,6 @@ class _DlgSearch(wx.Frame):
 		position = appconfig.get('search_wnd', 'position')
 		if position is None:
 			self.Centre(wx.BOTH)
-
 		else:
 			self.Move(position)
 
@@ -188,11 +187,9 @@ class _DlgSearch(wx.Frame):
 		if self._selected_item is not None:
 			if isinstance(self._selected_item, Disk):
 				map(cb.Append, (_("<current collection>"), _("<current disk>")))
-
 			elif isinstance(self._selected_item, Directory):
 				map(cb.Append, (_("<current collection>"), _("<current disk>"),
 						_("<current dir>")))
-
 			elif isinstance(self._selected_item, Collection) and len(self._collections) > 1:
 				map(cb.Append, (_("<current collection>"), _("<current disk>")))
 
@@ -385,7 +382,6 @@ class _DlgSearch(wx.Frame):
 		try:
 			options = self._get_options()
 			_LOG.debug('DlgSearch._on_btn_find options: %r', options)
-
 		except _OptionsError, err:
 			dialogs.message_box_info(self, _("Bad options:\n%s") % err, _('Find'))
 			return
@@ -407,7 +403,6 @@ class _DlgSearch(wx.Frame):
 			if isinstance(item, FileImage):
 				ico = icon_image_idx
 				counters[0] += 1
-
 			else:
 				ico = icon_folder_idx
 				counters[1] += 1
@@ -436,9 +431,7 @@ class _DlgSearch(wx.Frame):
 				if not dialogs.message_box_warning_yesno(self,
 						_("Found more than 1000 items.\nContinue?"), _('Find')):
 					cntr[2] = False
-
 				cntr[1] = False
-
 			return cont & cntr[2]
 
 		what = search.find(what, options, collections, insert, update_dlg_progress)
@@ -452,14 +445,11 @@ class _DlgSearch(wx.Frame):
 		found = len(self._result) > 0
 		if found:
 			self.Layout()
-
 		else:
 			dialogs.message_box_info(self, _('Not found'), _('Find'))
 
 		self._btn_icons.Enable(found)
-
 		self._make_last_search_menu(search.update_last_search(what))
-
 		self._statusbar.SetStatusText(
 				_('Found %(folders)d folders and %(files)d files') %
 				dict(folders=counters[1], files=counters[0]))
@@ -482,10 +472,8 @@ class _DlgSearch(wx.Frame):
 
 			if res == wx.ID_BACKWARD:
 				item_idx -= 1
-
 			elif res == wx.ID_FORWARD:
 				item_idx += 1
-
 			else:
 				break
 
@@ -585,7 +573,7 @@ class _DlgSearch(wx.Frame):
 	def _show_preview(self, item):
 		self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
 		self._bmp_preview.SetBitmap(image.load_bitmap_from_item_with_size(item,
-				self._thumb_width, self._thumb_height)[0])
+				self._thumb_width, self._thumb_height, 1)[0])
 		self._bmp_preview.Refresh()
 
 	def _show_icons(self, icons):
@@ -614,14 +602,11 @@ class _DlgSearch(wx.Frame):
 					for item in self._result
 					if isinstance(item, FileImage)])
 			self._bmp_preview.SetBitmap(wx.EmptyImage(1, 1).ConvertToBitmap())
-
 		else:
 			self._thumbctrl.show_dir([])
 
 		self._bmp_preview.SetMinSize(size)
-
 		self._grid_result.RecalcSizes()
-
 		self._btn_goto.Enable(False)
 		self._btn_properties.Enable(False)
 

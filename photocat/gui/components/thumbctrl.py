@@ -2,13 +2,13 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (C) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 
 
@@ -57,6 +57,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 
 		self._thumb_width = 200
 		self._thumb_height = 200
+		self.scale = 1
 
 		self._items = []
 		self._reset()
@@ -123,7 +124,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Scroll(0, 0)
 		self._update()
 
-	def set_thumb_size(self, thumb_width, thumb_height):
+	def set_thumb_size(self, thumb_width, thumb_height, scale=1):
 		''' thumbctrl.set_thumb_size(thumb_width, thumb_height) -- ustawienie
 			nowego rozmiaru miniaturek i odświerzenie
 
@@ -132,9 +133,11 @@ class ThumbCtrl(wx.ScrolledWindow):
 		'''
 		self._thumb_width = thumb_width
 		self._thumb_height = thumb_height
+		self.scale = scale
 
 		self._thumb_drawer.thumb_width = thumb_width
 		self._thumb_drawer.thumb_height = thumb_height
+		self._thumb_drawer.scale = scale
 
 		for item in self._items:
 			item.reset()
@@ -272,7 +275,6 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if event.ControlDown():
 			if self._selected in self._selected_list:
 				self._selected_list.remove(self._selected)
-
 			else:
 				self._selected_list.append(self._selected)
 
@@ -280,22 +282,16 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if self._selected != -1:
 				begindex = self._selected
 				endindex = lastselected
-
 				if lastselected < self._selected:
 					begindex = lastselected
 					endindex = self._selected
-
 				self._selected_list = []
-
 				for ii in xrange(begindex, endindex + 1):
 					self._selected_list.append(ii)
-
 			self._selected = lastselected
-
 		else:
 			if self._selected == -1:
 				self._selected_list = []
-
 			else:
 				self._selected_list = []
 				self._selected_list.append(self._selected)
@@ -329,7 +325,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 			if self._last_preloaded < len_items -1:
 				self._last_preloaded += 1
 				self._items[self._last_preloaded].get_bitmap(self._thumb_width,
-						self._thumb_height)
+						self._thumb_height, self.scale)
 
 				if self._status_wnd is not None:
 					now_preloaded = int(20 * self._last_preloaded / len_items)
