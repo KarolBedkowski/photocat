@@ -5,6 +5,10 @@ Licence and version informations.
 
 __author__ = 'Karol Będkowski'
 
+if '_' not in globals():
+	_ = lambda x: x
+
+
 SHORTNAME = 'photocat'
 NAME = _("Photo Catalog")
 VERSION = '1.6.5'

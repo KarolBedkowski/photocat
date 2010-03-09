@@ -3,10 +3,10 @@ SetCompressor /SOLID lzma
 #SetCompressorDictSize 16
 
 ; HM NIS Edit Wizard helper defines
-!define PRODUCT_NAME "PC"
+!define PRODUCT_NAME "PhotoCatalog"
 !define PRODUCT_VERSION "1.6.5"
 !define PRODUCT_PUBLISHER "Karol Bêdkowski"
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\pc.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\PhotoCatalog.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_STARTMENU_REGVAL "NSIS:StartMenuDir"
@@ -22,13 +22,13 @@ SetCompressor /SOLID lzma
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; Licence
-!insertmacro MUI_PAGE_LICENSE "dist\LICENCE.txt"
+!insertmacro MUI_PAGE_LICENSE "dist\COPYING"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Start menu page
 var ICONS_GROUP
 !define MUI_STARTMENUPAGE_NODISABLE
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "PC"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "PhotoCatalog"
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "${PRODUCT_UNINST_ROOT_KEY}"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "${PRODUCT_UNINST_KEY}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "${PRODUCT_STARTMENU_REGVAL}"
@@ -36,7 +36,7 @@ var ICONS_GROUP
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\pc.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\photocat.exe"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -51,11 +51,11 @@ var ICONS_GROUP
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "setup_${PRODUCT_NAME}_${PRODUCT_VERSION}.exe"
-InstallDir "$PROGRAMFILES\pc"
+InstallDir "$PROGRAMFILES\PhotoCatalog"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
-LicenseData "dist\LICENCE.txt"
+LicenseData "dist\COPYING"
 SetDateSave on
 SetDatablockOptimize on
 CRCCheck on
@@ -83,8 +83,8 @@ Section "GrupaGlowna" SEC01
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\PC.lnk" "$INSTDIR\pc.exe"
-  CreateShortCut "$DESKTOP\PC.lnk" "$INSTDIR\pc.exe"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\PhotoCatalog.lnk" "$INSTDIR\photocat.exe"
+  CreateShortCut "$DESKTOP\PhotoCatalog.lnk" "$INSTDIR\photocat.exe"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -96,10 +96,10 @@ SectionEnd
 
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\pc.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\PhotoCatalog.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\pc.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\PhotoCatalog.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
@@ -118,8 +118,8 @@ FunctionEnd
 Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
-  Delete "$DESKTOP\pc.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\pc.lnk"
+  Delete "$DESKTOP\PhotoCatalog.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\PhotoCatalog.lnk"
 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir /r "$INSTDIR\locale"

@@ -71,8 +71,8 @@ def get_data_files():
 
 
 pctarget = {
-	'script': "pc_console.py",
-	'name': "pc_console",
+	'script': "photocat_console.py",
+	'name': "photocat_console",
 	'version': version.VERSION,
 	'description': "%s - %s (%s, build: %s)" \
 			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
