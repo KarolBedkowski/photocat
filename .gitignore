@@ -10,3 +10,13 @@ profile.tmp
 profile_result_*.txt
 *-stamp
 photocat.egg-info
+*.pot
+*~
+*.exe
+*.pyc
+*.pyo
+*.~*
+.svn
+*.7z
+*.log
+*.swp
