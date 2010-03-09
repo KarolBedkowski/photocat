@@ -52,7 +52,7 @@ install: build
 	mkdir -p $(CURDIR)/debian/photocat/usr/share/locale
 	cp -r locale/* $(CURDIR)/debian/photocat/usr/share/locale
 	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/data
-	cp data/icon.svg $(CURDIR)/debian/photocat/usr/share/photocat/data/
+	cp data/art/icon.svg $(CURDIR)/debian/photocat/usr/share/photocat/data/art/
 
 
 # Build architecture-independent files here.

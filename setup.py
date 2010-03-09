@@ -65,7 +65,7 @@ def get_data_files():
 
 	for x in find_files('data', data_dir):
 		yield x
-	
+
 	for x in find_files('locale', locales_dir):
 		yield x
 
@@ -78,7 +78,7 @@ pctarget = {
 			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
 	'company_name': "Karol Będkowski",
 	'copyright': version.COPYRIGHT,
-	'icon_resources': [(0, "data/icon.ico")],
+	'icon_resources': [(0, "data/art/icon.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
 
