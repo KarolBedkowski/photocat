@@ -99,18 +99,14 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 	def _create_layout(self, appconfig):
 		splitter = self._layout_splitter_v = wx.SplitterWindow(self, -1,
 				style=wx.SW_BORDER)
-
 		splitter2 = self._layout_splitter_h = wx.SplitterWindow(splitter, -1,
 				style=wx.SW_BORDER)
 		splitter2.SplitHorizontally(self._create_layout_photolist(splitter2),
 				self._create_layout_info(splitter2))
 		splitter2.SetMinimumPaneSize(0)
-
 		splitter.SplitVertically(self._create_layout_tree(splitter), splitter2)
-
 		splitter.SetSashGravity(0.0)
 		splitter2.SetSashGravity(1.0)
-
 		splitter.SetSashPosition(appconfig.get('main_wnd', 'splitter_v', 200))
 		splitter2.SetSashPosition(appconfig.get('main_wnd', 'splitter_h', -1))
 
@@ -181,14 +177,11 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 	def _create_main_menu_view(self):
 		menu = wx.Menu()
-
 		self._menu_view_show_info = create_menu_item(self, menu,
 				_('[x]Show &Informations'), self._on_view_show_hide_info, accel='F4')[1]
 		self._menu_view_show_captions = create_menu_item(self, menu,
 				_('[x]Show &Captions'), self._on_view_show_hide_captions)[1]
-
 		menu.AppendSeparator()
-
 		self._menu_view_sort_name = create_menu_item(self, menu,
 				_('[o]Sort by &Name '), self._on_view_sort)[1]
 		self._menu_view_sort_date = create_menu_item(self, menu,
@@ -197,14 +190,11 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				_('[o]&Sort and Group by Date '), self._on_view_sort)[1]
 		self._menu_view_group_path = create_menu_item(self, menu,
 				_('[o]Sort and Group by Pa&th '), self._on_view_sort)[1]
-
 		menu.AppendSeparator()
-
 		self._menu_view_sort_desc = create_menu_item(self, menu,
 				_('[x]Sort Descend'), self._on_view_sort)[1]
 		self._menu_view_show_recur = create_menu_item(self, menu,
 				_('[x]Show All Files in Subtree'), self._on_view_sort)[1]
-
 		return menu
 
 	def _create_main_menu_help(self):
@@ -224,7 +214,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 	def _create_toolbar(self):
 		self._toolbar = toolbar = self.CreateToolBar(
 				wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT | wx.TB_TEXT)
-		toolbar.SetToolBitmapSize((16, 16))
+		#toolbar.SetToolBitmapSize((16, 16))
 
 		def __cbtna(label, function, iconname, description=''):
 			return create_toolbar_button(toolbar, label, function,
@@ -297,7 +287,6 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				if item.path == '': #isinstance(item, Disk):
 					__append(_('&Update disk...'), self._on_collection_update_disk)
 					__append(_('&Delete disk...'), self._on_collection_del_disk)
-
 				else:
 					__append(_('Delete selected &dir...'), self._on_collection_del_dir)
 
@@ -345,7 +334,6 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				self._layout_splitter_h.Unsplit()
 				self._info_panel.Destroy()
 				self._info_panel = None
-
 		else:
 			if show is None or show is True:
 				# stworzenie panelu

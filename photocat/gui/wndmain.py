@@ -110,7 +110,7 @@ class WndMain(WndMainView):
 
 	def _on_close(self, evt):
 		'''_on_close'''
-		dirty_collections = [collection for collection in self._collections 
+		dirty_collections = [collection for collection in self._collections
 				if collection.dirty]
 
 		if len(dirty_collections) > 0:
@@ -703,7 +703,6 @@ class WndMain(WndMainView):
 				menu.Append(wx.ID_FILE1 + num,
 						"&%d. %s\tCTRL+%d" % (num + 1, filename, num + 1),
 						_('Open %s') % filepath)
-
 			self._main_menu_file_recent_item.Enable(True)
 		else:
 			self._main_menu_file_recent_item.Enable(False)
@@ -714,7 +713,6 @@ class WndMain(WndMainView):
 		if collection.dirty or force:
 			try:
 				Storage.save(collection)
-
 			except StandardError:
 				_LOG.exception('WndMain._on_file_save(%s)', collection.caption)
 				dialogs.message_box_error(self,
@@ -733,33 +731,28 @@ class WndMain(WndMainView):
 			if selected_tree_item is None:
 				collection_writable = (not self._collections[0].readonly
 						if len(self._collections) == 1 else False)
-
 			else:
 				collection_writable = not selected_tree_item.collection.readonly
+		images_showed = len(self._current_show_images) > 0
 
 		self._menu_bar.EnableTop(2, collections_loaded)
 
 		mm_items = self._main_menu_file.GetMenuItems()
-		mm_items[2].Enable(collections_loaded and collection_writable)
-		mm_items[4].Enable(collections_loaded)
-		mm_items[6].Enable(collections_loaded and collection_writable)
-		mm_items[8].Enable(len(self._current_show_images) > 0)
-		mm_items[9].Enable(len(self._current_show_images) > 0 \
-				and epdf.EPDF_AVAILABLE)
-
+		mm_items[2].Enable(collection_writable)
+		mm_items[4].Enable(images_showed and epdf.EPDF_AVAILABLE)
+		mm_items[5].Enable(collection_writable)
+		mm_items[6].Enable(images_showed)
 		self._toolbar.EnableTool(self._tb_find, collections_loaded)
 		self._toolbar.EnableTool(self._tb_add_disk, collections_loaded)
-		self._toolbar.EnableTool(self._tb_save, collections_loaded \
-				and collection_writable)
+		self._toolbar.EnableTool(self._tb_save, collection_writable)
 
 		if collections_loaded:
 			disk_selected = (isinstance(selected_tree_item, Disk)
-				if selected_tree_item is not None else False)
+					if selected_tree_item is not None else False)
 			dir_selected = not disk_selected and selected_tree_item is not None \
 					and isinstance(selected_tree_item, Directory)
 
 			file_selected = self._photo_list.selected_count > 0
-
 			mm_items = self._main_menu_collection.GetMenuItems()
 			mm_items[0].Enable(collection_writable)
 			mm_items[1].Enable(disk_selected and collection_writable)
@@ -835,7 +828,6 @@ class WndMain(WndMainView):
 			else:
 				self._photo_list.show_dir(images, cmp_func)
 				self._current_show_images = images
-
 		else:
 			self._photo_list.show_dir(images)
 			self._current_show_images = images
@@ -869,7 +861,6 @@ class WndMain(WndMainView):
 			sort_by = collections.SORT_BY_PATH
 
 		return collections.get_sorting_function(sort_by, desc, images_as_list)
-
 
 	def _show_item(self, item, show_info, images_count):
 		try:
