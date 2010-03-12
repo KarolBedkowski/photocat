@@ -660,9 +660,10 @@ class WndMain(WndMainView):
 			self.SetStatusText(filename)
 		except StandardError, err:
 			_LOG.exception('WndMain.open_file(%s)', filename)
-			dialogs.message_box_error(self,
-					(_('Error opening file %s:\n') % filename) + err.message,
-					_('Open file'))
+			dialogs.message_box_error_ex(self,
+					_('Cannot open file'),
+					_('During openning file %(filename)s\nerror occured: %(error)s') % \
+					dict(filename=filename, error=err.message))
 			self.SetStatusText(_('Error: %s') % err.message)
 			collection = None
 		else:

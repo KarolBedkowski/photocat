@@ -16,12 +16,11 @@ __revision__ = '$Id$'
 
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
-		'message_box_warning_yesnocancel', 'message_box_not_save_confirm']
+		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',
+		'message_box_error_ex']
 
 
 import wx
-
-
 
 
 class MyMessageDialog(wx.Dialog):
@@ -85,7 +84,7 @@ class DialogConfirmSave(MyMessageDialog):
 		self.saveas = saveas
 		MyMessageDialog.__init__(self, parent, primary_text, secondary_text, None,
 				wx.ART_WARNING)
-	
+
 	def _create_buttons(self, buttons):
 		grid = wx.StdDialogButtonSizer()
 		btn = wx.Button(self, wx.ID_NO, _('Close &without Saving'))
@@ -103,6 +102,12 @@ class DialogConfirmSave(MyMessageDialog):
 def message_box_error(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, str(msg), title,
 			wx.OK | wx.CENTRE | wx.ICON_ERROR)
+	dlg.ShowModal()
+	dlg.Destroy()
+
+
+def message_box_error_ex(parent, header, message):
+	dlg = MyMessageDialog(parent, header, message, wx.OK, wx.ART_ERROR)
 	dlg.ShowModal()
 	dlg.Destroy()
 
