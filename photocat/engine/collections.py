@@ -5,7 +5,7 @@ photocat.engine.collections
 -- obsługa katalogów
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -211,18 +211,18 @@ def open_collection(filename):
 
 		@param filename - pełna ścieżka do pliku
 		@retuen obiekt Collection
-		@exception OpencollectionError
+		@exception OpenCollectionError
 	'''
 	_LOG.debug("collections.open_collection(%s)", filename)
 
 	# plik indeksu
 	# istnienie
 	if not os.path.exists(filename) or not os.path.isfile(filename):
-		raise errors.OpencollectionError(_("File not exists!"))
+		raise errors.OpenCollectionError(_("File not exists!"))
 
 	# odczyt
 	if not os.access(filename, os.R_OK):
-		raise errors.OpencollectionError(_("File not readable"))
+		raise errors.OpenCollectionError(_("File not readable"))
 
 	# zapis
 	file_writable = os.access(filename, os.W_OK)
@@ -233,11 +233,11 @@ def open_collection(filename):
 	data_file = os.path.splitext(filename)[0] + '.data'
 	# istnienie
 	if not os.path.exists(data_file) or not os.path.isfile(data_file):
-		raise errors.OpencollectionError(_("Data file not exists!"))
+		raise errors.OpenCollectionError(_("Data file not exists!"))
 
 	# odczyt
 	if not os.access(data_file, os.R_OK):
-		raise errors.OpencollectionError(_("Data file not readable"))
+		raise errors.OpenCollectionError(_("Data file not readable"))
 
 	# zapisywanie
 	data_writable = os.access(data_file, os.W_OK)
@@ -259,7 +259,7 @@ def open_collection(filename):
 		collection.data_provider.open(readonly=not writable)
 
 	except Exception, err:
-		raise errors.OpencollectionError(err)
+		raise errors.OpenCollectionError(err)
 
 	return collection
 
@@ -269,7 +269,7 @@ def new_collection(filename):
 
 		@param filename - pełna ścieżka do pliku
 		@retuen obiekt Collection
-		@exception OpencollectionError
+		@exception OpenCollectionError
 	'''
 	_LOG.debug("collections.open_collection(%s)", filename)
 
@@ -277,11 +277,11 @@ def new_collection(filename):
 
 	# ścieżka istnieje
 	if not os.path.exists(path):
-		raise errors.OpencollectionError(_("Invalid path"))
+		raise errors.OpenCollectionError(_("Invalid path"))
 
 	# ścieżka jest zapisywalna
 	if not os.access(path, os.W_OK):
-		raise errors.OpencollectionError(_("Path is not writable!"))
+		raise errors.OpenCollectionError(_("Path is not writable!"))
 
 	# plik indexu
 	# czy plik indeksu istnieje
@@ -290,15 +290,15 @@ def new_collection(filename):
 		if os.path.isfile(filename):
 			# czy mozna go czytac
 			if not os.access(filename, os.R_OK):
-				raise errors.OpencollectionError(_("File not readable"))
+				raise errors.OpenCollectionError(_("File not readable"))
 
 			# czy mozna zapisywac
 			if not os.access(filename, os.W_OK):
-				raise errors.OpencollectionError(_("File is not writable!"))
+				raise errors.OpenCollectionError(_("File is not writable!"))
 
 		# plik jest katalogiem
 		else:
-			raise errors.OpencollectionError(_("Invalid path"))
+			raise errors.OpenCollectionError(_("Invalid path"))
 
 	# plik danych
 	data_file = os.path.splitext(filename)[0] + '.data'
@@ -306,18 +306,18 @@ def new_collection(filename):
 	if os.path.exists(data_file):
 		# można czytać
 		if not os.access(data_file, os.R_OK):
-			raise errors.OpencollectionError(_("File not readable"))
+			raise errors.OpenCollectionError(_("File not readable"))
 
 		# można zapisywać
 		if not os.access(data_file, os.W_OK):
-			raise errors.OpencollectionError(_("File is not writable!"))
+			raise errors.OpenCollectionError(_("File is not writable!"))
 
 	try:
 		collection = Collection(filename)
 		collection.data_provider.open(True)
 
 	except Exception, err:
-		raise errors.OpencollectionError(err)
+		raise errors.OpenCollectionError(err)
 
 	return collection
 
