@@ -120,9 +120,6 @@ class WndMain(WndMainView):
 					return
 				elif res == wx.ID_YES:
 					self._save_collection(collection)
-		elif not dialogs.message_box_question_yesno(self, _('Close program?'),
-				_('Exit')):
-			return
 
 		for collection in self._collections:
 			collections.collection_close(collection)
@@ -431,7 +428,7 @@ class WndMain(WndMainView):
 				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
 		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty '
 				'entries: %(dirty)d (%(dirtyp)d%%)') % data
-		dialogs.message_box_info(self, info, version.NAME)
+		dialogs.message_box_info_ex(self, _('Catalog information'), info)
 
 	def _on_collection_edit_multi(self, evt):
 		''' _on_collection_edit_multi'''
@@ -736,13 +733,14 @@ class WndMain(WndMainView):
 				collection_writable = not selected_tree_item.collection.readonly
 		images_showed = len(self._current_show_images) > 0
 
-		self._menu_bar.EnableTop(2, collections_loaded)
+		self._menu_bar.EnableTop(1, collections_loaded)
 
 		mm_items = self._main_menu_file.GetMenuItems()
-		mm_items[2].Enable(collection_writable)
-		mm_items[4].Enable(images_showed and epdf.EPDF_AVAILABLE)
-		mm_items[5].Enable(collection_writable)
-		mm_items[6].Enable(images_showed)
+		mm_items[3].Enable(collection_writable)
+		mm_items[4].Enable(collection_writable)
+		mm_items[6].Enable(images_showed and epdf.EPDF_AVAILABLE)
+		mm_items[7].Enable(images_showed)
+		mm_items[9].Enable(collections_loaded)
 		self._toolbar.EnableTool(self._tb_find, collections_loaded)
 		self._toolbar.EnableTool(self._tb_add_disk, collections_loaded)
 		self._toolbar.EnableTool(self._tb_save, collection_writable)
@@ -759,7 +757,7 @@ class WndMain(WndMainView):
 			mm_items[1].Enable(disk_selected and collection_writable)
 			mm_items[2].Enable(disk_selected and collection_writable)
 			mm_items[4].Enable(dir_selected and collection_writable)
-			mm_items[5].Enable(file_selected and collection_writable)
+			mm_items[6].Enable(file_selected and collection_writable)
 			mm_items[7].Enable(file_selected and collection_writable)
 
 	def _update_settings(self):

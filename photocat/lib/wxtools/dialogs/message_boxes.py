@@ -17,7 +17,7 @@ __revision__ = '$Id$'
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
 		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',
-		'message_box_error_ex']
+		'message_box_error_ex', 'message_box_info_ex']
 
 
 import wx
@@ -115,6 +115,12 @@ def message_box_error_ex(parent, header, message):
 def message_box_info(parent, msg, title=''):
 	dlg = wx.MessageDialog(parent, str(msg), title,
 			wx.OK | wx.CENTRE | wx.ICON_INFORMATION)
+	dlg.ShowModal()
+	dlg.Destroy()
+
+
+def message_box_info_ex(parent, header, message):
+	dlg = MyMessageDialog(parent, header, message, wx.OK, wx.ART_INFORMATION)
 	dlg.ShowModal()
 	dlg.Destroy()
 

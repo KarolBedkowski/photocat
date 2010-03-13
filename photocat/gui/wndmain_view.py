@@ -113,8 +113,8 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 	def _create_main_menu(self):
 		self._menu_bar = menu_bar = wx.MenuBar()
 		menu_bar.Append(self._create_main_menu_file(), _('&File'))
+		menu_bar.Append(self._create_main_menu_edit(), _('&Edit'))
 		menu_bar.Append(self._create_main_menu_view(), _('&View'))
-		menu_bar.Append(self._create_main_menu_collection(), _('&Collection'))
 		menu_bar.Append(self._create_main_menu_help(), _('Help'))
 		if self._debug:
 			menu_bar.Append(self._create_main_menu_debug(), '&Debug')
@@ -127,31 +127,33 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 					wx.ID_NEW, wx.ART_NEW),
 			(_('&Open'), 'Ctrl+O', _('Open collection'), self._on_file_open,
 					wx.ID_OPEN, wx.ART_FILE_OPEN),
+			('-'),
 			(_('&Save'), 'Ctrl+S', _('Save the current collection'), self._on_file_save,
 					wx.ID_SAVE, wx.ART_FILE_SAVE),
-			('-'),
-			(_('&Export to PDF...'), None, '', self._on_file_export_pdf),
 			(_('&Rebuild collection'), None, _('Rebuild collection'),
 					self._on_file_rebuild),
+			('-'),
+			(_('&Export to PDF...'), None, '', self._on_file_export_pdf),
 			(_('&Print'), 'Ctrl+P', '', self._on_file_print_prv, wx.ID_PRINT,
 					wx.ART_PRINT),
 			('-'),
-			(_('Pre&ferences'), None, _('Change Photo Catalog preferences'),
-					self._on_file_settings),
+			(_('Properties'), 'Alt+Return',
+					_('Show informations about selected calalog...'),
+					self._on_collection_info),
 			('-'),
 			('-'),
 			(_('&Close'), 'Ctrl+W', _('Close the current collection'),
 					self._on_file_close),
-			(_('&Quit'), 'Alt-F4', _('Quit the application'), self._on_menu_close,
+			(_('&Quit'), 'Ctrl+Q', _('Quit the application'), self._on_menu_close,
 					wx.ID_EXIT, wx.ART_QUIT)))
 
 		self._main_menu_file_recent = wx.Menu()
-		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(10,
+		self._main_menu_file_recent_item = self._main_menu_file.InsertMenu(11,
 				-1, _('Recent files'), self._main_menu_file_recent)
 
 		return self._main_menu_file
 
-	def _create_main_menu_collection(self):
+	def _create_main_menu_edit(self):
 		menu = create_menu(self, (
 			(_('&Add Disk...'), None, _('Add disk to collection'),
 					self._on_collection_add, None, wx.ART_NEW_DIR),
@@ -161,17 +163,17 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 					self._on_collection_del_disk, None, wx.ART_DELETE),
 			('-'),
 			(_('Delete Selected &Dir...'), None, '', self._on_collection_del_dir),
+			('-'),
+			(_('&Edit Selected Files...'), None, '', self._on_collection_edit_multi),
 			(_('Delete Selected &Image...'), None, '',
 					self._on_collection_del_image),
 			('-'),
-			(_('&Edit Selected Files...'), None, '', self._on_collection_edit_multi),
-			('-'),
 			(_('Search...'), 'Ctrl+F', _('Search for something in calalogs'),
 					self._on_collection_search, wx.ID_FIND, wx.ART_FIND),
-			(_('Show Collection Informations'), None,
-					_('Show informations about selected calalog...'), self._on_collection_info),
+			('-'),
 			(_('Tags'), None, _('Manage collection tags...'), self._on_collection_edit_tags),
-		))
+			(_('Pre&ferences'), None, _('Change Photo Catalog preferences'),
+					self._on_file_settings, None, wx.ART_HELP_SETTINGS)))
 		self._main_menu_collection = menu
 		return menu
 
