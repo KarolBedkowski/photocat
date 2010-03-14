@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -59,8 +59,7 @@ class DlgPropertiesBase(wx.Dialog):
 
 	def _create_layout(self):
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND | wx.ALL,
-				12)
+		main_grid.Add(self._create_layout_notebook(), 1, wx.EXPAND | wx.ALL, 12)
 
 		btns = wx.CANCEL
 		if not self.readonly:
@@ -95,7 +94,6 @@ class DlgPropertiesBase(wx.Dialog):
 		position = appconfig.get(self._CONFIG_KEY, 'position')
 		if position is None:
 			self.Centre(wx.BOTH)
-
 		else:
 			self.Move(position)
 
@@ -119,7 +117,6 @@ class DlgPropertiesBase(wx.Dialog):
 			if key == '':
 				bsizer.Add((1, 5))
 				bsizer.Add((1, 5))
-
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0,
 						wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
@@ -189,7 +186,6 @@ class DlgPropertiesBase(wx.Dialog):
 		item_tags = self._item.tags
 		if not self.readonly:
 			all_tags = self._item.collection.tags_provider.tags
-
 		else:
 			all_tags = item_tags
 

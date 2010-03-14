@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x  (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -27,7 +27,6 @@ class DlgPropertiesDir(DlgPropertiesBase):
 
 	def __init__(self, parent, item):
 		readonly = item.collection.readonly
-
 		DlgPropertiesBase.__init__(self, parent, item, readonly)
 
 	def _create_layout_notebook(self):
@@ -44,8 +43,8 @@ class DlgPropertiesDir(DlgPropertiesBase):
 		changed = False
 
 		new_desc = self._textctrl_desc.GetValue().strip()
-		changed_desc = ((new_desc != '')
-				if (item.desc is None) else (new_desc != item.desc))
+		changed_desc = ((new_desc != '') if (item.desc is None)
+				else (new_desc != item.desc))
 
 		if changed_desc:
 			item.desc = new_desc
@@ -63,7 +62,6 @@ class DlgPropertiesDir(DlgPropertiesBase):
 
 		if changed:
 			self.EndModal(wx.ID_OK)
-
 		else:
 			self.EndModal(wx.ID_CANCEL)
 

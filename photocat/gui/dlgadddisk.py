@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -224,7 +224,6 @@ class DlgAddDisk(wx.Dialog):
 		last_dir = ''
 		if __name__ == '__main__':
 			last_dirs = []
-
 		else:
 			last_dirs = AppConfig().get_items('add_disk-last_dir') or []
 			if len(last_dirs) > 0:
@@ -240,7 +239,6 @@ class DlgAddDisk(wx.Dialog):
 				name = self._data['name']
 				self._collection_disk_names = tuple((disk.name
 						for disk in collection.disks if disk.name != name))
-
 			else:
 				self._collection_disk_names = tuple((disk.name
 						for disk in collection.disks))

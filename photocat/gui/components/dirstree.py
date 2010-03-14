@@ -67,20 +67,18 @@ class DirsTree(wx.TreeCtrl):
 			item = self.GetItemData(node)
 			if item is not None:
 				data = item.GetData()
-
 		return data
 
 	@property
 	def selected_node_parent(self):
 		''' dirtree.selected_node_parent -> Directory -- pobranie parenta
-			zaznaczonego elementu drzewa '''
+		zaznaczonego elementu drzewa '''
 		node = self.GetSelection()
 		parent = None
 		if node.IsOk():
 			parent = self.GetItemParent(node)
 			if parent is None or not parent.IsOk():
 				parent = None
-
 		return parent
 
 	@property
@@ -93,9 +91,7 @@ class DirsTree(wx.TreeCtrl):
 
 	def add_collection(self, collection):
 		''' dirtree.add_collection(collection) -- dodanie katalogu do drzewa
-
-			@param collection	- katalog do dodania
-		'''
+			@param collection	- katalog do dodania'''
 		self.Freeze()
 		self.update_node_collection(collection)
 		self.Expand(collection.tree_node)
@@ -118,10 +114,8 @@ class DirsTree(wx.TreeCtrl):
 	def update_node_collection(self, collection, recursive=True):
 		''' dirtree.update_node_collection(collection, [recursive]) -- odświeżenie
 		katalogu
-
 		@param collection 		- katalog do odświerzenia
-		@param recursive	- czy odświerzać też gałąź (def=true)
-		'''
+		@param recursive	- czy odświerzać też gałąź (def=true)'''
 		_LOG.debug('update_node_collection %s', collection.name)
 		self.Freeze()
 
@@ -132,7 +126,6 @@ class DirsTree(wx.TreeCtrl):
 					collection.caption, data=wx.TreeItemData(collection))
 			self.SetItemImage(collection_node, self._icon_folderimg_idx,
 					wx.TreeItemIcon_Normal)
-
 		else:
 			self.SetItemText(collection_node, collection.caption)
 
@@ -151,10 +144,8 @@ class DirsTree(wx.TreeCtrl):
 	def update_node_disk(self, disk, recursive=True):
 		''' dirtree.update_node_disk(disk, recursive=True) -- odsiweżenie
 		elementu drzewa - dysku
-
 		@param disk 		- dysk do odświerzenia
-		@param recursive	- czy odświerzać też gałąź (def=true)
-		'''
+		@param recursive	- czy odświerzać też gałąź (def=true)'''
 		_LOG.debug('update_node_disk %s', disk.name)
 		disk_node = disk.tree_node
 
@@ -163,7 +154,6 @@ class DirsTree(wx.TreeCtrl):
 					disk.caption, data=wx.TreeItemData(disk))
 			self.SetItemImage(disk_node, self._icon_disk_idx,
 					wx.TreeItemIcon_Normal)
-
 		else:
 			self.SetItemText(disk_node, disk.caption)
 
@@ -175,10 +165,8 @@ class DirsTree(wx.TreeCtrl):
 	def update_node_directory(self, directory, recursive=True):
 		''' dirtree.update_node_directory(dir, recursive=True) -- odsiweżenie
 		elementu drzewa - folderu
-
 		@param directory	- folder do odświerzenia
-		@param recursive	- czy odświerzać też gałąź (def=true)
-		'''
+		@param recursive	- czy odświerzać też gałąź (def=true)'''
 		_LOG.debug('update_node_directory %s', directory.name)
 		dir_node = directory.tree_node
 
@@ -188,10 +176,8 @@ class DirsTree(wx.TreeCtrl):
 					data=wx.TreeItemData(directory))
 			self.SetItemImage(dir_node, self._icon_idx, wx.TreeItemIcon_Normal)
 			self.SetItemImage(dir_node, self._icon2_idx, wx.TreeItemIcon_Expanded)
-
 		elif dir_node.IsOk():
 			self.SetItemText(dir_node, directory.caption)
-
 		else:
 			dir.tree_node = None
 			return
@@ -204,17 +190,14 @@ class DirsTree(wx.TreeCtrl):
 	def update_node_tags(self, tags, clear=False):
 		''' dirtree.update_node_tags(tags, recursive=True) -- odsiweżenie gałęzi
 		tagów
-
 		@param tags			- element tag do odświerzenia
-		@param recursive	- czy odświerzać też gałąź (def=true)
-		'''
+		@param recursive	- czy odświerzać też gałąź (def=true)'''
 		node = tags.tree_node
 
 		if node is None or not node.IsOk():
 			node = tags.tree_node = self.AppendItem(tags.collection.tree_node,
 					_('Tags'), data=wx.TreeItemData(tags.collection.tags_provider))
 			self.SetItemImage(node, self._icon_tags_idx, wx.TreeItemIcon_Normal)
-
 		elif clear:
 			self.DeleteChildren(node)
 
@@ -226,21 +209,17 @@ class DirsTree(wx.TreeCtrl):
 							tag.caption, data=wx.TreeItemData(tag))
 					self.SetItemImage(tag_node, self._icon_tags_idx,
 							wx.TreeItemIcon_Normal)
-
 				else:
 					self.SetItemText(tag.tree_node, tag.caption)
 					if tags.current_tags_nodes.count(tag.tree_node) > 0:
 						tags.current_tags_nodes.remove(tag.tree_node)
-
 				self.update_node_tag(tag)
-
 			else:
 				if tag.tree_node is not None:
 					self.DeleteChildren(tag.tree_node)
 					self.Delete(tag.tree_node)
 					if tags.current_tags_nodes.count(tag.tree_node) > 0:
 						tags.current_tags_nodes.remove(tag.tree_node)
-
 					tag.tree_node = None
 
 		for tree_node in tags.current_tags_nodes:
@@ -253,20 +232,15 @@ class DirsTree(wx.TreeCtrl):
 	def update_node_tag(self, tag):
 		''' dirtree.update_node_tag(tag, recursive=True) -- odsiweżenie
 		pojedyńczego taga
-
 		@param tag			- element tag do odświerzenia
-		@param recursive	- czy odświerzać też gałąź (def=true)
-		'''
+		@param recursive	- czy odświerzać też gałąź (def=true)'''
 		_LOG.debug('_update_node_tag %s', tag)
 		node = tag.tree_node
-
 		self.DeleteChildren(node)
-
 		if tag.count == 0:
 			# jeżeli tag nie ma nic - usunięcie go
 			if tag.tree_node.IsOk():
 				self.Delete(node)
-
 			tag.tree_node = None
 			return
 
@@ -275,7 +249,6 @@ class DirsTree(wx.TreeCtrl):
 					data=wx.TreeItemData(item))
 			if isinstance(item, Disk):
 				self.SetItemImage(node, self._icon_disk_idx, wx.TreeItemIcon_Normal)
-
 			else:
 				self.SetItemImage(node, self._icon_idx, wx.TreeItemIcon_Normal)
 				self.SetItemImage(node, self._icon2_idx, wx.TreeItemIcon_Expanded)
@@ -293,18 +266,15 @@ class DirsTree(wx.TreeCtrl):
 
 	def update_timeline_node(self, timeline):
 		''' dirtree.update_timeline_node(timeline) -- odsiweżenie elementu lini
-			czasu '''
+		czasu '''
 		_LOG.debug('update_timeline_node cat= %s', timeline.collection.name)
-
 		self.SetCursor(wx.HOURGLASS_CURSOR)
-
 		node = timeline.tree_node
 		if node is None or not node.IsOk():
 			node = timeline.tree_node = self.AppendItem(timeline.collection.tree_node,
 					_('Timeline'), data=wx.TreeItemData(timeline))
 
 			self.SetItemImage(node, self._icon_timeline_idx, wx.TreeItemIcon_Normal)
-
 		else:
 			self.CollapseAndReset(node)
 
@@ -330,8 +300,7 @@ class DirsTree(wx.TreeCtrl):
 	def _on_tree_delete_item(self, evt):
 		''' dirtree._on_tree_delete_item(evt) -- callback na EVT_TREE_DELETE_ITEM.
 		Usuwane elementy musza miec czyszczone tree_node - w wxgtk nie
-		dziala dobrze IsOk
-		'''
+		dziala dobrze IsOk '''
 		node = evt.GetItem()
 		if node.IsOk():
 			item = self.GetItemData(node)

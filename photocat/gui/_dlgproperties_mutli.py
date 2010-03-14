@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -169,7 +169,6 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 
 			sdate_val = sdate.GetTicks()
 			result['shot_date'] = sdate_val
-
 		elif self._cb_shot_date.Get3StateValue() == wx.CHK_UNCHECKED:
 			result['shot_date'] = None
 
@@ -177,7 +176,6 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 
 		if len(result) > 0:
 			self.EndModal(wx.ID_OK)
-
 		else:
 			self.EndModal(wx.ID_CANCEL)
 

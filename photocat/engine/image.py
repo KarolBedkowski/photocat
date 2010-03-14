@@ -97,21 +97,17 @@ def load_thumb_from_file(path, options, data_provider):
 		else:
 			if image.mode != 'RGB':
 				image = image.convert('RGB')
-
 			dimensions = image.size
 			thumbsize = (options.get('thumb_width', 200),
 					options.get('thumb_height', 200))
-
 			if dimensions[0] > thumbsize[0] or dimensions[1] > thumbsize[1]:
 				image.thumbnail(thumbsize, PILImage.ANTIALIAS)
-
 		# zapisanie miniaturki przez StringIO
 		output = cStringIO.StringIO()
 		thumb_compression = options.get('thumb_compression', 50)
 		image.save(output, "JPEG", quality=thumb_compression)
 		thumb = data_provider.append(output.getvalue())
 		output.close()
-
 	except StandardError:
 		_LOG.exception('load_thumb_from_file error file=%s', path)
 		thumb = None
@@ -204,7 +200,6 @@ def get_exif_shotinfo(exif):
 
 	if 'EXIF ISOSpeedRatings' in exif:
 		__append('EXIF ISOSpeedRatings', _('iso'))
-
 	elif 'MakerNote ISOSetting' in exif:
 		try:
 			iso = exif['MakerNote ISOSetting'][1:-1].split(',')[-1].strip()

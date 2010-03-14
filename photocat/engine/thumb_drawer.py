@@ -72,37 +72,31 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 	def set_captions_font(self, fontdata):
 		''' thumbctrl.set_captions_font(fontdata) -- ustawienie czcionek
 		i odświerzenie
-		@param fontdata - słownik z informacją o fontach
-		'''
+		@param fontdata - słownik z informacją o fontach '''
 		self._caption_font = fonttools.data2font(fontdata, 'thumb',
 				wx.Font(8, wx.DEFAULT, wx.FONTSTYLE_NORMAL,
 				wx.FONTWEIGHT_NORMAL, False))
 		self._caption_color = fonttools.str2color(
 				fontdata.get('thumb_font_color', '127;127;127'))
-
 		self._header_font = fonttools.data2font(fontdata, 'header',
 				wx.Font(10, wx.DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD,
 				False))
 		self._header_color = fonttools.str2color(
 				fontdata.get('header_font_color', '127;127;127'))
 		self._pen_header = wx.Pen(self._header_color, 1, wx.SOLID)
-
 		color = fonttools.str2color(fontdata.get('thumb_raw_color'),
 				wx.Colour(70, 70, 255))
 		if fontdata.get('thumb_raw_custom_color', True):
 			self._caption_raw_color = color
-
 		else:
 			self._caption_raw_color = self._caption_color
 
 	def get_item_idx_on_xy(self, pos_x, pos_y):
 		''' thumbctrl._get_item_idx_on_xy(x, y) -> int -- znalezienie indexu
-			elementu o danej współrzędnych
-
-			@param x	- pozycja x
-			@param y	- pozycja y
-			@return index elementu lub -1 jezeli brak
-		'''
+		elementu o danej współrzędnych
+		@param x	- pozycja x
+		@param y	- pozycja y
+		@return index elementu lub -1 jezeli brak '''
 		for index, _item, ix1, iy1, ix2, iy2, dummy in self._items_pos:
 			if pos_x >= ix1 and pos_x <= ix2 and pos_y >= iy1 and pos_y <= iy2:
 				return index
@@ -113,12 +107,10 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	def draw(self, dc, paint_rect, selected=None):	# pylint: disable-msg=R0914
 		''' thumbctrl.draw(dc, paint_rect, selected) -- narysowanie miniaturek
-			na wskazanym dc i we wskazanym obszarze.
-
-			@param dc		- dc po którym będzie rysowanie
-			@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
-			@param selected	- lista zaznaczonych elementów (indeksów)
-		'''
+		na wskazanym dc i we wskazanym obszarze.
+		@param dc		- dc po którym będzie rysowanie
+		@param paint_rect - wxRect gdzie będzie rysowane, jeżeli None - wszędzie
+		@param selected	- lista zaznaczonych elementów (indeksów)'''
 		dc.BeginDrawing()
 		dc.SetPen(self._pen)
 		dc.SetBrush(self._brush)
@@ -127,7 +119,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 		caption_color = self._caption_color
 		caption_raw_color = self._caption_raw_color
-
 		thumb_w = self.thumb_width
 		thumb_h = self.thumb_height
 		twc = self.thumb_width - 10
@@ -194,13 +185,12 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	def update(self, items, width, height=sys.maxint, dc=None):
 		''' thumbctrl.update(items, width, [height]) -> tuple() -- aktualizacja
-			rozmiarów i pozycji miniaturek
+		rozmiarów i pozycji miniaturek
 
-			@param items	- elementy do wyświetlenia
-			@param width	- szerokość
-			@param height	- wysokosc (max) default=inf.
-			@return (cols, rows, virtual_size, size_hints, scroll_rate)
-		'''
+		@param items	- elementy do wyświetlenia
+		@param width	- szerokość
+		@param height	- wysokosc (max) default=inf.
+		@return (cols, rows, virtual_size, size_hints, scroll_rate)'''
 
 		self._items = items
 		self._items_pos = []
@@ -235,8 +225,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		self._rows = rows
 		self._width = width
 
-		return (cols, rows,
-				(self._cols * (self.thumb_width + padding), height),
+		return (cols, rows, (self._cols * (self.thumb_width + padding), height),
 				(self.thumb_width + padding, self.thumb_height + 30),
 				((self.thumb_width + padding) / 4, (self.thumb_height + 30) / 4),
 				last_index)
@@ -245,14 +234,13 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	def __compute_thumbs_pos_normal(self, height):	# pylint: disable-msg=R0914
 		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji
-			poszczególnych miniaturek - normalne
+		poszczególnych miniaturek - normalne
 
-			Pozycje miniaturek zapisywane są w self._items_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
+		Pozycje miniaturek zapisywane są w self._items_pos jako
+		(index, item, x1, y1, x2, y2, wxRect())
 
-			@param height	- max wysokość
-			@return (row, height, last_index) - liczba wierszy i długość panelu
-		'''
+		@param height	- max wysokość
+		@return (row, height, last_index) - liczba wierszy i długość panelu'''
 		row = -1
 		thumb_w = self.thumb_width
 		thumb_h = self.thumb_height
@@ -276,7 +264,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 			# pozycja
 			thumb_x = col * twm + padding
 			thumb_y = row * thm + 5
-			items_pos_append((idx, item, thumb_x, thumb_y, thumb_x + thumb_w, 
+			items_pos_append((idx, item, thumb_x, thumb_y, thumb_x + thumb_w,
 				thumb_y + thm, wx.Rect(thumb_x, thumb_y, twm, thm)))
 
 		return row, thumb_y + thm, len(items_pos)
@@ -288,14 +276,13 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	def __compute_thumbs_pos_timeline(self, height):
 		''' thumbctrl.__compute_thumbs_pos_timeline() -- wyznaczenie pozycji
-			poszczególnych miniaturek dla grupowania wg dnia
+		poszczególnych miniaturek dla grupowania wg dnia
 
-			Pozycje miniaturek zapisywane są w self._items_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
+		Pozycje miniaturek zapisywane są w self._items_pos jako
+		(index, item, x1, y1, x2, y2, wxRect())
 
-			@param height	- max wysokość
-			@return (row, height, last_index) - liczba wierszy i długość panelu
-		'''
+		@param height	- max wysokość
+		@return (row, height, last_index) - liczba wierszy i długość panelu'''
 
 		item_value_func, group_label_func = self._GROUP_TIMELINE_FUNC
 		return self.__compute_thumbs_pos_group_by(height, item_value_func,
@@ -307,15 +294,14 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	def __compute_thumbs_pos_path(self, height, _level=86400):
 		''' thumbctrl.__compute_thumbs_pos_path() -- wyznaczenie pozycji
-			poszczególnych miniaturek dla grupowania wg dnia
+		poszczególnych miniaturek dla grupowania wg dnia
 
-			Pozycje miniaturek zapisywane są w self._items_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
+		Pozycje miniaturek zapisywane są w self._items_pos jako
+		(index, item, x1, y1, x2, y2, wxRect())
 
-			@param height	- max wysokość
-			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
-			@return (row, height, last_index) - liczba wierszy i długość panelu
-		'''
+		@param height	- max wysokość
+		@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
+		@return (row, height, last_index) - liczba wierszy i długość panelu'''
 
 		item_value_func, group_label_func = self._GROUP_PATH_FUNC
 		return self.__compute_thumbs_pos_group_by(height, item_value_func,
@@ -324,15 +310,14 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 	def __compute_thumbs_pos_group_by(self, height,	# pylint: disable-msg=R0914
 				item_value_func, group_label_func):
 		''' thumbctrl.__compute_thumbs_pos_group_by() -- wyznaczenie pozycji
-			poszczególnych miniaturek dla grupowania wg dnia
+		poszczególnych miniaturek dla grupowania wg dnia
 
-			Pozycje miniaturek zapisywane są w self._items_pos jako
-			(index, item, x1, y1, x2, y2, wxRect())
+		Pozycje miniaturek zapisywane są w self._items_pos jako
+		(index, item, x1, y1, x2, y2, wxRect())
 
-			@param height	- max wysokość
-			@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
-			@return (row, height, last_index) - liczba wierszy i długość panelu
-		'''
+		@param height	- max wysokość
+		@param level	- [opcja] dzielnik daty do grupowania (w sek, 86400=dzień)
+		@return (row, height, last_index) - liczba wierszy i długość panelu'''
 		row = -1
 		col = -1
 		last_date = -1
@@ -364,7 +349,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 				row = next_row
 				last_date = item_date
 				group_bars_append((label, pos, pos + header_height + 2))
-
 			elif col >= cols:
 				col = 0
 				if (row + 2) * thm + 5 > height:
@@ -374,7 +358,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 			# pozycja
 			thumb_x = col * twm + padding
 			thumb_y = int(row * thm + 5)
-
 			items_pos_append((index, item, thumb_x, thumb_y, thumb_x + thumb_w,
 					thumb_y + thm, wx.Rect(thumb_x, thumb_y, twm, thm)))
 
@@ -385,8 +368,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		wysokości napisów dla podanych fontów
 
 		@param fonts -- [wxFont] | (wxFont) - lista fontów do przeliczenia
-		@return lista wysokości w px podanych fontów
-		'''
+		@return lista wysokości w px podanych fontów'''
 		dc = wx.ClientDC(self._parent) if dest_dc is None else dest_dc
 		dc_SetFont = dc.SetFont
 		dc_GetCharHeight = dc.GetCharHeight

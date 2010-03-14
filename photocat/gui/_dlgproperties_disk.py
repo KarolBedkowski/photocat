@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x  (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -52,11 +52,9 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 		for dummy, key, val in sorted(self._item.info):
 			if key == key_name:
 				self._tc_name.SetValue(val)
-
 			elif key == '':
 				bsizer.Add((1, 5))
 				bsizer.Add((1, 5))
-
 			else:
 				bsizer.Add(self._create_label(panel, key + ":"), 0,
 						wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
@@ -103,7 +101,6 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 
 		if changed:
 			self.EndModal(wx.ID_OK)
-
 		else:
 			self.EndModal(wx.ID_CANCEL)
 

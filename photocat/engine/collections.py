@@ -36,12 +36,10 @@ _LOG = logging.getLogger(__name__)
 def _count_files(path, parent_wnd, title):
 	'''_count_files(path, parent_wnd, title) -> int -- polieczenie plików
 	w podanej ścieżce
-
 	@param path			-- ścieżka
 	@param parent_wnd	-- okno nadrzędne
 	@param title		-- tytuł okien
-	@return liczba plików do dodania/aktualizacji
-	'''
+	@return liczba plików do dodania/aktualizacji '''
 	dlg_progress = wx.ProgressDialog(title, _("Counting files..."),
 			parent=parent_wnd, maximum=1, style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME)
 
@@ -59,13 +57,11 @@ def _count_files(path, parent_wnd, title):
 def _add_or_update_collection(collection, title, data, parent_wnd):
 	''' _add_or_update_collection(collection. title, data, parent_wnd) -> Disk
 		-- dodanie lub aktualizacja dysku
-
 		@param collection	-- katalog do którego jest dodawany dysk
 		@param title		-- tytuł okien
 		@param data			-- dane przebudowy/aktualizacji
 		@param parent_wnd	-- okno nadrzędne
-		@return zaktualizowany/dodany dysk
-	'''
+		@return zaktualizowany/dodany dysk '''
 
 	if collection.readonly:
 		raise errors.UpdateDiskError(_("Collection is read-only."))
@@ -110,20 +106,15 @@ def _add_or_update_collection(collection, title, data, parent_wnd):
 			parent_wnd.SetCursor(wx.HOURGLASS_CURSOR)
 			if data['update']:
 				collection.update_disk(disk, data['path'], descr=data['descr'],
-						options=data, on_update=update_progress,
-						name=data['name'])
-
+						options=data, on_update=update_progress, name=data['name'])
 			else:
 				disk = collection.add_disk(data['path'], data['name'],
 						data['descr'], options=data, on_update=update_progress)
-
 			dlg_progress.Update(allfiles + 100, _('Done!'))
-
 		except Exception, err:
 			_LOG.exception('_add_or_update_collection(%r)', data)
 			dialogs.message_box_error(parent_wnd, _('Error:\n%s') % err, title)
 			raise errors.UpdateDiskError(err)
-
 		finally:
 			parent_wnd.SetCursor(wx.STANDARD_CURSOR)
 			dlg_progress.Destroy()
@@ -133,11 +124,9 @@ def _add_or_update_collection(collection, title, data, parent_wnd):
 
 def add_disk_to_collection(collection, parent_wnd):
 	''' add_disk_to_collection(collection, parent_wnd) -> Disk -- dodanie dysku
-
-		@param collection		-- katalog do którego jest dodawany dysk
+		@param collection	-- katalog do którego jest dodawany dysk
 		@param parent_wnd	-- okno nadrzędne
-		@return dodany dysk
-	'''
+		@return dodany dysk '''
 	data = dict(disk=None, update=False)
 	return _add_or_update_collection(collection, _("Adding disk"), data, parent_wnd)
 
@@ -157,11 +146,9 @@ def update_disk_in_collection(collection, disk, parent_wnd):
 
 def rebuild(collection, parent_wnd):
 	''' rebuild(collection, parent_wnd) -> bool -- przebudowa katalogu
-
-		@param collection		-- katalog do przebudowania
+		@param collection	-- katalog do przebudowania
 		@param parent_wnd	-- okno nadrzędne
-		@return True=sukces
-	'''
+		@return True=sukces	'''
 	if collection.readonly:
 		raise errors.UpdateDiskError(_("Collection is read-only."))
 
@@ -185,15 +172,12 @@ def rebuild(collection, parent_wnd):
 
 		if saved_space < 0:
 			dlg_progress.Update(objects_count + 2, _('Rebuild collection aborted'))
-
 		else:
 			dlg_progress.Update(objects_count + 2,
 					_('Rebuild collection finished\nSaved space: %sB') \
 					% format_human_size(saved_space),
 			)
-
 		result = True
-
 	except RuntimeError, err:
 		_LOG.exception('rebuild error')
 		dialogs.message_box_error(parent_wnd,
@@ -202,17 +186,14 @@ def rebuild(collection, parent_wnd):
 
 	dlg_progress.Destroy()
 	parent_wnd.SetCursor(wx.STANDARD_CURSOR)
-
 	return result
 
 
 def open_collection(filename):
 	''' open_collection(filename) -> Collection -- otwarcie katalogu
-
 		@param filename - pełna ścieżka do pliku
 		@retuen obiekt Collection
-		@exception OpenCollectionError
-	'''
+		@exception OpenCollectionError'''
 	_LOG.debug("collections.open_collection(%s)", filename)
 
 	# plik indeksu
@@ -257,7 +238,6 @@ def open_collection(filename):
 		collection = Storage.load(filename)
 		collection.readonly = not writable
 		collection.data_provider.open(readonly=not writable)
-
 	except Exception, err:
 		raise errors.OpenCollectionError(err)
 
@@ -266,15 +246,11 @@ def open_collection(filename):
 
 def new_collection(filename):
 	''' new_collection(filename) -> Collection -- otwarcie nowego katalogu
-
 		@param filename - pełna ścieżka do pliku
 		@retuen obiekt Collection
-		@exception OpenCollectionError
-	'''
+		@exception OpenCollectionError	'''
 	_LOG.debug("collections.open_collection(%s)", filename)
-
 	path = os.path.dirname(filename)
-
 	# ścieżka istnieje
 	if not os.path.exists(path):
 		raise errors.OpenCollectionError(_("Invalid path"))
@@ -315,7 +291,6 @@ def new_collection(filename):
 	try:
 		collection = Collection(filename)
 		collection.data_provider.open(True)
-
 	except Exception, err:
 		raise errors.OpenCollectionError(err)
 
@@ -325,11 +300,9 @@ def new_collection(filename):
 def check_new_file_exists(filename):
 	''' check_new_file_exists(filename) -> (bool, bool, bool) -- sprawdzenie
 		czy plik indeksu i danych istnieją
-
 		@param filename - scieżka do pliku indeksu
 		@return (istnieje plik indeksu lub danych, istnieje plik indeksu,
-				istnieje plik danych)
-	'''
+				istnieje plik danych)'''
 	data_file = os.path.splitext(filename)[0] + '.data'
 	index_exists = os.path.exists(filename)
 	data_exists = os.path.exists(data_file)
@@ -359,13 +332,11 @@ def get_sorting_function(sort_by=SORT_BY_NAME, reverse=False,
 		items_as_list=False):
 	''' get_sorting_function(sort_by, [reverse], [items_as_list])
 	-> (function, reverse) -- zwraca funkcję klucza do sortowania
-
-	@param sort_by - pole po którym będzie sortowanie (SORT_BY_NAME,
-	SORT_BY_DATE, SORT_BY_PATH)
-	@param reverse - (bool) czy sortowanie w odwrotnej kolejności
+	@param sort_by	- pole po którym będzie sortowanie (SORT_BY_NAME,
+					SORT_BY_DATE, SORT_BY_PATH)
+	@param reverse	- (bool) czy sortowanie w odwrotnej kolejności
 	@param items_as_list - (bool) czy elementy są podane jako lista czy jako
-	lista elementów Thumb
-	'''
+					lista elementów Thumb'''
 	return _SORTING_FUNCTIONS[sort_by][1 if items_as_list else 0], reverse
 
 
@@ -377,20 +348,13 @@ def fast_count_files_dirs(path):
 
 	def count_folder(path):
 		''' count files and dirs in selcted path '''
-		content = [os.path.join(path, name)
-				for name
-				in os.listdir(path)
+		content = [os.path.join(path, name) for name in os.listdir(path)
 				if not name.startswith('.')]
-
-		content_size = sum((
-			os.path.getsize(item)
-			for item in content
-			if os.path.isdir(item) or (os.path.isfile(item)
-					and os.path.splitext(item)[1].lower()
-					in _image_files_extension)))
-
-		content_size += sum((count_folder(item) for item in content
-				if os.path.isdir(item)))
+		content_size = sum(os.path.getsize(item) for item in content
+				if os.path.isdir(item) or (os.path.isfile(item)
+				and os.path.splitext(item)[1].lower() in _image_files_extension))
+		content_size += sum(count_folder(item) for item in content
+				if os.path.isdir(item))
 		return content_size
 
 	return count_folder(path)
@@ -404,13 +368,9 @@ def update_images_from_dict(images, data):
 			if key == 'tags':
 				for key in image.set_tags(val):
 					changed_tags.__setitem__(key, None)
-
 			elif hasattr(image, key):
 				setattr(image, key, val)
-
 	return changed_tags.keys()
-
-
 
 
 # vim: encoding=utf8: ff=unix:

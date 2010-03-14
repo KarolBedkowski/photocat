@@ -61,7 +61,6 @@ class _DlgSearch(wx.Frame):
 		self._result = []
 		self._selected_item = selected_item
 		self._sort_order = None
-
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
 

@@ -2,7 +2,7 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -68,7 +68,6 @@ class InfoPanel(wx.Panel):
 			if key == '':
 				bsizer.Add((1, 5))
 				bsizer.Add((1, 5))
-
 			else:
 				bsizer.Add(_create_label(panel, key + ":"), 0,
 						wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-14 16:28+0100\n"
-"PO-Revision-Date: 2010-03-14 16:30+0100\n"
+"POT-Creation-Date: 2010-03-14 18:19+0100\n"
+"PO-Revision-Date: 2010-03-14 17:15+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -502,8 +502,11 @@ msgid "Show"
 msgstr "Wyświetl"
 
 #, python-format
-msgid "Photos: %d"
-msgstr "Zdjęcia: %d"
+msgid "One photo"
+msgid_plural "%(count)d photos"
+msgstr[0] "Jedno zdjęcie"
+msgstr[1] "%(count)d zdjęcia"
+msgstr[2] "%(count)d zdjęć"
 
 #, python-format
 msgid "Opening %s....  Please wait..."
@@ -548,8 +551,18 @@ msgid "Save collection"
 msgstr "Zapisz kolekcję"
 
 #, python-format
-msgid "Directories %(dirs)d;  photos: %(files)d"
-msgstr "Katalogów %(dirs)d; zdjęć: %(files)d"
+msgid "One directory"
+msgid_plural "%(count)d directories"
+msgstr[0] "Jeden katalog"
+msgstr[1] "%(count)d katalogi"
+msgstr[2] "%(count)d katalogów"
+
+#, python-format
+msgid "one photo"
+msgid_plural "%(count)d photos"
+msgstr[0] "jedno zdjęcie"
+msgstr[1] "%(count)d zdjęcia"
+msgstr[2] "%(count)d zdjęć"
 
 msgid "&File"
 msgstr "&Plik"
@@ -877,6 +890,12 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "Photos: %d"
+#~ msgstr "Zdjęcia: %d"
+
+#~ msgid "Directories %(dirs)d;  photos: %(files)d"
+#~ msgstr "Katalogów %(dirs)d; zdjęć: %(files)d"
 
 #~ msgid "image"
 #~ msgid_plural "%(count)d images"

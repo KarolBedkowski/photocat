@@ -397,16 +397,16 @@ class WndMain(WndMainView):
 			return
 
 		collection = self.selected_collection
-		files_count, subdirs_count = 0, 0
+		f_count, sd_count = 0, 0
 		for disk in collection.disks:
 			(disk_files_count, disk_subdirs_count, disk_files_count2,
 					disk_subdirs_count2) = disk.directory_size
-			files_count += disk_files_count + disk_files_count2
-			subdirs_count += disk_subdirs_count + disk_subdirs_count2
+			f_count += disk_files_count + disk_files_count2
+			sd_count += disk_subdirs_count + disk_subdirs_count2
 
 		dirty, dirtyp = collection.dirty_objects_count
-		data = dict(disks=len(collection.disks), files=files_count,
-				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
+		data = dict(disks=len(collection.disks), files=f_count,
+				dirs=sd_count, dirty=dirty, dirtyp=dirtyp)
 		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nPhotos: %(files)d\nDirty '
 				'entries: %(dirty)d (%(dirtyp)d%%)') % data
 		dialogs.message_box_info_ex(self, _('Collection information'), info)
@@ -466,7 +466,9 @@ class WndMain(WndMainView):
 						_("Showing that many photos may take a long time."),
 						_("Show")):
 					self._show_dir([])
-					self.SetStatusText(_('Photos: %d') % len(item.files))
+					count = len(item.files)
+					status = ngettext("One photo", "%(count)d photos", count)
+					self.SetStatusText(status % {'count': count})
 					self._dirs_tree.Expand(self._dirs_tree.selected_node)
 					return
 			show_info = False
@@ -855,11 +857,16 @@ class WndMain(WndMainView):
 		finally:
 			self.SetCursor(wx.STANDARD_CURSOR)
 			if show_info:
-				files_count, subdirs_count, dummy, dummy = item.directory_size
-				self.SetStatusText(_('Directories %(dirs)d;  photos: %(files)d') %
-						dict(dirs=subdirs_count, files=files_count))
+				f_count, sd_count, dummy, dummy = item.directory_size
+				dirs = ngettext("One directory", "%(count)d directories", sd_count) % \
+						{'count': sd_count}
+				files = ngettext("one photo", "%(count)d photos", f_count) % \
+						{'count': f_count}
+				status = dirs + ', ' + files
 			else:
-				self.SetStatusText(_('Photos: %d') % images_count)
+				status = ngettext("One photo", "%(count)d photos", images_count) % \
+						{'count': images_count}
+			self.SetStatusText(status)
 
 
 # vim: encoding=utf8: ff=unix:

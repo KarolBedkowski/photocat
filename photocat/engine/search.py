@@ -36,8 +36,7 @@ def get_collections_to_search(collections, options, selected_item):
 		@param selected_item - aktualnie wybrany element
 
 		Opcje:
-			- search_in_collection - gdzie szukać
-	"""
+			- search_in_collection - gdzie szukać """
 	collections_to_search = collections
 	if options is not None:
 		search_in_collection = options.get('search_in_collection', _("<all>"))
@@ -46,13 +45,10 @@ def get_collections_to_search(collections, options, selected_item):
 
 		elif search_in_collection == _("<current collection>"):
 			collections_to_search = [selected_item.collection]
-
 		elif search_in_collection == _("<current disk>"):
 			collections_to_search = [selected_item.disk]
-
 		elif search_in_collection == _("<current dir>"):
 			collections_to_search = [selected_item]
-
 		else:
 			# wyszukiwanie w konkretnym katalogu
 			search_in_collection = search_in_collection.split(": ", 1)[1]
@@ -60,7 +56,6 @@ def get_collections_to_search(collections, options, selected_item):
 					if cat.name == search_in_collection]
 
 	subdirs_count = sum((cat.subdirs_count for cat in collections_to_search))
-
 	return collections_to_search, subdirs_count
 
 
@@ -76,8 +71,7 @@ def find(what, options, collections, insert_func, progress_funct):
 
 	Opcje:
 		- opt_match_case	- dopasowanie wielkości liter (def=False)
-		- opt_regex			- wyszukiwanie po regex (def=False)
-	"""
+		- opt_regex			- wyszukiwanie po regex (def=False) """
 	options = options or {}
 	match_case = options.get('opt_match_case', False)
 	regex = options.get('opt_regex', False)
@@ -86,17 +80,14 @@ def find(what, options, collections, insert_func, progress_funct):
 		what = what.lower()
 
 	_LOG.debug('find: "%s"', what)
-
 	if regex:
 		# wyszukiwanie po regex
 		textre = re.compile(what, (0 if match_case else re.I))
 		cmpfunc = textre.search
-
 	else:
 		if match_case:
 			# z dopasowaniem case
 			cmpfunc = lambda x: (x.find(what) > -1)
-
 		else:
 			# bez dopasowania case
 			cmpfunc = lambda x: (x.lower().find(what) > -1)
@@ -109,18 +100,13 @@ def find(what, options, collections, insert_func, progress_funct):
 
 def update_last_search(text):
 	''' update_last_search(text) -> [string] -- aktualzacja listy poptrzednich
-		wyszukiwań
-
-		@return lista ostatnich wyszukiwań
-
-		Na liście nie pojawią się duble.
-	'''
+	wyszukiwań
+	@return lista ostatnich wyszukiwań
+	Na liście nie pojawią się duble.  '''
 	last = get_last_search()
-
 	if text in last:
 		# jeżeli text jest już gdzieś na liście - usunięcie go
 		last.remove(text)
-
 	elif len(last) > 19:
 		# obcięcie listy do 19 elementow
 		last = last[:19]
@@ -133,9 +119,7 @@ def update_last_search(text):
 
 def get_last_search():
 	''' get_last_search() -> [str] -- lista ostatnich wyszukian
-
-		@return lista ostatnich wyszukiwań
-	'''
+	@return lista ostatnich wyszukiwań '''
 	last = AppConfig().get_items('last_search') or []
 	last = [l[1] for l in last]
 

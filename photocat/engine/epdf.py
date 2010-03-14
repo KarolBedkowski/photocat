@@ -4,7 +4,7 @@
 engine/epdf.py
 
 Photo Catalog v 1.x  (photocat)
-Copyright (c) Karol Będkowski, 2004-2008
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -98,7 +98,7 @@ def _create_pdf(parent, items, options=None):
 				rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
 				bottomMargin=MARGIN_BOTTOM, pageCompression=9)
 		page = []
-		
+
 		options = options or {}
 		grouping = options.get('group_by')
 		if grouping == GROUP_BY_DATE:
@@ -107,24 +107,19 @@ def _create_pdf(parent, items, options=None):
 					time.localtime(i.date_to_check))
 			_create_doc_group_by(page, items, style, style_header, img_width,
 					img_height, cols, item_value_func, group_label_func, options)
-
 		elif grouping == GROUP_BY_PATH:
 			item_value_func = lambda i: i.parent.path
 			group_label_func = lambda i: i.disk.name + ": " + i.parent.path
 			_create_doc_group_by(page, items, style, style_header, img_width,
 					img_height, cols, item_value_func, group_label_func, options)
-
 		else:
 			_create_doc_group_none(page, items, style, img_width, img_height,
 					cols, options)
-
 		doc.build(page, onLaterPages=__my_page, onFirstPage=__my_page)
-
 	except RuntimeError, err:
 		_LOG.exception('create_pdf error. file=%s', filename)
 		dialogs.message_box_error(parent, _('Error:\n%s') % str(err),
 				_('Export to PDF'))
-
 	else:
 		dialogs.message_box_info(parent, _('Done!'), _('Export to PDF'))
 
@@ -139,7 +134,6 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols,
 	''' draw items without grouping '''
 	data = []
 	row = []
-
 	show_captions = options.get('show_captions', True)
 	col_width = img_width + 0.5 * cm
 	table_style = [('ALIGN', (0, 0), (-1, -1), 'CENTER')]
@@ -152,18 +146,14 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols,
 			par = Paragraph(item.name, style)
 			par.wrap(img_width, img_height)
 			row.append([image, par])
-
 		else:
 			row.append(image)
-
 		if idx % cols == cols -1:
 			data.append(row)
 			row = []
-
 	if len(row) > 0:
 		while len(row) < cols:
 			row.append(Spacer(img_width, img_height))
-
 		data.append(row)
 
 	table = Table(data, col_width, style=table_style)
@@ -175,23 +165,18 @@ def _create_doc_group_by(page, items, style, style_header, img_width,
 	''' draw item with grouping '''
 	data = []
 	row = []
-
 	show_captions = options.get('show_captions', True)
 	col_width = img_width + 0.5 * cm
 	table_style = [('ALIGN', (0, 0), (-1, -1), 'CENTER')]
-
 	last_item_value = None
 
 	for item in items:
 		item_value = item_value_func(item)
-
 		if last_item_value != item_value:
 			if len(row) > 0:
 				while len(row) < cols:
 					row.append(Spacer(img_width, img_height))
-
 				data.append(row)
-
 			if len(data) > 0:
 				table = Table(data, col_width, style=table_style)
 				#table.hAlign = 'LEFT'
@@ -200,10 +185,8 @@ def _create_doc_group_by(page, items, style, style_header, img_width,
 			data = []
 			row = []
 			last_item_value = item_value
-
 			page.append(Spacer(defaultPageSize[0] / 2, 1 * cm))
 			page.append(Paragraph(group_label_func(item), style_header))
-
 		img = StringIO(item.image)
 		image = Image(img, 33, 33, kind='%', lazy=2)
 
@@ -211,19 +194,15 @@ def _create_doc_group_by(page, items, style, style_header, img_width,
 			par = Paragraph(item.name, style)
 			par.wrap(img_width, img_height)
 			row.append([image, par])
-
 		else:
 			row.append(image)
-
 		if len(row) == cols:
 			data.append(row)
 			row = []
 
-
 	if len(row) > 0:
 		while len(row) < cols:
 			row.append(Spacer(img_width, img_height))
-
 		data.append(row)
 
 	if len(data) > 0:

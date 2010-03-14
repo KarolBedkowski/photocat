@@ -3,7 +3,7 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.x  (photocat)
-Copyright (c) Karol Będkowski, 2004-2009
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
