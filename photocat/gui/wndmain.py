@@ -22,7 +22,6 @@ import logging
 
 import wx
 
-from photocat import version
 from photocat.model import Collection, Directory, Disk, FileImage, Tag, Timeline
 from photocat.storage.storage import Storage
 from photocat.engine import collections, eprint, epdf
@@ -46,6 +45,7 @@ _LOG = logging.getLogger(__name__)
 _DEFAULT_ADD_OPTIONS = {
 		'filter_folder_names': None,
 		'include_empty': 0}
+_THUMBS_CONFIRM_LIMIT = 1000
 
 
 class WndMain(WndMainView):
@@ -154,8 +154,10 @@ class WndMain(WndMainView):
 				filename = filename + '.index'
 
 			if collections.check_new_file_exists(filename)[0]:
-				if not dialogs.message_box_question_yesno(self,
-						_('File exists!\nOverwrite?')):
+				if not dialogs.message_box_question(self,
+						_('Overwrite existing file?'),
+						_("File %s already exist.\nAll data will be lost") % filename,
+						_("Overwrite")):
 					return
 
 			try:
@@ -165,8 +167,8 @@ class WndMain(WndMainView):
 				self._dirs_tree.add_collection(collection)
 			except StandardError, err:
 				_LOG.exception('WndMain._on_file_new(%s)', filename)
-				dialogs.message_box_error(self,
-						_('Error creating new collection file %(filename)s:\n%(error)s') \
+				dialogs.message_box_error_ex(self, _("Cannot create new collection"),
+						_('During creating file %(filename)s\n error occurred:%(error)s') \
 						% dict(filename=filename, error=err.message))
 				self.SetStatusText(_('Error: %s') % err.message)
 			else:
@@ -206,17 +208,11 @@ class WndMain(WndMainView):
 			return
 
 		if collection.dirty:
-			res = dialogs.message_box_warning_yesnocancel(self,
-					_('Collection %s has unsaved changes!\nSave before close??') \
-					% collection.caption,
-					_('Collection'))
+			res = dialogs.message_box_not_save_confirm(self, collection.name)
 			if res == wx.ID_YES:
 				self._save_collection(collection)
 			elif res == wx.ID_CANCEL:
 				return
-		elif not dialogs.message_box_question_yesno(self,
-				_('Close collection %s?') % collection.caption, _('Close')):
-			return
 
 		self._dirs_tree.delete_item(collection)
 		collections.collection_close(collection)
@@ -232,8 +228,10 @@ class WndMain(WndMainView):
 		collection = self.selected_collection
 		if collection is None:
 			return
-		if not dialogs.message_box_question_yesno(self,
-				_('Rebuild collection %s?') % collection.caption, 'photocat'):
+		if not dialogs.message_box_question(self,
+				_('Rebuild collection %s?') % collection.name,
+				_('This may take some time, but allow to reduce file size\n'
+					'and improve performance.'), _("Rebuild")):
 			return
 		if collections.rebuild(collection, self):
 			self._save_collection(collection)
@@ -345,17 +343,10 @@ class WndMain(WndMainView):
 			self._update_menus_toolbars()
 
 	def _on_collection_del_disk(self, evt):
-		if self.collections_not_loaded:
-			return
-
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None or not isinstance(tree_selected, Disk):
-			dialogs.message_box_error(self, _('No disk selected'),
-					_('Delete disk'))
 			return
-
-		if dialogs.message_box_warning_yesno(self,
-				_('Delete disk %s?') % tree_selected.name, 'photocat'):
+		if dialogs.message_box_delete_confirm(self, tree_selected.name):
 			self._dirs_tree.delete_item(tree_selected)
 			collection = tree_selected.collection
 			collection.remove_disk(tree_selected)
@@ -364,17 +355,10 @@ class WndMain(WndMainView):
 			self._update_menus_toolbars()
 
 	def _on_collection_del_dir(self, evt):
-		if self.collections_not_loaded:
-			return
-
 		tree_selected = self._dirs_tree.selected_item
 		if tree_selected is None or not isinstance(tree_selected, Directory):
-			dialogs.message_box_error(self, _('No directory selected'),
-					_('Delete directory'))
 			return
-
-		if dialogs.message_box_warning_yesno(self,
-				_('Delete directory %s?') % tree_selected.name, _('Delete directory')):
+		if dialogs.message_box_delete_confirm(self, tree_selected.name):
 			self._dirs_tree.delete_item(tree_selected)
 			tree_selected.parent.remove_subdir(tree_selected)
 			self._update_tags_timeline(tree_selected.collection)
@@ -382,19 +366,16 @@ class WndMain(WndMainView):
 
 	def _on_collection_del_image(self, evt):
 		''' _on_collection_del_image '''
-		if self.collections_not_loaded:
-			return
-
 		folder = self._dirs_tree.selected_item
 		if folder is None or isinstance(folder, Collection):
 			return
-
 		selected_count = self._photo_list.selected_count
 		if selected_count == 0:
 			return
 
-		if dialogs.message_box_warning_yesno(self,
-				_('Delete %d images?') % selected_count, _('Delete image')):
+		text = ngettext("photo", "%(count)d photos", selected_count) % \
+				dict(count=selected_count)
+		if dialogs.message_box_delete_confirm(self, text):
 			for image in self._photo_list.selected_items:
 				folder.remove_file(image)
 
@@ -426,9 +407,9 @@ class WndMain(WndMainView):
 		dirty, dirtyp = collection.dirty_objects_count
 		data = dict(disks=len(collection.disks), files=files_count,
 				dirs=subdirs_count, dirty=dirty, dirtyp=dirtyp)
-		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nFiles: %(files)d\nDirty '
+		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nPhotos: %(files)d\nDirty '
 				'entries: %(dirty)d (%(dirtyp)d%%)') % data
-		dialogs.message_box_info_ex(self, _('Catalog information'), info)
+		dialogs.message_box_info_ex(self, _('Collection information'), info)
 
 	def _on_collection_edit_multi(self, evt):
 		''' _on_collection_edit_multi'''
@@ -478,13 +459,14 @@ class WndMain(WndMainView):
 				self._show_dir([])
 				self._dirs_tree.Expand(self._dirs_tree.selected_node)
 				return
-			elif images_count > 1000:
+			elif images_count > _THUMBS_CONFIRM_LIMIT:
 				# jeżeli ilość plików > 1000 - ostrzeżenie i pytania
-				if not dialogs.message_box_warning_yesno(self,
-						_('Number of files exceed 1000!\nShow %d files?') %\
-						len(item.files), version.NAME):
+				if not dialogs.message_box_question(self,
+						_("Show %d photos?") % images_count,
+						_("Showing that many photos may take a long time."),
+						_("Show")):
 					self._show_dir([])
-					self.SetStatusText(_('Files: %d') % len(item.files))
+					self.SetStatusText(_('Photos: %d') % len(item.files))
 					self._dirs_tree.Expand(self._dirs_tree.selected_node)
 					return
 			show_info = False
@@ -659,7 +641,7 @@ class WndMain(WndMainView):
 			_LOG.exception('WndMain.open_file(%s)', filename)
 			dialogs.message_box_error_ex(self,
 					_('Cannot open file'),
-					_('During openning file %(filename)s\nerror occured: %(error)s') % \
+					_('During opening file %(filename)s\nerror occurred: %(error)s') % \
 					dict(filename=filename, error=err.message))
 			self.SetStatusText(_('Error: %s') % err.message)
 			collection = None
@@ -671,12 +653,14 @@ class WndMain(WndMainView):
 					self.SetStatusText(_('Opened %s') % filename)
 
 				dirty, dirtyp = collection.dirty_objects_count
-				_LOG.info('WndMain.open_file(%s) successfull dirty_object=%d/%d',
+				_LOG.info('WndMain.open_file(%s) successful dirty_object=%d/%d',
 						filename, dirty, dirtyp)
 				if dirtyp > 10:
-					if dialogs.message_box_warning_yesno(self,
-							_('Collection file contain %d%% unused entries.\n' \
-							'Rebuild collection?') % dirtyp, _('Collection')):
+					if dialogs.message_box_question(self,
+							_('Collection file contain %d%% unused entries.\n'
+								'Rebuild collection?') % dirtyp,
+							_('This may take some time, but allow to reduce file size\n'
+								'and improve performance.'), _("Rebuild")):
 						if collections.rebuild(collection, self):
 							self._save_collection(collection)
 		finally:
@@ -706,7 +690,7 @@ class WndMain(WndMainView):
 			self._main_menu_file_recent_item.Enable(False)
 
 	def _save_collection(self, collection, force=False):
-		''' Save @collection when it's dirtry or @force'''
+		''' Save @collection when it's dirty or @force'''
 		self.SetCursor(wx.HOURGLASS_CURSOR)
 		if collection.dirty or force:
 			try:
@@ -872,10 +856,10 @@ class WndMain(WndMainView):
 			self.SetCursor(wx.STANDARD_CURSOR)
 			if show_info:
 				files_count, subdirs_count, dummy, dummy = item.directory_size
-				self.SetStatusText(_('Directories %(dirs)d;  files: %(files)d') %
+				self.SetStatusText(_('Directories %(dirs)d;  photos: %(files)d') %
 						dict(dirs=subdirs_count, files=files_count))
 			else:
-				self.SetStatusText(_('Files: %d') % images_count)
+				self.SetStatusText(_('Photos: %d') % images_count)
 
 
 # vim: encoding=utf8: ff=unix:

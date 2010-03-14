@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-12 18:37+0100\n"
-"PO-Revision-Date: 2010-03-12 18:38+0100\n"
+"POT-Creation-Date: 2010-03-14 16:28+0100\n"
+"PO-Revision-Date: 2010-03-14 16:30+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -420,29 +420,33 @@ msgstr "Dodaj dysk"
 msgid "Selected dir don't exists!"
 msgstr "Wybrany katalog nie istnieje"
 
-msgid "Close program?"
-msgstr "Zakończyć program?"
-
-msgid "Exit"
-msgstr "Wyjście"
-
 msgid "Collection file name"
 msgstr "Nazwa pliku kolekcji"
 
-msgid ""
-"File exists!\n"
-"Overwrite?"
-msgstr ""
-"Plik istnieje!\n"
-"Nadpisać?"
+msgid "Overwrite existing file?"
+msgstr "Nadpisać istniejący plik?"
 
 #, python-format
 msgid ""
-"Error creating new collection file %(filename)s:\n"
-"%(error)s"
+"File %s already exist.\n"
+"All data will be lost"
 msgstr ""
-"Wystąpił błąd podczas tworzenia pliku kolekcji %(filename)s:\n"
-"%(error)s"
+"Plik %s już istnieje.\n"
+"Wszystkie dane zostaną utracone."
+
+msgid "Overwrite"
+msgstr "Nadpisz"
+
+msgid "Cannot create new collection"
+msgstr "Nie można utworzyć nowej kolekcji"
+
+#, python-format
+msgid ""
+"During creating file %(filename)s\n"
+" error occurred:%(error)s"
+msgstr ""
+"Podczas tworzenia pliku %(filename)s\n"
+"wystąpił błąd: %(error)s"
 
 #, python-format
 msgid "Error: %s"
@@ -452,66 +456,54 @@ msgid "Open file"
 msgstr "Otwórz plik"
 
 #, python-format
-msgid ""
-"Collection %s has unsaved changes!\n"
-"Save before close??"
-msgstr ""
-"Kolekcja %s zawiera niezapisane zmiany!\n"
-"Zapisać przed wyjściem?"
-
-#, python-format
-msgid "Close collection %s?"
-msgstr "Zamknąć kolekcję %s?"
-
-msgid "Close"
-msgstr "Zamknij"
-
-#, python-format
 msgid "Rebuild collection %s?"
 msgstr "Przebudować kolekcję  %s?"
 
-msgid "No disk selected"
-msgstr "Nie wybrano dysku"
+msgid ""
+"This may take some time, but allow to reduce file size\n"
+"and improve performance."
+msgstr ""
+"Może to zabrać trochę czasu, ale pozwoli na zredukowanie\n"
+"rozmiaru pliku oraz poprawi wydajność."
 
-msgid "Delete disk"
-msgstr "Usuń dysk"
-
-#, python-format
-msgid "Delete disk %s?"
-msgstr "Usunąć dysk %s?"
-
-msgid "No directory selected"
-msgstr "Nie wybrano katalogu"
-
-msgid "Delete directory"
-msgstr "Usuń katalog"
+msgid "Rebuild"
+msgstr "Przebuduj"
 
 #, python-format
-msgid "Delete directory %s?"
-msgstr "Usunąć katalog %s?"
-
-#, python-format
-msgid "Delete %d images?"
-msgstr "Usunąć %d plików?"
-
-msgid "Delete image"
-msgstr "Usunąć obraz"
+msgid "photo"
+msgid_plural "%(count)d photos"
+msgstr[0] "zdjęcie"
+msgstr[1] "%(count)d zdjęcia"
+msgstr[2] "%(count)d zdjęć"
 
 #, python-format
 msgid ""
 "Disks: %(disks)d\n"
 "Dirs: %(dirs)d\n"
-"Files: %(files)d\n"
+"Photos: %(files)d\n"
 "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
 msgstr ""
 "Dyski: %(disks)d\n"
 "Katalogi: %(dirs)d\n"
-"Pliki: %(files)d\n"
+"Zdjęcia: %(files)d\n"
 "Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
 
+msgid "Collection information"
+msgstr "Informacje o kolekcji"
+
 #, python-format
-msgid "Files: %d"
-msgstr "Plików: %d"
+msgid "Show %d photos?"
+msgstr "Wyświetlić %d zdjęć?"
+
+msgid "Showing that many photos may take a long time."
+msgstr "Wyświetlenie takiej ilości zdjęć może zabrać trochę czasu."
+
+msgid "Show"
+msgstr "Wyświetl"
+
+#, python-format
+msgid "Photos: %d"
+msgstr "Zdjęcia: %d"
 
 #, python-format
 msgid "Opening %s....  Please wait..."
@@ -522,8 +514,8 @@ msgstr "Nie można otworzyć pliku"
 
 #, python-format
 msgid ""
-"During openning file %(filename)s\n"
-"error occured: %(error)s"
+"During opening file %(filename)s\n"
+"error occurred: %(error)s"
 msgstr ""
 "Podczas otwierania pliku %(filename)s\n"
 "wystąpił błąd: %(error)s"
@@ -556,17 +548,17 @@ msgid "Save collection"
 msgstr "Zapisz kolekcję"
 
 #, python-format
-msgid "Directories %(dirs)d;  files: %(files)d"
-msgstr "Katalogów %(dirs)d;  plików: %(files)d"
+msgid "Directories %(dirs)d;  photos: %(files)d"
+msgstr "Katalogów %(dirs)d; zdjęć: %(files)d"
 
 msgid "&File"
 msgstr "&Plik"
 
+msgid "&Edit"
+msgstr "&Edycja"
+
 msgid "&View"
 msgstr "&Widok"
-
-msgid "&Collection"
-msgstr "&Kolekcja"
 
 msgid "Help"
 msgstr "Pomoc"
@@ -589,20 +581,20 @@ msgstr "&Zapisz"
 msgid "Save the current collection"
 msgstr "Zapisz aktualną kolekcję"
 
-msgid "&Export to PDF..."
-msgstr "&Eksportuj do pliku PDF..."
-
 msgid "&Rebuild collection"
 msgstr "&Przebuduj kolekcję"
+
+msgid "&Export to PDF..."
+msgstr "&Eksportuj do pliku PDF..."
 
 msgid "&Print"
 msgstr "&Wydrukuj"
 
-msgid "Pre&ferences"
-msgstr "Pre&ferencje"
+msgid "Properties"
+msgstr "Własności"
 
-msgid "Change Photo Catalog preferences"
-msgstr "Zmień preferencje Katalogu Zdjęć"
+msgid "Show informations about selected calalog..."
+msgstr "Pokaż informacje o wybranym katalogu..."
 
 msgid "&Close"
 msgstr "Za&mknij"
@@ -637,11 +629,11 @@ msgstr "Usuń wybrany dysk z kolekcji"
 msgid "Delete Selected &Dir..."
 msgstr "Usuń wybrany &katalog..."
 
-msgid "Delete Selected &Image..."
-msgstr "Usuń wybrany &plik..."
-
 msgid "&Edit Selected Files..."
 msgstr "&Edytuj wybrane pliki..."
+
+msgid "Delete Selected &Image..."
+msgstr "Usuń wybrany &plik..."
 
 msgid "Search..."
 msgstr "Szukaj..."
@@ -649,14 +641,14 @@ msgstr "Szukaj..."
 msgid "Search for something in calalogs"
 msgstr "Znajdowanie czegoś w katalogach"
 
-msgid "Show Collection Informations"
-msgstr "Pokaż informacje o kolekcji"
-
-msgid "Show informations about selected calalog..."
-msgstr "Pokaż informacje o wybranym katalogu..."
-
 msgid "Manage collection tags..."
 msgstr "Zarządzaj listą etykiet kolekcji..."
+
+msgid "Pre&ferences"
+msgstr "Pre&ferencje"
+
+msgid "Change Photo Catalog preferences"
+msgstr "Zmień preferencje Katalogu Zdjęć"
 
 msgid "[x]Show &Informations"
 msgstr "[x]Pokaż &informacje"
@@ -700,9 +692,6 @@ msgstr "Dodaj dysk"
 msgid "Zoom: "
 msgstr "Zoom: "
 
-msgid "Properties"
-msgstr "Własności"
-
 #. isinstance(item, Disk):
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
@@ -743,6 +732,22 @@ msgstr "Za&kończ bez zapisywania"
 
 msgid "Save &As"
 msgstr "Z&apisz jako..."
+
+#, python-format
+msgid "Delete %s?"
+msgstr "Usunąć %s?"
+
+msgid "After removal, it cannot be recovered."
+msgstr "Po usunięciu, przywrócenie nie będzie możliwe."
+
+msgid "Delete"
+msgstr "Usuń"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Cancel"
+msgstr "Anuluj"
 
 #, python-format
 msgid ""
@@ -873,6 +878,69 @@ msgstr ""
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
 
+#~ msgid "image"
+#~ msgid_plural "%(count)d images"
+#~ msgstr[0] "obraz"
+#~ msgstr[1] "%(count)d obrazy"
+#~ msgstr[2] "%(count)d obrazów"
+
+#~ msgid "Catalog information"
+#~ msgstr "Informacje o katalogu"
+
+#~ msgid "Files: %d"
+#~ msgstr "Plików: %d"
+
+#~ msgid "Close program?"
+#~ msgstr "Zakończyć program?"
+
+#~ msgid ""
+#~ "File exists!\n"
+#~ "Overwrite?"
+#~ msgstr ""
+#~ "Plik istnieje!\n"
+#~ "Nadpisać?"
+
+#~ msgid ""
+#~ "Error creating new collection file %(filename)s:\n"
+#~ "%(error)s"
+#~ msgstr ""
+#~ "Wystąpił błąd podczas tworzenia pliku kolekcji %(filename)s:\n"
+#~ "%(error)s"
+
+#~ msgid ""
+#~ "Collection %s has unsaved changes!\n"
+#~ "Save before close??"
+#~ msgstr ""
+#~ "Kolekcja %s zawiera niezapisane zmiany!\n"
+#~ "Zapisać przed wyjściem?"
+
+#~ msgid "Close collection %s?"
+#~ msgstr "Zamknąć kolekcję %s?"
+
+#~ msgid "Close"
+#~ msgstr "Zamknij"
+
+#~ msgid "No disk selected"
+#~ msgstr "Nie wybrano dysku"
+
+#~ msgid "No directory selected"
+#~ msgstr "Nie wybrano katalogu"
+
+#~ msgid "Delete directory"
+#~ msgstr "Usuń katalog"
+
+#~ msgid "Delete directory %s?"
+#~ msgstr "Usunąć katalog %s?"
+
+#~ msgid "Delete %d images?"
+#~ msgstr "Usunąć %d plików?"
+
+#~ msgid "Delete image"
+#~ msgstr "Usunąć obraz"
+
+#~ msgid "&Collection"
+#~ msgstr "&Kolekcja"
+
 #~ msgid "Error opening file %s:\n"
 #~ msgstr "Błąd otwierania pliku %s:\n"
 
@@ -906,9 +974,6 @@ msgstr ""
 
 #~ msgid "Open catalog"
 #~ msgstr "Otwórz katalog"
-
-#~ msgid "&Rebuild Catalog"
-#~ msgstr "&Przebuduj katalog"
 
 #~ msgid "Program settings"
 #~ msgstr "Ustawienia programu"

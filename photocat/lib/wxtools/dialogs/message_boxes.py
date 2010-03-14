@@ -17,7 +17,8 @@ __revision__ = '$Id$'
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
 		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',
-		'message_box_error_ex', 'message_box_info_ex']
+		'message_box_error_ex', 'message_box_info_ex', 'message_box_delete_confirm',
+		'message_box_question']
 
 
 import wx
@@ -63,9 +64,13 @@ class MyMessageDialog(wx.Dialog):
 		self.SetSizerAndFit(sizer)
 
 		self.Bind(wx.EVT_BUTTON, self._on_btn_no, id=wx.ID_NO)
+		self.Bind(wx.EVT_BUTTON, self._on_btn_yes, id=wx.ID_YES)
 
 	def _on_btn_no(self, evt):
 		self.EndModal(wx.ID_NO)
+
+	def _on_btn_yes(self, evt):
+		self.EndModal(wx.ID_YES)
 
 	def _create_buttons(self, buttons):
 		return self.CreateStdDialogButtonSizer(buttons or wx.ID_OK)
@@ -93,6 +98,45 @@ class DialogConfirmSave(MyMessageDialog):
 		grid.AddButton(btn)
 		btn_save_text = _('Save &As') if self.saveas else _('Save')
 		btn = wx.Button(self, wx.ID_YES, btn_save_text)
+		btn.SetDefault()
+		grid.AddButton(btn)
+		grid.Realize()
+		return grid
+
+
+class DialogConfirmDelete(MyMessageDialog):
+	"""docstring for DialogConfirmSave"""
+	def __init__(self, parent, name):
+		primary_text = _("Delete %s?") % name
+		secondary_text = _('After removal, it cannot be recovered.')
+		MyMessageDialog.__init__(self, parent, primary_text, secondary_text, None,
+				wx.ART_QUESTION)
+
+	def _create_buttons(self, buttons):
+		grid = wx.StdDialogButtonSizer()
+		btn = wx.Button(self, wx.ID_CANCEL)
+		grid.AddButton(btn)
+		btn = wx.Button(self, wx.ID_YES, _("Delete"))
+		btn.SetDefault()
+		grid.AddButton(btn)
+		grid.Realize()
+		return grid
+
+
+class DialogQuestion(MyMessageDialog):
+	"""docstring for DialogConfirmSave"""
+	def __init__(self, parent, primary_text, secondary_text, affirmative_button,
+			cancel_button):
+		self.affirmative_button = affirmative_button
+		self.cancel_button = cancel_button
+		MyMessageDialog.__init__(self, parent, primary_text, secondary_text, None,
+				wx.ART_QUESTION)
+
+	def _create_buttons(self, buttons):
+		grid = wx.StdDialogButtonSizer()
+		btn = wx.Button(self, wx.ID_CANCEL, self.cancel_button)
+		grid.AddButton(btn)
+		btn = wx.Button(self, wx.ID_YES, self.affirmative_button)
 		btn.SetDefault()
 		grid.AddButton(btn)
 		grid.Realize()
@@ -155,6 +199,24 @@ def message_box_not_save_confirm(parent, doc_name, time_period=None,
 	res = dlg.ShowModal()
 	dlg.Destroy()
 	return res
+
+
+def message_box_delete_confirm(parent, name):
+	dlg = DialogConfirmDelete(parent, name)
+	res = dlg.ShowModal()
+	dlg.Destroy()
+	return res == wx.ID_YES
+
+
+def message_box_question(parent, primary_text, secondary_text,
+		affirmative_button=None, cancel_button=None):
+	affirmative_button = affirmative_button or _('Ok')
+	cancel_button = cancel_button or _("Cancel")
+	dlg = DialogQuestion(parent, primary_text, secondary_text, affirmative_button,
+			cancel_button)
+	res = dlg.ShowModal()
+	dlg.Destroy()
+	return res == wx.ID_YES
 
 
 

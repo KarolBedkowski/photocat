@@ -22,11 +22,10 @@ import wx
 
 def dialog_file_save(parent, title, wildcard, filename=None, default_dir=None):
 	if default_dir is None:
-		dlg = wx.FileDialog(parent, title, style=wx.SAVE | wx.OVERWRITE_PROMPT,
-				wildcard=wildcard)
+		dlg = wx.FileDialog(parent, title, style=wx.SAVE, wildcard=wildcard)
 	else:
-		dlg = wx.FileDialog(parent, title, style=wx.SAVE | wx.OVERWRITE_PROMPT,
-				wildcard=wildcard, defaultDir=default_dir)
+		dlg = wx.FileDialog(parent, title, style=wx.SAVE, wildcard=wildcard,
+				defaultDir=default_dir)
 	if filename is not None:
 		dlg.SetPath(filename)
 	if dlg.ShowModal() == wx.ID_OK:
