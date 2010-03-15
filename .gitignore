@@ -20,3 +20,4 @@ photocat.egg-info
 *.7z
 *.log
 *.swp
+debian/photocat

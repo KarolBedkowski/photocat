@@ -47,11 +47,11 @@ install: build
 	cp -r photocat $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat.pyw $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat_console.py $(CURDIR)/debian/photocat/usr/share/photocat/src/
-	cp dist.linux/photocat.desktop $(CURDIR)/debian/photocat/usr/share/applications/
-	cp dist.linux/photocat $(CURDIR)/debian/photocat/usr/bin/
+	cp data/photocat.desktop $(CURDIR)/debian/photocat/usr/share/applications/
+	cp data/photocat $(CURDIR)/debian/photocat/usr/bin/
 	mkdir -p $(CURDIR)/debian/photocat/usr/share/locale
 	cp -r locale/* $(CURDIR)/debian/photocat/usr/share/locale
-	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/data
+	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/data/art/
 	cp data/art/icon.svg $(CURDIR)/debian/photocat/usr/share/photocat/data/art/
 
 
@@ -63,7 +63,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs CHANGELOG
+	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_install
 	dh_pysupport
