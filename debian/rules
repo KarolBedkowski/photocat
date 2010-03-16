@@ -46,7 +46,7 @@ install: build
 	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat.pyw $(CURDIR)/debian/photocat/usr/share/photocat/src/
-	cp -r photocat_console.py $(CURDIR)/debian/photocat/usr/share/photocat/src/
+	cp -r photocat_dbg.py $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp data/photocat.desktop $(CURDIR)/debian/photocat/usr/share/applications/
 	cp data/photocat $(CURDIR)/debian/photocat/usr/bin/
 	mkdir -p $(CURDIR)/debian/photocat/usr/share/locale
