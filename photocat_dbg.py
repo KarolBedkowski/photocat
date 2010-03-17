@@ -28,6 +28,7 @@ __all__ = []
 
 
 import sys
+sys.argv.append('-d')
 
 from photocat.main import run
 

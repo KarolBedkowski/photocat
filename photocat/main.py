@@ -6,7 +6,7 @@ Main class App
 
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 
@@ -107,7 +107,6 @@ if not appconfig.is_frozen():
 
 import wx
 
-from photocat import icons
 from photocat.lib.wxtools.logging_wx import logging_setup_wx
 
 ##########################################################################
@@ -123,7 +122,15 @@ class App(wx.App):
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
 		from photocat.lib.wxtools.iconprovider import IconProvider
-		IconProvider(icons)
+		app_config = appconfig.AppConfig()
+		art_dir = os.path.join(app_config.data_dir, 'art')
+		_LOG.debug('App.OnInit: art dir=' + art_dir)
+		try:
+			from photocat import icons
+		except ImportError:
+			_LOG.info('No icons module....')
+			icons = None
+		IconProvider(icons, art_dir)
 
 		from photocat.gui.wndmain	import WndMain
 		wnd = WndMain(self, DEBUG)

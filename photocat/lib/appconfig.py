@@ -27,6 +27,7 @@ import logging
 import ConfigParser
 
 from photocat.lib.singleton import Singleton
+from photocat import configuration
 
 _LOG = logging.getLogger(__name__)
 
@@ -132,20 +133,20 @@ class AppConfig(Singleton):
 
 	@property
 	def locales_dir(self):
-		locales_dir = None
 		if self.main_is_frozen:
-			locales_dir = os.path.join(self.main_dir, 'locale')
-		else:
-			if os.path.isdir('./locale'):
-				locales_dir = './locale'
+			if self.main_dir == configuration.LINUX_INSTALL_DIR:
+				return configuration.LINUX_LOCALES_DIR
+		return os.path.join(self.main_dir, configuration.LOCALES_DIR)
 
-		if not locales_dir or not os.path.isdir(locales_dir):
-			if os.path.isdir('/usr/share/locale/'):
-				locales_dir = '/usr/share/locale'
-		return locales_dir
+	@property
+	def data_dir(self):
+		return os.path.join(self.main_dir, configuration.DATA_DIR)
 
 	def _main_dir(self):
 		if self.main_is_frozen:
+			if os.path.abspath(os.path.dirname(__file__)).startswith(
+					configuration.LINUX_INSTALL_DIR):
+				return configuration.LINUX_INSTALL_DIR
 			return os.path.abspath(os.path.dirname(sys.executable))
 		return os.path.abspath(os.path.dirname(sys.argv[0]))
 
@@ -194,7 +195,7 @@ class AppConfig(Singleton):
 
 
 def is_frozen():
-	if __file__.startswith('/usr/share/'):
+	if __file__.startswith(configuration.LINUX_INSTALL_DIR):
 		return True
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe

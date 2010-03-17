@@ -16,6 +16,7 @@ __all__ = ['IconProvider']
 
 
 import logging
+import os.path
 
 import wx
 
@@ -27,46 +28,62 @@ _LOG = logging.getLogger(__name__)
 class _IconProviderCache(Singleton):
 	''' cache ikon '''
 
-	def _init(self, icons):
+	def _init(self, icons, icons_directory):
 		self.__icon_cache = {}
 		self.__icons = icons
+		self.__icons_dir = icons_directory
 
 	def __load_icon(self, name):
-		''' ipc.__load_icon(name) -> bitmap -- Zaladowanie podanej grafiki do
-		cache '''
+		''' Zaladowanie podanej grafiki do cache '''
 
-		try:
-			bitmap = wx.ArtProvider_GetBitmap(name)
-			if bitmap.IsNull():
-				bitmap = getattr(self.__icons, 'get_%s_Image' % name)()
-
-		except (AttributeError, TypeError):
-			_LOG.exception('_IconProviderCache.__load_icon(%s) error' % name)
-			bitmap = wx.NullBitmap
-
-		else:
-			self.__icon_cache[name] = bitmap
-
+		bitmap = wx.ArtProvider_GetBitmap(name)
+		if bitmap.IsNull():
+			bitmap = None
+			if self.__icons_dir:
+				bitmap = self._try_to_load_from_dir(name)
+			if bitmap is None and self.__icons is not None:
+				attrname = 'get_%s_Image' % name
+				if hasattr(self.__icons, attrname):
+					bitmap = getattr(self.__icons, attrname)()
+			if bitmap is None:
+				_LOG.warn('_IconProviderCache.__load_icon(%s): not found' % name)
+				bitmap = wx.NullBitmap
+			else:
+				self.__icon_cache[name] = bitmap
 		return bitmap
 
 	def __getitem__(self, name):
 		icon = self.__icon_cache.get(name)
 		if not icon:
 			icon = self.__load_icon(name)
-
 		return icon
 
 	def __contains__(self, key):
 		return key in self.__icon_cache
 
+	def _try_to_load_from_dir(self, name):
+		filename = os.path.join(self.__icons_dir, name + '.png')
+		if not os.path.isfile(filename):
+			return None
+		bitmap = None
+		try:
+			bitmap = wx.Bitmap(filename, wx.BITMAP_TYPE_PNG)
+		except IOError, err:
+			_LOG.debug('_IconProviderCache._try_to_load_from_dir(%s): %s',
+					name, str(err))
+		else:
+			if bitmap and bitmap.IsNull():
+				bitmap = None
+		return bitmap
+
 
 class IconProvider:
 	""" Klasa dostarczająca ikonki """
 
-	def __init__(self, icons=None):
+	def __init__(self, icons=None, data_dir=None):
 		self.__image_list = wx.ImageList(16, 16)
 		self.__image_dict = {}
-		self._icon_provider_cache = _IconProviderCache(icons)
+		self._icon_provider_cache = _IconProviderCache(icons, data_dir)
 
 	def get_image_list(self):
 		""" ip.get_image_list() -> list -- pobranie listy ikon """
@@ -82,21 +99,16 @@ class IconProvider:
 			image = wx.ArtProvider_GetIcon(name)
 			if image.IsNull():
 				image = self._icon_provider_cache[name]
-
 		except (KeyError, AttributeError):
 			_LOG.exception('load_icon(%s) error' % name)
 			image = wx.EmptyBitmap(1, 1)
-
 		else:
 			if isinstance(image, wx.Icon):
 				self.__image_dict[name] = self.__image_list.AddIcon(image)
-
 			elif isinstance(image, wx.Bitmap):
 				self.__image_dict[name] = self.__image_list.Add(image)
-
 			else:
 				self.__image_dict[name] = self.__image_list.Add(image.ConvertToBitmap())
-
 		return image
 
 	def load_icons(self, names):
@@ -120,10 +132,8 @@ class IconProvider:
 		elif image is not None:
 			if isinstance(image, wx.Image):
 				image = image.ConvertToBitmap()
-
 			icon = wx.EmptyIcon()
 			icon.CopyFromBitmap(image)
-
 		else:
 			icon = None
 
