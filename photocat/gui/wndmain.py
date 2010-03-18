@@ -719,8 +719,6 @@ class WndMain(WndMainView):
 				collection_writable = not selected_tree_item.collection.readonly
 		images_showed = len(self._current_show_images) > 0
 
-		self._menu_bar.EnableTop(1, collections_loaded)
-
 		mm_items = self._main_menu_file.GetMenuItems()
 		mm_items[3].Enable(collection_writable)
 		mm_items[4].Enable(collection_writable)
@@ -745,6 +743,12 @@ class WndMain(WndMainView):
 			mm_items[4].Enable(dir_selected and collection_writable)
 			mm_items[6].Enable(file_selected and collection_writable)
 			mm_items[7].Enable(file_selected and collection_writable)
+			mm_items[9].Enable(True)
+			mm_items[11].Enable(True)
+		else:
+			mitems = self._main_menu_collection.GetMenuItems()
+			for idx in xrange(len(mitems)-1):
+				mitems[idx].Enable(False)
 
 	def _update_settings(self):
 		""" aktualizacja wszystkiego na podstawie ustawien """
