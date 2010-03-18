@@ -24,6 +24,7 @@ import time
 import wx
 
 from photocat.lib import fonttools
+from photocat.lib.wxtools.iconprovider import IconProvider
 
 _LOG = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		self.thumb_height = 200
 		self.scale = 0
 		self.show_captions = True
+		self.show_emblems = True
 		self.group_by = ThumbDrawer.GROUP_BY_NONE
 
 		self._padding = 0
@@ -64,6 +66,12 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 		self._caption_height, self._header_height = 0, 0
 		self._rows = 0
+
+		self._icon_provider = IconProvider()
+		self._icon_provider.load_icons(('raw', 'exif'))
+
+		self._bmp_raw = self._icon_provider.get_image('raw')
+		self._bmp_exif = self._icon_provider.get_image('exif')
 
 	def __del__(self):
 		self._items_pos = None
@@ -131,6 +139,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 			painty2 = paint_rect.height + painty1
 
 		show_captions = self.show_captions
+		show_emblems = self.show_emblems
 		selected_bottom = ((self._caption_height + 15) if show_captions else 6)
 		has_selected = len(selected) > 0 if selected is not None else False
 
@@ -139,6 +148,12 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		dc_SetTextForeground = dc.SetTextForeground
 		dc_DrawText = dc.DrawText
 		scale = self.scale
+
+		def draw_emblem(bmp, posx, posy):
+			ex1 = posx - bmp.GetWidth()
+			ey1 = posy - bmp.GetHeight()
+			dc_DrawBitmap(bmp, ex1, ey1, True)
+			return ex1 - 2
 
 		for idx, item, thumb_x, thumb_y, _txwm, _tyhm, rect in self._items_pos:
 			# czy rysowac
@@ -158,6 +173,15 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 			# rysowanie
 			dc_DrawBitmap(img, txi, tyi, True)
+
+			# emblems
+			if show_emblems:
+				eposy = thumb_y + thumb_h
+				eposx = thumb_x + thumb_w
+				if item.image.exif:
+					eposx = draw_emblem(self._bmp_exif, eposx, eposy)
+				if item.image.is_raw:
+					eposx = draw_emblem(self._bmp_raw, eposx, eposy)
 
 			# caption
 			if show_captions:
