@@ -92,7 +92,8 @@ def load_thumb_from_file(path, options, data_provider):
 	try:
 		try:
 			image = PILImage.open(path)
-		except OSError:
+		except OSError, err:
+			_LOG.warn('load_thumb_from_file(%s) error: %s', (path, str(err)))
 			image = PILImage.new('RGB', (1, 1))
 		else:
 			if image.mode != 'RGB':
@@ -222,8 +223,8 @@ _IMAGE_FILES_EXTENSION_RAW = dict((key, None) for key in ('nef', 'arw', 'srf',
 
 def is_file_raw(name):
 	''' check is file is raw '''
-	return (name and '.' in name \
-		and os.path.splitext(name)[-1].lower() in _IMAGE_FILES_EXTENSION_RAW)
+	return (name and ('.' in name) \
+			and os.path.splitext(name)[-1].lower()[1:] in _IMAGE_FILES_EXTENSION_RAW)
 
 
 
