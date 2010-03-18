@@ -24,11 +24,13 @@ from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools.validators import MyValidator, validators
 
 
-_SETTINGS_KEYS = (
-		('thumb_width', 200), ('thumb_height', 200), ('thumb_compression', 50),
-		('view_preload', True), ('view_show_captions', True),
-		('thumb_raw_custom_color', True),
-)
+_SETTINGS_KEYS = {'thumb_width': 200,
+	'thumb_height': 200,
+	'thumb_compression': 50,
+	'view_preload': True,
+	'view_show_captions': True,
+	'view_show_emblems': True,
+	'thumb_raw_custom_color': True}
 
 
 class DlgSettings(wx.Dialog):
@@ -118,6 +120,10 @@ class DlgSettings(wx.Dialog):
 		self._tc_thumb_captions = wx.CheckBox(panel, -1, _('Show captions'),
 				validator=MyValidator(data_key=(self._data, 'view_show_captions')))
 		box_options.Add(self._tc_thumb_captions, 0, wx.EXPAND)
+
+		self._tc_thumb_emblems = wx.CheckBox(panel, -1, _('Show emblems'),
+				validator=MyValidator(data_key=(self._data, 'view_show_emblems')))
+		box_options.Add(self._tc_thumb_emblems, 0, wx.EXPAND)
 
 		grid.Add(box_options, 0, wx.EXPAND | wx.ALL, 12)
 
@@ -226,7 +232,7 @@ class DlgSettings(wx.Dialog):
 
 	def _load_settings(self):
 		appconfig = AppConfig()
-		data = dict(_SETTINGS_KEYS)
+		data = _SETTINGS_KEYS.copy()
 		for key, val in appconfig.get_items('settings') or []:
 			data[key] = val
 		return data
