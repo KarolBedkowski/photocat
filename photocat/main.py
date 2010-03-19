@@ -32,8 +32,8 @@ __revision__ = '$Id$'
 try:
 	# pylint: disable-msg=F0401
 	import psyco
-except ImportError, err:
-	print 'No psyco........ (%s)' % str(err)
+except ImportError:
+	pass
 else:
 	psyco.full()
 
@@ -43,6 +43,7 @@ import sys
 import gettext
 import locale
 import logging
+import optparse
 
 from photocat.lib import appconfig
 from photocat.lib.logging_setup import logging_setup
@@ -56,10 +57,21 @@ try:
 except AttributeError:
 	sys.setdefaultencoding("utf-8")	# pylint: disable-msg=E1101
 
+
+def show_version(ption, opt_str, value, parser, *args, **kwargs):
+	from photocat import version
+	print version.INFO
+	exit(0)
+
+p = optparse.OptionParser(usage="usage: %prog [options] [collection] ...")
+p.add_option('--debug', '-d', action="store_true", default=False,
+		help='enable debug messages')
+p.add_option('--version', action="callback", callback=show_version,
+		help='show information about application version')
+options, arguments = p.parse_args()
+
 # logowanie
-DEBUG = sys.argv.count('-d') > 0
-if DEBUG:
-	sys.argv.remove('-d')
+DEBUG = options.debug
 logging_setup('photocat.log', DEBUG)
 
 _LOG = logging.getLogger(__name__)
@@ -137,9 +149,8 @@ class App(wx.App):
 		wnd.Show(True)
 		self.SetTopWindow(wnd)
 
-		for arg in sys.argv[1:]:
-			if not arg.startswith('-'):
-				wnd.open_file(arg)
+		for arg in arguments:
+			wnd.open_file(arg)
 
 		return True
 

@@ -31,7 +31,7 @@ import sys
 
 from photocat.main import run
 
-if '--version' in sys.argv:
+if '--version' in sys.argv or '-v' in sys.argv:
 	from photocat import version
 	print version.INFO
 else:

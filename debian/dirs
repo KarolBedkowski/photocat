@@ -1,5 +1,6 @@
 usr/bin
-usr/share
-usr/share/pc
-usr/share/pc/src
+usr/share/locale
 usr/share/applications/
+usr/share/photocat/data
+usr/share/photocat/data/art
+usr/share/photocat/src/

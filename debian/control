@@ -7,8 +7,8 @@ Standards-Version: 3.7.3
 
 Package: photocat
 Architecture: any
-Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8)
+Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8), ${python:Depends}
 Suggests: python-reportlab (>=2.0), python-psyco, 
 Description: digital photo management application
- Aplication allow to index, browse and search photo collections
+ Application allow to index, browse and search photo collections
  stored on dvd/cd.

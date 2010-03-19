@@ -42,17 +42,12 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/photocat.
-	mkdir -p $(CURDIR)/debian/photocat
-	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp -r photocat.pyw $(CURDIR)/debian/photocat/usr/share/photocat/src/
-	cp -r photocat_dbg.py $(CURDIR)/debian/photocat/usr/share/photocat/src/
 	cp data/photocat.desktop $(CURDIR)/debian/photocat/usr/share/applications/
-	cp data/photocat $(CURDIR)/debian/photocat/usr/bin/
-	mkdir -p $(CURDIR)/debian/photocat/usr/share/locale
+	cp bin/photocat $(CURDIR)/debian/photocat/usr/bin/
 	cp -r locale/* $(CURDIR)/debian/photocat/usr/share/locale
-	mkdir -p $(CURDIR)/debian/photocat/usr/share/photocat/data/art/
-	cp data/art/icon.svg $(CURDIR)/debian/photocat/usr/share/photocat/data/art/
+	cp -r data $(CURDIR)/debian/photocat/usr/share/photocat/
 
 
 # Build architecture-independent files here.
