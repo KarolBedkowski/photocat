@@ -11,9 +11,9 @@ if '_' not in globals():
 
 SHORTNAME = 'photocat'
 NAME = _("Photo Catalog")
-VERSION = '1.6.5'
-VERSION_INFO = (1, 6, 5, 'beta', 0)
-RELEASE = '2010-03-02'
+VERSION = '1.7.0'
+VERSION_INFO = (1, 7, 0, 'release', 0)
+RELEASE = '2010-03-20'
 DESCRIPTION = _('''Photo collection manager''')
 DEVELOPERS = '''Karol Będkowski'''
 TRANSLATORS = '''Karol Będkowski'''

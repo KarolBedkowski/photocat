@@ -3,7 +3,7 @@ photocat (1.7.0) unstable; urgency=low
   * New unstable release.
   * Change program short name pc -> photocat.
 
- -- Karol Będkowski <karol.bedkowski@gmail.com>  Tue, 02 Mar 2010 16:48:02 +0100
+ -- Karol Będkowski <karol.bedkowski@gmail.com>  Sat, 20 Mar 2010 15:43:08 +0100
 
 pc (1.6.5) unstable; urgency=low
 
