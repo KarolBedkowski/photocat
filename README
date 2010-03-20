@@ -2,9 +2,26 @@ PhotoCatalog (PC) ver. 1.x
 
 Copyright (C) Karol Będkowski 2006-2010
 
+
+PhotoCatalog is simple application, that allows to manage photo collections 
+stored on various media like dvd, cd or local disks.
+In local index files store information about photo thumbnails, meta data, 
+and allow to add information like comments and tags.
+Application is designed for speed and portability.
+
+Main features:
+- support all main file formats including raw
+- support EXIF metadata
+- comments for photos, directories and disks
+- organize items in tags
+- show photos in timeline
+
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
 (at your option) any later version.
 
-For details please see COPYING file.
+For details please see COPYING and LICENCE* files.
+
+

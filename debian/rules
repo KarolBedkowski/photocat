@@ -30,6 +30,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
+	rm -rf $(CURDIR)/debian/photocat
 
 	find . -type f \( -name '*.pyc' -or -name '*.pyo' -or -name '*~' \) -exec rm {} ';'
 
@@ -50,12 +51,8 @@ install: build
 	cp -r data $(CURDIR)/debian/photocat/usr/share/photocat/
 
 
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
 # Build architecture-dependent files here.
-binary-arch: build install
+binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog
@@ -73,5 +70,5 @@ binary-arch: build install
 	dh_md5sums
 	dh_builddeb
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+binary: binary-indep 
+.PHONY: build clean binary-indep binary install configure

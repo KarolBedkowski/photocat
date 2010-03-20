@@ -22,6 +22,22 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
+PhotoCatalog is simple application, that allows to manage photo collections 
+stored on various media like dvd, cd or local disks.
+
+In local index files store information about photo thumbnails, meta data, 
+and allow to add information like comments and tags.
+
+Application is designed for speed and portability.
+
+Main features:
+
+* support all main file formats including raw
+* support EXIF metadata
+* comments for photos, directories and disks
+* organize items in tags
+* show photos in timeline
+
 
 OPTIONS
 =======

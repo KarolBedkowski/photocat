@@ -6,9 +6,20 @@ Build-Depends: debhelper (>= 7)
 Standards-Version: 3.7.3
 
 Package: photocat
-Architecture: any
+Architecture: all
 Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8), ${python:Depends}
 Suggests: python-reportlab (>=2.0), python-psyco, 
 Description: digital photo management application
- Application allow to index, browse and search photo collections
- stored on dvd/cd.
+ PhotoCatalog is simple application, that allows to manage photo collections 
+ stored on various media like dvd, cd or local disks.
+ In local index files store information about photo thumbnails, meta data, 
+ and allow to add information like comments and tags.
+ Application is designed for speed and portability.
+ .
+ Main features:
+  - support all main file formats including raw
+  - support EXIF metadata
+  - comments for photos, directories and disks
+  - organize items in tags
+  - show photos in timeline
+

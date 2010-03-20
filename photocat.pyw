@@ -27,15 +27,9 @@ __revision__ = '$Id$'
 __all__ = []
 
 
-import sys
-
 from photocat.main import run
 
-if '--version' in sys.argv or '-v' in sys.argv:
-	from photocat import version
-	print version.INFO
-else:
-	run()
+run()
 
 
 # vim: encoding=utf8: ff=unix:
