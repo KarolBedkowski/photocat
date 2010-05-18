@@ -5,7 +5,9 @@ Licence and version informations.
 
 __author__ = 'Karol Będkowski'
 
-if '_' not in globals():
+try:
+	_('photocat')
+except NameError:
 	_ = lambda x: x
 
 
