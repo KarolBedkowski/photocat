@@ -69,7 +69,6 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 		self._appconfig = AppConfig()
 		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(('raw', 'exif'))
 
 		self._bmp_raw = self._icon_provider.get_image('raw')
 		self._bmp_exif = self._icon_provider.get_image('exif')
