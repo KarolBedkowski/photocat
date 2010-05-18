@@ -13,9 +13,9 @@ except NameError:
 
 SHORTNAME = 'photocat'
 NAME = _("Photo Catalog")
-VERSION = '1.7.0'
-VERSION_INFO = (1, 7, 0, 'release', 0)
-RELEASE = '2010-03-20'
+VERSION = '1.7.1'
+VERSION_INFO = (1, 7, 1, 'release', 0)
+RELEASE = '2010-05-18'
 DESCRIPTION = _('''Photo collection manager''')
 DEVELOPERS = '''Karol Będkowski'''
 TRANSLATORS = '''Karol Będkowski'''
