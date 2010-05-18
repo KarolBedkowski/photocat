@@ -34,7 +34,7 @@ class DirsTree(wx.TreeCtrl):
 				'calendar_view_week',
 				wx.ART_FOLDER, wx.ART_FOLDER_OPEN, wx.ART_CDROM])
 
-		self.SetImageList(self.__icon_provider.get_image_list())
+		self.SetImageList(self.__icon_provider.image_list)
 		self._icon_idx = self.__icon_provider.get_image_index(wx.ART_FOLDER)
 		self._icon2_idx = self.__icon_provider.get_image_index(wx.ART_FOLDER_OPEN)
 		self._icon_folderimg_idx = self.__icon_provider.get_image_index(

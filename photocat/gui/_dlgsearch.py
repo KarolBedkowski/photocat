@@ -299,7 +299,7 @@ class _DlgSearch(wx.Frame):
 	def _create_layout_list(self, parent):
 		listctrl = self._result_list = SearchResultListCtrl(parent, -1,
 				style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-		listctrl.SetImageList(self._icon_provider.get_image_list(),
+		listctrl.SetImageList(self._icon_provider.image_list,
 				wx.IMAGE_LIST_SMALL)
 		listctrl.set_sort_icons(self._icon_provider.get_image_index('sm_up'),
 				self._icon_provider.get_image_index('sm_down'))

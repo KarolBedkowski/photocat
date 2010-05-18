@@ -24,7 +24,7 @@ import wx
 
 from photocat import version
 from photocat.lib.appconfig import AppConfig
-from photocat.lib.wxtools.iconprovider import IconProvider
+from photocat.lib.wxtools import iconprovider
 from photocat.lib.wxtools.guitools import create_menu, create_toolbar_button, \
 	create_menu_item
 from photocat.gui.components.dirstree import DirsTree
@@ -53,8 +53,6 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._layout_splitter = None
 		self._info_panel_size = None
 		self._last_used_dir = os.path.expanduser('~')
-		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['icon'])
 		self._menu_view_show_captions = None
 		self._layout_splitter_h = None
 		self._layout_splitter_v = None
@@ -78,7 +76,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		self._main_menu_collection = None
 		self._tb_find = None
 
-		self.SetIcon(self._icon_provider.get_icon('icon'))
+		self.SetIcon(iconprovider.get_icon('icon'))
 
 		self.SetMenuBar(self._create_main_menu())
 		self._create_toolbar()

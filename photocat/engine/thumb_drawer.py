@@ -24,7 +24,7 @@ import time
 import wx
 
 from photocat.lib import fonttools
-from photocat.lib.wxtools.iconprovider import IconProvider
+from photocat.lib.wxtools import iconprovider
 from photocat.lib.appconfig import AppConfig
 
 _LOG = logging.getLogger(__name__)
@@ -68,10 +68,9 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		self._rows = 0
 
 		self._appconfig = AppConfig()
-		self._icon_provider = IconProvider()
 
-		self._bmp_raw = self._icon_provider.get_image('raw')
-		self._bmp_exif = self._icon_provider.get_image('exif')
+		self._bmp_raw = iconprovider.get_image('raw')
+		self._bmp_exif = iconprovider.get_image('exif')
 
 	def __del__(self):
 		self._items_pos = None

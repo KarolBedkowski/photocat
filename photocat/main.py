@@ -133,16 +133,11 @@ class App(wx.App):
 		_LOG.info('App.OnInit')
 
 		_LOG.info('App.OnInit: preparing iconprovider...')
-		from photocat.lib.wxtools.iconprovider import IconProvider
+		from photocat.lib.wxtools.iconprovider import init_icon_cache
 		app_config = appconfig.AppConfig()
 		art_dir = os.path.join(app_config.data_dir, 'art')
 		_LOG.debug('App.OnInit: art dir=' + art_dir)
-		try:
-			from photocat import icons
-		except ImportError:
-			_LOG.info('No icons module....')
-			icons = None
-		IconProvider(icons, art_dir)
+		init_icon_cache(None, art_dir)
 
 		from photocat.gui.wndmain	import WndMain
 		wnd = WndMain(self, DEBUG)
