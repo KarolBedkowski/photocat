@@ -161,6 +161,13 @@ class AppConfig(Singleton):
 		for fidn, fname in enumerate(last_open_files):
 			config.set('last_files', 'file%d' % fidn, fname)
 
+	def get_data_file(self, filename):
+		path = os.path.join(self.data_dir, filename)
+		if os.path.exists(path):
+			return path
+		_LOG.warn('AppConfig.get_data_file(%s) not found', filename)
+		return None
+
 	def get(self, section, key, default=None):
 		if self._config.has_section(section) \
 				and self._config.has_option(section, key):
