@@ -29,10 +29,12 @@ _LOG = logging.getLogger(__name__)
 try:
 	from reportlab.platypus import (SimpleDocTemplate, Table, Paragraph,
 			Image, Spacer)
-	from reportlab.rl_config	import defaultPageSize
-	from reportlab.lib.units	import cm, inch
-	from reportlab.lib.styles	import getSampleStyleSheet
-	from reportlab.lib.enums	import TA_CENTER
+	from reportlab.rl_config import defaultPageSize
+	from reportlab.lib.units import cm, inch
+	from reportlab.lib.styles import getSampleStyleSheet
+	from reportlab.lib.enums import TA_CENTER
+	from reportlab.pdfbase import pdfmetrics
+	from reportlab.pdfbase.ttfonts import TTFont
 
 except ImportError:
 	_LOG.warn('reportlab not available')
@@ -61,6 +63,11 @@ def _create_pdf(parent, items, options=None):
 	@items: list of items to render
 	@options: options for generating pdf
 	'''
+
+	appconfig = AppConfig()
+	pdfmetrics.registerFont(TTFont('FreeSans',
+		appconfig.get_data_file('fonts/freesans.ttf')))
+
 	filename = dialogs.dialog_file_save(parent, _('Export to PDF'), '*.pdf')
 	if filename is None:
 		return
@@ -71,11 +78,10 @@ def _create_pdf(parent, items, options=None):
 	def __my_page(canvas, doc):
 		# strona - numer
 		canvas.saveState()
-		canvas.setFont('Times-Roman', 6)
+		canvas.setFont('FreeSans', 6)
 		canvas.drawString(defaultPageSize[0] / 2, MARGIN_BOTTOM, "%d" % doc.page)
 		canvas.restoreState()
 
-	appconfig = AppConfig()
 	img_width = appconfig.get('settings', 'thumb_width', 200) / 150 * inch
 	img_height = appconfig.get('settings', 'thumb_height', 200) / 150 * inch
 
@@ -88,11 +94,12 @@ def _create_pdf(parent, items, options=None):
 		stylesheet = getSampleStyleSheet()
 		style = stylesheet['BodyText']
 		style.alignment = TA_CENTER
+		style.fontName = 'FreeSans'
 		style.fontSize = 6
 
 		style_header = stylesheet['Heading1']
 		style_header.fontSize = 10
-		style_header.fontName = 'Times-Bold'
+		style_header.fontName = 'FreeSans'
 
 		doc = SimpleDocTemplate(filename, leftMargin=MARGIN_LEFT,
 				rightMargin=MARGIN_RIGHT, topMargin=MARGIN_TOP,
