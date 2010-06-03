@@ -21,6 +21,7 @@ configure-stamp:
 
 
 build: build-stamp
+	$(CURDIR)/setup.py make_mo
 
 build-stamp: configure-stamp  
 	dh_testdir
@@ -35,6 +36,8 @@ clean:
 	find . -type f \( -name '*.pyc' -or -name '*.pyo' -or -name '*~' \) -exec rm {} ';'
 
 	dh_clean 
+
+	$(CURDIR)/setup.py cleanup
 
 install: build
 	dh_testdir

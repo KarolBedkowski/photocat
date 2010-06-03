@@ -8,13 +8,16 @@ import sys
 
 try:
 	from setuptools import setup
-except:
+	from setuptools import Command
+except ImportError:
 	from distutils.core import setup
+	from distutils.cmd import Command
+
 
 if sys.platform == 'win32':
 	try:
 		import py2exe
-	except:
+	except ImportError:
 		pass
 
 from photocat import version
@@ -70,6 +73,78 @@ def get_data_files():
 		yield x
 
 
+def _delete_dir(path):
+	if os.path.exists(path):
+		for root, dirs, files in os.walk(path, topdown=False):
+			for name in files:
+				filename = os.path.join(root, name)
+				print 'Delete ', filename
+				os.remove(filename)
+			for name in dirs:
+				filename = os.path.join(root, name)
+				print 'Delete dir ', filename
+				os.rmdir(filename)
+		os.removedirs(path)
+
+
+class CleanupCmd(Command):
+	"""docstring for cleanup"""
+
+	description = "cleanup all files"
+	user_options = []
+
+	def initialize_options(self):
+		pass
+
+	def finalize_options(self):
+		pass
+
+	def run(self):
+		for root, dirs, files in os.walk('.', topdown=False):
+			for name in files:
+				nameext = os.path.splitext(name)[-1]
+				if (name.endswith('~') or name.startswith('profile_result_')
+						or name.endswith('-stamp')
+						or nameext in ('.pyd', '.pyc', '.pyo', '.log', '.tmp',
+							'.swp', '.db', '.cfg', '.debhelper', '.substvars')):
+					filename = os.path.join(root, name)
+					print 'Delete ', filename
+					os.remove(filename)
+		_delete_dir('build')
+		_delete_dir('debian/photocat')
+		if os.path.exists('hotshot_edi_stats'):
+			os.remove('hotshot_edi_stats')
+
+
+class MakeMoCommand(Command):
+	"""docstring for cleanup"""
+
+	description = "create mo files"
+	user_options = []
+
+	def initialize_options(self):
+		pass
+
+	def finalize_options(self):
+		pass
+
+	def run(self):
+		po_langs = (filename[:-3] for filename in os.listdir('po')
+				if filename.endswith('.po'))
+		for lang in po_langs:
+			print 'creating mo for', lang
+			path = os.path.join('locale', lang, 'LC_MESSAGES')
+			if not os.path.exists(path):
+				os.makedirs(path)
+			os.execl('/usr/bin/msgfmt', '/usr/bin/msgfmt', 'po/%s.po' % lang,
+					'-o', os.path.join(path, '%s.mo' % version.SHORTNAME))
+
+
+cmdclass = {'cleanup': CleanupCmd,
+		'make_mo' : MakeMoCommand,
+}
+
+
 pctarget = {
 	'script': "photocat_dbg.py",
 	'name': "photocat_dbg",
@@ -120,6 +195,7 @@ setup(
 	zipfile=r"modules.dat",
 	windows = [pctarget_win],
 	console=[pctarget],
+	cmdclass=cmdclass,
 )
 
 
