@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
- Photo Catalog v 1.0  (photocat)
- Copyright (c) Karol Będkowski, 2004-2010
+Photo Catalog v 1.0  (photocat)
+Copyright (c) Karol Będkowski, 2004-2010
 
- This file is part of Photo Catalog
+This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-03"
-
+__version__ = "2010-06-04"
 
 
 class StatsProvider(object):

@@ -50,6 +50,8 @@ class DlgStats(wx.Dialog):
 		self._create_layout()
 		self._fill_stats()
 
+		self.SetSize((600, 400))
+
 		self.Bind(wx.EVT_COMBOBOX, self._on_stats_provider_changed,
 				self._cb_stats_providers)
 		self.Bind(wx.EVT_LISTBOX, self._on_stats_changed, self._lb_stats)
@@ -57,9 +59,10 @@ class DlgStats(wx.Dialog):
 	############################################################################
 
 	def _create_layout(self):
-		self._cb_stats_providers = wx.ComboBox(self, -1)
+		self._cb_stats_providers = wx.ComboBox(self, -1, _("Please select..."),
+				style=wx.CB_READONLY | wx.CB_DROPDOWN)
 		self._lb_stats = wx.ListBox(self, -1, style=wx.LB_SINGLE | wx.LB_SORT)
-		self._tc_result = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE)
+		self._lc_result = self._create_result_list()
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 		grid.Add(wx.StaticText(self, -1, _('Statistic:')))
@@ -73,12 +76,19 @@ class DlgStats(wx.Dialog):
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 		grid.Add(self._lb_stats, 1, wx.EXPAND)
 		grid.Add((6, 6))
-		grid.Add(self._tc_result, 2, wx.EXPAND)
+		grid.Add(self._lc_result, 2, wx.EXPAND)
 		grid_main.Add(grid, 1, wx.EXPAND)
 
 		grid_panel = wx.BoxSizer(wx.VERTICAL)
 		grid_panel.Add(grid_main, 1, wx.EXPAND | wx.ALL, 12)
 		self.SetSizerAndFit(grid_panel)
+
+	def _create_result_list(self):
+		lc_result = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+		lc_result.InsertColumn(0, _('Value'))
+		lc_result.InsertColumn(1, _('%'))
+		lc_result.InsertColumn(2, _('Count'))
+		return lc_result
 
 	def _fill_stats(self):
 		for name in STATS_PROVIDERS.iterkeys():
@@ -90,18 +100,20 @@ class DlgStats(wx.Dialog):
 		self._lb_stats.Clear()
 		for key in self._curr_stats.iterkeys():
 			self._lb_stats.Append(key)
-		self._tc_result.SetValue('')
+		self._lc_result.DeleteAllItems()
 
 	def _on_stats_changed(self, evt):
 		sel = self._lb_stats.GetStringSelection()
-		print sel
-		values = []
-		for value, number, perc in self._curr_stats[sel]:
-			if not value:
-				value = _('unknown')
-			values.append('%s: %0.1f%% (%d)' % (value, perc, number))
-		self._tc_result.SetValue('\n'.join(values))
+		listctrl = self._lc_result
+		listctrl.DeleteAllItems()
+		for idx, (value, number, perc) in enumerate(self._curr_stats[sel]):
+			listctrl.InsertStringItem(idx, value[1] or _('Unknown'))
+			listctrl.SetStringItem(idx, 1, '%0.1f%%' % (perc * 100))
+			listctrl.SetStringItem(idx, 2, str(number))
 
+		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 
 
 # vim: encoding=utf8: ff=unix:
