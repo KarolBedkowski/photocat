@@ -195,6 +195,9 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 				_('[x]Sort Descend'), self._on_view_sort)[1]
 		self._menu_view_show_recur = create_menu_item(self, menu,
 				_('[x]Show All Files in Subtree'), self._on_view_sort)[1]
+		menu.AppendSeparator()
+		self._menu_view_stats = create_menu_item(self, menu,
+				_('Statisitics'), self._on_view_stats)[1]
 		return menu
 
 	def _create_main_menu_help(self):
@@ -423,6 +426,9 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		raise NotImplementedError()
 
 	def _on_view_sort(self, evt):
+		raise NotImplementedError()
+
+	def _on_view_stats(self, evt):
 		raise NotImplementedError()
 
 	def _on_help_about(self, evt):

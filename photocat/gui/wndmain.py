@@ -36,6 +36,7 @@ from photocat.gui._dlgproperties_mutli import DlgPropertiesMulti
 from photocat.gui._dlgsearch import DlgSearchProvider
 from photocat.gui._dlgsettings import DlgSettings
 from photocat.gui._dlg_edit_tags import show_dlg_edit_tags
+from photocat.gui._dlgstats import DlgStats
 from photocat.gui.components.thumbctrl import EVT_THUMB_DBCLICK, \
 		EVT_THUMB_SELECTION_CHANGE
 
@@ -289,6 +290,13 @@ class WndMain(WndMainView):
 			self._on_dirtree_item_select(evt)
 		else:
 			self._show_dir(None)
+
+	def _on_view_stats(self, evt):
+		collection = self.selected_collection
+		if collection is not None:
+			dlg = DlgStats(self, collection)
+			dlg.ShowModal()
+			dlg.Destroy()
 
 	def _on_help_about(self, evt):
 		show_about_box(self)
