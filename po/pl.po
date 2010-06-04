@@ -2,14 +2,16 @@
 # Copyright (C) 2007-2010, Karol Będkowski
 # This file is distributed under the same license as the PC package.
 # Karol Będkowski <karol.bedkowski@gmail.com>, 2007, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 13:16+0100\n"
-"PO-Revision-Date: 2010-03-18 21:33+0100\n"
+"POT-Creation-Date: 2010-06-05 22:08+0200\n"
+"PO-Revision-Date: 2010-06-05 22:09+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -347,6 +349,24 @@ msgstr "Czcionka nagłówka:"
 
 msgid "Use custom color"
 msgstr "Używanie innego koloru"
+
+msgid "Statistics"
+msgstr "Statystyki"
+
+msgid "Please select..."
+msgstr "Proszę wybrać..."
+
+msgid "Statistic:"
+msgstr "Statystyka:"
+
+msgid "%"
+msgstr "%"
+
+msgid "Count"
+msgstr "Liczba"
+
+msgid "Unknown"
+msgstr "Nieznane"
 
 msgid "Timeline"
 msgstr "Linia czasu"
@@ -690,6 +710,9 @@ msgstr "[x]Sortuj malejąco"
 msgid "[x]Show All Files in Subtree"
 msgstr "[x]Pokaż wszystkie pliki w poddrzewie"
 
+msgid "Statisitics"
+msgstr "Statystyki"
+
 msgid "&About"
 msgstr "O programie"
 
@@ -829,6 +852,45 @@ msgstr "Aparat"
 msgid "Settings"
 msgstr "Ustawienia"
 
+msgid "EXIF"
+msgstr "EXIF"
+
+msgid "F number"
+msgstr "Liczba F"
+
+msgid "Focal Length"
+msgstr "Ogniskowa"
+
+msgid "Exposure time"
+msgstr "Czas ekspozycji"
+
+msgid "Lens"
+msgstr "Szkło"
+
+msgid "Flash"
+msgstr "Flesz"
+
+msgid "Camera model"
+msgstr "Model aparatu"
+
+msgid "ISO"
+msgstr "ISO"
+
+msgid "Basic"
+msgstr "Podstawowe"
+
+msgid "Disks"
+msgstr "Dyski"
+
+msgid "Directories"
+msgstr "Katalogi"
+
+msgid "Files"
+msgstr "Pliki"
+
+msgid "photocat"
+msgstr "photocat"
+
 msgid "Photo Catalog"
 msgstr "Katalog zdjęć"
 
@@ -893,6 +955,9 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "EXIF stats"
+#~ msgstr "Statystyki EXIF"
 
 #~ msgid "Photos: %d"
 #~ msgstr "Zdjęcia: %d"
