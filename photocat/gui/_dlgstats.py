@@ -28,13 +28,6 @@ _LOG = logging.getLogger(__name__)
 ###############################################################################
 
 
-class _OptionsError(StandardError):
-	pass
-
-
-###############################################################################
-
-
 class DlgStats(wx.Dialog):
 	''' Dialog wyszukiwania '''
 
@@ -46,6 +39,7 @@ class DlgStats(wx.Dialog):
 		self._parent = parent
 		self._selected_item = selected_item
 		self._curr_stats = {}
+		self._stats_providers = []
 
 		self._create_layout()
 		self._fill_stats()
@@ -91,12 +85,14 @@ class DlgStats(wx.Dialog):
 		return lc_result
 
 	def _fill_stats(self):
-		for name in STATS_PROVIDERS.iterkeys():
-			self._cb_stats_providers.Append(name)
+		self._stats_providers = {}
+		for sprov in STATS_PROVIDERS:
+			self._cb_stats_providers.Append(sprov.name)
+			self._stats_providers[sprov.name] = sprov()
 
 	def _on_stats_provider_changed(self, evt):
-		sprov = STATS_PROVIDERS[self._cb_stats_providers.GetValue()]
-		self._curr_stats = dict(sprov().get_stats((self._collections, )))
+		sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
+		self._curr_stats = sprov.get_stats((self._collections, ))
 		self._lb_stats.Clear()
 		for key in self._curr_stats.iterkeys():
 			self._lb_stats.Append(key)

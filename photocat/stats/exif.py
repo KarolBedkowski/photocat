@@ -9,7 +9,7 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-04"
+__version__ = "2010-06-05"
 
 
 import re
@@ -96,7 +96,7 @@ class ExifLens(StatsProvider):
 			'MakerNote ISOSetting': (_("ISO"), _calc_iso),
 	}
 
-	def get_stats(self, objects):
+	def _compute_stats(self, objects):
 		stats = dict((key, {}) for key in self._keys.iterkeys())
 		for item in self._get_items(objects):
 			exif = item.exif_data
@@ -116,7 +116,7 @@ class ExifLens(StatsProvider):
 	def _get_items(self, objects):
 		for obj in objects:
 			if isinstance(obj, Collection):
-				for item in self._find_itmes_in_collection(obj):
+				for item in self._find_items_in_collection(obj):
 					yield item
 			elif isinstance(obj, Directory):
 				for item in self._find_itmes_in_dir(obj):
@@ -124,7 +124,7 @@ class ExifLens(StatsProvider):
 			elif isinstance(obj, FileImage):
 				yield obj
 
-	def _find_itmes_in_collection(self, collection):
+	def _find_items_in_collection(self, collection):
 		for disk in collection.disks:
 			for item in self._find_itmes_in_dir(disk):
 				yield item

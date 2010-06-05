@@ -9,18 +9,14 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-04"
-
-
-STATS_PROVIDERS = {}
+__version__ = "2010-06-05"
 
 
 from .exif import ExifLens
 
 from ._stats_provider import StatsProvider
 
-for cls in StatsProvider.__subclasses__():
-	STATS_PROVIDERS[cls.name] = cls
+STATS_PROVIDERS = StatsProvider.__subclasses__()
 
 
 
