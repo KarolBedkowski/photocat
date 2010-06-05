@@ -12,9 +12,10 @@ __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __version__ = "2010-06-05"
 
 
-from .exif import ExifLens
-
 from ._stats_provider import StatsProvider
+from .exif import ExifLens
+from .basic import BasicStats
+
 
 STATS_PROVIDERS = StatsProvider.__subclasses__()
 

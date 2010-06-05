@@ -102,9 +102,12 @@ class DlgStats(wx.Dialog):
 		sel = self._lb_stats.GetStringSelection()
 		listctrl = self._lc_result
 		listctrl.DeleteAllItems()
+		if not sel:
+			return
 		for idx, (value, number, perc) in enumerate(self._curr_stats[sel]):
 			listctrl.InsertStringItem(idx, value[1] or _('Unknown'))
-			listctrl.SetStringItem(idx, 1, '%0.1f%%' % (perc * 100))
+			if perc is not None:
+				listctrl.SetStringItem(idx, 1, '%0.1f%%' % (perc * 100))
 			listctrl.SetStringItem(idx, 2, str(number))
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
