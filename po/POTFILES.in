@@ -66,8 +66,9 @@
 ./photocat/model/tag.py
 ./photocat/model/timeline.py
 ./photocat/stats/_stats_provider.py
-./photocat/stats/exif.py
 ./photocat/stats/basic.py
+./photocat/stats/dates.py
+./photocat/stats/exif.py
 ./photocat/storage/__init__.py
 ./photocat/storage/_storage_v3.py
 ./photocat/storage/data_provider.py
