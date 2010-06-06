@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-06 10:11+0200\n"
-"PO-Revision-Date: 2010-06-05 22:09+0200\n"
+"POT-Creation-Date: 2010-06-06 22:16+0200\n"
+"PO-Revision-Date: 2010-06-06 22:17+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "Language: pl\n"
@@ -852,6 +852,39 @@ msgstr "Aparat"
 msgid "Settings"
 msgstr "Ustawienia"
 
+msgid "Basic"
+msgstr "Podstawowe"
+
+msgid "Disks"
+msgstr "Dyski"
+
+msgid "Directories"
+msgstr "Katalogi"
+
+msgid "Files"
+msgstr "Pliki"
+
+msgid "Dates"
+msgstr "Daty"
+
+msgid "By year"
+msgstr "Wg roku"
+
+msgid "By year and month"
+msgstr "Wg roku i miesiąca"
+
+msgid "By month"
+msgstr "Wg miesiąca"
+
+msgid "By date"
+msgstr "Wg daty"
+
+msgid "By weekday"
+msgstr "Wg dnia tygodnia"
+
+msgid "By day hour"
+msgstr "Wg godziny"
+
 msgid "EXIF"
 msgstr "EXIF"
 
@@ -875,18 +908,6 @@ msgstr "Model aparatu"
 
 msgid "ISO"
 msgstr "ISO"
-
-msgid "Basic"
-msgstr "Podstawowe"
-
-msgid "Disks"
-msgstr "Dyski"
-
-msgid "Directories"
-msgstr "Katalogi"
-
-msgid "Files"
-msgstr "Pliki"
 
 msgid "photocat"
 msgstr "photocat"
