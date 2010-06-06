@@ -35,7 +35,8 @@ class DlgStats(wx.Dialog):
 		wx.Dialog.__init__(self, parent, -1, _('Statistics'),
 				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
 
-		self._collections = collections
+		self._collections = collections if hasattr(collections, '__iter__') \
+				else (collections, )
 		self._parent = parent
 		self._selected_item = selected_item
 		self._curr_stats = {}
@@ -92,7 +93,7 @@ class DlgStats(wx.Dialog):
 
 	def _on_stats_provider_changed(self, evt):
 		sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
-		self._curr_stats = sprov.get_stats((self._collections, ))
+		self._curr_stats = sprov.get_stats(self._collections)
 		self._lb_stats.Clear()
 		for key in self._curr_stats.iterkeys():
 			self._lb_stats.Append(key)
