@@ -97,7 +97,8 @@ class DlgStats(wx.Dialog):
 		self._lb_stats.Clear()
 		for key in self._curr_stats.iterkeys():
 			self._lb_stats.Append(key)
-		self._lc_result.DeleteAllItems()
+		self._lb_stats.SetSelection(0)
+		self._on_stats_changed(None)
 
 	def _on_stats_changed(self, evt):
 		sel = self._lb_stats.GetStringSelection()
