@@ -306,8 +306,10 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 			popup_menu.Append(mid, name)
 			wx.EVT_MENU(self, mid, func)
 
-		__append(_('Open'), self._on_photo_popoup_open)
-		popup_menu.AppendSeparator()
+		if self._photo_list.selected_item.disk.last_path:
+			__append(_('Open'), self._on_photo_popoup_open)
+			popup_menu.AppendSeparator()
+
 		__append(_('Properties'), self._on_photo_popoup_properties)
 
 		collection = self._photo_list.selected_item.collection

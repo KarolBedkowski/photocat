@@ -630,13 +630,10 @@ class WndMain(WndMainView):
 			self._on_thumb_dclick(evt)
 
 	def _on_photo_popoup_open(self, evt):
-		selected_idx, items_count = self._photo_list.selected_index
-		items_count -= 1
-		if selected_idx > -1:
-			selected = self._photo_list.get_item_by_index(selected_idx)
-			if selected.disk.last_path:
-				os_helpers.open_file(os.path.join(selected.disk.last_path,
-					selected.path))
+		selected = self._photo_list.selected_item
+		if selected and selected.disk.last_path:
+			os_helpers.open_file(os.path.join(selected.disk.last_path,
+				selected.path))
 
 	def _on_zoom_scroll(self, evt):
 		self._set_zoom()
