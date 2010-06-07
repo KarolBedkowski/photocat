@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-06 22:16+0200\n"
-"PO-Revision-Date: 2010-06-06 22:17+0200\n"
+"POT-Creation-Date: 2010-06-07 14:33+0200\n"
+"PO-Revision-Date: 2010-06-07 14:33+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "Language: pl\n"
@@ -350,23 +350,27 @@ msgstr "Czcionka nagłówka:"
 msgid "Use custom color"
 msgstr "Używanie innego koloru"
 
+msgid "Count"
+msgstr "Liczba"
+
+msgid "%"
+msgstr "%"
+
+msgid "Unknown"
+msgstr "Nieznane"
+
 msgid "Statistics"
 msgstr "Statystyki"
+
+#, python-format
+msgid "Statistics for %s"
+msgstr "Statystyki dla %s"
 
 msgid "Please select..."
 msgstr "Proszę wybrać..."
 
 msgid "Statistic:"
 msgstr "Statystyka:"
-
-msgid "%"
-msgstr "%"
-
-msgid "Count"
-msgstr "Liczba"
-
-msgid "Unknown"
-msgstr "Nieznane"
 
 msgid "Timeline"
 msgstr "Linia czasu"
@@ -863,6 +867,18 @@ msgstr "Katalogi"
 
 msgid "Files"
 msgstr "Pliki"
+
+msgid "Dirs by size"
+msgstr "Katalogi wg rozmiaru"
+
+msgid "Dirs by images count"
+msgstr "Katalogi wg ilości zdjęć"
+
+msgid "Disks by images count"
+msgstr "Dyski wg ilości zdjęć"
+
+msgid "File formats"
+msgstr "Formaty plików"
 
 msgid "Dates"
 msgstr "Daty"
