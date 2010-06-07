@@ -292,9 +292,11 @@ class WndMain(WndMainView):
 			self._show_dir(None)
 
 	def _on_view_stats(self, evt):
-		collection = self.selected_collection
-		if collection is not None:
-			dlg = DlgStats(self, collection)
+		selectection = self._dirs_tree.selected_item
+		if not selectection:
+			selectection = self.selected_collection
+		if selectection is not None:
+			dlg = DlgStats(self, selectection)
 			dlg.ShowModal()
 			dlg.Destroy()
 

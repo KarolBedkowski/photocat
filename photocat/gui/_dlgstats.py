@@ -18,29 +18,92 @@ __all__ = ['DlgStats']
 import logging
 
 import wx
+import wx.lib.mixins.listctrl as listmix
+from wx.lib.embeddedimage import PyEmbeddedImage
 
 from photocat.stats import STATS_PROVIDERS
 
 
 _LOG = logging.getLogger(__name__)
 
+_SMALL_UP_ARROW = PyEmbeddedImage(
+	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAADxJ"
+	"REFUOI1jZGRiZqAEMFGke2gY8P/f3/9kGwDTjM8QnAaga8JlCG3CAJdt2MQxDCAUaOjyjKMp"
+	"cRAYAABS2CPsss3BWQAAAABJRU5ErkJggg==")
+
+_SMALL_DN_ARROW = PyEmbeddedImage(
+	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAEhJ"
+	"REFUOI1jZGRiZqAEMFGke9QABgYGBgYWdIH///7+J6SJkYmZEacLkCUJacZqAD5DsInTLhDR"
+	"bcPlKrwugGnCFy6Mo3mBAQChDgRlP4RC7wAAAABJRU5ErkJggg==")
 
 ###############################################################################
 
 
+class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
+	def __init__(self, parent):
+		wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
+
+		self._imagelist = wx.ImageList(16, 16)
+		self._img_sm_up = self._imagelist.Add(_SMALL_UP_ARROW.GetBitmap())
+		self._img_sm_dn = self._imagelist.Add(_SMALL_DN_ARROW.GetBitmap())
+
+		self._create_list()
+		self.itemDataMap = {}
+		listmix.ColumnSorterMixin.__init__(self, 3)
+
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(self._list, 1, wx.EXPAND)
+		self.SetSizer(sizer)
+		self.SetAutoLayout(True)
+
+	def _create_list(self):
+		self._list = list_ = wx.ListCtrl(self, -1,
+				style=wx.LC_REPORT | wx.LC_SORT_ASCENDING)
+		list_.SetImageList(self._imagelist, wx.IMAGE_LIST_SMALL)
+		list_.InsertColumn(0, _('Value'))
+		list_.InsertColumn(1, _('Count'))
+		list_.InsertColumn(2, _('%'))
+
+	def GetListCtrl(self):
+		return self._list
+
+	def GetSortImages(self):
+		return (self._img_sm_dn, self._img_sm_up)
+
+	def fill(self, data):
+		self._list.DeleteAllItems()
+		self.itemDataMap.clear()
+		if not data:
+			return
+		for idx, (value, number, perc) in enumerate(data):
+			self._list.InsertStringItem(idx, value[1] or _('Unknown'))
+			self._list.SetStringItem(idx, 1, str(number))
+			if perc is not None:
+				self._list.SetStringItem(idx, 2, '%0.1f%%' % (perc * 100))
+			self._list.SetItemData(idx, idx)
+			self.itemDataMap[idx] = (value[0], number, perc)
+		self._list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		self._list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		self._list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+
+
 class DlgStats(wx.Dialog):
-	''' Dialog wyszukiwania '''
+	''' Dialog statystyk '''
 
 	def __init__(self, parent, collections, selected_item=None):
-		wx.Dialog.__init__(self, parent, -1, _('Statistics'),
-				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
-
 		self._collections = collections if hasattr(collections, '__iter__') \
 				else (collections, )
+
+		title = _('Statistics') if len(self._collections) > 1 else \
+				_('Statistics for %s') % self._collections[0].name
+
+		wx.Dialog.__init__(self, parent, -1, title,
+				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
+
 		self._parent = parent
 		self._selected_item = selected_item
 		self._curr_stats = {}
-		self._stats_providers = []
+		self._stats_providers = None
 
 		self._create_layout()
 		self._fill_stats()
@@ -56,8 +119,9 @@ class DlgStats(wx.Dialog):
 	def _create_layout(self):
 		self._cb_stats_providers = wx.ComboBox(self, -1, _("Please select..."),
 				style=wx.CB_READONLY | wx.CB_DROPDOWN)
-		self._lb_stats = wx.ListBox(self, -1, style=wx.LB_SINGLE | wx.LB_SORT)
-		self._lc_result = self._create_result_list()
+		self._lb_stats = wx.ListBox(self, -1, size=(170, -1),
+				style=wx.LB_SINGLE | wx.LB_SORT)
+		self._lc_result = _StatsListCtrlPanel(self)
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 		grid.Add(wx.StaticText(self, -1, _('Statistic:')))
@@ -69,21 +133,14 @@ class DlgStats(wx.Dialog):
 		grid_main.Add((6, 6))
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
-		grid.Add(self._lb_stats, 1, wx.EXPAND)
+		grid.Add(self._lb_stats, 0, wx.EXPAND)
 		grid.Add((6, 6))
-		grid.Add(self._lc_result, 2, wx.EXPAND)
+		grid.Add(self._lc_result, 1, wx.EXPAND)
 		grid_main.Add(grid, 1, wx.EXPAND)
 
 		grid_panel = wx.BoxSizer(wx.VERTICAL)
 		grid_panel.Add(grid_main, 1, wx.EXPAND | wx.ALL, 12)
 		self.SetSizerAndFit(grid_panel)
-
-	def _create_result_list(self):
-		lc_result = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
-		lc_result.InsertColumn(0, _('Value'))
-		lc_result.InsertColumn(1, _('%'))
-		lc_result.InsertColumn(2, _('Count'))
-		return lc_result
 
 	def _fill_stats(self):
 		self._stats_providers = {}
@@ -102,19 +159,7 @@ class DlgStats(wx.Dialog):
 
 	def _on_stats_changed(self, evt):
 		sel = self._lb_stats.GetStringSelection()
-		listctrl = self._lc_result
-		listctrl.DeleteAllItems()
-		if not sel:
-			return
-		for idx, (value, number, perc) in enumerate(self._curr_stats[sel]):
-			listctrl.InsertStringItem(idx, value[1] or _('Unknown'))
-			if perc is not None:
-				listctrl.SetStringItem(idx, 1, '%0.1f%%' % (perc * 100))
-			listctrl.SetStringItem(idx, 2, str(number))
-
-		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		listctrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		self._lc_result.fill(self._curr_stats[sel] if sel else None)
 
 
 # vim: encoding=utf8: ff=unix:

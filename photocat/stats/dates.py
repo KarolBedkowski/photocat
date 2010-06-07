@@ -9,12 +9,10 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-06"
+__version__ = "2010-06-07"
 
 
 import time
-
-from photocat.model import Directory, Collection, FileImage
 
 from ._stats_provider import StatsProvider
 
@@ -22,84 +20,41 @@ from ._stats_provider import StatsProvider
 class DatesStats(StatsProvider):
 	name = _('Dates')
 
+	_stats_def = {
+		'year': (_("By year"), "%Y", lambda x, y: x.tm_year),
+		'yemo': (_("By year and month"), "%Y %B", lambda x, y: x.tm_year * 12 + \
+				x.tm_mon),
+		'mont': (_("By month"), "%B", lambda x, y: x.tm_mon),
+		'date': (_("By date"), "%x", lambda x, y: y),
+		'weda': (_("By weekday"), "%A", lambda x, y: x.tm_wday),
+		'hour': (_("By day hour"), "%H", lambda x, y: x.tm_hour),
+	}
+
 	def __init__(self):
 		StatsProvider.__init__(self)
-		self._stats_by_year = {}
-		self._stats_by_yearmonth = {}
-		self._stats_by_day = {}
-		self._stats_by_month = {}
-		self._stats_by_weekday = {}
-		self._stats_by_hour = {}
+		self._stats = dict((key, {}) for key in self._stats_def.iterkeys())
 
 	def _compute_stats(self, objects):
 		for item in self._get_items(objects):
 			shot_date = item.shot_date
 			if shot_date:
 				tdate = time.localtime(shot_date)
-				_add_to_stats(self._stats_by_year, '%Y', tdate, tdate.tm_year)
-				_add_to_stats(self._stats_by_yearmonth, "%Y %B", tdate,
-						tdate.tm_year * 12 + tdate.tm_mon)
-				_add_to_stats(self._stats_by_month, "%B", tdate, tdate.tm_mon)
-				_add_to_stats(self._stats_by_day, "%x", tdate, shot_date)
-				_add_to_stats(self._stats_by_weekday, "%A", tdate, tdate.tm_wday)
-				_add_to_stats(self._stats_by_hour, "%H", tdate, tdate.tm_hour)
+				for skey, (_name, val_e, sort_f) in self._stats_def.iteritems():
+					sdict = self._stats[skey]
+					key = time.strftime(val_e, tdate)
+					cnt, sortval = sdict.get(key) or (0, sort_f(tdate, shot_date))
+					sdict[key] = (cnt + 1, sortval)
 			else:
-				_add_to_stats_unknown(self._stats_by_year)
-				_add_to_stats_unknown(self._stats_by_yearmonth)
-				_add_to_stats_unknown(self._stats_by_month)
-				_add_to_stats_unknown(self._stats_by_day)
-				_add_to_stats_unknown(self._stats_by_weekday)
-				_add_to_stats_unknown(self._stats_by_hour)
+				for skey, (_name, _val_e, _sort_f) in self._stats_def.iteritems():
+					sdict = self._stats[skey]
+					cnt, _skey = sdict.get('') or (0, 0)
+					sdict[''] = (cnt + 1, 0)
 
-		yield _("By year"), _get_stats_for_var(self._stats_by_year)
-		yield _("By year and month"), _get_stats_for_var(self._stats_by_yearmonth)
-		yield _("By month"), _get_stats_for_var(self._stats_by_month)
-		yield _("By date"), _get_stats_for_var(self._stats_by_day)
-		yield _("By weekday"), _get_stats_for_var(self._stats_by_weekday)
-		yield _("By day hour"), _get_stats_for_var(self._stats_by_hour)
-
-	def _get_items(self, objects):
-		for obj in objects:
-			if isinstance(obj, Collection):
-				for item in self._find_items_in_collection(obj):
-					yield item
-			elif isinstance(obj, Directory):
-				for item in self._find_itmes_in_dir(obj):
-					yield item
-			elif isinstance(obj, FileImage):
-				yield obj
-
-	def _find_items_in_collection(self, collection):
-		for disk in collection.disks:
-			for item in self._find_itmes_in_dir(disk):
-				yield item
-
-	def _find_itmes_in_dir(self, directory):
-		for subdir in directory.subdirs:
-			for item in self._find_itmes_in_dir(subdir):
-				yield item
-		for img in directory.files:
-			yield img
-
-
-def _add_to_stats(var, format_, date, sdate):
-	key = time.strftime(format_, date)
-	cnt, _skey = var.get(key) or (0, 0)
-	var[key] = (cnt + 1, sdate)
-
-
-def _add_to_stats_unknown(var):
-	cnt, _skey = var.get('') or (0, 0)
-	var[''] = (cnt + 1, 0)
-
-
-def _get_stats_for_var(var):
-	all_cnt = float(sum((val[0] for val in var.itervalues())))
-	res = [((skey, key), val, val / all_cnt) for key, (val, skey)
-			in var.iteritems()]
-	res.sort()
-	return res
-
-
+		for skey, (name, _val_e, _sort_f) in self._stats_def.iteritems():
+			sdict = self._stats[skey]
+			all_cnt = float(sum((val[0] for val in sdict.itervalues())))
+			res = (((skey, key), val, val / all_cnt) for key, (val, skey)
+					in sdict.iteritems())
+			yield name, sorted(res)
 
 # vim: encoding=utf8: ff=unix:
