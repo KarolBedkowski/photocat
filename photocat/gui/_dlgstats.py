@@ -77,9 +77,10 @@ class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 						(perc * 100)))
 			self._list.SetItemData(lidx, idx)
 			self.itemDataMap[idx] = (value[0], number, perc)
-		self._list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		self._list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		self._list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		self._list.SetColumnWidth(0, 200)
+		self._list.SetColumnWidth(1, 50)
+		self._list.SetColumnWidth(2, 50)
+		self.SortListItems(0, True)
 
 
 class DlgStats(wx.Dialog):
