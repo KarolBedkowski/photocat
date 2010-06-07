@@ -13,6 +13,7 @@ __version__ = "2010-06-07"
 
 
 import re
+import locale
 
 from ._stats_provider import StatsProvider
 
@@ -40,7 +41,7 @@ def _parse_div(value, keep_float=True):
 
 def _calculate_float(value):
 	value = _parse_div(value) or 0
-	return value, '%0.1f' % value
+	return value, locale.format('%0.1f', value)
 
 
 def _calc_lens(value):
@@ -51,10 +52,10 @@ def _calc_lens(value):
 		return value
 	values = [_parse_div(val) for val in values]
 	if values[0] < 1:
-		length = '%0.2f-%0.2f' % (float(values[0]), float(values[1]))
+		length = locale.format('%0.2f-%0.2f', (float(values[0]), float(values[1])))
 	else:
 		length = '%d-%d' % (int(values[0]), int(values[1]))
-	app = '%0.1f-%0.1f' % (float(values[2]), float(values[3]))
+	app = locale.format('%0.1f-%0.1f', (float(values[2]), float(values[3])))
 	return values[0], length + ' ' + app
 
 
