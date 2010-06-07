@@ -2,7 +2,7 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -28,7 +28,7 @@ class Disk(Directory):
 		self.collection = collection
 		self.add_date = kwargs.get('add_date')
 		self.update_date = kwargs.get('update_date')
-		self.last_path = None
+		self.last_path = kwargs.get('last_path')
 		Directory.__init__(self, oid, name, parent, self, *args, **kwargs)
 
 	@property
