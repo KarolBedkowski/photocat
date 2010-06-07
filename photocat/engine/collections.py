@@ -67,6 +67,8 @@ def _add_or_update_collection(collection, title, data, parent_wnd):
 		raise errors.UpdateDiskError(_("Collection is read-only."))
 
 	data.update(dict(AppConfig().get_items('settings') or []))
+	data['path'] = data['disk'].last_path if 'disk' in data and data['disk'] \
+			else ''
 
 	dlg = DlgAddDisk(parent_wnd, data, update=data['update'], collection=collection)
 	result = dlg.ShowModal()
