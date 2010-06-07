@@ -9,12 +9,10 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-06"
+__version__ = "2010-06-07"
 
 
 import time
-
-from photocat.model import Directory, Collection, FileImage
 
 from ._stats_provider import StatsProvider
 
@@ -57,29 +55,6 @@ class DatesStats(StatsProvider):
 		yield _("By date"), _get_stats_for_var(self._stats_by_day)
 		yield _("By weekday"), _get_stats_for_var(self._stats_by_weekday)
 		yield _("By day hour"), _get_stats_for_var(self._stats_by_hour)
-
-	def _get_items(self, objects):
-		for obj in objects:
-			if isinstance(obj, Collection):
-				for item in self._find_items_in_collection(obj):
-					yield item
-			elif isinstance(obj, Directory):
-				for item in self._find_itmes_in_dir(obj):
-					yield item
-			elif isinstance(obj, FileImage):
-				yield obj
-
-	def _find_items_in_collection(self, collection):
-		for disk in collection.disks:
-			for item in self._find_itmes_in_dir(disk):
-				yield item
-
-	def _find_itmes_in_dir(self, directory):
-		for subdir in directory.subdirs:
-			for item in self._find_itmes_in_dir(subdir):
-				yield item
-		for img in directory.files:
-			yield img
 
 
 def _add_to_stats(var, format_, date, sdate):

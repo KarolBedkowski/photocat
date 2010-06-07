@@ -9,12 +9,10 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-05"
+__version__ = "2010-06-07"
 
 
 import re
-
-from photocat.model import Directory, Collection, FileImage
 
 from ._stats_provider import StatsProvider
 
@@ -112,30 +110,6 @@ class ExifLens(StatsProvider):
 					in value.iteritems()]
 			keystats.sort()
 			yield (self._keys[key][0], keystats)
-
-	def _get_items(self, objects):
-		for obj in objects:
-			if isinstance(obj, Collection):
-				for item in self._find_items_in_collection(obj):
-					yield item
-			elif isinstance(obj, Directory):
-				for item in self._find_itmes_in_dir(obj):
-					yield item
-			elif isinstance(obj, FileImage):
-				yield obj
-
-	def _find_items_in_collection(self, collection):
-		for disk in collection.disks:
-			for item in self._find_itmes_in_dir(disk):
-				yield item
-
-	def _find_itmes_in_dir(self, directory):
-		for subdir in directory.subdirs:
-			for item in self._find_itmes_in_dir(subdir):
-				yield item
-		for img in directory.files:
-			yield img
-
 
 
 # vim: encoding=utf8: ff=unix:
