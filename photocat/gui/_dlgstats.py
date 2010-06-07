@@ -86,8 +86,8 @@ class DlgStats(wx.Dialog):
 	def _create_result_list(self):
 		lc_result = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
 		lc_result.InsertColumn(0, _('Value'))
-		lc_result.InsertColumn(1, _('%'))
-		lc_result.InsertColumn(2, _('Count'))
+		lc_result.InsertColumn(1, _('Count'))
+		lc_result.InsertColumn(2, _('%'))
 		return lc_result
 
 	def _fill_stats(self):
@@ -113,9 +113,9 @@ class DlgStats(wx.Dialog):
 			return
 		for idx, (value, number, perc) in enumerate(self._curr_stats[sel]):
 			listctrl.InsertStringItem(idx, value[1] or _('Unknown'))
+			listctrl.SetStringItem(idx, 1, str(number))
 			if perc is not None:
-				listctrl.SetStringItem(idx, 1, '%0.1f%%' % (perc * 100))
-			listctrl.SetStringItem(idx, 2, str(number))
+				listctrl.SetStringItem(idx, 2, '%0.1f%%' % (perc * 100))
 
 		listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)
