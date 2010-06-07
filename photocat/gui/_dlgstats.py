@@ -60,7 +60,8 @@ class DlgStats(wx.Dialog):
 	def _create_layout(self):
 		self._cb_stats_providers = wx.ComboBox(self, -1, _("Please select..."),
 				style=wx.CB_READONLY | wx.CB_DROPDOWN)
-		self._lb_stats = wx.ListBox(self, -1, style=wx.LB_SINGLE | wx.LB_SORT)
+		self._lb_stats = wx.ListBox(self, -1, size=(170, -1),
+				style=wx.LB_SINGLE | wx.LB_SORT)
 		self._lc_result = self._create_result_list()
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
@@ -73,9 +74,9 @@ class DlgStats(wx.Dialog):
 		grid_main.Add((6, 6))
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
-		grid.Add(self._lb_stats, 1, wx.EXPAND)
+		grid.Add(self._lb_stats, 0, wx.EXPAND)
 		grid.Add((6, 6))
-		grid.Add(self._lc_result, 2, wx.EXPAND)
+		grid.Add(self._lc_result, 1, wx.EXPAND)
 		grid_main.Add(grid, 1, wx.EXPAND)
 
 		grid_panel = wx.BoxSizer(wx.VERTICAL)
