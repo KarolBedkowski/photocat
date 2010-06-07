@@ -24,7 +24,7 @@ import wx
 
 from photocat.model import Collection, Directory, Disk, FileImage, Tag, Timeline
 from photocat.storage.storage import Storage
-from photocat.engine import collections, eprint, epdf
+from photocat.engine import collections, eprint, epdf, os_helpers
 from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools import dialogs
 from photocat.lib.wxtools.wnd_shell import WndShell
@@ -626,6 +626,15 @@ class WndMain(WndMainView):
 			self._on_collection_edit_multi(evt)
 		elif selected_count == 1:
 			self._on_thumb_dclick(evt)
+
+	def _on_photo_popoup_open(self, evt):
+		selected_idx, items_count = self._photo_list.selected_index
+		items_count -= 1
+		if selected_idx > -1:
+			selected = self._photo_list.get_item_by_index(selected_idx)
+			if selected.disk.last_path:
+				os_helpers.open_file(os.path.join(selected.disk.last_path,
+					selected.path))
 
 	def _on_zoom_scroll(self, evt):
 		self._set_zoom()

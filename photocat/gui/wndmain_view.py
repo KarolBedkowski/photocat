@@ -306,6 +306,8 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 			popup_menu.Append(mid, name)
 			wx.EVT_MENU(self, mid, func)
 
+		__append(_('Open'), self._on_photo_popoup_open)
+		popup_menu.AppendSeparator()
 		__append(_('Properties'), self._on_photo_popoup_properties)
 
 		collection = self._photo_list.selected_item.collection
@@ -441,6 +443,9 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 		raise NotImplementedError()
 
 	def _on_photo_popoup_properties(self, evt):
+		raise NotImplementedError()
+
+	def _on_photo_popoup_open(self, evt):
 		raise NotImplementedError()
 
 	def _on_thumb_sel_changed(self, evt):
