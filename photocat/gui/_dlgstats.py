@@ -32,11 +32,15 @@ class DlgStats(wx.Dialog):
 	''' Dialog wyszukiwania '''
 
 	def __init__(self, parent, collections, selected_item=None):
-		wx.Dialog.__init__(self, parent, -1, _('Statistics'),
-				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
-
 		self._collections = collections if hasattr(collections, '__iter__') \
 				else (collections, )
+
+		title = _('Statistics') if len(self._collections) > 1 else \
+				_('Statistics for %s') % self._collections[0].name
+
+		wx.Dialog.__init__(self, parent, -1, title,
+				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
+
 		self._parent = parent
 		self._selected_item = selected_item
 		self._curr_stats = {}
