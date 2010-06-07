@@ -59,17 +59,18 @@ class BasicStats(StatsProvider):
 		self._dirs += len(directory.subdirs)
 		for subdir in directory.subdirs:
 			self._find_items_in_dir(subdir)
-		self._files += len(directory.files)
 		disk_name = directory.disk.name
 		dir_path = disk_name + ':/' + directory.path
-		self._dirs_size[dir_path] = directory.directory_size_sumary
-		self._dirs_image_cnt[dir_path] = len(directory.files)
-		self._disk_image_cnt[disk_name] = self._disk_image_cnt.get(disk_name, 0) \
-				+ len(directory.files)
-		for img in directory.files:
-			ext = (('.' in img.name) and \
-					os.path.splitext(img.name)[-1].lower()[1:]) or ''
-			self._file_types[ext] = self._file_types.get(ext, 0) + 1
+		if directory.files:
+			self._files += len(directory.files)
+			self._dirs_size[dir_path] = directory.directory_size_sumary
+			self._dirs_image_cnt[dir_path] = len(directory.files)
+			self._disk_image_cnt[disk_name] = self._disk_image_cnt.get(
+					disk_name, 0) + len(directory.files)
+			for img in directory.files:
+				ext = (('.' in img.name) and \
+						os.path.splitext(img.name)[-1].lower()[1:]) or ''
+				self._file_types[ext] = self._file_types.get(ext, 0) + 1
 
 
 def _compute_stats(data):
