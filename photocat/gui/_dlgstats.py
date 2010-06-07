@@ -16,12 +16,14 @@ __all__ = ['DlgStats']
 
 
 import logging
+import locale
 
 import wx
 import wx.lib.mixins.listctrl as listmix
 
 from photocat.stats import STATS_PROVIDERS
 from photocat.lib.wxtools.iconprovider import IconProvider
+from photocat.lib import hlplocale
 
 
 _LOG = logging.getLogger(__name__)
@@ -67,11 +69,13 @@ class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 		if not data:
 			return
 		for idx, (value, number, perc) in enumerate(data):
-			self._list.InsertStringItem(idx, value[1] or _('Unknown'))
-			self._list.SetStringItem(idx, 1, str(number))
+			lidx = self._list.InsertStringItem(idx,
+					hlplocale.from_locale(value[1]) or _('Unknown'))
+			self._list.SetStringItem(lidx, 1, str(number))
 			if perc is not None:
-				self._list.SetStringItem(idx, 2, '%0.1f%%' % (perc * 100))
-			self._list.SetItemData(idx, idx)
+				self._list.SetStringItem(lidx, 2, locale.format('%0.1f',
+						(perc * 100)))
+			self._list.SetItemData(lidx, idx)
 			self.itemDataMap[idx] = (value[0], number, perc)
 		self._list.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		self._list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
