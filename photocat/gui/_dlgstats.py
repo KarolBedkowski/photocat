@@ -19,33 +19,23 @@ import logging
 
 import wx
 import wx.lib.mixins.listctrl as listmix
-from wx.lib.embeddedimage import PyEmbeddedImage
 
 from photocat.stats import STATS_PROVIDERS
+from photocat.lib.wxtools.iconprovider import IconProvider
 
 
 _LOG = logging.getLogger(__name__)
-
-_SMALL_UP_ARROW = PyEmbeddedImage(
-	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAADxJ"
-	"REFUOI1jZGRiZqAEMFGke2gY8P/f3/9kGwDTjM8QnAaga8JlCG3CAJdt2MQxDCAUaOjyjKMp"
-	"cRAYAABS2CPsss3BWQAAAABJRU5ErkJggg==")
-
-_SMALL_DN_ARROW = PyEmbeddedImage(
-	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAEhJ"
-	"REFUOI1jZGRiZqAEMFGke9QABgYGBgYWdIH///7+J6SJkYmZEacLkCUJacZqAD5DsInTLhDR"
-	"bcPlKrwugGnCFy6Mo3mBAQChDgRlP4RC7wAAAABJRU5ErkJggg==")
-
-###############################################################################
 
 
 class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 	def __init__(self, parent):
 		wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
 
-		self._imagelist = wx.ImageList(16, 16)
-		self._img_sm_up = self._imagelist.Add(_SMALL_UP_ARROW.GetBitmap())
-		self._img_sm_dn = self._imagelist.Add(_SMALL_DN_ARROW.GetBitmap())
+		self._icon_provider = IconProvider()
+		self._icon_provider.load_icons(['image', wx.ART_FOLDER, 'sm_up', 'sm_down'])
+
+		self._img_sm_up = self._icon_provider.get_image_index('sm_up')
+		self._img_sm_dn = self._icon_provider.get_image_index('sm_down')
 
 		self._create_list()
 		self.itemDataMap = {}
@@ -59,7 +49,8 @@ class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 	def _create_list(self):
 		self._list = list_ = wx.ListCtrl(self, -1,
 				style=wx.LC_REPORT | wx.LC_SORT_ASCENDING)
-		list_.SetImageList(self._imagelist, wx.IMAGE_LIST_SMALL)
+		list_.SetImageList(self._icon_provider.image_list, wx.IMAGE_LIST_SMALL)
+
 		list_.InsertColumn(0, _('Value'))
 		list_.InsertColumn(1, _('Count'))
 		list_.InsertColumn(2, _('%'))
