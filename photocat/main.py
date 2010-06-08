@@ -58,20 +58,24 @@ except AttributeError:
 	sys.setdefaultencoding("utf-8")		# pylint: disable-msg=E1101
 
 
-def show_version(ption, opt_str, value, parser, *args, **kwargs):
+def _show_version(ption, opt_str, value, parser, *args, **kwargs):
 	from photocat import version
 	print version.INFO
 	exit(0)
 
-p = optparse.OptionParser(usage="usage: %prog [options] [collection] ...")
-p.add_option('--debug', '-d', action="store_true", default=False,
-		help='enable debug messages')
-p.add_option('--version', action="callback", callback=show_version,
-		help='show information about application version')
-options, arguments = p.parse_args()
+
+def _parse_opt():
+	p = optparse.OptionParser(usage="usage: %prog [options] [collection] ...")
+	p.add_option('--debug', '-d', action="store_true", default=False,
+			help='enable debug messages')
+	p.add_option('--version', action="callback", callback=_show_version,
+			help='show information about application version')
+	return  p.parse_args()
+
+OPTIONS, ARGUMENTS = _parse_opt()
 
 # logowanie
-DEBUG = options.debug
+DEBUG = OPTIONS.debug
 logging_setup('photocat.log', DEBUG)
 
 _LOG = logging.getLogger(__name__)
@@ -120,52 +124,7 @@ if not appconfig.is_frozen():
 import wx
 
 from photocat.lib.wxtools.logging_wx import logging_setup_wx
-
-##########################################################################
-
-
-class App(wx.App):
-	""" wx App class """
-
-	def OnInit(self):		# pylint: disable-msg=C0103
-		""" OnInit """
-
-		_LOG.info('App.OnInit')
-
-		_LOG.info('App.OnInit: preparing iconprovider...')
-		from photocat.lib.wxtools.iconprovider import init_icon_cache
-		app_config = appconfig.AppConfig()
-		art_dir = os.path.join(app_config.data_dir, 'art')
-		_LOG.debug('App.OnInit: art dir=' + art_dir)
-		init_icon_cache(None, art_dir)
-
-		from photocat.gui.wndmain import WndMain
-		wnd = WndMain(self, DEBUG)
-		wnd.Show(True)
-		self.SetTopWindow(wnd)
-
-		for arg in arguments:
-			wnd.open_file(arg)
-
-		return True
-
-	def OnExceptionInMainLoop(self):		# pylint: disable-msg=C0103
-		''' OnExceptionInMainLoop '''
-		_LOG.warn('OnExceptionInMainLoop')
-		super(App, self).OnExceptionInMainLoop()
-
-	def OnUnhandledException(self):		# pylint: disable-msg=C0103
-		'''OnUnhandledException '''
-		_LOG.warn('OnUnhandledException')
-		super(App, self).OnUnhandledException()
-
-	def OnFatalException(self):		# pylint: disable-msg=C0103
-		''' OnFatalException '''
-		_LOG.warn('OnFatalException')
-		super(App, self).OnFatalException()
-
-
-##########################################################################
+from photocat.lib.wxtools import iconprovider
 
 
 def run():
@@ -177,7 +136,19 @@ def run():
 	app_config.load()
 
 	_LOG.info('run: starting app...')
-	app = App(None)
+	app = wx.PySimpleApp(0)
+	wx.InitAllImageHandlers()
+
+	iconprovider.init_icon_cache(None, os.path.join(app_config.data_dir, 'art'))
+
+	from photocat.gui.wndmain import WndMain
+
+	wnd = WndMain(app, DEBUG)
+	wnd.Show(True)
+	app.SetTopWindow(wnd)
+
+	for arg in ARGUMENTS:
+		wnd.open_file(arg)
 
 	_LOG.info('run: starting app main loop...')
 	app.MainLoop()
