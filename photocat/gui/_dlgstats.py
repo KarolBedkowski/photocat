@@ -8,6 +8,8 @@ Copyright (c) Karol Będkowski, 2004-2010
 This file is part of Photo Catalog
 """
 
+from __future__ import with_statement
+
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
@@ -24,6 +26,7 @@ import wx.lib.mixins.listctrl as listmix
 from photocat.stats import STATS_PROVIDERS
 from photocat.lib.wxtools.iconprovider import IconProvider
 from photocat.lib import hlplocale
+from photocat.lib import hlpwx
 
 
 _LOG = logging.getLogger(__name__)
@@ -145,17 +148,21 @@ class DlgStats(wx.Dialog):
 			self._stats_providers[sprov.name] = sprov()
 
 	def _on_stats_provider_changed(self, evt):
-		sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
-		self._curr_stats = sprov.get_stats(self._collections)
-		self._lb_stats.Clear()
-		for key in self._curr_stats.iterkeys():
-			self._lb_stats.Append(key)
-		self._lb_stats.SetSelection(0)
-		self._on_stats_changed(None)
+		with hlpwx.with_wait_cursor():
+			sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
+			self._curr_stats = sprov.get_stats(self._collections)
+			self._lb_stats.Clear()
+			for key in self._curr_stats.iterkeys():
+				self._lb_stats.Append(key)
+			self._lb_stats.SetSelection(0)
+			self._on_stats_changed(None)
 
 	def _on_stats_changed(self, evt):
-		sel = self._lb_stats.GetStringSelection()
-		self._lc_result.fill(self._curr_stats[sel] if sel else None)
+		with hlpwx.with_wait_cursor():
+			self._lc_result.Freeze()
+			sel = self._lb_stats.GetStringSelection()
+			self._lc_result.fill(self._curr_stats[sel] if sel else None)
+			self._lc_result.Thaw()
 
 
 # vim: encoding=utf8: ff=unix:
