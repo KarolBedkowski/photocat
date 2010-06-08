@@ -291,15 +291,6 @@ class WndMain(WndMainView):
 		else:
 			self._show_dir(None)
 
-	def _on_view_stats(self, evt):
-		selectection = self._dirs_tree.selected_item
-		if not selectection:
-			selectection = self.selected_collection
-		if selectection is not None:
-			dlg = DlgStats(self, selectection)
-			dlg.ShowModal()
-			dlg.Destroy()
-
 	def _on_help_about(self, evt):
 		show_about_box(self)
 
@@ -403,23 +394,13 @@ class WndMain(WndMainView):
 
 	def _on_collection_info(self, evt):
 		''' _on_collection_info '''
-		if self.collections_not_loaded:
-			return
-
-		collection = self.selected_collection
-		f_count, sd_count = 0, 0
-		for disk in collection.disks:
-			(disk_files_count, disk_subdirs_count, disk_files_count2,
-					disk_subdirs_count2) = disk.directory_size
-			f_count += disk_files_count + disk_files_count2
-			sd_count += disk_subdirs_count + disk_subdirs_count2
-
-		dirty, dirtyp = collection.dirty_objects_count
-		data = dict(disks=len(collection.disks), files=f_count,
-				dirs=sd_count, dirty=dirty, dirtyp=dirtyp)
-		info = _('Disks: %(disks)d\nDirs: %(dirs)d\nPhotos: %(files)d\nDirty '
-				'entries: %(dirty)d (%(dirtyp)d%%)') % data
-		dialogs.message_box_info_ex(self, _('Collection information'), info)
+		selectection = self._dirs_tree.selected_item
+		if not selectection:
+			selectection = self.selected_collection
+		if selectection is not None:
+			dlg = DlgStats(self, selectection)
+			dlg.ShowModal()
+			dlg.Destroy()
 
 	def _on_collection_edit_multi(self, evt):
 		''' _on_collection_edit_multi'''
