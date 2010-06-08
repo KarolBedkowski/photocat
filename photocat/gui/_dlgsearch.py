@@ -189,7 +189,8 @@ class _DlgSearch(wx.Frame):
 			elif isinstance(self._selected_item, Directory):
 				map(cb.Append, (_("<current collection>"), _("<current disk>"),
 						_("<current dir>")))
-			elif isinstance(self._selected_item, Collection) and len(self._collections) > 1:
+			elif isinstance(self._selected_item, Collection) and \
+					len(self._collections) > 1:
 				map(cb.Append, (_("<current collection>"), _("<current disk>")))
 
 		for cat in self._collections:

@@ -155,7 +155,7 @@ def _create_doc_group_none(page, items, style, img_width, img_height, cols,
 			row.append([image, par])
 		else:
 			row.append(image)
-		if idx % cols == cols -1:
+		if idx % cols == cols - 1:
 			data.append(row)
 			row = []
 	if len(row) > 0:

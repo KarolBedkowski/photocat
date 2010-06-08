@@ -30,7 +30,7 @@ from photocat.lib.appconfig import AppConfig
 _LOG = logging.getLogger(__name__)
 
 
-class ThumbDrawer(object):	# pylint: disable-msg=R0902
+class ThumbDrawer(object):		# pylint: disable-msg=R0902
 	''' Draw thumb '''
 
 	GROUP_BY_NONE = 0
@@ -112,7 +112,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	############################################################################
 
-	def draw(self, dc, paint_rect, selected=None):	# pylint: disable-msg=R0914
+	def draw(self, dc, paint_rect, selected=None):		# pylint: disable-msg=R0914
 		''' thumbctrl.draw(dc, paint_rect, selected) -- narysowanie miniaturek
 		na wskazanym dc i we wskazanym obszarze.
 		@param dc		- dc po którym będzie rysowanie
@@ -255,7 +255,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 
 	############################################################################
 
-	def __compute_thumbs_pos_normal(self, height):	# pylint: disable-msg=R0914
+	def __compute_thumbs_pos_normal(self, height):		# pylint: disable-msg=R0914
 		''' thumbctrl.__compute_thumbs_pos_normal() -- wyznaczenie pozycji
 		poszczególnych miniaturek - normalne
 
@@ -330,7 +330,7 @@ class ThumbDrawer(object):	# pylint: disable-msg=R0902
 		return self.__compute_thumbs_pos_group_by(height, item_value_func,
 				group_label_func)
 
-	def __compute_thumbs_pos_group_by(self, height,	# pylint: disable-msg=R0914
+	def __compute_thumbs_pos_group_by(self, height,		# pylint: disable-msg=R0914
 				item_value_func, group_label_func):
 		''' thumbctrl.__compute_thumbs_pos_group_by() -- wyznaczenie pozycji
 		poszczególnych miniaturek dla grupowania wg dnia

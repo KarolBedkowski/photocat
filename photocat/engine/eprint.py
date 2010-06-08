@@ -73,35 +73,35 @@ class _Printout(wx.Printout):
 		dc.SetDeviceOrigin(px1, py1)
 
 		# rysowanie marginesów
-		#dc.DrawRectangleRect(wx.RectPP((px1, py1), (page_width-px2, 
+		#dc.DrawRectangleRect(wx.RectPP((px1, py1), (page_width-px2,
 		#		page_height-py2)))
 
 		return page_width, page_height
 
-	def HasPage(self, page):	# pylint: disable-msg=C0103,W0221
+	def HasPage(self, page):		# pylint: disable-msg=C0103,W0221
 		''' Check is page exists '''
 		return page <= self._num_pages
 
-	def GetPageInfo(self):	# pylint: disable-msg=C0103,W0221
+	def GetPageInfo(self):		# pylint: disable-msg=C0103,W0221
 		''' GetPageInfo '''
 		return (1, self._num_pages, 1, self._num_pages)
 
-	def OnPrintPage(self, page):	# pylint: disable-msg=C0103
+	def OnPrintPage(self, page):		# pylint: disable-msg=C0103
 		''' Render page '''
 		dc = self.GetDC()
 
 		self._calc_scale(dc)
 		width, height = self._calc_layout(dc)
 
-		#res = 
-		self.drawer.update(self._items_per_page[page-1], width, height, dc=dc)
+		#res =
+		self.drawer.update(self._items_per_page[page - 1], width, height, dc=dc)
 		#cols, rows, virtual_size, size_hints, scroll_rate, last_index = res
 
 		self.drawer.draw(dc, None)
 
 		return True
 
-	def OnPreparePrinting(self):	# pylint: disable-msg=C0103,W0221
+	def OnPreparePrinting(self):		# pylint: disable-msg=C0103,W0221
 		''' Prepare to printing '''
 		dc = self.GetDC()
 		self._calc_scale(dc)
@@ -121,7 +121,7 @@ class _Printout(wx.Printout):
 			begin += last_index
 			self._num_pages += 1
 
-	def GetBackgroundColour(self):	# pylint: disable-msg=C0103,R0201
+	def GetBackgroundColour(self):		# pylint: disable-msg=C0103,R0201
 		''' GetBackgroundColour '''
 		return wx.WHITE
 

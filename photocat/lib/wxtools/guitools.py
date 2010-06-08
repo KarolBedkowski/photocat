@@ -175,6 +175,7 @@ def create_menu2(wnd, items):
 
 	return menu, menu_elements
 
+
 def combobox_select_item(control, data):
 	for i in xrange(control.GetCount()):
 		if control.GetClientData(i) == data:

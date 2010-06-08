@@ -3,7 +3,7 @@
 validators/validators/_simple_validator.py
 
 kpylibs 1.x
-Copyright (c) Karol Będkowski, 2006-2008
+Copyright (c) Karol Będkowski, 2006-2010
 
 This file is part of kpylibs
 
@@ -14,6 +14,7 @@ Foundation, version 2.
 
 
 from .errors import ValidateError
+
 
 class SimpleValidator:
 

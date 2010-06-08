@@ -53,9 +53,9 @@ from photocat.lib.logging_setup import logging_setup
 
 reload(sys)
 try:
-	sys.setappdefaultencoding("utf-8")	# pylint: disable-msg=E1101
+	sys.setappdefaultencoding("utf-8")		# pylint: disable-msg=E1101
 except AttributeError:
-	sys.setdefaultencoding("utf-8")	# pylint: disable-msg=E1101
+	sys.setdefaultencoding("utf-8")		# pylint: disable-msg=E1101
 
 
 def show_version(ption, opt_str, value, parser, *args, **kwargs):
@@ -80,8 +80,8 @@ _LOG = logging.getLogger(__name__)
 def _setup_locale():
 	''' setup locales and gettext '''
 	use_home_dir = sys.platform != 'win32'
-	app_config = appconfig.AppConfig('photocat.cfg', __file__, use_home_dir=use_home_dir,
-			app_name='photocat')
+	app_config = appconfig.AppConfig('photocat.cfg', __file__,
+			use_home_dir=use_home_dir, app_name='photocat')
 	locales_dir = app_config.locales_dir
 	package_name = 'photocat'
 	_LOG.info('run: locale dir: %s' % locales_dir)
@@ -127,7 +127,7 @@ from photocat.lib.wxtools.logging_wx import logging_setup_wx
 class App(wx.App):
 	""" wx App class """
 
-	def OnInit(self):	# pylint: disable-msg=C0103
+	def OnInit(self):		# pylint: disable-msg=C0103
 		""" OnInit """
 
 		_LOG.info('App.OnInit')
@@ -139,7 +139,7 @@ class App(wx.App):
 		_LOG.debug('App.OnInit: art dir=' + art_dir)
 		init_icon_cache(None, art_dir)
 
-		from photocat.gui.wndmain	import WndMain
+		from photocat.gui.wndmain import WndMain
 		wnd = WndMain(self, DEBUG)
 		wnd.Show(True)
 		self.SetTopWindow(wnd)
@@ -149,17 +149,17 @@ class App(wx.App):
 
 		return True
 
-	def OnExceptionInMainLoop(self):	# pylint: disable-msg=C0103
+	def OnExceptionInMainLoop(self):		# pylint: disable-msg=C0103
 		''' OnExceptionInMainLoop '''
 		_LOG.warn('OnExceptionInMainLoop')
 		super(App, self).OnExceptionInMainLoop()
 
-	def OnUnhandledException(self):	# pylint: disable-msg=C0103
+	def OnUnhandledException(self):		# pylint: disable-msg=C0103
 		'''OnUnhandledException '''
 		_LOG.warn('OnUnhandledException')
 		super(App, self).OnUnhandledException()
 
-	def OnFatalException(self):	# pylint: disable-msg=C0103
+	def OnFatalException(self):		# pylint: disable-msg=C0103
 		''' OnFatalException '''
 		_LOG.warn('OnFatalException')
 		super(App, self).OnFatalException()

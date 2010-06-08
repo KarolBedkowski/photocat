@@ -284,7 +284,7 @@ class DirsTree(wx.TreeCtrl):
 			node = self.AppendItem(parent_node, item.caption,
 					data=wx.TreeItemData(item))
 			item.tree_node = node
-			self.SetItemImage(node, self._icon_calendars_idxs[item.level-1],
+			self.SetItemImage(node, self._icon_calendars_idxs[item.level - 1],
 					wx.TreeItemIcon_Normal)
 
 			for subdir in item.subdirs:

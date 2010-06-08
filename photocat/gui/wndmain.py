@@ -22,7 +22,8 @@ import logging
 
 import wx
 
-from photocat.model import Collection, Directory, Disk, FileImage, Tag, Timeline
+from photocat.model import Collection, Directory, Disk, FileImage, Tag, \
+		Timeline
 from photocat.storage.storage import Storage
 from photocat.engine import collections, eprint, epdf, os_helpers
 from photocat.lib.appconfig import AppConfig
@@ -405,7 +406,8 @@ class WndMain(WndMainView):
 	def _on_collection_edit_multi(self, evt):
 		''' _on_collection_edit_multi'''
 		folder = self._dirs_tree.selected_item
-		if folder is None or isinstance(folder, Collection) or len(folder.files) == 0:
+		if folder is None or isinstance(folder, Collection) or \
+				len(folder.files) == 0:
 			return
 
 		image = FileImage(None, None, None, None, collection=folder.collection)
@@ -744,7 +746,7 @@ class WndMain(WndMainView):
 			mm_items[11].Enable(True)
 		else:
 			mitems = self._main_menu_collection.GetMenuItems()
-			for idx in xrange(len(mitems)-1):
+			for idx in xrange(len(mitems) - 1):
 				mitems[idx].Enable(False)
 
 	def _update_settings(self):
@@ -776,7 +778,7 @@ class WndMain(WndMainView):
 				int(appconfig.get('settings', 'thumb_width', 200) * zfac),
 				int(appconfig.get('settings', 'thumb_height', 200) * zfac),
 				zfac)
-		self._s_zoom_label.SetLabel(' %d%%' % (zfac*100))
+		self._s_zoom_label.SetLabel(' %d%%' % (zfac * 100))
 
 	def _show_dir(self, images):
 		'''  wyświetlenie zawartości katalogu lub listy
@@ -798,9 +800,9 @@ class WndMain(WndMainView):
 			# jak sortujemy
 			group_by = 0
 
-			if self._menu_view_group_path.IsChecked(): # group_by_path
+			if self._menu_view_group_path.IsChecked():  # group_by_path
 				group_by = 2
-			elif self._menu_view_group_date.IsChecked(): #group_by_date
+			elif self._menu_view_group_date.IsChecked():  # group_by_date
 				group_by = 1
 
 			self._photo_list.group_by = group_by
@@ -838,7 +840,7 @@ class WndMain(WndMainView):
 		desc = self._menu_view_sort_desc.IsChecked()
 		sort_by = collections.SORT_BY_DATE
 
-		if self._menu_view_sort_name.IsChecked(): # sort by name
+		if self._menu_view_sort_name.IsChecked():		# sort by name
 			if desc or images_as_list or force:
 				sort_by = collections.SORT_BY_NAME
 			else:

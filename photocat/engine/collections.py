@@ -70,7 +70,8 @@ def _add_or_update_collection(collection, title, data, parent_wnd):
 	data['path'] = data['disk'].last_path if 'disk' in data and data['disk'] \
 			else ''
 
-	dlg = DlgAddDisk(parent_wnd, data, update=data['update'], collection=collection)
+	dlg = DlgAddDisk(parent_wnd, data, update=data['update'],
+			collection=collection)
 	result = dlg.ShowModal()
 	dlg.Destroy()
 
@@ -94,13 +95,13 @@ def _add_or_update_collection(collection, title, data, parent_wnd):
 		dlg_progress.Center()
 
 		path_len = len(data['path']) + 1
-
 		cntr = [0]
+
 		def update_progress(msg):
 			''' update progress bar '''
 			cntr[0] = cntr[0] + os.path.getsize(msg) / 10240
-			if cntr[0] > allfiles: # zabezpieczenie na dziwne sytuacje
-				cntr[0] = max(0, cntr[0]-10)
+			if cntr[0] > allfiles:  # zabezpieczenie na dziwne sytuacje
+				cntr[0] = max(0, cntr[0] - 10)
 			return dlg_progress.Update(cntr[0],
 					_("Loading file:\n%s") % msg[path_len:])[0]
 
@@ -130,7 +131,8 @@ def add_disk_to_collection(collection, parent_wnd):
 		@param parent_wnd	-- okno nadrzędne
 		@return dodany dysk '''
 	data = dict(disk=None, update=False)
-	return _add_or_update_collection(collection, _("Adding disk"), data, parent_wnd)
+	return _add_or_update_collection(collection, _("Adding disk"), data,
+			parent_wnd)
 
 
 def update_disk_in_collection(collection, disk, parent_wnd):
@@ -143,7 +145,8 @@ def update_disk_in_collection(collection, disk, parent_wnd):
 		@return zaktualizowany dysk
 	'''
 	data = dict(name=disk.name, descr=disk.desc, disk=disk, update=True)
-	return _add_or_update_collection(collection, _("Updating disk"), data, parent_wnd)
+	return _add_or_update_collection(collection, _("Updating disk"), data,
+			parent_wnd)
 
 
 def rebuild(collection, parent_wnd):
@@ -233,8 +236,8 @@ def open_collection(filename):
 		_LOG.debug("dir with file %s not writable", filename)
 
 	writable = file_writable and path_writable and data_writable
-	_LOG.info("collections.open_collection: file %s writable=%r (%r,%r,%r)", filename,
-			writable, file_writable, path_writable, data_writable)
+	_LOG.info("collections.open_collection: file %s writable=%r (%r,%r,%r)",
+			filename, writable, file_writable, path_writable, data_writable)
 
 	try:
 		collection = Storage.load(filename)

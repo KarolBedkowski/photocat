@@ -37,7 +37,7 @@ _DEFAULT_ADD_OPTIONS = {
 		'include_empty': 0}
 
 
-class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
+class WndMainView(wx.Frame):		# pylint: disable-msg=R0902
 	""" MainWnd """
 
 	def __init__(self, app, debug):
@@ -169,7 +169,8 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 			(_('Search...'), 'Ctrl+F', _('Search for something in calalogs'),
 					self._on_collection_search, wx.ID_FIND, wx.ART_FIND),
 			('-'),
-			(_('Tags'), None, _('Manage collection tags...'), self._on_collection_edit_tags),
+			(_('Tags'), None, _('Manage collection tags...'),
+					self._on_collection_edit_tags),
 			(_('Pre&ferences'), None, _('Change Photo Catalog preferences'),
 					self._on_file_settings, None, wx.ART_HELP_SETTINGS)))
 		self._main_menu_collection = menu
@@ -221,7 +222,8 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 					imgid=iconname, description=description)
 
 		__cbtna(_('New'), self._on_file_new, wx.ART_NEW, _('Create new collection'))
-		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN, _('Open collection'))
+		__cbtna(_('Open'), self._on_file_open, wx.ART_FILE_OPEN,
+				_('Open collection'))
 		self._tb_save = __cbtna(_('Save'), self._on_file_save, wx.ART_FILE_SAVE,
 				_('Save the current collection'))
 
@@ -284,7 +286,7 @@ class WndMainView(wx.Frame):	# pylint: disable-msg=R0902
 
 			if not item.collection.readonly:
 				popup_menu.AppendSeparator()
-				if item.path == '': #isinstance(item, Disk):
+				if item.path == '':
 					__append(_('&Update disk...'), self._on_collection_update_disk)
 					__append(_('&Delete disk...'), self._on_collection_del_disk)
 				else:

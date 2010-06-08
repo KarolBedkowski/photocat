@@ -35,7 +35,7 @@ _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
 
 _SMALL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
-_SMALL_FONT_STYLE.SetPointSize(_SMALL_FONT_STYLE.GetPointSize()-1)
+_SMALL_FONT_STYLE.SetPointSize(_SMALL_FONT_STYLE.GetPointSize() - 1)
 
 
 def _create_label(parent, title):
@@ -195,7 +195,8 @@ class DlgAddDisk(wx.Dialog):
 
 		name = self._data['name']
 
-		if self._collection_disk_names is not None and name in self._collection_disk_names:
+		if self._collection_disk_names is not None and \
+				name in self._collection_disk_names:
 			message_box_error(self, _('Name already exists in collection!'),
 					_('Add disk'))
 			return

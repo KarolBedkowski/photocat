@@ -322,7 +322,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		if self.IsShownOnScreen():
 			len_items = len(self._items)
 
-			if self._last_preloaded < len_items -1:
+			if self._last_preloaded < len_items - 1:
 				self._last_preloaded += 1
 				self._items[self._last_preloaded].get_bitmap(self._thumb_width,
 						self._thumb_height, self.scale)
