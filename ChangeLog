@@ -1,31 +1,25 @@
-2010-06-07 (v.1.8.0)
+2010-06-08 (v.1.8.1)
+	fix: problem z locales w win32
 
-Karol Będkowski:
+
+2010-06-07 (v.1.8.0)
 	+ statystyki
-	+ otiwranie plików w domyślnym programie (opcja w popupmenu)
+	+ otwieranie plików w domyślnym programie (opcja w popupmenu)
 
 
 2010-06-01 (v.1.7.3)
-
-Karol Będkowski:
 	fix: problem z kodowaniem znaków w pdf
 
 
 2010-05-18 (v.1.7.2)
-
-Karol Będkowski:
 	fix: problem w ikonami w win32
 
 
 2010-05-18 (v.1.7.1)
-
-Karol Będkowski:
 	fix: problem z tłumaczeniem wersji
 
 
 2010-03-20 (v.1.7.0)
-
-Karol Będkowski:
 	rename pc -> photocat
 	fix strings
 	+ allow to zoom thumbs
@@ -34,8 +28,6 @@ Karol Będkowski:
 
 
 2010-03-02 (v1.6.5)
-
-Karol Będkowski:
 	fix: mniejsze błędy
 	dev: przeczyszczenie, optymalizacje
 	dev: usunięcie zależności od kabes.*
@@ -44,8 +36,6 @@ Karol Będkowski:
 
 
 2010-01-14 (v1.6.4)
-
-Karol Będkowski:
 	fix problem z wykrywaniem istnienia pliku (problem z tworzeniem
 		nowych plików)
 	fix problem z zamykaniem katalogów
@@ -53,8 +43,6 @@ Karol Będkowski:
 
 
 2010-01-12 (v1.6.3)
-
-Karol Będkowski:
 	fix problemy na środowiskach 64bit
 	gui: fix problem z podwojnym potwierdzaniem zamniecia okna
 	fix problem z pythonem 2.5
@@ -62,104 +50,80 @@ Karol Będkowski:
 
 
 2009-11-12 (v1.6.2)
-
-Karol Będkowski:
 	wymuszanie ładowania wx 2.8 (poza exe)
 
 
 2009-10-24 (v1.6.0)
-
-Karol Będkowski:
 	nowa wersja
 
 
 2009-05-14 (v 1.6.0b0)
-
-Karol Będkowski:
-	  all: nowy format pliku (v3)
+	all: nowy format pliku (v3)
 
 
 2009-04-17 (v 1.5.0b0)
-
-Karol Będkowski:
-	  all: poprawa usability
-	  all: optymalizacja
-	  gui: dodanie możliwości przechodzenia między zdjęciami we właściwościach
+	all: poprawa usability
+	all: optymalizacja
+	gui: dodanie możliwości przechodzenia między zdjęciami we właściwościach
 
 
 2008-11-29 (v 1.4.2b4)
-
-Karol Będkowski:
-	  all: zmienianie katalogu przy uruchamianiu
-	  all: fix: poprawne otwieranie plików tylko do odczytu
-	  gui: drobne poprawki
-	  all: wyłączenie automatycznego zapisywania katalogu po dodaniu/aktualizacji pliku
-	  search: fix: błąd przy wyszukiwaniu
-	  win: fix: problem ze ścieżkami
+	all: zmienianie katalogu przy uruchamianiu
+	all: fix: poprawne otwieranie plików tylko do odczytu
+	gui: drobne poprawki
+	all: wyłączenie automatycznego zapisywania katalogu po dodaniu/aktualizacji pliku
+	search: fix: błąd przy wyszukiwaniu
+	win: fix: problem ze ścieżkami
 
 
 2008-10-13 (v 1.4.1)
-
-Karol Będkowski:
-	  pdf: tuning, dodanie pokazywania/ukrywania podpisów
+	pdf: tuning, dodanie pokazywania/ukrywania podpisów
 
 
 2008-08-02 (v 1.4)
-
-Karol Będkowski:
-	  all: drukowanie
-	  gui: możliwość pokazywanie zawartości podkatalogów
-	  all: grupowanie wg ścieżki
-	  gui: dodanie komunikatów o błędach w dlg ustawień
-	  all: export do pdf-a (epdf)
+	all: drukowanie
+	gui: możliwość pokazywanie zawartości podkatalogów
+	all: grupowanie wg ścieżki
+	gui: dodanie komunikatów o błędach w dlg ustawień
+	all: export do pdf-a (epdf)
 
 
 2008-07-13 (v 1.3.0)
-
-Karol Będkowski:
-	  model: obsługa plików raw i innych plików (tiff, p?m, tga, pds, pcx, bmp)
-	  gui: fix problem z wyświetlaniem śmieci z exifów
-	  win32: fix problem z kończeniem dialogu progresu przu a/u dysku
-	  model: zapisywanie miniaturek bez plików tymczasowych
-	  oznaczanie plików raw innym kolorem podpisów
-	  gui: wndmain: rozwijanie gałęzi po kliknięciu na timeline
+	model: obsługa plików raw i innych plików (tiff, p?m, tga, pds, pcx, bmp)
+	gui: fix problem z wyświetlaniem śmieci z exifów
+	win32: fix problem z kończeniem dialogu progresu przu a/u dysku
+	model: zapisywanie miniaturek bez plików tymczasowych
+	oznaczanie plików raw innym kolorem podpisów
+	gui: wndmain: rozwijanie gałęzi po kliknięciu na timeline
 
 
 2008-07-04 (v 1.2.1)
-
-Karol Będkowski:
-	  gui: fix: podwójne wywoływanie niektórych opcji z menu
+	gui: fix: podwójne wywoływanie niektórych opcji z menu
 
 
 2008-07-03 (v 1.2.0)
-
-Karol Będkowski:
-	  setup: fix: błąd tworzenia pliku instalatora
-	  gui: dodanie menu widok, sortowanie, grupowanie
-	  all: optymalizacje
-	  gui: zmiana karty panelu informacji na katalog/zdjęcie po wybraniu katalogu/zdjęcia
-	  gui: możliwość  wyboru czcionki na liście miniaturek
-	  gui: poprawka w przeliczaniu pozycji miniaturek (uwzględnianie fontów)
-	  gui: sortowanie miniaturek bez odświerzania
+	setup: fix: błąd tworzenia pliku instalatora
+	gui: dodanie menu widok, sortowanie, grupowanie
+	all: optymalizacje
+	gui: zmiana karty panelu informacji na katalog/zdjęcie po wybraniu katalogu/zdjęcia
+	gui: możliwość  wyboru czcionki na liście miniaturek
+	gui: poprawka w przeliczaniu pozycji miniaturek (uwzględnianie fontów)
+	gui: sortowanie miniaturek bez odświerzania
 
 
 2008-06-27 (v 1.1.1)
-
-Karol Będkowski:
 	 conf: fix: brak domyslnej wartości dla thumb_width, thumb_height
 
 
 2008-06-16 (v 1.1.0)
-
-Karol Będkowski:
-	  sterowanie wyświetlaniem miniaturek: preload i podpisy
-	  infopanel: fix zły nagłówek w głównych informacjach
-	  gsearch: + wyświetlanie informacji o zaznaczonym zdjęciu
-	  search: + przycisk goto; ukrywanie podglądu przy miniaturach
-	  search: + możliwość przerwania wyszukiwania po znalezieniu 1000+ elementów
-	  search: + sortowanie listy wynikow
-	  fix: wygląd
-	  settings: wybór czcionki dla podpisów miniaturek
+	sterowanie wyświetlaniem miniaturek: preload i podpisy
+	infopanel: fix zły nagłówek w głównych informacjach
+	gsearch: + wyświetlanie informacji o zaznaczonym zdjęciu
+	search: + przycisk goto; ukrywanie podglądu przy miniaturach
+	search: + możliwość przerwania wyszukiwania po znalezieniu 1000+ elementów
+	search: + sortowanie listy wynikow
+	fix: wygląd
+	settings: wybór czcionki dla podpisów miniaturek
 
 
 
