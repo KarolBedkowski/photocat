@@ -9,7 +9,7 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-07"
+__version__ = "2010-06-09"
 
 
 import re
@@ -46,17 +46,19 @@ def _calculate_float(value):
 
 def _calc_lens(value):
 	if not value.startswith('[') or not value.endswith(']'):
-		return value
+		return value, value
 	values = _RE_MATCH_DIV.findall(value)
 	if not value or len(values) != 4:
-		return value
+		return value, value
 	values = [_parse_div(val) for val in values]
-	if values[0] < 1:
+	if int(values[0]) != float(values[0]):
 		length = locale.format('%0.2f-%0.2f', (float(values[0]), float(values[1])))
 	else:
 		length = '%d-%d' % (int(values[0]), int(values[1]))
-	app = locale.format('%0.1f-%0.1f', (float(values[2]), float(values[3])))
-	return values[0], length + ' ' + app
+	if float(values[2]) >= 0.1:
+		app = locale.format('%0.1f-%0.1f', (float(values[2]), float(values[3])))
+		return values[0], length + '  [' + app + ']'
+	return values[0], length
 
 
 def _calc_length(value):
