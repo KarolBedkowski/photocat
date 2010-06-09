@@ -19,6 +19,7 @@ import wx
 
 from photocat.gui._dlg_properties_base import DlgPropertiesBase
 from photocat.lib.wxtools.dialogs import message_box_error
+from photocat.gui._dlgstats import PanelStats
 
 
 class DlgPropertiesDisk(DlgPropertiesBase):
@@ -34,6 +35,7 @@ class DlgPropertiesDisk(DlgPropertiesBase):
 		notebook.AddPage(self._create_layout_page_main(notebook), _('Main'))
 		notebook.AddPage(self._create_layout_page_desc(notebook), _('Comment'))
 		notebook.AddPage(self._create_layout_page_tags(notebook), _('Tags'))
+		notebook.AddPage(PanelStats(notebook, self._item), _('Statistics'))
 		return notebook
 
 	def _create_layout_page_main(self, parent):
