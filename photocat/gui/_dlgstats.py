@@ -12,9 +12,9 @@ from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__revision__ = '$Id$'
+__version__ = '2010-06-09'
 
-__all__ = ['DlgStats']
+__all__ = ['DlgStats', 'PanelStats']
 
 
 import logging
@@ -86,28 +86,16 @@ class _StatsListCtrlPanel(wx.Panel, listmix.ColumnSorterMixin):
 		self.SortListItems(0, True)
 
 
-class DlgStats(wx.Dialog):
-	''' Dialog statystyk '''
+class PanelStats(wx.Panel):
+	def __init__(self, parent, data):
+		wx.Panel.__init__(self, parent)
 
-	def __init__(self, parent, collections, selected_item=None):
-		self._collections = collections if hasattr(collections, '__iter__') \
-				else (collections, )
-
-		title = _('Statistics') if len(self._collections) > 1 else \
-				_('Statistics for %s') % self._collections[0].name
-
-		wx.Dialog.__init__(self, parent, -1, title,
-				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
-
-		self._parent = parent
-		self._selected_item = selected_item
+		self._data = data if hasattr(data, '__iter__') else (data, )
 		self._curr_stats = {}
 		self._stats_providers = None
 
 		self._create_layout()
 		self._fill_stats()
-
-		self.SetSize((600, 400))
 
 		self.Bind(wx.EVT_COMBOBOX, self._on_stats_provider_changed,
 				self._cb_stats_providers)
@@ -150,7 +138,7 @@ class DlgStats(wx.Dialog):
 	def _on_stats_provider_changed(self, evt):
 		with hlpwx.with_wait_cursor():
 			sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
-			self._curr_stats = sprov.get_stats(self._collections)
+			self._curr_stats = sprov.get_stats(self._data)
 			self._lb_stats.Clear()
 			for key in self._curr_stats.iterkeys():
 				self._lb_stats.Append(key)
@@ -163,6 +151,22 @@ class DlgStats(wx.Dialog):
 			sel = self._lb_stats.GetStringSelection()
 			self._lc_result.fill(self._curr_stats[sel] if sel else None)
 			self._lc_result.Thaw()
+
+
+class DlgStats(wx.Dialog):
+	''' Dialog statystyk '''
+
+	def __init__(self, parent, collections):
+		collections = collections if hasattr(collections, '__iter__') \
+				else (collections, )
+		title = _('Statistics') if len(collections) > 1 else \
+				_('Statistics for %s') % collections[0].name
+
+		wx.Dialog.__init__(self, parent, -1, title,
+				style=wx.RESIZE_BORDER | wx.DEFAULT_DIALOG_STYLE)
+
+		self._panel = PanelStats(self, collections)
+		self.SetSize((600, 400))
 
 
 # vim: encoding=utf8: ff=unix:
