@@ -37,19 +37,10 @@ except ImportError:
 else:
 	psyco.full()
 
-
 import os
 import sys
-import gettext
-import locale
-import logging
 import optparse
 
-from photocat.lib import appconfig
-from photocat.lib.logging_setup import logging_setup
-
-
-##########################################################################
 
 reload(sys)
 try:
@@ -58,37 +49,57 @@ except AttributeError:
 	sys.setdefaultencoding("utf-8")		# pylint: disable-msg=E1101
 
 
-def _show_version(ption, opt_str, value, parser, *args, **kwargs):
+def _show_version(_option, _opt_str, _value, _parser, *_args, **_kwargs):
 	from photocat import version
 	print version.INFO
 	exit(0)
 
 
 def _parse_opt():
-	p = optparse.OptionParser(usage="usage: %prog [options] [collection] ...")
-	p.add_option('--debug', '-d', action="store_true", default=False,
+	pars = optparse.OptionParser(usage="usage: %prog [options] [collection] ...")
+	pars.add_option('--debug', '-d', action="store_true", default=False,
 			help='enable debug messages')
-	p.add_option('--version', action="callback", callback=_show_version,
+	pars.add_option('--version', action="callback", callback=_show_version,
 			help='show information about application version')
-	return  p.parse_args()
+	return  pars.parse_args()
+
 
 OPTIONS, ARGUMENTS = _parse_opt()
 
 # logowanie
-DEBUG = OPTIONS.debug
-logging_setup('photocat.log', DEBUG)
+import logging
+import traceback
 
+from photocat.lib.logging_setup import logging_setup
+logging_setup('photocat.log', OPTIONS.debug)
 _LOG = logging.getLogger(__name__)
+
+
+def _my_exception_hook(exctype, value, tback):
+	lline = tback.tb_next.tb_frame.f_lineno
+	lfilename = tback.tb_next.tb_frame.f_code.co_filename
+	lproc = tback.tb_next.tb_frame.f_code.co_name
+	_LOG.error('Exception: %s(%s) in %s:%d (%s)', exctype.__name__, value,
+			lfilename, lline, lproc)
+	_LOG.debug(''.join(traceback.format_exception(exctype, value, tback)))
+
+sys.excepthook = _my_exception_hook
+
+
+from photocat.lib import appconfig
 
 
 def _setup_locale():
 	''' setup locales and gettext '''
+	import gettext
+	import locale
+
 	use_home_dir = sys.platform != 'win32'
 	app_config = appconfig.AppConfig('photocat.cfg', __file__,
 			use_home_dir=use_home_dir, app_name='photocat')
 	locales_dir = app_config.locales_dir
 	package_name = 'photocat'
-	_LOG.info('run: locale dir: %s' % locales_dir)
+	_LOG.debug('run: locale dir: %s' % locales_dir)
 	try:
 		locale.bindtextdomain(package_name, locales_dir)
 		locale.bind_textdomain_codeset(package_name, "UTF-8")
@@ -103,7 +114,7 @@ def _setup_locale():
 	gettext.bindtextdomain(package_name, locales_dir)
 	gettext.bind_textdomain_codeset(package_name, "UTF-8")
 
-	_LOG.info('locale: %s' % str(locale.getlocale()))
+	_LOG.debug('locale: %s' % str(locale.getlocale()))
 
 
 _setup_locale()
@@ -121,14 +132,14 @@ if not appconfig.is_frozen():
 	except ImportError, err:
 		print 'No wxversion.... (%s)' % str(err)
 
-import wx
-
-from photocat.lib.wxtools.logging_wx import logging_setup_wx
-from photocat.lib.wxtools import iconprovider
-
 
 def run():
 	''' Run application '''
+	import wx
+
+	from photocat.lib.wxtools.logging_wx import logging_setup_wx
+	from photocat.lib.wxtools import iconprovider
+
 	logging_setup_wx()
 
 	_LOG.info('run')
@@ -143,7 +154,7 @@ def run():
 
 	from photocat.gui.wndmain import WndMain
 
-	wnd = WndMain(app, DEBUG)
+	wnd = WndMain(app, OPTIONS.debug)
 	wnd.Show(True)
 	app.SetTopWindow(wnd)
 
