@@ -97,15 +97,14 @@ class PanelStats(wx.Panel):
 		self._create_layout()
 		self._fill_stats()
 
-		self.Bind(wx.EVT_COMBOBOX, self._on_stats_provider_changed,
+		self.Bind(wx.EVT_CHOICE, self._on_stats_provider_changed,
 				self._cb_stats_providers)
 		self.Bind(wx.EVT_LISTBOX, self._on_stats_changed, self._lb_stats)
 
 	############################################################################
 
 	def _create_layout(self):
-		self._cb_stats_providers = wx.ComboBox(self, -1, _("Please select..."),
-				style=wx.CB_READONLY | wx.CB_DROPDOWN)
+		self._cb_stats_providers = wx.Choice(self, -1, choices=[_("Please select...")])
 		self._lb_stats = wx.ListBox(self, -1, size=(170, -1),
 				style=wx.LB_SINGLE | wx.LB_SORT)
 		self._lc_result = _StatsListCtrlPanel(self)
@@ -137,13 +136,20 @@ class PanelStats(wx.Panel):
 
 	def _on_stats_provider_changed(self, evt):
 		with hlpwx.with_wait_cursor():
-			sprov = self._stats_providers[self._cb_stats_providers.GetValue()]
+			selection = self._cb_stats_providers.GetStringSelection()
+			exst = self._cb_stats_providers.GetCount() > len(self._stats_providers)
+			if exst and self._cb_stats_providers.GetSelection() == 0:
+				return
+			sprov = self._stats_providers[selection]
 			self._curr_stats = sprov.get_stats(self._data)
 			self._lb_stats.Clear()
 			for key in self._curr_stats.iterkeys():
 				self._lb_stats.Append(key)
 			self._lb_stats.SetSelection(0)
 			self._on_stats_changed(None)
+			if exst:
+				self._cb_stats_providers.Delete(0)
+				self._cb_stats_providers.SetStringSelection(selection)
 
 	def _on_stats_changed(self, evt):
 		with hlpwx.with_wait_cursor():
