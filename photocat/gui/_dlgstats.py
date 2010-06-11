@@ -104,7 +104,8 @@ class PanelStats(wx.Panel):
 	############################################################################
 
 	def _create_layout(self):
-		self._cb_stats_providers = wx.Choice(self, -1, choices=[_("Please select...")])
+		self._cb_stats_providers = wx.Choice(self, -1,
+				choices=[_("Please select...")])
 		self._lb_stats = wx.ListBox(self, -1, size=(170, -1),
 				style=wx.LB_SINGLE | wx.LB_SORT)
 		self._lc_result = _StatsListCtrlPanel(self)
@@ -141,7 +142,13 @@ class PanelStats(wx.Panel):
 			if exst and self._cb_stats_providers.GetSelection() == 0:
 				return
 			sprov = self._stats_providers[selection]
-			self._curr_stats = sprov.get_stats(self._data)
+			if sprov.need_compute:
+				dlg_progress = wx.ProgressDialog(_("Computing statistics..."),
+						" " * 50, 20, parent=self, style=wx.PD_APP_MODAL)
+				self._curr_stats = sprov.get_stats(self._data, dlg_progress.Pulse)
+				dlg_progress.Destroy()
+			else:
+				self._curr_stats = sprov.get_stats(self._data)
 			self._lb_stats.Clear()
 			for key in self._curr_stats.iterkeys():
 				self._lb_stats.Append(key)

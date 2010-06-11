@@ -9,7 +9,7 @@ This file is part of Photo Catalog
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
-__version__ = "2010-06-07"
+__version__ = "2010-06-11"
 
 
 import os.path
@@ -53,6 +53,8 @@ class BasicStats(StatsProvider):
 	def _find_itmes_in_collection(self, collection):
 		self._disks += len(collection.disks)
 		for disk in collection.disks:
+			if self._progress_cb and self._progress_cb():
+				self._progress_cb()(disk.name)
 			self._find_items_in_dir(disk)
 
 	def _find_items_in_dir(self, directory):
