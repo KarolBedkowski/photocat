@@ -20,6 +20,7 @@ import sys
 import wx
 from wx.lib import masked
 
+from photocat.engine import image as eimage
 from photocat.gui.components.tags_list_box import TagsListBox
 from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools.guitools import create_button
@@ -167,8 +168,10 @@ class DlgPropertiesBase(wx.Dialog):
 		exif = self._item.exif_data
 		if exif is not None:
 			for key, val in sorted(exif.iteritems()):
-				idx = listctrl.InsertStringItem(sys.maxint, str(key))
-				listctrl.SetStringItem(idx, 1, unicode(val, errors='replace'))
+				key_human, val_human = eimage.get_tag_human(key, val)
+				idx = listctrl.InsertStringItem(sys.maxint, str(key_human))
+				listctrl.SetStringItem(idx, 1, unicode(val_human,
+						errors='replace'))
 
 			listctrl.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 			listctrl.SetColumnWidth(1, wx.LIST_AUTOSIZE)

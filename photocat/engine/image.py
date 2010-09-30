@@ -36,11 +36,14 @@ import Image as PILImage
 
 import pyexiv2
 
+_PYEXIV2_1x = hasattr(pyexiv2, 'Image')
+
+
 _LOG = logging.getLogger(__name__)
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote',
-		'EXIF UserComment']
+		'EXIF UserComment', 'Exif.Photo.MakerNote']
 _RE_REPLACE_EXPRESSION = re.compile(r'[\0-\037]', re.MULTILINE)
-
+_RE_RATIONAL = re.compile(r'^\d+/\d+$')
 _EXIF_SHOTDATE_KEYS = ('EXIF DateTimeOriginal', 'EXIF DateTimeDigitized',
 		'EXIF DateTime')
 
@@ -130,10 +133,17 @@ def load_exif_from_file(path, data_provider):
 	try:
 #		jpeg_file = open(path, 'rb')
 #		exif = EXIF.process_file(jpeg_file)
-		meta = pyexiv2.Image(path)
-		meta.readMetadata()
-		keys = meta.exifKeys()
-		keys.extend(meta.iptcKeys())
+		if _PYEXIV2_1x:
+			meta = pyexiv2.Image(path)
+			meta.readMetadata()
+			keys = meta.exifKeys()
+			keys.extend(meta.iptcKeys())
+		else:
+			meta = pyexiv2.ImageMetadata(path)
+			meta.read()
+			keys = meta.exif_keys[:]
+			#keys.extend(meta.xmp_keys)  # problems
+			keys.extend(meta.iptc_keys)
 		if keys:
 			exif_data = {}
 			for key in keys:
@@ -142,13 +152,18 @@ def load_exif_from_file(path, data_provider):
 						or key.startswith('EXIF Tag ')
 						or key.startswith('MakerNote Tag ')):
 					continue
-				if hasattr(val, '__iter__'):
-					val = _format_exif_list(val)
-				else:
-					val = _format_exif_value(val)
-				val = str(val).replace('\0', '').strip()
-				exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
-
+				if hasattr(val, 'raw_value'):
+					val = val.raw_value
+				elif hasattr(val, 'raw_values'):
+					val = val.raw_values
+				else: # pyexiv2 1.x
+					if hasattr(val, '__iter__'):
+						val = ', '.join(str(val_) for val_ in val)
+					val = str(val).replace('\0', '').strip()
+					val = _RE_REPLACE_EXPRESSION.sub(' ', val)
+				if len(val) > 97:
+					val = val[:97] + '...'
+				exif_data[key] = val
 			if len(exif_data) > 0:
 				str_exif = pickle.dumps(exif_data, -1)
 				self_exif = data_provider.append(str_exif)
@@ -157,7 +172,6 @@ def load_exif_from_file(path, data_provider):
 	finally:
 		if jpeg_file is not None:
 			jpeg_file.close()
-
 	return self_exif, exif_data
 
 
@@ -192,9 +206,11 @@ def get_exif_shotinfo(exif):
 
 	def __append(key, name):
 		if key in exif:
-			shot_info.append((name, exif[key]))
+			val = _convert_exif_val(key, exif[key])
+			shot_info.append((name, val))
 
 	__append('EXIF ExposureTime', _('t'))
+	__append('Exif.Photo.ExposureTime', _('t'))
 
 	def __get_value(key, name):
 		if key in exif:
@@ -206,6 +222,7 @@ def get_exif_shotinfo(exif):
 				shot_info.append((name, int(val) if int(val) == val else val))
 
 	__get_value('EXIF FNumber', _('f'))
+	__append('Exif.Photo.FNumber', _('f'))
 
 	if 'EXIF ISOSpeedRatings' in exif:
 		__append('EXIF ISOSpeedRatings', _('iso'))
@@ -216,9 +233,17 @@ def get_exif_shotinfo(exif):
 			_LOG.exception('_get_info exif iso "%s"', exif.get('MakerNote ISOSetting'))
 		else:
 			shot_info.append((_('iso'), iso))
+	elif 'Exif.Nikon3.ISOSettings' in exif:
+		shot_info.append((_('iso'), exif['Exif.Nikon3.ISOSettings']))
+	elif 'Exif.Nikon3.ISOSpeed' in exif:
+		shot_info.append((_('iso'), exif['Exif.Nikon3.ISOSpeed']))
+	elif 'Exif.ISOSpeedRatings' in exif:
+		shot_info.append((_('iso'), exif['Exif.ISOSpeedRatings']))
 
 	__append('EXIF Flash', _('flash'))
+	__append('Exif.Photo.Flash', _('flash'))
 	__get_value('EXIF FocalLength', _('focal len.'))
+	__append('Exif.Photo.FocalLength', _('focal len.'))
 
 	return shot_info
 
@@ -235,13 +260,62 @@ def is_file_raw(name):
 			and os.path.splitext(name)[-1].lower()[1:] in _IMAGE_FILES_EXTENSION_RAW)
 
 
-def _format_exif_value(val):
-	if hasattr(val, 'denominator') and hasattr(val, 'numerator'):
-		return '%0.2f' % (val.numerator / float(val.denominator))
-	return str(val)
+def _convert_exif_val(key, value):
+	value = value.strip()
+	if _RE_RATIONAL.match(value):
+		try:
+			num, den = value.split('/', 1)
+			num = float(num)
+			den = float(den)
+		except:
+			return value
+		else:
+			if num == 0:
+				return '0'
+			if den > num:
+				return '1/%d' % (den / num)
+			if int(num / den) == num / den:
+				return str(int(num / den))
+			return '%0.2f' % (num / den)
+	return value
 
-def _format_exif_list(value):
-	return '[' + ', '.join(_format_exif_value(val) for val in value) + ']'
+
+def get_tag_human(name, value):
+	label = name
+	hvalue = value
+	if _PYEXIV2_1x:
+		if ',' in value:
+			value = ', '.join(_convert_exif_val(name, val)
+					for val in value.split(','))
+		else:
+			value = _convert_exif_val(name, value)
+		value = str(value).replace('\0', '').strip()
+		hvalue = _RE_REPLACE_EXPRESSION.sub(' ', value)
+		label = name.replace('.', ' ')
+	else:
+		if name.startswith('Exif.'):
+			try:
+				tag = pyexiv2.ExifTag(name)
+				if tag:
+					label = tag.label
+					tag.raw_value = value
+					if tag.human_value:
+						hvalue = tag.human_value
+			except KeyError:
+				pass
+		elif name.startswith('Iptc.'):
+			try:
+				tag = pyexiv2.IptcTag(name)
+				if tag:
+					label = 'IPTC ' + tag.title
+					if isinstance(value, (list, tuple)):
+						hvalue = ', '.join(value)
+			except KeyError:
+				pass
+	hvalue = hvalue or value or ''
+	if len(hvalue) > 97:
+		hvalue = hvalue[:97] + '...'
+	return label or name, hvalue
 
 
 # vim: encoding=utf8: ff=unix
