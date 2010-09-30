@@ -34,7 +34,7 @@ import Image as PILImage
 #import IcoImagePlugin, TgaImagePlugin
 #PILImage._initialized = 3
 
-from photocat.lib import EXIF
+import pyexiv2
 
 _LOG = logging.getLogger(__name__)
 _IGNORE_EXIF_KEYS = ['JPEGThumbnail', 'TIFFThumbnail', 'EXIF MakerNote',
@@ -128,16 +128,24 @@ def load_exif_from_file(path, data_provider):
 	exif_data = {}
 	jpeg_file = None
 	try:
-		jpeg_file = open(path, 'rb')
-		exif = EXIF.process_file(jpeg_file)
-		if exif is not None:
+#		jpeg_file = open(path, 'rb')
+#		exif = EXIF.process_file(jpeg_file)
+		meta = pyexiv2.Image(path)
+		meta.readMetadata()
+		keys = meta.exifKeys()
+		keys.extend(meta.iptcKeys())
+		if keys:
 			exif_data = {}
-			for key, val in exif.iteritems():
+			for key in keys:
+				val = meta[key]
 				if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ')
 						or key.startswith('EXIF Tag ')
 						or key.startswith('MakerNote Tag ')):
 					continue
-
+				if hasattr(val, '__iter__'):
+					val = _format_exif_list(val)
+				else:
+					val = _format_exif_value(val)
 				val = str(val).replace('\0', '').strip()
 				exif_data[key] = _RE_REPLACE_EXPRESSION.sub(' ', val)
 
@@ -227,5 +235,13 @@ def is_file_raw(name):
 			and os.path.splitext(name)[-1].lower()[1:] in _IMAGE_FILES_EXTENSION_RAW)
 
 
+def _format_exif_value(val):
+	if hasattr(val, 'denominator') and hasattr(val, 'numerator'):
+		return '%0.2f' % (val.numerator / float(val.denominator))
+	return str(val)
 
-# vim: encoding=utf8: ff=unix:
+def _format_exif_list(value):
+	return '[' + ', '.join(_format_exif_value(val) for val in value) + ']'
+
+
+# vim: encoding=utf8: ff=unix

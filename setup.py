@@ -62,7 +62,7 @@ def get_data_files():
 		locales_dir = '/usr/share/locale'
 		data_dir = '/usr/share/doc/data'
 
-	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING", "LICENCE_EXIFpy.txt",
+	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING",
 			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'ChangeLog',
 			'LICENCE_ICONS.txt'])
 
