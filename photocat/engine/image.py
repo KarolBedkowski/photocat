@@ -315,7 +315,35 @@ def get_tag_human(name, value):
 	hvalue = hvalue or value or ''
 	if len(hvalue) > 97:
 		hvalue = hvalue[:97] + '...'
+	label = label or name
+	if '\n' in label:
+		label = label[:label.index('\n') - 1]
 	return label or name, hvalue
+
+
+def _rational2float(value):
+	num, den = value.split('/', 1)
+	num = float(num)
+	den = float(den)
+	return num / den
+
+
+def exif_geopos_to_float(value):
+	deg, mi, sec = map(_rational2float, value.split(None))
+	return deg + mi / 60. + sec / 3600.
+
+
+def get_geotag_from_exif(exif):
+	#Exif.GPSInfo.GPSLatitude 51/1 6/1 66047/1927
+	#Exif.GPSInfo.GPSLongitude 17/1 4/1 124887/2500
+	if not 'Exif.GPSInfo.GPSLatitude' in exif or \
+			not 'Exif.GPSInfo.GPSLongitude' in exif:
+		return None
+	lat = exif_geopos_to_float(exif['Exif.GPSInfo.GPSLatitude'])
+	lon = exif_geopos_to_float(exif['Exif.GPSInfo.GPSLongitude'])
+	return lat, lon
+
+
 
 
 # vim: encoding=utf8: ff=unix

@@ -36,6 +36,7 @@ class DlgProperties(DlgPropertiesBase):
 		notebook.AddPage(self._create_layout_page_exif(notebook), _('Exif'))
 		notebook.AddPage(self._create_layout_page_tags(notebook), _('Tags'))
 		notebook.AddPage(self._create_layout_page_other(notebook), _('Other'))
+		notebook.AddPage(self._create_layout_page_map(notebook), _('Map'))
 		return notebook
 
 	def _create_layout_page_main(self, parent):

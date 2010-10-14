@@ -2,7 +2,7 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2007
+Copyright (c) Karol Będkowski, 2004-2010
 
 This file is part of Photo Catalog
 """
@@ -141,6 +141,11 @@ class FileImage(CollectionObject):
 	@property
 	def data_objects_count(self):
 		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
+
+	@property
+	def geo_position(self):
+		return eimage.get_geotag_from_exif(self.exif_data)
+
 
 	##########################################################################
 

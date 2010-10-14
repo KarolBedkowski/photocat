@@ -129,7 +129,7 @@ class _MapWindow(wx.Panel):
 		self._drag_pos_start = None
 		self._loading_threads = []
 		self._highlight = None
-		self._no_data_img = wx.Image(AppConfig().get_data_file('nodata.png'))\
+		self._no_data_img = wx.Image(AppConfig().get_data_file('art/nodata.png'))\
 				.ConvertToBitmap()
 		self._scroll_timer = None
 		size = wx.Display().GetClientArea()
@@ -399,6 +399,10 @@ class PanelOsmMap(wx.Panel):
 	def set_highlight(self, highlight, center=False):
 		self._panel_map.set_highlight(highlight)
 		self._panel_map.show_map(highlight if center else None)
+		self._panel_map.Refresh()
+
+	def show_map(self, center, zoom):
+		self._panel_map.show_map(center, zoom)
 		self._panel_map.Refresh()
 
 	def _create_layout(self):

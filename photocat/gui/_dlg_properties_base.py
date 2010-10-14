@@ -24,6 +24,7 @@ from photocat.engine import image as eimage
 from photocat.gui.components.tags_list_box import TagsListBox
 from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools.guitools import create_button
+from ._panel_osm_map import PanelOsmMap
 
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
@@ -105,6 +106,7 @@ class DlgPropertiesBase(wx.Dialog):
 		notebook.AddPage(self._create_layout_page_exif(notebook), _('Exif'))
 		notebook.AddPage(self._create_layout_page_tags(notebook), _('Tags'))
 		notebook.AddPage(self._create_layout_page_other(notebook), _('Other'))
+		notebook.AddPage(self._create_layout_page_map(notebook), _('Map'))
 		return notebook
 
 	def _create_layout_page_main(self, parent):
@@ -249,6 +251,19 @@ class DlgPropertiesBase(wx.Dialog):
 		panel_sizer.Add(sizer, 1, wx.EXPAND | wx.ALL, 12)
 		panel.SetSizerAndFit(panel_sizer)
 
+		return panel
+
+	def _create_layout_page_map(self, parent):
+		panel = wx.Panel(parent, -1)
+		panel_sizer = wx.BoxSizer(wx.VERTICAL)
+		self._panel_map = PanelOsmMap(panel)
+		panel_sizer.Add(self._panel_map, 1, wx.EXPAND | wx.ALL, 12)
+		panel.SetSizerAndFit(panel_sizer)
+		pos = self._item.geo_position
+		if pos:
+			lat, lon = pos
+			self._panel_map.add_waypoints((lon, lat, self._item.name or _('Image')))
+			self._panel_map.show_map((lon, lat), 10)
 		return panel
 
 	#########################################################################
