@@ -8,9 +8,9 @@ PanelOsmMap
 rwr 3.x
 Copyright (c) Karol Będkowski, 2010
 
-This file is part of rwr3
+This file is part of photocat
 
-rwr3 is free software; you can redistribute it and/or modify it under the
+photocat is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation, version 2.
 """
@@ -53,18 +53,19 @@ class _TilesCache:
 			return self._cache[key]
 
 TILES_CACHE = _TilesCache()
-
+_LOG2 = math.log(2)
 
 def log2(x):
-	return math.log(x) / math.log(2)
+	return math.log(x) / _LOG2
 
 
 def tileXY(lat, lon, z):
 	n = pow(2, z)
-	x = (lon + 180) / 360
+	x = (lon + 180) / 360.
 	y = (1 - math.log(math.tan(math.radians(lat)) + \
 			1 / math.cos(math.radians(lat))) / math.pi) / 2
 	return x * n, y * n
+
 
 def xy2latlon(x, y, z):
 	n = float(pow(2, z))
@@ -75,6 +76,12 @@ def xy2latlon(x, y, z):
 
 def distfunc(data, x_, y_):
 	return math.sqrt((data[0] - x_) ** 2 + (data[1] - y_) ** 2)
+
+
+def nth_element_iter(seq, nth):
+	for idx, item in enumerate(seq):
+		if idx % nth == 0:
+			yield item
 
 
 class _DownloadThread(threading.Thread):
@@ -110,7 +117,6 @@ class _RoutePouints:
 	def __init__(self, points, params):
 		self.points = points
 		self.params = params
-		self.screen_points = []
 
 
 class _MapWindow(wx.Panel):
@@ -129,6 +135,7 @@ class _MapWindow(wx.Panel):
 		self._drag_pos_start = None
 		self._loading_threads = []
 		self._highlight = None
+		self._track_color_cb = None
 		self._no_data_img = wx.Image(AppConfig().get_data_file('art/nodata.png'))\
 				.ConvertToBitmap()
 		self._scroll_timer = None
@@ -177,9 +184,9 @@ class _MapWindow(wx.Panel):
 
 	def set_view(self, min_lon, min_lat, max_lon, max_lat):
 		pwidth, pheight = self.GetClientSizeTuple()
-		tiles_w, tiles_h = (pwidth / 256 + 2) or 5, (pheight / 256 + 2) or 5
-		zoom_lat = log2(360. / abs(max_lat - min_lat)) + log2(tiles_h)
-		zoom_lon = log2(360. / abs(max_lon - min_lon)) + log2(tiles_w)
+		tiles_w, tiles_h = (pwidth / 256) or 5, (pheight / 256) or 5
+		zoom_lat = log2(360. / abs(max_lat - min_lat))
+		zoom_lon = log2(360. / abs(max_lon - min_lon)) * 2
 		zoom = self.base_zoom = int(math.floor(min(zoom_lat, zoom_lon)))
 		self.map_center = (max_lon + min_lon) / 2, (max_lat + min_lat) / 2
 		self.show_map(self.map_center, zoom)
@@ -208,13 +215,8 @@ class _MapWindow(wx.Panel):
 		self._tiles_on_screen = tiles
 		self._do_drawing()
 
-	def find_point_on_xy(self, x, y):
-		if not self._routes:
-			return None
-		point = min((distfunc(data, x, y), data[2])
-				for route in self._routes
-				for data in route.screen_points)
-		return point[1] if point[0] < 50 else None
+	def set_tracks_color_cb(self, color_cb=None):
+		self._track_color_cb = color_cb
 
 	def zoom_in(self, center=None):
 		center = center or self._curr_center
@@ -232,7 +234,7 @@ class _MapWindow(wx.Panel):
 		xtile = (x - self._curr_center_offset[0]) / 256. + self._ctile[0]
 		ytile = (y - self._curr_center_offset[1]) / 256. + self._ctile[1]
 		lat, lon = xy2latlon(xtile, ytile, self._zoom)
-		return lon, lat
+		return lat, lon
 
 	def _on_size(self, evt):
 		if self._curr_center:
@@ -254,24 +256,55 @@ class _MapWindow(wx.Panel):
 				img = TILES_CACHE[tile]
 			dc.DrawBitmap(img, xoffs + xpos * 256, yofff + ypos * 256)
 		# rotues
+		paint_rect = wx.Rect(0, 0, pwidth, pheight)
 		for route in self._routes:
 			pts = list(self._get_route_points(route))
 			params = route.params
-			dc.SetPen(wx.Pen(params.get('color', wx.RED), params.get('width', 3),
-				params.get('style', wx.SOLID)))
-			dc.DrawLines(pts)
-			for point in pts:
-				dc.DrawCircle(point.x - 1, point.y - 1, 2)
+			pena = wx.Pen(params.get('color', wx.BLACK), params.get('width', 2),
+				params.get('style', wx.SOLID))
+			pen = wx.Pen(params.get('color', wx.RED), params.get('width', 3),
+				params.get('style', wx.SOLID))
+			pen2 = wx.Pen(params.get('color', wx.BLACK), params.get('width', 5),
+				params.get('style', wx.SOLID))
+			dc.SetPen(pen)
+			prev_point = None
+			for point, trkpt in pts:
+				if prev_point and (paint_rect.Contains(prev_point) or \
+						paint_rect.Contains(point)):
+					# arrow
+					alen = self._zoom / 2.
+					if alen > 7:
+						slopy = math.atan2((point.y - prev_point.y),
+								(point.x - prev_point.x))
+						coss, sins = math.cos(slopy), math.sin(slopy)
+						dc.SetPen(pena)
+						dc.DrawLine(point.x, point.y,
+								point.x + int(-alen * coss - (alen * sins)),
+								point.y + int(-alen * sins + (alen * coss)))
+						dc.DrawLine(point.x, point.y,
+								point.x + int(-alen * coss + (alen * sins)),
+								point.y + int(-alen * sins - (alen * coss)))
+					# arrow - end
+					dc.SetPen(pen2)
+					dc.DrawLine(prev_point.x, prev_point.y, point.x, point.y)
+					if self._track_color_cb:
+						pen.SetColour(self._track_color_cb(trkpt))
+						dc.SetPen(pen)
+						dc.DrawLine(prev_point.x, prev_point.y, point.x, point.y)
+				prev_point = point
 		# waypoints
 		dc.SetPen(wx.Pen(wx.BLUE, 2, wx.SOLID))
 		dc.SetFont(wx.Font(7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
 				wx.FONTWEIGHT_NORMAL))
+		dc.SetBrush(wx.WHITE_BRUSH)
 		for wpt_pos_x, wpt_pos_y, wpt_name in self._waypoints:
 			x, y = self._latlon2screen(wpt_pos_x, wpt_pos_y)
-			sw, sh = dc.GetTextExtent(wpt_name)
-			dc.DrawLine(x, y, x + 5, y - 15)
-			dc.DrawLine(x + 5, y - 15, x + sw + 8, y - 15)
-			dc.DrawText(wpt_name, x + 6, y - 15 - sh)
+			if paint_rect.Contains((x, y)):
+				sw, sh = dc.GetTextExtent(wpt_name)
+				x1, y1 = x + 5, y - 15
+				dc.DrawLine(x, y, x1, y1)
+				dc.DrawRectangle(x1, y1, sw + 6, -sh - 6)
+				dc.DrawText(wpt_name, x1 + 3, y1 - sh - 3)
 		# higlight
 		if self._highlight:
 			hlx, hly = self._latlon2screen(self._highlight[0], self._highlight[1])
@@ -348,11 +381,14 @@ class _MapWindow(wx.Panel):
 		return (x, y)
 
 	def _get_route_points(self, route):
-		route.screen_points = []
-		for pts in route.points:
+		points = route.points
+		if self._zoom < 14:
+			step = int(pow(1.5, 15 - self._zoom))
+			_LOG.debug('_MapWindow._get_route_points step=%d', step)
+			points = nth_element_iter(route.points, step)
+		for pts in points:
 			x, y = self._latlon2screen(pts.lon, pts.lat)
-			route.screen_points.append((x, y, pts))
-			yield wx.Point(x, y)
+			yield wx.Point(x, y), pts
 
 	def _start_threads(self, count=5):
 		for x in xrange(count):
@@ -377,7 +413,11 @@ class PanelOsmMap(wx.Panel):
 		self._tracks = []
 		self._waypoints = []
 		self._fill_maps()
-		self._current_map = None
+		self._current_map = 'mapnik'
+
+	@property
+	def panel(self):
+		return self._panel_map
 
 	def destroy(self):
 		self._panel_map.destroy()
@@ -405,35 +445,36 @@ class PanelOsmMap(wx.Panel):
 		self._panel_map.show_map(center, zoom)
 		self._panel_map.Refresh()
 
+	def set_tracks_color_cb(self, color_cb):
+		self._panel_map.set_tracks_color_cb(color_cb)
+		self._panel_map.show_map()
+		self._panel_map.Refresh()
+		self._zoom_slider.SetFocus()
+
 	def _create_layout(self):
 		main_grid = wx.BoxSizer(wx.HORIZONTAL)
 		self._panel_map = _MapWindow(self)
 		main_grid.Add(self._panel_map, 1, wx.EXPAND | wx.ALL, 5)
-		button_sizer = wx.BoxSizer(wx.VERTICAL)
-		button_sizer.Add(wx.Button(self, wx.ID_ZOOM_IN), 0, wx.EXPAND)
-		button_sizer.Add((6, 6))
-		button_sizer.Add(wx.Button(self, wx.ID_ZOOM_OUT), 0, wx.EXPAND)
-		button_sizer.Add((12, 12))
-		button_sizer.Add(wx.StaticText(self, -1, _("Map")))
-		button_sizer.Add((3, 3))
-		self._cb_map = wx.Choice(self, -1, choices=['map'])
+		self._zoom_slider = wx.Slider(self._panel_map, -1, 5, 10, 10, pos=(6, 6),
+				size=(-1, 150), style=wx.SL_VERTICAL)
+		self._cb_map = wx.Choice(self._panel_map, -1, choices=['map'],
+				size=(200, -1))
 		self._cb_map.Select(0)
-		button_sizer.Add(self._cb_map, 0, wx.LEFT, 6)
-		main_grid.Add(button_sizer, 0, wx.EXPAND | wx.ALL, 5)
 
 		self.SetSizerAndFit(main_grid)
 		self.Centre(wx.BOTH)
 
-		wx.EVT_BUTTON(self, wx.ID_ZOOM_IN, self._on_btn_zoom_in)
-		wx.EVT_BUTTON(self, wx.ID_ZOOM_OUT, self._on_btn_zoom_out)
 		self._cb_map.Bind(wx.EVT_CHOICE, self._on_map_select)
 		self._panel_map.Bind(wx.EVT_LEFT_DOWN, self._on_mouse_down)
 		self._panel_map.Bind(wx.EVT_LEFT_UP, self._on_mouse_up)
 		self._panel_map.Bind(wx.EVT_MOUSEWHEEL, self._on_mouse_wheel)
+		self.Bind(wx.EVT_SCROLL, self._on_zoom_slider, self._zoom_slider)
+		self.Bind(wx.EVT_SIZE, self._on_size)
 
 	def _on_mouse_wheel(self, evt):
 		x, y = evt.GetPosition()
-		center = self._panel_map.screen2latlon(x, y)
+		lat, lon = self._panel_map.screen2latlon(x, y)
+		center = lon, lat
 		if evt.GetWheelRotation() < 0:
 			self._on_btn_zoom_out(None, center)
 		else:
@@ -461,17 +502,27 @@ class PanelOsmMap(wx.Panel):
 	def _on_mouse_up(self, evt):
 		if evt.GetPosition() == self._mouse_pos:
 			x, y = evt.GetX(), evt.GetY()
-			point = self._panel_map.find_point_on_xy(x, y)
-			if point:
-				wx.PostEvent(self, PointSelectedEvent(point=point))
+			lat, lon = self._panel_map.screen2latlon(x, y)
+			pixelzoom = 180. / pow(2, self._panel_map.zoom)
+			wx.PostEvent(self, PointSelectedEvent(lat=lat, lon=lon,
+					pixels=pixelzoom))
 		self._mouse_pos = None
 		evt.Skip()
+
+	def _on_size(self, evt):
+		wx.CallAfter(self._do_layout)
+		evt.Skip()
+
+	def _on_zoom_slider(self, evt):
+		zoom = evt.GetPosition()
+		self._panel_map.show_map(zoom=zoom)
+		self._panel_map.Refresh()
 
 	def _set_btns_status(self):
 		map_ = maps_loader.MAPS[self._current_map]
 		min_zoom, max_zoom = map_['min_zoom'], map_['max_zoom']
-		self.FindWindowById(wx.ID_ZOOM_OUT).Enable(self._panel_map.zoom > min_zoom)
-		self.FindWindowById(wx.ID_ZOOM_IN).Enable(self._panel_map.zoom < max_zoom)
+		self._zoom_slider.SetRange(min_zoom, max_zoom)
+		self._zoom_slider.SetValue(self._panel_map.zoom)
 
 	def _fill_maps(self):
 		self._cb_map.Clear()
@@ -485,3 +536,8 @@ class PanelOsmMap(wx.Panel):
 				to_sel = idx
 		self._cb_map.SetSelection(to_sel)
 		self._current_map = prev_sel_map
+		self._cb_map.Fit()
+
+	def _do_layout(self):
+		self._cb_map.SetPosition((self._panel_map.GetSizeTuple()[0] - \
+				self._cb_map.GetSizeTuple()[0] - 6, 6))
