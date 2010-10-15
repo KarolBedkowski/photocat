@@ -55,6 +55,7 @@ class _TilesCache:
 TILES_CACHE = _TilesCache()
 _LOG2 = math.log(2)
 
+
 def log2(x):
 	return math.log(x) / _LOG2
 
@@ -202,12 +203,19 @@ class _MapWindow(wx.Panel):
 				int(pheight / 2 - math.modf(cty)[0] * 256))
 		self._ctile = ctx, cty = int(ctx), int(cty)
 		tiles = {}
+		maxn = pow(2, zoom)
+
+		def add_valid(x, y):
+			new_x, new_y = ctx + x, cty + y
+			if new_x >= 0 and new_y >= 0 and new_x < maxn and new_y < maxn:
+				tiles[(x, y)] = (new_x, new_y % maxn, zoom, self.mapname)
+
 		for x in xrange(pwidth / 256 / 2 + 2):
 			for y in range(pheight / 256 / 2 + 2):
-				tiles[(-x, -y)] = (ctx - x, cty - y, zoom, self.mapname)
-				tiles[(x, -y)] = (ctx + x, cty - y, zoom, self.mapname)
-				tiles[(-x, y)] = (ctx - x, cty + y, zoom, self.mapname)
-				tiles[(x, y)] = (ctx + x, cty + y, zoom, self.mapname)
+				add_valid(-x, -y)
+				add_valid(x, -y)
+				add_valid(-x, y)
+				add_valid(x, y)
 		self._down_tiles_queue.clear()
 		for tile in tiles.itervalues():
 			if tile not in TILES_CACHE:
