@@ -204,7 +204,7 @@ class FileImage(CollectionObject):
 	def _attrlist(cls):
 		attribs = super(FileImage, cls)._attrlist()
 		attribs.extend((('shot_date', int), ('thumb', tuple),
-			('dimensions', tuple), ('exif', tuple)))
+			('dimensions', tuple), ('exif', tuple), ('geo_pos', tuple)))
 		return attribs
 
 

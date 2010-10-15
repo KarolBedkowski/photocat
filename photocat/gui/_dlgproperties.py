@@ -107,6 +107,10 @@ class DlgProperties(DlgPropertiesBase):
 			item.shot_date = None
 			changed = True
 
+		if self.changed_geotag:
+			item.geo_position = self.changed_geotag
+			changed = True
+
 		self._on_close()
 
 		if changed:

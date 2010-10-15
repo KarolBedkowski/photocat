@@ -24,7 +24,7 @@ from photocat.engine import image as eimage
 from photocat.gui.components.tags_list_box import TagsListBox
 from photocat.lib.appconfig import AppConfig
 from photocat.lib.wxtools.guitools import create_button
-from ._panel_osm_map import PanelOsmMap
+from ._panel_osm_map import PanelOsmMap, EVT_MAP_DCLICK
 
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
@@ -44,6 +44,8 @@ class DlgPropertiesBase(wx.Dialog):
 		self._panel_map = None
 		# lista zmienionych podczas edycji nazw tagów
 		self.changed_tags = None
+		# zmieniona pozycja
+		self.changed_geotag = None
 		self._create_layout()
 		self._set_pos()
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
@@ -226,6 +228,7 @@ class DlgPropertiesBase(wx.Dialog):
 			lat = appconfig.get('last_map', 'lat', 0.0)
 			zoom = appconfig.get('last_map', 'zoom', 4)
 		self._panel_map.show_map((lon, lat), zoom)
+		self._panel_map.Bind(EVT_MAP_DCLICK, self._on_map_dclick)
 		return panel
 
 	#########################################################################
@@ -242,6 +245,7 @@ class DlgPropertiesBase(wx.Dialog):
 			appconfig.set('last_map', 'lon', lon)
 			appconfig.set('last_map', 'lat', lat)
 			appconfig.set('last_map', 'zoom', zoom)
+			self._panel_map.destroy()
 		if evt is not None:
 			evt.Skip()
 
@@ -259,5 +263,9 @@ class DlgPropertiesBase(wx.Dialog):
 		self._on_close()
 		self.EndModal(wx.ID_BACKWARD)
 
-
-# vim: encoding=utf8:
+	def _on_map_dclick(self, evt):
+		lat, lon = evt.lat, evt.lon
+		self.changed_geotag = (lat, lon)
+		self._panel_map.clear_waypoints()
+		self._panel_map.add_waypoints((lon, lat, self._item.name or _('Image')))
+		self._panel_map.show_map((lon, lat), evt.zoom)
