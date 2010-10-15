@@ -21,3 +21,4 @@ photocat.egg-info
 *.log
 *.swp
 debian/photocat
+*.orig
