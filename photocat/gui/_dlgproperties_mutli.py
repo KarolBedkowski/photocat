@@ -37,6 +37,7 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 		notebook.AddPage(self._create_layout_page_desc(notebook), _('Comment'))
 		notebook.AddPage(self._create_layout_page_tags(notebook), _('Tags'))
 		notebook.AddPage(self._create_layout_page_other(notebook), _('Other'))
+		notebook.AddPage(self._create_layout_page_map(notebook), _('Map'))
 		return notebook
 
 	def _create_layout_page_desc(self, parent):
@@ -171,6 +172,9 @@ class DlgPropertiesMulti(DlgPropertiesBase):
 			result['shot_date'] = sdate_val
 		elif self._cb_shot_date.Get3StateValue() == wx.CHK_UNCHECKED:
 			result['shot_date'] = None
+
+		if self.changed_geotag:
+			result['geo_position'] = self.changed_geotag
 
 		self._on_close()
 
