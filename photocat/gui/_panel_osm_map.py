@@ -32,6 +32,7 @@ from photocat.lib.appconfig import AppConfig
 _LOG = logging.getLogger(__name__)
 (TileUpdatedEvent, EVT_TILE_UPDATED) = wx.lib.newevent.NewEvent()
 (PointSelectedEvent, EVT_POINT_SELECTED) = wx.lib.newevent.NewEvent()
+(MapDClickEvent, EVT_MAP_DCLICK) = wx.lib.newevent.NewEvent()
 
 
 class _TilesCache:
@@ -125,11 +126,11 @@ class _MapWindow(wx.Panel):
 		wx.Panel.__init__(self, parent, wx.ID_ANY, style=wx.BORDER_SUNKEN | \
 				wx.FULL_REPAINT_ON_RESIZE)
 		self._data = None
-		self._zoom = 0
+		self.zoom = 0
 		self.mapname = 'mapnik'
 		self._tiles_on_screen = {}
-		self._routes = []
-		self._waypoints = []
+		self.routes = []
+		self.waypoints = []
 		self._curr_center = 0
 		self._update_timer = None
 		self._down_tiles_queue = deque()
@@ -156,10 +157,6 @@ class _MapWindow(wx.Panel):
 			self.destroy()
 
 	@property
-	def zoom(self):
-		return self._zoom
-
-	@property
 	def center(self):
 		return self._curr_center
 
@@ -171,12 +168,12 @@ class _MapWindow(wx.Panel):
 
 	def add_waypoints(self, waypoints):
 		if hasattr(waypoints[0], '__iter__'):
-			self._waypoints.extend(waypoints)
+			self.waypoints.extend(waypoints)
 		else:
-			self._waypoints.append(waypoints)
+			self.waypoints.append(waypoints)
 
 	def set_routes(self, routes):
-		self._routes = [_RoutePouints(point, params)
+		self.routes = [_RoutePouints(point, params)
 				for point, params in routes]
 
 	def set_highlight(self, pts):
@@ -198,9 +195,9 @@ class _MapWindow(wx.Panel):
 
 	def show_map(self, map_center=None, zoom=None):
 		self._curr_center = map_center = map_center or self._curr_center
-		zoom = zoom or self._zoom
+		zoom = zoom or self.zoom
 		zoom = min(zoom, maps_loader.MAPS[self.mapname]['max_zoom'])
-		self._zoom = zoom = max(zoom, maps_loader.MAPS[self.mapname]['min_zoom'])
+		self.zoom = zoom = max(zoom, maps_loader.MAPS[self.mapname]['min_zoom'])
 		pwidth, pheight = self.GetClientSizeTuple()
 		ctx, cty = tileXY(map_center[1], map_center[0], zoom)
 		self._curr_center_offset = (int(pwidth / 2 - math.modf(ctx)[0] * 256),
@@ -232,25 +229,25 @@ class _MapWindow(wx.Panel):
 
 	def zoom_in(self, center=None):
 		center = center or self._curr_center
-		self.show_map(center, min(self._zoom + 1,
+		self.show_map(center, min(self.zoom + 1,
 			maps_loader.MAPS[self.mapname]['max_zoom']))
 		self.Refresh()
 
 	def zoom_out(self, center=None):
 		center = center or self._curr_center
-		self.show_map(center, max(self._zoom - 1,
+		self.show_map(center, max(self.zoom - 1,
 			maps_loader.MAPS[self.mapname]['min_zoom']))
 		self.Refresh()
 
 	def screen2latlon(self, x, y):
 		xtile = (x - self._curr_center_offset[0]) / 256. + self._ctile[0]
 		ytile = (y - self._curr_center_offset[1]) / 256. + self._ctile[1]
-		lat, lon = xy2latlon(xtile, ytile, self._zoom)
+		lat, lon = xy2latlon(xtile, ytile, self.zoom)
 		return lat, lon
 
 	def _on_size(self, evt):
 		if self._curr_center:
-			self.show_map(self._curr_center, self._zoom)
+			self.show_map(self._curr_center, self.zoom)
 
 	def _on_paint(self, evt):
 		wx.BufferedPaintDC(self, self._buffer, wx.BUFFER_VIRTUAL_AREA)
@@ -269,7 +266,7 @@ class _MapWindow(wx.Panel):
 			dc.DrawBitmap(img, xoffs + xpos * 256, yofff + ypos * 256)
 		# rotues
 		paint_rect = wx.Rect(0, 0, pwidth, pheight)
-		for route in self._routes:
+		for route in self.routes:
 			pts = list(self._get_route_points(route))
 			params = route.params
 			pena = wx.Pen(params.get('color', wx.BLACK), params.get('width', 2),
@@ -284,7 +281,7 @@ class _MapWindow(wx.Panel):
 				if prev_point and (paint_rect.Contains(prev_point) or \
 						paint_rect.Contains(point)):
 					# arrow
-					alen = self._zoom / 2.
+					alen = self.zoom / 2.
 					if alen > 7:
 						slopy = math.atan2((point.y - prev_point.y),
 								(point.x - prev_point.x))
@@ -309,7 +306,7 @@ class _MapWindow(wx.Panel):
 		dc.SetFont(wx.Font(7, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
 				wx.FONTWEIGHT_NORMAL))
 		dc.SetBrush(wx.WHITE_BRUSH)
-		for wpt_pos_x, wpt_pos_y, wpt_name in self._waypoints:
+		for wpt_pos_x, wpt_pos_y, wpt_name in self.waypoints:
 			x, y = self._latlon2screen(wpt_pos_x, wpt_pos_y)
 			if paint_rect.Contains((x, y)):
 				sw, sh = dc.GetTextExtent(wpt_name)
@@ -378,24 +375,24 @@ class _MapWindow(wx.Panel):
 			self._drag_pos_start = pos
 
 	def _scroll_to_pos(self, start, stop):
-		n = pow(2, self._zoom)
+		n = pow(2, self.zoom)
 		dx = float(start[0] - stop[0]) / n
 		dy = float(start[1] - stop[1]) / n
 		if dx != 0. or dy != 0.:
 			new_center = self._curr_center[0] + dx, self._curr_center[1] - dy
-			self.show_map(new_center, self._zoom)
+			self.show_map(new_center, self.zoom)
 			self.Refresh()
 
 	def _latlon2screen(self, lon, lat):
-		x, y = tileXY(lat, lon, self._zoom)
+		x, y = tileXY(lat, lon, self.zoom)
 		x = self._curr_center_offset[0] + (x - self._ctile[0]) * 256
 		y = self._curr_center_offset[1] + (y - self._ctile[1]) * 256
 		return (x, y)
 
 	def _get_route_points(self, route):
 		points = route.points
-		if self._zoom < 14:
-			step = int(pow(1.5, 15 - self._zoom))
+		if self.zoom < 14:
+			step = int(pow(1.5, 15 - self.zoom))
 			_LOG.debug('_MapWindow._get_route_points step=%d', step)
 			points = nth_element_iter(route.points, step)
 		for pts in points:
@@ -423,7 +420,6 @@ class PanelOsmMap(wx.Panel):
 		self._create_layout()
 		self._mouse_pos = None
 		self._tracks = []
-		self._waypoints = []
 		self._fill_maps()
 		self._current_map = 'mapnik'
 
@@ -448,6 +444,9 @@ class PanelOsmMap(wx.Panel):
 		self._panel_map.set_routes(self._tracks)
 		self._on_map_select(None)
 		self._set_btns_status()
+
+	def clear_waypoints(self):
+		self._panel_map.waypoints = []
 
 	def add_waypoints(self, waypoints):
 		self._panel_map.add_waypoints(waypoints)
@@ -484,6 +483,7 @@ class PanelOsmMap(wx.Panel):
 		self._panel_map.Bind(wx.EVT_LEFT_DOWN, self._on_mouse_down)
 		self._panel_map.Bind(wx.EVT_LEFT_UP, self._on_mouse_up)
 		self._panel_map.Bind(wx.EVT_MOUSEWHEEL, self._on_mouse_wheel)
+		self._panel_map.Bind(wx.EVT_LEFT_DCLICK, self._on_map_dclick)
 		self.Bind(wx.EVT_SCROLL, self._on_zoom_slider, self._zoom_slider)
 		self.Bind(wx.EVT_SIZE, self._on_size)
 
@@ -523,6 +523,14 @@ class PanelOsmMap(wx.Panel):
 			wx.PostEvent(self, PointSelectedEvent(lat=lat, lon=lon,
 					pixels=pixelzoom))
 		self._mouse_pos = None
+		evt.Skip()
+
+	def _on_map_dclick(self, evt):
+		x, y = evt.GetX(), evt.GetY()
+		lat, lon = self._panel_map.screen2latlon(x, y)
+		pixelzoom = 180. / pow(2, self._panel_map.zoom)
+		wx.PostEvent(self, MapDClickEvent(lat=lat, lon=lon,
+			zoom=self._panel_map.zoom, pixelzoom=pixelzoom))
 		evt.Skip()
 
 	def _on_size(self, evt):
