@@ -48,13 +48,14 @@ class FileImage(CollectionObject):
 		'.erf'))					# epson raw
 
 	__slots__ = ('thumb', 'dimensions', 'exif', 'shot_date', '_exif_data',
-			'is_raw', '__weakref__')
+			'is_raw', '__weakref__', 'geo_pos')
 
 	def __init__(self, oid, name, parent, disk, *args, **kwargs):
 		self.thumb = kwargs.get('thumb')
 		self.dimensions = kwargs.get('dimensions')
 		self.exif = kwargs.get('exif')
 		self.shot_date = kwargs.get('shot_date')
+		self.geo_pos = kwargs.get('geo_pos')
 
 		self._exif_data = None
 
@@ -142,10 +143,17 @@ class FileImage(CollectionObject):
 	def data_objects_count(self):
 		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
 
-	@property
-	def geo_position(self):
-		return eimage.get_geotag_from_exif(self.exif_data)
+	def _get_geo_position(self):
+		if not self.geo_pos:
+			exif = self.exif_data
+			if exif:
+				self.geo_pos = eimage.get_geotag_from_exif(exif)
+		return self.geo_pos
 
+	def _set_geo_position(self, geo_pos):
+		self.geo_pos = geo_pos
+
+	geo_position = property(_get_geo_position, _set_geo_position)
 
 	##########################################################################
 
