@@ -219,14 +219,13 @@ class DlgPropertiesBase(wx.Dialog):
 		panel.SetSizerAndFit(panel_sizer)
 		pos = self._item.geo_position
 		appconfig = AppConfig()
+		zoom = appconfig.get('last_map', 'zoom', 8)
 		if pos:
 			lat, lon = pos
-			zoom = 10
 			self._panel_map.add_waypoints((lon, lat, self._item.name or _('Image')))
 		else:
 			lon = appconfig.get('last_map', 'lon', 0.0)
 			lat = appconfig.get('last_map', 'lat', 0.0)
-			zoom = appconfig.get('last_map', 'zoom', 4)
 		self._panel_map.show_map((lon, lat), zoom)
 		self._panel_map.Bind(EVT_MAP_DCLICK, self._on_map_dclick)
 		return panel
