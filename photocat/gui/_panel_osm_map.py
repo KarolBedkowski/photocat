@@ -159,6 +159,10 @@ class _MapWindow(wx.Panel):
 	def zoom(self):
 		return self._zoom
 
+	@property
+	def center(self):
+		return self._curr_center
+
 	def destroy(self):
 		self._down_tiles_queue.clear()
 		for thr in self._loading_threads:
@@ -426,6 +430,10 @@ class PanelOsmMap(wx.Panel):
 	@property
 	def panel(self):
 		return self._panel_map
+
+	@property
+	def center_zoom(self):
+		return self._panel_map.center, self._panel_map.zoom
 
 	def destroy(self):
 		self._panel_map.destroy()
