@@ -13,9 +13,9 @@ except NameError:
 
 SHORTNAME = 'photocat'
 NAME = _("Photo Catalog")
-VERSION = '1.9.0a'
-VERSION_INFO = (1, 9, 0, 'alfa', 1)
-RELEASE = '2010-10-x'
+VERSION = '1.9.0a2'
+VERSION_INFO = (1, 9, 0, 'alfa', 2)
+RELEASE = '2010-10-15'
 DESCRIPTION = _('''Photo collection manager''')
 DEVELOPERS = '''Karol Będkowski'''
 TRANSLATORS = '''Karol Będkowski'''
@@ -50,6 +50,3 @@ the Free Software Foundation, either version 2 of the License, or
 
 For details please see COPYING file.
 """) % dict(name=NAME, version=VERSION, copyright=COPYRIGHT, release=RELEASE)
-
-
-# vim: encoding=utf8: ff=unix:
