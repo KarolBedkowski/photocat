@@ -156,7 +156,7 @@ def load_exif_from_file(path, data_provider):
 					val = val.raw_value
 				elif hasattr(val, 'raw_values'):
 					val = val.raw_values
-				else: # pyexiv2 1.x
+				else:  # pyexiv2 1.x
 					if hasattr(val, '__iter__'):
 						val = ', '.join(str(val_) for val_ in val)
 					val = str(val).replace('\0', '').strip()
