@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PhotoCatalog (PC)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-07 14:33+0200\n"
-"PO-Revision-Date: 2010-06-07 14:33+0200\n"
+"POT-Creation-Date: 2010-10-15 13:40+0200\n"
+"PO-Revision-Date: 2010-10-15 13:41+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "Language: pl\n"
@@ -160,6 +160,9 @@ msgstr "Exif"
 msgid "Other"
 msgstr "Inne"
 
+msgid "Map"
+msgstr "Mapa"
+
 msgid "Tag"
 msgstr "Etykieta"
 
@@ -174,6 +177,12 @@ msgstr "Ustaw datę wykonania"
 
 msgid "Shot date:"
 msgstr "Data wykonania:"
+
+msgid "Image"
+msgstr "Obraz"
+
+msgid "Statistics"
+msgstr "Statystyki"
 
 msgid "Name"
 msgstr "Nazwa"
@@ -359,18 +368,18 @@ msgstr "%"
 msgid "Unknown"
 msgstr "Nieznane"
 
-msgid "Statistics"
-msgstr "Statystyki"
-
-#, python-format
-msgid "Statistics for %s"
-msgstr "Statystyki dla %s"
-
 msgid "Please select..."
 msgstr "Proszę wybrać..."
 
 msgid "Statistic:"
 msgstr "Statystyka:"
+
+msgid "Computing statistics..."
+msgstr "Liczenie statystyk..."
+
+#, python-format
+msgid "Statistics for %s"
+msgstr "Statystyki dla %s"
 
 msgid "Timeline"
 msgstr "Linia czasu"
@@ -502,21 +511,6 @@ msgid_plural "%(count)d photos"
 msgstr[0] "zdjęcie"
 msgstr[1] "%(count)d zdjęcia"
 msgstr[2] "%(count)d zdjęć"
-
-#, python-format
-msgid ""
-"Disks: %(disks)d\n"
-"Dirs: %(dirs)d\n"
-"Photos: %(files)d\n"
-"Dirty entries: %(dirty)d (%(dirtyp)d%%)"
-msgstr ""
-"Dyski: %(disks)d\n"
-"Katalogi: %(dirs)d\n"
-"Zdjęcia: %(files)d\n"
-"Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
-
-msgid "Collection information"
-msgstr "Informacje o kolekcji"
 
 #, python-format
 msgid "Show %d photos?"
@@ -714,9 +708,6 @@ msgstr "[x]Sortuj malejąco"
 msgid "[x]Show All Files in Subtree"
 msgstr "[x]Pokaż wszystkie pliki w poddrzewie"
 
-msgid "Statisitics"
-msgstr "Statystyki"
-
 msgid "&About"
 msgstr "O programie"
 
@@ -735,7 +726,6 @@ msgstr "Dodaj dysk"
 msgid "Zoom: "
 msgstr "Zoom: "
 
-#. isinstance(item, Disk):
 msgid "&Update disk..."
 msgstr "&Aktualizuj dysk..."
 
@@ -993,6 +983,23 @@ msgstr ""
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
 
+#~ msgid ""
+#~ "Disks: %(disks)d\n"
+#~ "Dirs: %(dirs)d\n"
+#~ "Photos: %(files)d\n"
+#~ "Dirty entries: %(dirty)d (%(dirtyp)d%%)"
+#~ msgstr ""
+#~ "Dyski: %(disks)d\n"
+#~ "Katalogi: %(dirs)d\n"
+#~ "Zdjęcia: %(files)d\n"
+#~ "Zbędne wpisy: %(dirty)d (%(dirtyp)d%%)"
+
+#~ msgid "Collection information"
+#~ msgstr "Informacje o kolekcji"
+
+#~ msgid "Statisitics"
+#~ msgstr "Statystyki"
+
 #~ msgid "EXIF stats"
 #~ msgstr "Statystyki EXIF"
 
@@ -1001,12 +1008,6 @@ msgstr ""
 
 #~ msgid "Directories %(dirs)d;  photos: %(files)d"
 #~ msgstr "Katalogów %(dirs)d; zdjęć: %(files)d"
-
-#~ msgid "image"
-#~ msgid_plural "%(count)d images"
-#~ msgstr[0] "obraz"
-#~ msgstr[1] "%(count)d obrazy"
-#~ msgstr[2] "%(count)d obrazów"
 
 #~ msgid "Catalog information"
 #~ msgstr "Informacje o katalogu"
