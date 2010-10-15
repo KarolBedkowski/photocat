@@ -181,8 +181,6 @@ class _MapWindow(wx.Panel):
 
 	def set_map(self, mapname):
 		self.mapname = mapname
-		self.show_map()
-		self.Refresh()
 
 	def set_view(self, min_lon, min_lat, max_lon, max_lat):
 		pwidth, pheight = self.GetClientSizeTuple()
@@ -421,7 +419,8 @@ class PanelOsmMap(wx.Panel):
 		self._mouse_pos = None
 		self._tracks = []
 		self._fill_maps()
-		self._current_map = 'mapnik'
+		self._current_map = AppConfig().get('map', 'last_map', 'mapnik')
+		self._panel_map.set_map(self._current_map)
 
 	@property
 	def panel(self):
@@ -509,6 +508,8 @@ class PanelOsmMap(wx.Panel):
 		self._current_map = map_name
 		AppConfig().set('map', 'last_map', map_name)
 		self._panel_map.set_map(map_name)
+		self._panel_map.show_map()
+		self._panel_map.Refresh()
 		self._set_btns_status()
 
 	def _on_mouse_down(self, evt):
@@ -551,7 +552,7 @@ class PanelOsmMap(wx.Panel):
 	def _fill_maps(self):
 		self._cb_map.Clear()
 		to_sel = 0
-		prev_sel_map = AppConfig().get('map', 'last_map', 'ocm')
+		prev_sel_map = AppConfig().get('map', 'last_map', 'mapnik')
 		maps = sorted((vmap['name'], key)
 				for key, vmap in maps_loader.MAPS.iteritems())
 		for idx, (mapname, key) in enumerate(maps):
