@@ -22,3 +22,4 @@ photocat.egg-info
 *.swp
 debian/photocat
 *.orig
+locale/
