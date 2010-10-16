@@ -1,3 +1,6 @@
+2010-10-16 (v.1.9.0a3)
+	* mniejsze poprawki związane z geotagowaniem
+
 2010-10-15 (v.1.9.0a2)
 	+ geotagowanie
 
@@ -136,4 +139,4 @@
 
 
 
-# vim: encoding=utf8: ff=unix: fileencoding=utf8:
+# vim: fileencoding=utf-8: ff=unix:
