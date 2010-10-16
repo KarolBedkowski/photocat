@@ -17,6 +17,7 @@ import logging
 
 from photocat.engine import image as eimage
 from photocat.model._collection_object import CollectionObject
+from photocat.lib import geoutils
 from photocat.lib.formaters import format_human_size
 
 _LOG = logging.getLogger(__name__)
@@ -120,6 +121,12 @@ class FileImage(CollectionObject):
 
 		if self.size is not None:
 			result.append((201, _('File size'), format_human_size(self.size)))
+
+		geotag = self.geo_position
+		if geotag:
+			lonlat = '     '.join(geoutils.format_geopos(*geotag))
+			result.append((81, '', None))
+			result.append((82, _('Geo position'), lonlat))
 
 		return result
 
