@@ -227,7 +227,8 @@ class DlgPropertiesBase(wx.Dialog):
 			lon = appconfig.get('last_map', 'lon', 0.0)
 			lat = appconfig.get('last_map', 'lat', 0.0)
 		self._panel_map.show_map((lon, lat), zoom)
-		self._panel_map.Bind(EVT_MAP_DCLICK, self._on_map_dclick)
+		if not self.readonly:
+			self._panel_map.Bind(EVT_MAP_DCLICK, self._on_map_dclick)
 		return panel
 
 	#########################################################################
