@@ -15,6 +15,8 @@ __revision__ = '$Id$'
 import wx
 import wx.lib.scrolledpanel as scrolled
 
+from photocat.engine import image as eimage
+
 
 _LABEL_FONT_STYLE = wx.SystemSettings_GetFont(wx.SYS_DEFAULT_GUI_FONT)
 _LABEL_FONT_STYLE.SetWeight(wx.FONTWEIGHT_BOLD)
@@ -106,10 +108,11 @@ class InfoPanel(wx.Panel):
 			bsizer = wx.FlexGridSizer(2, 2, 5, 12)
 			bsizer.AddGrowableCol(1)
 
-			for key, val in sorted(image.exif_data.iteritems()):
-				bsizer.Add(_create_label(panel, key + ":"), 0,
+			for key_human, val_human in sorted(eimage.get_tag_human(key, val) \
+					for key, val in image.exif_data.iteritems()):
+				bsizer.Add(_create_label(panel, key_human + ":"), 0,
 						wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-				stext = wx.StaticText(panel, -1, str(val[:100]))
+				stext = wx.StaticText(panel, -1, str(val_human[:100]))
 				bsizer.Add(stext, 1, wx.EXPAND)
 
 			sizer.Add(bsizer, 0, wx.EXPAND | wx.LEFT, 12)

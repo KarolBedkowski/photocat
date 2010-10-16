@@ -146,8 +146,8 @@ class DlgPropertiesBase(wx.Dialog):
 		panel.SetSizerAndFit(panel_sizer)
 		exif = self._item.exif_data
 		if exif is not None:
-			for key, val in sorted(exif.iteritems()):
-				key_human, val_human = eimage.get_tag_human(key, val)
+			for key_human, val_human in sorted(eimage.get_tag_human(key, val) \
+					for key, val in exif.iteritems()):
 				idx = listctrl.InsertStringItem(sys.maxint, str(key_human))
 				listctrl.SetStringItem(idx, 1, unicode(val_human,
 						errors='replace'))
