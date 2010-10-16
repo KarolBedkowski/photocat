@@ -144,7 +144,7 @@ class FileImage(CollectionObject):
 		return (self.thumb and 1 or 0) + (self.exif and 1 or 0)
 
 	def _get_geo_position(self):
-		if not self.geo_pos:
+		if self.geo_pos is None:
 			exif = self.exif_data
 			if exif:
 				self.geo_pos = eimage.get_geotag_from_exif(exif)
@@ -208,4 +208,4 @@ class FileImage(CollectionObject):
 		return attribs
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf8: ff=unix:

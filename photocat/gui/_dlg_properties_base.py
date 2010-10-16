@@ -216,7 +216,6 @@ class DlgPropertiesBase(wx.Dialog):
 		panel_sizer = wx.BoxSizer(wx.VERTICAL)
 		self._panel_map = PanelOsmMap(panel)
 		panel_sizer.Add(self._panel_map, 1, wx.EXPAND | wx.ALL, 12)
-		panel.SetSizerAndFit(panel_sizer)
 		pos = self._item.geo_position
 		appconfig = AppConfig()
 		zoom = appconfig.get('last_map', 'zoom', 8)
@@ -228,7 +227,12 @@ class DlgPropertiesBase(wx.Dialog):
 			lat = appconfig.get('last_map', 'lat', 0.0)
 		self._panel_map.show_map((lon, lat), zoom)
 		if not self.readonly:
+			btn_clear = wx.Button(panel, wx.ID_CLEAR)
+			panel_sizer.Add(btn_clear, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM | \
+					wx.ALIGN_RIGHT, 12)
+			self.Bind(wx.EVT_BUTTON, self._on_map_clear, btn_clear)
 			self._panel_map.Bind(EVT_MAP_DCLICK, self._on_map_dclick)
+		panel.SetSizerAndFit(panel_sizer)
 		return panel
 
 	#########################################################################
@@ -269,3 +273,8 @@ class DlgPropertiesBase(wx.Dialog):
 		self._panel_map.clear_waypoints()
 		self._panel_map.add_waypoints((lon, lat, self._item.name or _('Image')))
 		self._panel_map.show_map((lon, lat), evt.zoom)
+
+	def _on_map_clear(self, _evt):
+		self.changed_geotag = 0
+		self._panel_map.clear_waypoints()
+		self._panel_map.show_map(None, None)

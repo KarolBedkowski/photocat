@@ -107,7 +107,7 @@ class DlgProperties(DlgPropertiesBase):
 			item.shot_date = None
 			changed = True
 
-		if self.changed_geotag:
+		if self.changed_geotag is not None:
 			item.geo_position = self.changed_geotag
 			changed = True
 
@@ -121,4 +121,4 @@ class DlgProperties(DlgPropertiesBase):
 
 
 
-# vim: encoding=utf8:
+# vim: fileencoding=utf8: ff=unix:
