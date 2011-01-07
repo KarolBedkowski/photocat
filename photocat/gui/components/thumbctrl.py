@@ -2,7 +2,7 @@
 
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2010
+Copyright (c) Karol Będkowski, 2004-2011
 
 This file is part of Photo Catalog
 """
@@ -68,6 +68,7 @@ class ThumbCtrl(wx.ScrolledWindow):
 		self.Bind(wx.EVT_LEFT_DCLICK, self.__on_mouse_dbclick)
 		self.Bind(wx.EVT_RIGHT_DOWN, self.__on_mouse_right_down)
 		self.Bind(wx.EVT_IDLE, self.__on_idle)
+		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda _evt: None)
 
 	def _reset(self):
 		self._selected_list = []
@@ -341,9 +342,3 @@ class ThumbCtrl(wx.ScrolledWindow):
 				self._status_wnd.SetStatusText("", 1)
 
 		evt.Skip()
-
-
-
-
-
-# vim: encoding=utf8: ff=unix:
