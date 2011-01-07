@@ -54,6 +54,7 @@ def find_files(directory, base):
 
 packages = packages_for(".")
 
+
 def get_data_files():
 	if sys.platform == 'win32':
 		doc_dir = locales_dir = data_dir = '.'
@@ -141,7 +142,7 @@ class MakeMoCommand(Command):
 
 
 cmdclass = {'cleanup': CleanupCmd,
-		'make_mo' : MakeMoCommand,
+		'make_mo': MakeMoCommand,
 }
 
 
@@ -154,11 +155,11 @@ pctarget = {
 	'company_name': "Karol Będkowski",
 	'copyright': version.COPYRIGHT,
 	'icon_resources': [(0, "data/art/icon.ico")],
-	'other_resources': [("VERSIONTAG", 1, build)] }
+	'other_resources': [("VERSIONTAG", 1, build)]}
 
 
 pctarget_win = pctarget.copy()
-pctarget_win.update({'script': "photocat.pyw",'name': "photocat"})
+pctarget_win.update({'script': "photocat.pyw", 'name': "photocat"})
 
 
 setup(
@@ -185,18 +186,17 @@ setup(
 	data_files=list(get_data_files()),
 	include_package_data=True,
 	scripts=['photocat.pyw'],
-	install_requires=['wxPython>=2.6.0', 'reportlab>=2', 'Image>=1.1.0', 'pyexiv2>=1.3'],
+	install_requires=['wxPython>=2.6.0', 'reportlab>=2', 'Image>=1.1.0',
+			'pyexiv2>=1.3'],
 	options={"py2exe": {
-		"compressed": 1,
-		"optimize": 2,
-		"ascii": 0,
-		"bundle_files": 2,
-		"packages": "PngImagePlugin, JpegImagePlugin, _rl_accel, libexiv2python", }},
+			"compressed": 1,
+			"optimize": 2,
+			"ascii": 0,
+			"bundle_files": 2,
+			"packages": "PngImagePlugin, JpegImagePlugin, _rl_accel, "
+					"libexiv2python", }},
 	zipfile=r"modules.dat",
-	windows = [pctarget_win],
+	windows=[pctarget_win],
 	console=[pctarget],
 	cmdclass=cmdclass,
 )
-
-
-# vim: encoding=utf8:
