@@ -1,3 +1,9 @@
+photocat (1.9.0-1) unstable; urgency=low
+
+  * New unstable release.
+
+ -- Karol Będkowski <karol.bedkowski@gmail.com>  Fri, 07 Jan 2011 22:31:57 +0100
+
 photocat (1.9.0~rc.1-1) unstable; urgency=low
 
   * New release candidate version.

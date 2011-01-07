@@ -13,13 +13,13 @@ except NameError:
 
 SHORTNAME = 'photocat'
 NAME = _("Photo Catalog")
-VERSION = '1.9.0rc1'
-VERSION_INFO = (1, 9, 0, 'rc', 1)
-RELEASE = '2010-10-17'
+VERSION = '1.9.0'
+VERSION_INFO = (1, 9, 0, 'r', 1)
+RELEASE = '2011-01-07'
 DESCRIPTION = _('''Photo collection manager''')
 DEVELOPERS = '''Karol Będkowski'''
 TRANSLATORS = '''Karol Będkowski'''
-COPYRIGHT = 'Copyright (C) Karol Będkowski, 2004-2010'
+COPYRIGHT = 'Copyright (C) Karol Będkowski, 2004-2011'
 LICENSE = _('''\
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
