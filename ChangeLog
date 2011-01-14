@@ -1,3 +1,7 @@
+2011-01-14 (1.9.1)
+	* obsługa pyexiv2 3.x
+
+
 2011-01-08 (1.9.0)
 	+ geotagowanie
 	dev: python-exiv2 zamiast EXIF.py
