@@ -6,13 +6,13 @@ photocat.engine.image
 -- engine do obsługi obrazów
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2010
+Copyright (c) Karol Będkowski, 2004-2011
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2011'
 __revision__ = '$Id$'
 
 
@@ -301,8 +301,8 @@ def get_tag_human(name, value):
 					tag.raw_value = value
 					if tag.human_value:
 						hvalue = tag.human_value
-			except KeyError:
-				pass
+			except (KeyError, ValueError):
+				_LOG.debug('get_tag_human %r' % value)
 		elif name.startswith('Iptc.'):
 			try:
 				tag = pyexiv2.IptcTag(name)
@@ -310,8 +310,8 @@ def get_tag_human(name, value):
 					label = 'IPTC ' + tag.title
 					if isinstance(value, (list, tuple)):
 						hvalue = ', '.join(value)
-			except KeyError:
-				pass
+			except (KeyError, ValueError):
+				_LOG.debug('get_tag_human %r' % value)
 	hvalue = hvalue or value or ''
 	if len(hvalue) > 97:
 		hvalue = hvalue[:97] + '...'
