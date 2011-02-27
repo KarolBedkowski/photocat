@@ -1,0 +1,3 @@
+?package(photocat):needs="X11" section="Applications/Graphics"\
+	title="Photo Catalog" command="/usr/bin/photocat"
+
