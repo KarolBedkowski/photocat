@@ -3,13 +3,13 @@
 # pylint: disable-msg=R0901, R0904
 """
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2010
+Copyright (c) Karol Będkowski, 2004-2014
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2014'
 __revision__ = '$Id$'
 
 __all__ = ['DlgProperties']
@@ -110,8 +110,7 @@ class _DlgSearch(wx.Frame):
 		panel = wx.Panel(parent, -1)
 		grid = wx.BoxSizer(wx.VERTICAL)
 
-		pnl = fpb.FoldPanelBar(panel, -1, wx.DefaultPosition, wx.Size(200, -1),
-				fpb.FPB_DEFAULT_STYLE)
+		pnl = fpb.FoldPanelBar(panel, -1, wx.DefaultPosition, wx.Size(200, -1))
 		self._create_layout_fields(pnl, cbs)
 		self._create_layout_options(pnl, cbs)
 		self._create_layout_advanced(pnl, cbs)
@@ -658,8 +657,3 @@ class DlgSearchProvider(Singleton):
 		'''
 		self._dialogs.remove(evt.GetEventObject())
 		evt.Skip()
-
-
-
-
-# vim: encoding=utf8: ff=unix:
