@@ -6,13 +6,13 @@ photocat.engine.image
 -- engine do obsługi obrazów
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2011
+Copyright (c) Karol Będkowski, 2004-2012
 
 This file is part of Photo Catalog
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2011'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2012'
 __revision__ = '$Id$'
 
 
@@ -147,6 +147,8 @@ def load_exif_from_file(path, data_provider):
 		if keys:
 			exif_data = {}
 			for key in keys:
+				if key.startswith('Exif.Photo.0x'):
+					continue
 				val = meta[key]
 				if (key in _IGNORE_EXIF_KEYS or key.startswith('Thumbnail ')
 						or key.startswith('EXIF Tag ')
