@@ -1,3 +1,9 @@
+photocat (1.9.2-1) unstable; urgency=low
+
+  * New bugfix release.
+
+ -- Karol Będkowski <karol.bedkowski@gmail.com>  Sat, 19 Apr 2014 17:53:49 +0200
+
 photocat (1.9.1-1) unstable; urgency=low
 
   * New unstable release.
