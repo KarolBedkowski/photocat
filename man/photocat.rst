@@ -8,7 +8,7 @@ Photo Catalog
 
 :Author: Karol Będkowski
 :Date:   2010-03-19
-:Copyright: Copyright(c) Karol Będkowski, 2006-2010
+:Copyright: Copyright(c) Karol Będkowski, 2006-2015
 :Version: 1.7
 :Manual section: 1
 :Manual group: PhotoCat Manual Pages
