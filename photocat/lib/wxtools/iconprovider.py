@@ -4,7 +4,7 @@
 """
 Icon provider for windows
 
-Copyright (c) Karol Będkowski, 2007-2010
+Copyright (c) Karol Będkowski, 2007-2015
 
 This file is part of kPyLibs
 """
@@ -87,6 +87,7 @@ class IconProvider:
 	""" Klasa dostarczająca ikonki """
 
 	def __init__(self, size=16):
+		self._width = self._height = size
 		self.__image_list = wx.ImageList(size, size)
 		self.__image_dict = {}
 
@@ -104,6 +105,15 @@ class IconProvider:
 			if image is None:
 				_LOG.warn('load icon %s failed', name)
 				continue
+			if image.GetWidth() != self._width or \
+					image.GetHeight() != self._height:
+				if isinstance(image, wx.Icon):
+					btmp = wx.EmptyBitmap(image.GetWidth(), image.GetHeight())
+					btmp.CopyFromIcon(image)
+					image = btmp.ConvertToImage()
+				elif isinstance(image, wx.Bitmap):
+					image = image.ConvertToImage()
+				image = image.Scale(self._width, self._height)
 			if isinstance(image, wx.Icon):
 				self.__image_dict[name] = self.__image_list.AddIcon(image)
 			elif isinstance(image, wx.Bitmap):

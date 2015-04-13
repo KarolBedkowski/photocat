@@ -34,7 +34,7 @@ def create_toolbar_button(parent, caption, function, image=None, imgid=None,
 		caption = wx.GetStockLabel(caption, False)
 
 	btn_id = wx.NewId()
-	parent.AddSimpleTool(btn_id, image, caption, description)
+	parent.AddLabelTool(btn_id, caption, image, shortHelp=description)
 	wx.EVT_TOOL(parent, btn_id, function)
 	return btn_id
 
