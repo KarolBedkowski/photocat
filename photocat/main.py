@@ -6,7 +6,7 @@ Main class App
 
 
 Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2010
+Copyright (c) Karol Będkowski, 2004-2015
 
 This file is part of Photo Catalog
 
@@ -122,16 +122,17 @@ _setup_locale()
 
 ##########################################################################
 
-if not appconfig.is_frozen():
+try:
+	import wxversion
 	try:
-		import wxversion
-		try:
-			wxversion.select('2.8')
-		except wxversion.AlreadyImportedError:
-			pass
-	except ImportError, err:
-		print 'No wxversion.... (%s)' % str(err)
+		wxversion.ensureMinimal("2.8")
+	except wxversion.AlreadyImportedError:
+		_LOG.warn('Wx Already Imported')
+except ImportError, err:
+	print 'No wxversion.... (%s)' % str(err)
 
+import wx
+_LOG.info("WX version: %s", wx.version())
 
 def run():
 	''' Run application '''
